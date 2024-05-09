@@ -3,20 +3,41 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-class LoginScreen extends StatelessWidget {
+import '../../controller/theme_controller.dart';
+
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
   Widget build(BuildContext context) {
+    final themeController = Get.put(ColorController());
+    final HomeController _controller = Get.put(HomeController());
+
+    @override
+    void initState() {
+      super.initState();
+    }
+
+    @override
+    void dispose() {
+      _controller.dispose();
+      super.dispose();
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          color: Color(0xffFFFFFF),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: Column(
@@ -62,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 2.h),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(child: Divider()),
@@ -71,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
                         'Or sign in with',
-                        style: CustomTextStyles.lightSmallTextStyle,
+                        style: CustomTextStyles.lightSmallTextStyle(),
                       ),
                     )),
                     Expanded(child: Divider())

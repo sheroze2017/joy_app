@@ -33,9 +33,17 @@ class CustomTextStyles {
     );
   }
 
-  static const TextStyle lightSmallTextStyle = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w500,
-    color: Color(0xff6B7280),
-  );
+  // static const TextStyle lightSmallTextStyle = TextStyle(
+  //   fontSize: 12,
+  //   fontWeight: FontWeight.w500,
+  //   color: Color(0xff6B7280),
+  // );
+
+  static TextStyle lightSmallTextStyle({Color? color, double size = 12}) {
+    return TextStyle(
+      fontSize: size,
+      fontWeight: FontWeight.w500,
+      color: color ?? Color(0xff6B7280),
+    );
+  }
 }

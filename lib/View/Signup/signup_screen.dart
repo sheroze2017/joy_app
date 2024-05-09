@@ -91,7 +91,7 @@ class SignupScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 2.h),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(child: Divider()),
@@ -100,7 +100,7 @@ class SignupScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
                         'Or sign up with',
-                        style: CustomTextStyles.lightSmallTextStyle,
+                        style: CustomTextStyles.lightSmallTextStyle(),
                       ),
                     )),
                     Expanded(child: Divider())

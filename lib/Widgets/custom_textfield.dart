@@ -18,7 +18,7 @@ class RoundedBorderTextField extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: const Color(0xffD1D5DB),
+          color: Theme.of(context).primaryColor,
           width: 1.0,
         ),
         color: Color(0xffF9FAFB),
