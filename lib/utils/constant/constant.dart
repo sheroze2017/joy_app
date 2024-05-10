@@ -1,7 +1,7 @@
 class CustomConstant {
-  static const String onboardImage1 = 'Assets/Images/onboard1.png';
-  static const String onboardImage2 = 'Assets/Images/onboard2.png';
-  static const String onboardImage3 = 'Assets/Images/onboard3.png';
+  static const String onboardImage1 = 'Assets/images/onboard1.png';
+  static const String onboardImage2 = 'Assets/images/onboard2.png';
+  static const String onboardImage3 = 'Assets/images/onboard3.png';
 
   static const String onboardTitle1 = 'Meet Doctors Online';
   static const String onboardTitle2 = 'Connect with Pharmacies';

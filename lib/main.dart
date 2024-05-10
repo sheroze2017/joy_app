@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/View/Signup/login_screen.dart';
+import 'package:joy_app/View/friend/add_friend.dart';
 import 'package:joy_app/View/passwordReset/new_pass_screen.dart';
 import 'package:joy_app/View/passwordReset/verify_code_screen.dart';
 import 'package:joy_app/controller/theme_controller.dart';
@@ -12,6 +13,7 @@ import 'View/home/editprofile_screen.dart';
 import 'View/home/notification_screen.dart';
 import 'View/onboarding/onboarding_screen.dart';
 import 'View/profile/my_profile.dart';
+import 'View/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +39,7 @@ class MyApp extends StatelessWidget {
         ),
         // initialRoute: AppPage.getNavbar(),
         //getPages: AppPage.routes,
-        home: MyProfileScreen(),
+        home: AddFriend(),
         //initialBinding: YourBinding(),
       );
     });
