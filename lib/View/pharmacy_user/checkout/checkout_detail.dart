@@ -124,7 +124,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
                       child: RoundedButton(
                           text: 'Confirm Order',
                           onPressed: () {
-                            _showPaymentBottomSheet(context);
+                            showPaymentBottomSheet(context, false);
                           },
                           backgroundColor: AppColors.darkGreenColor,
                           textColor: AppColors.whiteColor),
@@ -140,7 +140,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
   }
 }
 
-void _showPaymentBottomSheet(BuildContext context) {
+void showPaymentBottomSheet(BuildContext context, bool isbookAppointment) {
   showModalBottomSheet(
     context: context,
     shape: RoundedRectangleBorder(
@@ -186,11 +186,14 @@ void _showPaymentBottomSheet(BuildContext context) {
                         title: 'Congratulations!',
                         content: 'Your Order has been placed !',
                         showButton: true,
+                        isBookAppointment: isbookAppointment,
                       );
                     },
                   );
                 },
-                backgroundColor: AppColors.darkGreenColor,
+                backgroundColor: isbookAppointment!
+                    ? AppColors.darkBlueColor
+                    : AppColors.darkGreenColor,
                 textColor: AppColors.whiteColor)
           ],
         ),

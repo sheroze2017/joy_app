@@ -6,16 +6,19 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
+// ignore: must_be_immutable
 class CustomDialog extends StatelessWidget {
   final String title;
   final String content;
   bool showButton;
+  bool isBookAppointment;
 
   CustomDialog(
       {super.key,
       required this.title,
       required this.content,
-      this.showButton = false});
+      this.showButton = false,
+      this.isBookAppointment = false});
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -24,11 +27,11 @@ class CustomDialog extends StatelessWidget {
       ),
       elevation: 0,
       backgroundColor: Colors.transparent,
-      child: dialogContent(context),
+      child: dialogContent(context, isBookAppointment),
     );
   }
 
-  dialogContent(BuildContext context) {
+  dialogContent(BuildContext context, isBookAppointment) {
     return Stack(
       children: <Widget>[
         Container(
@@ -64,7 +67,9 @@ class CustomDialog extends StatelessWidget {
                           child: RoundedButton(
                               text: 'Done',
                               onPressed: () {},
-                              backgroundColor: AppColors.darkGreenColor,
+                              backgroundColor: isBookAppointment
+                                  ? AppColors.darkBlueColor
+                                  : AppColors.darkGreenColor,
                               textColor: AppColors.whiteColor),
                         ),
                       ],

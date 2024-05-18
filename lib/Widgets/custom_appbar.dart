@@ -7,17 +7,19 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget leading;
   final List<Widget> actions;
   final bool showIcon;
+  final Color? bgColor;
 
   HomeAppBar(
       {required this.title,
       required this.leading,
       required this.actions,
-      required this.showIcon});
+      required this.showIcon,
+      this.bgColor});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: bgColor == null ? Colors.transparent : bgColor,
       elevation: 0,
       leading: showIcon ? leading : null,
       centerTitle: true,

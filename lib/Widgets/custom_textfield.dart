@@ -5,12 +5,13 @@ class RoundedBorderTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final String icon;
+  final bool maxlines;
 
-  RoundedBorderTextField({
-    required this.controller,
-    required this.hintText,
-    required this.icon,
-  });
+  RoundedBorderTextField(
+      {required this.controller,
+      required this.hintText,
+      required this.icon,
+      this.maxlines = false});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,7 @@ class RoundedBorderTextField extends StatelessWidget {
             Expanded(
               child: TextField(
                 cursorColor: const Color(0xffD1D5DB),
+                maxLines: maxlines == false ? 1 : null,
                 controller: controller,
                 decoration: InputDecoration(
                   hintText: hintText,

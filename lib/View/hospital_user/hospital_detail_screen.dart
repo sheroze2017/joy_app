@@ -260,9 +260,11 @@ class ImagePage extends StatelessWidget {
                     ),
                     SizedBox(height: 1.h),
 
-                    UserRatingWidget(),
-             
-             
+                    UserRatingWidget(
+                      docName: 'Emily Anderson',
+                      reviewText: '',
+                      rating: '5',
+                    ),
                   ],
                 )),
               ),
@@ -285,64 +287,80 @@ class ImagePage extends StatelessWidget {
 }
 
 class UserRatingWidget extends StatelessWidget {
-  const UserRatingWidget({
-    super.key,
-  });
+  final String docName;
+  final String reviewText;
+  final String rating;
+
+  const UserRatingWidget(
+      {super.key,
+      required this.docName,
+      required this.reviewText,
+      required this.rating});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(50.0),
-          child: Image.network(
-            'https://www.nebosh.org.uk/public/case-studies/shyam-susivrithan.jpg',
-            width: 14.5.w,
-            height: 14.5.w,
-            fit: BoxFit.cover,
-          ),
-        ),
-        SizedBox(
-          width: 2.w,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Joe Doe',
-                style: CustomTextStyles.darkHeadingTextStyle(),
+        Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50.0),
+              child: Image.network(
+                'https://www.nebosh.org.uk/public/case-studies/shyam-susivrithan.jpg',
+                width: 14.5.w,
+                height: 14.5.w,
+                fit: BoxFit.cover,
               ),
-              Row(
+            ),
+            SizedBox(
+              width: 2.w,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('5.0',
-                      style: CustomTextStyles.lightTextStyle(
-                          color: Color(0xff4B5563), size: 12)),
-                  SizedBox(
-                    width: 0.5.w,
+                  Text(
+                    'Joe Doe',
+                    style: CustomTextStyles.darkHeadingTextStyle(),
                   ),
-                  RatingBar.builder(
-                    itemSize: 15,
-                    initialRating: 6,
-                    minRating: 1,
-                    direction: Axis.horizontal,
-                    allowHalfRating: true,
-                    itemCount: 5,
-                    itemPadding:
-                        EdgeInsets.symmetric(horizontal: 0.0),
-                    itemBuilder: (context, _) => Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    ),
-                    onRatingUpdate: (rating) {
-                      print(rating);
-                    },
+                  Row(
+                    children: [
+                      Text('5.0',
+                          style: CustomTextStyles.lightTextStyle(
+                              color: Color(0xff4B5563), size: 12)),
+                      SizedBox(
+                        width: 0.5.w,
+                      ),
+                      RatingBar.builder(
+                        itemSize: 15,
+                        initialRating: 6,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          print(rating);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+        SizedBox(
+          height: 0.5.h,
+        ),
+        Text(
+            'Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.',
+            style: CustomTextStyles.lightTextStyle(
+                color: Color(0xff4B5563), size: 14)),
       ],
     );
   }
@@ -425,8 +443,6 @@ class MedicineCard extends StatelessWidget {
         ),
       ),
     );
-  
-  
   }
 }
 
@@ -434,11 +450,15 @@ class RoundedSVGContainer extends StatelessWidget {
   final String svgAsset;
   final String numberText;
   final String descriptionText;
+  final Color? bgColor;
+  final Color? iconColor;
 
   RoundedSVGContainer({
     required this.svgAsset,
     required this.numberText,
     required this.descriptionText,
+    this.bgColor,
+    this.iconColor,
   });
 
   @override
@@ -449,13 +469,15 @@ class RoundedSVGContainer extends StatelessWidget {
           // You can adjust the size as needed
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50),
-            color: Color(0xffF3F4F6), // Background color of the container
+            color: bgColor ??
+                Color(0xffF3F4F6), // Background color of the container
           ),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Center(
               child: SvgPicture.asset(
                 svgAsset,
+                color: iconColor,
               ),
             ),
           ),
