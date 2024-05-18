@@ -110,7 +110,11 @@ class _FormScreenState extends State<FormScreen> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return CustomDialog();
+                              return CustomDialog(
+                                title: 'Congratulations!',
+                                content:
+                                    'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                              );
                             },
                           );
                         },

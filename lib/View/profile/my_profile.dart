@@ -24,6 +24,7 @@ class MyProfileScreen extends StatelessWidget {
     ];
     return Scaffold(
       appBar: HomeAppBar(
+        showIcon: true,
         title: 'My Profile',
         actions: [
           Padding(

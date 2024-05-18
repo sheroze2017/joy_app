@@ -14,6 +14,7 @@ class NotificationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
+        showIcon: true,
         title: 'Notification',
         actions: [
           Padding(

@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomDialog extends StatelessWidget {
+  final String title;
+  final String content;
+  bool showButton;
+
+  CustomDialog(
+      {super.key,
+      required this.title,
+      required this.content,
+      this.showButton = false});
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -37,19 +48,31 @@ class CustomDialog extends StatelessWidget {
                 width: 100,
               ),
               SizedBox(height: 2.h),
-              Text('Congratulations!', style: CustomTextStyles.darkTextStyle()),
+              Text(title, style: CustomTextStyles.darkTextStyle()),
               SizedBox(height: 2.h),
               Text(
-                'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                content,
                 style: CustomTextStyles.lightTextStyle(),
                 textAlign: TextAlign.center,
                 maxLines: 5,
               ),
               SizedBox(height: 2.h),
-              SpinKitFadingCircle(
-                color: Colors.grey,
-                size: 50.0,
-              )
+              showButton
+                  ? Row(
+                      children: [
+                        Expanded(
+                          child: RoundedButton(
+                              text: 'Done',
+                              onPressed: () {},
+                              backgroundColor: AppColors.darkGreenColor,
+                              textColor: AppColors.whiteColor),
+                        ),
+                      ],
+                    )
+                  : SpinKitFadingCircle(
+                      color: Colors.grey,
+                      size: 50.0,
+                    )
             ],
           ),
         ),

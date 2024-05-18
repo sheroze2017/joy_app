@@ -70,3 +70,14 @@ class CustomTheme {
       black = Colors.black,
       darkThemeColor = Colors.yellow;
 }
+
+class ThemeUtil {
+  static ThemeData getCurrentTheme(BuildContext context) {
+    return Theme.of(context);
+  }
+
+  static bool isDarkMode(BuildContext context) {
+    ThemeData theme = getCurrentTheme(context);
+    return theme.brightness == Brightness.dark;
+  }
+}

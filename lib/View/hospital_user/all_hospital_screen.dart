@@ -1,0 +1,218 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:joy_app/View/social_media/new_friend.dart';
+import 'package:joy_app/Widgets/appbar.dart';
+import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:sizer/sizer.dart';
+
+import 'hospital_detail_screen.dart';
+
+class AllHospitalScreen extends StatelessWidget {
+  bool isPharmacy;
+  bool isBloodBank;
+  bool isHospital;
+  final String appBarText;
+  AllHospitalScreen(
+      {super.key,
+      this.isPharmacy = false,
+      this.isBloodBank = false,
+      this.isHospital = false,
+      required this.appBarText});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HomeAppBar(
+          title: appBarText,
+          leading: Icon(Icons.arrow_back),
+          actions: [],
+          showIcon: true),
+      body: Container(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RoundedSearchTextField(
+                  hintText: 'Search', controller: TextEditingController()),
+              SizedBox(
+                height: 1.h,
+              ),
+              Text(
+                '532 found',
+                style: CustomTextStyles.darkHeadingTextStyle(),
+              ),
+              SizedBox(
+                height: 1.h,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ImagePage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: isPharmacy
+                          ? Color(0xffE2FFE3)
+                          : isBloodBank
+                              ? Color(0xffFFECEC)
+                              : Color(0xffEEF5FF),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12.0),
+                          child: Image.network(
+                            'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg',
+                            width: 28.w,
+                            height: 28.w,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 2.w,
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              HospitalName(),
+                              LocationWidget(),
+                              ReviewBar(),
+                              Divider(
+                                color: Color(0xff6B7280),
+                                thickness: 0.1.h,
+                              ),
+                              Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                          'Assets/icons/routing.svg'),
+                                      SizedBox(
+                                        width: 0.5.w,
+                                      ),
+                                      Text('2.5 km/40min',
+                                          style:
+                                              CustomTextStyles.lightTextStyle(
+                                                  color: Color(0xff6B7280),
+                                                  size: 10.8))
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                          'Assets/icons/hospital.svg'),
+                                      SizedBox(
+                                        width: 0.5.w,
+                                      ),
+                                      Text('Hospital',
+                                          style:
+                                              CustomTextStyles.lightTextStyle(
+                                                  color: Color(0xff6B7280),
+                                                  size: 10.8))
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HospitalName extends StatelessWidget {
+  const HospitalName({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Sunrise Health Clinic',
+      style: CustomTextStyles.darkHeadingTextStyle(
+          size: 12.67, color: Color(0xff4B5563)),
+    );
+  }
+}
+
+class LocationWidget extends StatelessWidget {
+  const LocationWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SvgPicture.asset('Assets/icons/location.svg'),
+        SizedBox(
+          width: 0.5.w,
+        ),
+        Text('123 Oak Street, CA 98765',
+            style: CustomTextStyles.lightTextStyle(
+                color: Color(0xff6B7280), size: 10.8))
+      ],
+    );
+  }
+}
+
+class ReviewBar extends StatelessWidget {
+  const ReviewBar({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text('5.0',
+            style: CustomTextStyles.w600TextStyle(
+                color: Color(0xff6B7280), size: 10.8)),
+        RatingBar.builder(
+          itemSize: 15,
+          initialRating: 6,
+          minRating: 1,
+          direction: Axis.horizontal,
+          allowHalfRating: true,
+          itemCount: 5,
+          itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
+          itemBuilder: (context, _) => Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          onRatingUpdate: (rating) {
+            print(rating);
+          },
+        ),
+        SizedBox(
+          width: 0.5.w,
+        ),
+        Text('(58 Reviews)',
+            style: CustomTextStyles.lightTextStyle(
+                color: Color(0xff6B7280), size: 10.8)),
+      ],
+    );
+  }
+}
