@@ -1,12 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/View/hospital_user/all_hospital_screen.dart';
-import 'package:joy_app/View/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/View/social_media/new_friend.dart';
-import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';

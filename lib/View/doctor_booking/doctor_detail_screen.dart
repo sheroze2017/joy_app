@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/View/hospital_user/hospital_detail_screen.dart';
-import 'package:joy_app/View/pharmacy_user/checkout/checkout_detail.dart';
 import 'package:joy_app/View/profile/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -230,9 +228,7 @@ class DoctorDetailScreen extends StatelessWidget {
                 Expanded(
                   child: RoundedButton(
                       text: "Book Appointment",
-                      onPressed: () {
-                       
-                      },
+                      onPressed: () {},
                       backgroundColor: AppColors.darkBlueColor,
                       textColor: AppColors.whiteColor),
                 ),

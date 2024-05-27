@@ -8,12 +8,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget> actions;
   final bool showIcon;
   final Color? bgColor;
+  bool? showBottom;
 
   HomeAppBar(
       {required this.title,
       required this.leading,
       required this.actions,
       required this.showIcon,
+      this.showBottom = false,
       this.bgColor});
 
   @override
@@ -28,6 +30,16 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         style: CustomTextStyles.darkTextStyle(color: Color(0xff374151)),
       ),
       actions: actions,
+      bottom: showBottom == true
+          ? PreferredSize(
+              preferredSize: preferredSize,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Divider(
+                  color: Color(0xffF1F4F5),
+                ),
+              ))
+          : null,
     );
   }
 

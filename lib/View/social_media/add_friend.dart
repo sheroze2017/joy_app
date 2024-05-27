@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/View/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
@@ -115,10 +114,15 @@ class countRequest extends StatelessWidget {
           style: CustomTextStyles.w600TextStyle(color: Colors.red, size: 14),
         ),
         Spacer(),
-        Text(
-          'See all',
-          style: CustomTextStyles.w600TextStyle(
-              color: Color(0xff1C2A3A), size: 14),
+        InkWell(
+          onTap: () {
+            Get.to(AddNewFriend());
+          },
+          child: Text(
+            'See all',
+            style: CustomTextStyles.w600TextStyle(
+                color: Color(0xff1C2A3A), size: 14),
+          ),
         )
       ],
     );
@@ -188,11 +192,11 @@ class FriendRequestWidget extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 8),
-                      Text(
-                        '$mutualFriendsCount mutual friends',
-                        style: CustomTextStyles.lightTextStyle(
-                            size: 9.4, color: Color(0xff99A1BE)),
-                      ),
+                      // Text(
+                      //   '$mutualFriendsCount mutual friends',
+                      //   style: CustomTextStyles.lightTextStyle(
+                      //       size: 9.4, color: Color(0xff99A1BE)),
+                      // ),
                     ],
                   ),
                 ],

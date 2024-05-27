@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:joy_app/View/pharmacy_user/checkout/checkout_detail.dart';
 
 import 'package:joy_app/Widgets/custom_appbar.dart';

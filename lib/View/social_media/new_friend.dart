@@ -5,7 +5,6 @@ import 'package:sizer/sizer.dart';
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/rounded_button.dart';
 import '../../styles/custom_textstyle.dart';
-import 'add_friend.dart';
 
 class AddNewFriend extends StatelessWidget {
   const AddNewFriend({super.key});
@@ -33,7 +32,7 @@ class AddNewFriend extends StatelessWidget {
               ),
               NewFriendRequestWidget(
                 profileImage: 'https://via.placeholder.com/150',
-                userName: 'John Doeeeeee',
+                userName: 'John Doe',
                 mutualFriends: [
                   'https://via.placeholder.com/50',
                   'https://via.placeholder.com/51',
@@ -127,11 +126,11 @@ class NewFriendRequestWidget extends StatelessWidget {
                       SizedBox(
                         width: 2.w,
                       ),
-                      Text(
-                        '$mutualFriendsCount mutual friends',
-                        style: CustomTextStyles.lightTextStyle(
-                            size: 9.4, color: Color(0xff99A1BE)),
-                      ),
+                      // Text(
+                      //   '$mutualFriendsCount mutual friends',
+                      //   style: CustomTextStyles.lightTextStyle(
+                      //       size: 9.4, color: Color(0xff99A1BE)),
+                      // ),
                     ],
                   ),
                 ],

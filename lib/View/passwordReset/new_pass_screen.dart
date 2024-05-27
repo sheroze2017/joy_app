@@ -1,12 +1,13 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/View/home/profile_screen.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../Widgets/appbar.dart';
 
 class NewPassScreen extends StatelessWidget {
   const NewPassScreen({super.key});
@@ -14,6 +15,12 @@ class NewPassScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+          title: '',
+          icon: Icons.arrow_back,
+          onPressed: () {
+            Get.back();
+          }),
       body: SingleChildScrollView(
         child: Container(
           color: Color(0xffFFFFFF),
@@ -59,7 +66,9 @@ class NewPassScreen extends StatelessWidget {
                     Expanded(
                       child: RoundedButton(
                           text: "Reset Password",
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(ProfileScreen());
+                          },
                           backgroundColor: Color(0xff1C2A3A),
                           textColor: Color(0xffFFFFFF)),
                     ),

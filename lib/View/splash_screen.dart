@@ -1,10 +1,22 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/View/onboarding/onboarding_screen.dart';
 import 'package:sizer/sizer.dart';
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+class SplashScreen extends StatefulWidget {
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Navigate to the onboarding screen after 5 seconds
+    Timer(Duration(seconds: 5), () => Get.offAll(OnboardingScreen()));
+  }
 
   @override
   Widget build(BuildContext context) {

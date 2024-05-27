@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomTextStyles {
   static TextStyle darkTextStyle({Color? color}) {

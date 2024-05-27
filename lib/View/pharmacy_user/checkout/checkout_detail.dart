@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -26,7 +22,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
   bool isButtonSelectedOp = false;
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
+    // List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
 
     return Scaffold(
       appBar: HomeAppBar(
@@ -184,7 +180,9 @@ void showPaymentBottomSheet(BuildContext context, bool isbookAppointment) {
                     builder: (BuildContext context) {
                       return CustomDialog(
                         title: 'Congratulations!',
-                        content: 'Your Order has been placed !',
+                        content: isbookAppointment
+                            ? 'Your appointment with Dr. David Patel is confirmed for June 30, 2023, at 10:00 AM.'
+                            : 'Your Order has been placed !',
                         showButton: true,
                         isBookAppointment: isbookAppointment,
                       );

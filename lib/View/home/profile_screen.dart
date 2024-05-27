@@ -1,12 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/Widgets/appbar.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/dropdown_button.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/View/Signup/login_screen.dart';
+import 'package:joy_app/View/home/editprofile_screen.dart';
+import 'package:joy_app/View/home/notification_screen.dart';
+import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
@@ -25,6 +24,12 @@ class _FormScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: HomeAppBar(
+        title: 'Profile',
+        leading: Icon(Icons.arrow_back),
+        actions: [],
+        showIcon: true,
+      ),
       body: Container(
         color: Color(0xffFFFFFF),
         child: Padding(
@@ -32,18 +37,18 @@ class _FormScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                'Profile',
-                style: CustomTextStyles.darkTextStyle(),
-              ),
+              // Text(
+              //   'Profile',
+              //   style: CustomTextStyles.darkTextStyle(),
+              // ),
               Stack(
                 children: <Widget>[
                   Center(
                     child: SvgPicture.asset('Assets/images/profile-circle.svg'),
                   ),
                   Positioned(
-                    bottom: 30,
-                    right: 105,
+                    bottom: 25,
+                    right: 90,
                     child: SvgPicture.asset('Assets/images/message-edit.svg'),
                   ),
                 ],
@@ -62,21 +67,26 @@ class _FormScreenState extends State<ProfileScreen> {
               SizedBox(
                 height: 2.h,
               ),
-              Row(
-                children: [
-                  SvgPicture.asset('Assets/images/user-edit.svg'),
-                  SizedBox(
-                    width: 3.w,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Edit Profile',
-                      style: CustomTextStyles.lightTextStyle(
-                          color: Color(0xff6B7280), size: 18),
+              InkWell(
+                onTap: () {
+                  Get.to(EditProfile());
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset('Assets/images/user-edit.svg'),
+                    SizedBox(
+                      width: 3.w,
                     ),
-                  ),
-                  SvgPicture.asset('Assets/images/arrow-right.svg'),
-                ],
+                    Expanded(
+                      child: Text(
+                        'Edit Profile',
+                        style: CustomTextStyles.lightTextStyle(
+                            color: Color(0xff6B7280), size: 18),
+                      ),
+                    ),
+                    SvgPicture.asset('Assets/images/arrow-right.svg'),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -84,21 +94,26 @@ class _FormScreenState extends State<ProfileScreen> {
                   color: Color(0xffE5E7EB),
                 ),
               ),
-              Row(
-                children: [
-                  SvgPicture.asset('Assets/images/notification.svg'),
-                  SizedBox(
-                    width: 3.w,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Notifications',
-                      style: CustomTextStyles.lightTextStyle(
-                          color: Color(0xff6B7280), size: 18),
+              InkWell(
+                onTap: () {
+                  Get.to(NotificationScreen());
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset('Assets/images/notification.svg'),
+                    SizedBox(
+                      width: 3.w,
                     ),
-                  ),
-                  SvgPicture.asset('Assets/images/arrow-right.svg'),
-                ],
+                    Expanded(
+                      child: Text(
+                        'Notifications',
+                        style: CustomTextStyles.lightTextStyle(
+                            color: Color(0xff6B7280), size: 18),
+                      ),
+                    ),
+                    SvgPicture.asset('Assets/images/arrow-right.svg'),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -106,21 +121,26 @@ class _FormScreenState extends State<ProfileScreen> {
                   color: Color(0xffE5E7EB),
                 ),
               ),
-              Row(
-                children: [
-                  SvgPicture.asset('Assets/images/appointment.svg'),
-                  SizedBox(
-                    width: 3.w,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Appointments',
-                      style: CustomTextStyles.lightTextStyle(
-                          color: Color(0xff6B7280), size: 18),
+              InkWell(
+                onTap: () {
+                  //  Get.to(BookAppointmentScreen());
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset('Assets/images/appointment.svg'),
+                    SizedBox(
+                      width: 3.w,
                     ),
-                  ),
-                  SvgPicture.asset('Assets/images/arrow-right.svg'),
-                ],
+                    Expanded(
+                      child: Text(
+                        'Appointments',
+                        style: CustomTextStyles.lightTextStyle(
+                            color: Color(0xff6B7280), size: 18),
+                      ),
+                    ),
+                    SvgPicture.asset('Assets/images/arrow-right.svg'),
+                  ],
+                ),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 4.0),
@@ -128,82 +148,86 @@ class _FormScreenState extends State<ProfileScreen> {
                   color: Color(0xffE5E7EB),
                 ),
               ),
-              Row(
-                children: [
-                  SvgPicture.asset('Assets/images/logout.svg'),
-                  SizedBox(
-                    width: 3.w,
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Log Out',
-                      style: CustomTextStyles.lightTextStyle(
-                          color: Color(0xff6B7280), size: 18),
-                    ),
-                  ),
-                  InkWell(
-                    child: SvgPicture.asset('Assets/images/arrow-right.svg'),
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Container(
-                            height: 30.h,
-                            decoration: BoxDecoration(
-                                color: Color(0xffFFFFFF),
-                                borderRadius: BorderRadius.circular(54)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'Logout',
-                                    style: CustomTextStyles.darkTextStyle(),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 4.0),
-                                    child: Divider(
-                                      color: Color(0xffE5E7EB),
+              InkWell(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        height: 30.h,
+                        decoration: BoxDecoration(
+                            color: Color(0xffFFFFFF),
+                            borderRadius: BorderRadius.circular(54)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Logout',
+                                style: CustomTextStyles.darkTextStyle(),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: Divider(
+                                  color: Color(0xffE5E7EB),
+                                ),
+                              ),
+                              Text(
+                                'Are you sure you want to log out?',
+                                style: CustomTextStyles.w600TextStyle(),
+                              ),
+                              SizedBox(height: 2.h),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: RoundedButton(
+                                      text: "Cancel",
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      backgroundColor: Color(0xffE5E7EB),
+                                      textColor: Color(0xff1C2A3A),
                                     ),
                                   ),
-                                  Text(
-                                    'Are you sure you want to log out?',
-                                    style: CustomTextStyles.w600TextStyle(),
+                                  SizedBox(
+                                    width: 4.w,
                                   ),
-                                  SizedBox(height: 2.h),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: RoundedButton(
-                                          text: "Cancel",
-                                          onPressed: () {},
-                                          backgroundColor: Color(0xffE5E7EB),
-                                          textColor: Color(0xff1C2A3A),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 4.w,
-                                      ),
-                                      Expanded(
-                                        child: RoundedButton(
-                                            text: "Yes, Logout",
-                                            onPressed: () {},
-                                            backgroundColor: Color(0xff1C2A3A),
-                                            textColor: Color(0xffFFFFFF)),
-                                      )
-                                    ],
-                                  ),
+                                  Expanded(
+                                    child: RoundedButton(
+                                        text: "Yes, Logout",
+                                        onPressed: () {
+                                          Get.offAll(LoginScreen());
+                                        },
+                                        backgroundColor: Color(0xff1C2A3A),
+                                        textColor: Color(0xffFFFFFF)),
+                                  )
                                 ],
                               ),
-                            ),
-                          );
-                        },
+                            ],
+                          ),
+                        ),
                       );
                     },
-                  ),
-                ],
+                  );
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset('Assets/images/logout.svg'),
+                    SizedBox(
+                      width: 3.w,
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Log Out',
+                        style: CustomTextStyles.lightTextStyle(
+                            color: Color(0xff6B7280), size: 18),
+                      ),
+                    ),
+                    SvgPicture.asset('Assets/images/arrow-right.svg'),
+                  ],
+                ),
               )
             ],
           ),

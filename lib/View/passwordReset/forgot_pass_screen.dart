@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/View/passwordReset/verify_code_screen.dart';
+import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -14,6 +14,12 @@ class ForgotPassScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+          title: '',
+          icon: Icons.arrow_back,
+          onPressed: () {
+            Get.back();
+          }),
       body: SingleChildScrollView(
         child: Container(
           color: Color(0xffFFFFFF),
@@ -21,6 +27,9 @@ class ForgotPassScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
+                // SizedBox(
+                //   height: 10.h,
+                // ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: SvgPicture.asset(
@@ -49,7 +58,9 @@ class ForgotPassScreen extends StatelessWidget {
                     Expanded(
                       child: RoundedButton(
                           text: "Send Code",
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(VerifyCodeScreen());
+                          },
                           backgroundColor: Color(0xff1C2A3A),
                           textColor: Color(0xffFFFFFF)),
                     ),

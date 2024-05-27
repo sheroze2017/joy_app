@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
@@ -111,6 +110,7 @@ class _FormScreenState extends State<FormScreen> {
                             context: context,
                             builder: (BuildContext context) {
                               return CustomDialog(
+                                showButton: true,
                                 title: 'Congratulations!',
                                 content:
                                     'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',

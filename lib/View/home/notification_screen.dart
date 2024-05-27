@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/notification_item.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:sizer/sizer.dart';
 
 import '../../Widgets/custom_appbar.dart';
 

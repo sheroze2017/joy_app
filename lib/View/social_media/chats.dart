@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/View/social_media/add_friend.dart';
+import 'package:joy_app/View/social_media/direct_chat.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
@@ -46,20 +48,58 @@ class AllChats extends StatelessWidget {
             SizedBox(
               height: 1.h,
             ),
-            ChatBox(
-              profileImageUrl: 'https://via.placeholder.com/150',
-              personName: 'John Doe',
-              lastMessage: 'Hello there!',
-              dateTime: '2:30 PM',
+            InkWell(
+              onTap: () {
+                Get.to(DirectMessageScreen());
+              },
+              child: ChatBox(
+                profileImageUrl: 'https://via.placeholder.com/150',
+                personName: 'John Doe',
+                lastMessage: 'Hello there!',
+                dateTime: '2:30 PM',
+              ),
             ),
             SizedBox(
               height: 2.h,
             ),
-            ChatBox(
-              profileImageUrl: 'https://via.placeholder.com/150',
-              personName: 'John Doe',
-              lastMessage: 'Hello there!',
-              dateTime: '2:30 PM',
+            InkWell(
+              onTap: () {
+                Get.to(DirectMessageScreen());
+              },
+              child: ChatBox(
+                profileImageUrl: 'https://via.placeholder.com/150',
+                personName: 'John Doe',
+                lastMessage: 'Hello there!',
+                dateTime: '2:30 PM',
+              ),
+            ),
+            SizedBox(
+              height: 2.h,
+            ),
+            InkWell(
+              onTap: () {
+                Get.to(AddFriend());
+              },
+              child: ChatBox(
+                profileImageUrl: 'https://via.placeholder.com/150',
+                personName: 'Add FRIEND',
+                lastMessage: 'Hello there!',
+                dateTime: '2:30 PM',
+              ),
+            ),
+            SizedBox(
+              height: 2.h,
+            ),
+            InkWell(
+              onTap: () {
+                Get.to(AddNewFriend());
+              },
+              child: ChatBox(
+                profileImageUrl: 'https://via.placeholder.com/150',
+                personName: 'Add New FRIEND',
+                lastMessage: 'Hello there!',
+                dateTime: '2:30 PM',
+              ),
             ),
           ],
         ),

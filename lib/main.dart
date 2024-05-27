@@ -1,32 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/Signup/login_screen.dart';
-import 'package:joy_app/View/doctor_booking/all_doctor_screen.dart';
-import 'package:joy_app/View/doctor_booking/book_appointment_screen.dart';
-import 'package:joy_app/View/doctor_booking/your_profileform_screen.dart';
-import 'package:joy_app/View/hospital_user/all_hospital_screen.dart';
-import 'package:joy_app/View/pharmacy_user/medicine_detail_screen.dart';
-import 'package:joy_app/View/pharmacy_user/mycart_screen.dart';
-import 'package:joy_app/View/pharmacy_user/pharmacy_product_screen.dart';
-import 'package:joy_app/View/social_media/add_friend.dart';
-import 'package:joy_app/View/passwordReset/new_pass_screen.dart';
-import 'package:joy_app/View/passwordReset/verify_code_screen.dart';
-import 'package:joy_app/View/social_media/direct_chat.dart';
-import 'package:joy_app/View/social_media/new_friend.dart';
+import 'package:joy_app/View/home/navbar.dart';
 import 'package:joy_app/controller/theme_controller.dart';
-import 'package:joy_app/routes/routes.dart';
-import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
-
-import 'View/doctor_booking/doctor_detail_screen.dart';
-import 'View/home/editprofile_screen.dart';
-import 'View/home/notification_screen.dart';
-import 'View/onboarding/onboarding_screen.dart';
-import 'View/pharmacy_user/checkout/checkout_detail.dart';
-import 'View/pharmacy_user/review_screen.dart';
-import 'View/profile/my_profile.dart';
-import 'View/social_media/chats.dart';
-import 'View/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,7 +27,9 @@ class MyApp extends StatelessWidget {
           ),
           // initialRoute: AppPage.getNavbar(),
           //getPages: AppPage.routes,
-          home: BookAppointmentScreen()
+          home: NavBarScreen(
+            isPharmacy: true,
+          )
           //initialBinding: YourBinding(),
           );
     });

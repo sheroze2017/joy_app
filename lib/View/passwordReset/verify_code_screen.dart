@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/View/passwordReset/new_pass_screen.dart';
+import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:pinput/pinput.dart';
@@ -33,6 +33,12 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+          title: '',
+          icon: Icons.arrow_back,
+          onPressed: () {
+            Get.back();
+          }),
       body: SingleChildScrollView(
         child: Container(
           color: Color(0xffFFFFFF),
@@ -72,7 +78,9 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                     Expanded(
                       child: RoundedButton(
                           text: "Verify",
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(NewPassScreen());
+                          },
                           backgroundColor: Color(0xff1C2A3A),
                           textColor: Color(0xffFFFFFF)),
                     ),

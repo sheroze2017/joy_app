@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/View/Signup/login_screen.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/utils/constant/constant.dart';
@@ -9,7 +9,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatelessWidget {
   OnboardingScreen({super.key});
-  final _pageController = PageController(viewportFraction: 0.8, keepPage: true);
+  final _pageController = PageController(viewportFraction: 1, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +17,7 @@ class OnboardingScreen extends StatelessWidget {
       body: Stack(
         children: [
           PageView(
+            padEnds: false,
             controller: _pageController,
             children: [
               OnBoardPage(
@@ -48,7 +49,7 @@ class OnboardingScreen extends StatelessWidget {
                       text: 'Next',
                       onPressed: () {
                         _pageController.nextPage(
-                            duration: Duration(milliseconds: 400),
+                            duration: Duration(milliseconds: 300),
                             curve: Curves.linear);
                       },
                       textColor: Color(0xffE5E7EB),
@@ -80,9 +81,14 @@ class OnboardingScreen extends StatelessWidget {
               right: 0,
               left: 0,
               bottom: 15,
-              child: Center(
-                  child:
-                      Text('Skip', style: CustomTextStyles.lightTextStyle()))),
+              child: InkWell(
+                onTap: () {
+                  Get.to(LoginScreen());
+                },
+                child: Center(
+                    child:
+                        Text('Skip', style: CustomTextStyles.lightTextStyle())),
+              )),
         ],
       ),
     );

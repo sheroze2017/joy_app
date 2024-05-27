@@ -18,8 +18,12 @@ class DirectMessageScreen extends StatelessWidget {
               MyMessage(
                 message: 'Hi hope you are doing well',
               ),
-              YourMessage(
-                message: 'Im fine how about you will come tomorrow for meeting',
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: YourMessage(
+                  message:
+                      'Im fine how about you will come tomorrow for meeting',
+                ),
               )
             ],
           ),

@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/View/Signup/signup_screen.dart';
+import 'package:joy_app/View/passwordReset/forgot_pass_screen.dart';
+import 'package:joy_app/View/social_media/chats.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -42,6 +43,9 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
+                SizedBox(
+                  height: 10.h,
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: SvgPicture.asset(
@@ -76,7 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     Expanded(
                       child: RoundedButton(
                           text: "Sign In",
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(AllChats());
+                          },
                           backgroundColor: Color(0xff1C2A3A),
                           textColor: Color(0xffFFFFFF)),
                     ),
@@ -84,17 +90,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 2.h),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(child: Divider()),
-                    Expanded(
-                        child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12.0),
+                    Center(
                       child: Text(
-                        'Or sign in with',
+                        '  Or sign in with  ',
                         style: CustomTextStyles.lightSmallTextStyle(),
                       ),
-                    )),
+                    ),
                     Expanded(child: Divider())
                   ],
                 ),
@@ -124,7 +128,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
                         ),
-                        recognizer: TapGestureRecognizer()..onTap = () {},
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Get.to(ForgotPassScreen());
+                          },
                       ),
                     ],
                   ),
@@ -144,7 +151,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
                         ),
-                        recognizer: TapGestureRecognizer()..onTap = () {},
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Get.to(SignupScreen());
+                          },
                       ),
                     ],
                   ),
@@ -156,11 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-
 }
-
-
 
 class RoundedContainer extends StatelessWidget {
   final String imagePath;

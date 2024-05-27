@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:joy_app/styles/custom_textstyle.dart';
 
 class RoundedBorderDropdown extends StatelessWidget {
   final String? value;
@@ -42,13 +42,15 @@ class RoundedBorderDropdown extends StatelessWidget {
                       value: value,
                       child: Text(
                         value,
-                        style: TextStyle(color: const Color(0xffD1D5DB)),
+                        style: CustomTextStyles.lightTextStyle(
+                            color: Color(0xff9CA3AF)),
                       ),
                     );
                   }).toList(),
                   hint: Text(
                     hintText,
-                    style: TextStyle(color: const Color(0xffD1D5DB)),
+                    style: CustomTextStyles.lightTextStyle(
+                        color: Color(0xff9CA3AF)),
                   ),
                 ),
               ),

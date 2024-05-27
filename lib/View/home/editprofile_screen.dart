@@ -33,9 +33,7 @@ class _EditProfileState extends State<EditProfile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 5.h,
-                ),
+                SizedBox(height: 8.h),
                 Text(
                   'Edit Profile',
                   style: CustomTextStyles.darkTextStyle(),
@@ -48,7 +46,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Positioned(
                       bottom: 30,
-                      right: 105,
+                      right: 90,
                       child: SvgPicture.asset('Assets/images/message-edit.svg'),
                     ),
                   ],
@@ -115,6 +113,7 @@ class _EditProfileState extends State<EditProfile> {
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomDialog(
+                                  
                                   title: 'Congratulations!',
                                   content:
                                       'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',

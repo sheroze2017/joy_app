@@ -1,0 +1,180 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:joy_app/View/Doctor_flow/home_screen.dart';
+import 'package:joy_app/View/hospital_user/hospital_detail_screen.dart';
+import 'package:joy_app/View/profile/my_profile.dart';
+import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:sizer/sizer.dart';
+
+import '../../styles/colors.dart';
+
+class PharmacyHomeScreen extends StatelessWidget {
+  const PharmacyHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HomeAppBar(
+          showBottom: true,
+          title: '',
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: SvgPicture.asset('Assets/icons/joy-icon-small.svg'),
+          ),
+          actions: [
+            SvgPicture.asset('Assets/icons/searchbg.svg'),
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0, left: 8),
+              child: SvgPicture.asset('Assets/icons/messagebg.svg'),
+            )
+          ],
+          showIcon: true),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "What's on your mind, Hashem?",
+                    style: CustomTextStyles.lightTextStyle(
+                        color: AppColors.borderColor),
+                  ),
+                  Spacer(),
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(54),
+                        color: AppColors.whiteColorf9f),
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset('Assets/icons/camera.svg'),
+                          SizedBox(width: 2.w),
+                          Text(
+                            "Photo",
+                            style: CustomTextStyles.lightTextStyle(
+                                color: AppColors.borderColor, size: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 1.5.h,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        //  Get.to(AllAppointments());
+                      },
+                      child: HeaderMenu(
+                        bgColor: AppColors.lightBlueColore5e,
+                        imgbgColor: AppColors.lightBlueColord0d,
+                        imagepath: 'Assets/icons/menu-board.svg',
+                        title: 'Appointments',
+                        subTitle: 'Manage Appointments',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 2.w,
+                  ),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        // Get.to(ManageAppointment(
+                        //   showPatientHistoryFromScreen: true,
+                        // ));
+                      },
+                      child: HeaderMenu(
+                        bgColor: AppColors.lightGreenColor,
+                        imgbgColor: AppColors.lightGreenColorFC7,
+                        imagepath: 'Assets/icons/calendar.svg',
+                        title: 'Patient History',
+                        subTitle: 'Manage Patient’s History',
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 1.5.h,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Upcoming Appointments',
+                    style: CustomTextStyles.darkHeadingTextStyle(),
+                  ),
+                  Spacer(),
+                  InkWell(
+                    onTap: () {
+                      //      Get.to(AllAppointments());
+                    },
+                    child: Text(
+                      'See All',
+                      style: CustomTextStyles.lightSmallTextStyle(size: 14),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 1.5.h,
+              ),
+              MeetingCallScheduler(
+                nextMeeting: true,
+                imgPath: 'Assets/images/onboard3.png',
+                name: '',
+                time: '',
+                location: '',
+                category: '',
+              ),
+              SizedBox(
+                height: 0.75.h,
+              ),
+              MeetingCallScheduler(
+                imgPath: 'Assets/images/oldPerson.png',
+                name: '',
+                time: '',
+                location: '',
+                category: '',
+              ),
+              SizedBox(height: 2.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Heading(
+                      title: 'Reviews',
+                    ),
+                    SizedBox(height: 2.h),
+                    UserRatingWidget(
+                      docName: 'Emily Anderson',
+                      reviewText: '',
+                      rating: '5',
+                    ),
+                    SizedBox(height: 1.h),
+                    UserRatingWidget(
+                      docName: 'Emily Anderson',
+                      reviewText: '',
+                      rating: '5',
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
