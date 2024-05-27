@@ -244,6 +244,7 @@ class ImagePage extends StatelessWidget {
                       height: 0.5.h,
                     ),
                     MedicineCard(
+                      btnText: "Add to Cart",
                       imgUrl:
                           'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
                       count: '10',
@@ -368,13 +369,15 @@ class MedicineCard extends StatelessWidget {
   final String cost;
   final String count;
   final String name;
+  final String btnText;
 
   const MedicineCard(
       {super.key,
       required this.imgUrl,
       required this.cost,
       required this.count,
-      required this.name});
+      required this.name,
+      required this.btnText});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -429,7 +432,7 @@ class MedicineCard extends StatelessWidget {
                 Expanded(
                   child: RoundedButtonSmall(
                       isSmall: true,
-                      text: "Add to Cart",
+                      text: btnText,
                       onPressed: () {},
                       backgroundColor: Color(0xff015104),
                       textColor: Color(0xffFFFFFF)),

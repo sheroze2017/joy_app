@@ -11,14 +11,14 @@ class MyProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> userNames = ['User 1', 'User 2', 'User 3', 'User 4', 'User 5'];
-    List<String> userAssets = [
-      'Assets/images/accountcreated.svg',
-      'Assets/images/accountcreated.svg',
-      'Assets/images/accountcreated.svg',
-      'Assets/images/accountcreated.svg',
-      'Assets/images/accountcreated.svg',
-    ];
+    // List<String> userNames = ['User 1', 'User 2', 'User 3', 'User 4', 'User 5'];
+    // List<String> userAssets = [
+    //   'Assets/images/accountcreated.svg',
+    //   'Assets/images/accountcreated.svg',
+    //   'Assets/images/accountcreated.svg',
+    //   'Assets/images/accountcreated.svg',
+    //   'Assets/images/accountcreated.svg',
+    // ];
     return Scaffold(
       appBar: HomeAppBar(
         showIcon: true,

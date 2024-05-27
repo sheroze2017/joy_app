@@ -133,17 +133,21 @@ class DoctorHomeScreen extends StatelessWidget {
                 height: 1.5.h,
               ),
               MeetingCallScheduler(
+                bgColor: AppColors.lightishBlueColor5ff,
                 nextMeeting: true,
                 imgPath: 'Assets/images/onboard3.png',
                 name: '',
                 time: '',
                 location: '',
                 category: '',
+                buttonColor: AppColors.darkBlueColor,
               ),
               SizedBox(
                 height: 0.75.h,
               ),
               MeetingCallScheduler(
+                buttonColor: AppColors.darkBlueColor,
+                bgColor: AppColors.lightishBlueColor5ff,
                 imgPath: 'Assets/images/oldPerson.png',
                 name: '',
                 time: '',
@@ -188,8 +192,11 @@ class MeetingCallScheduler extends StatelessWidget {
   final String category;
   final String location;
   final String time;
+  final Color buttonColor;
+  final Color bgColor;
   bool nextMeeting;
   bool isActive;
+  bool isPharmacy;
 
   MeetingCallScheduler(
       {super.key,
@@ -199,26 +206,32 @@ class MeetingCallScheduler extends StatelessWidget {
       required this.location,
       required this.time,
       this.nextMeeting = false,
-      this.isActive = true});
+      this.isActive = true,
+      required this.buttonColor,
+      required this.bgColor,
+      this.isPharmacy = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: AppColors.lightishBlueColor5ff),
+          borderRadius: BorderRadius.circular(12), color: bgColor),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'May 22, 2023 - 10.00 AM',
-              style: CustomTextStyles.darkHeadingTextStyle(size: 14),
-            ),
-            Divider(
-              color: Color(0xffE5E7EB),
-            ),
+            !isPharmacy
+                ? Text(
+                    time,
+                    style: CustomTextStyles.darkHeadingTextStyle(size: 14),
+                  )
+                : Container(),
+            !isPharmacy
+                ? Divider(
+                    color: Color(0xffE5E7EB),
+                  )
+                : Container(),
             SizedBox(
               height: 0.5.h,
             ),
@@ -244,14 +257,14 @@ class MeetingCallScheduler extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'James Robinson',
+                          name,
                           style: CustomTextStyles.darkHeadingTextStyle(),
                         ),
                         SizedBox(
                           height: 1.h,
                         ),
                         Text(
-                          'Cancer Patient',
+                          category,
                           style: CustomTextStyles.w600TextStyle(
                               size: 14, color: Color(0xff4B5563)),
                         ),
@@ -264,7 +277,7 @@ class MeetingCallScheduler extends StatelessWidget {
                             SizedBox(
                               width: 0.5.w,
                             ),
-                            Text('USA',
+                            Text(location,
                                 style: CustomTextStyles.lightTextStyle(
                                     color: Color(0xff4B5563), size: 14))
                           ],
@@ -286,13 +299,19 @@ class MeetingCallScheduler extends StatelessWidget {
                     children: [
                       Expanded(
                         child: RoundedButtonSmall(
-                            text: nextMeeting ? "Start" : "Starts In 15 Mins",
+                            text: isPharmacy
+                                ? "Mark as Delivered"
+                                : nextMeeting
+                                    ? "Start"
+                                    : "Starts In 15 Mins",
                             onPressed: () {
                               //      showPaymentBottomSheet(context, true);
                             },
-                            backgroundColor: nextMeeting
-                                ? AppColors.darkBlueColor
-                                : Color(0xffE5E7EB),
+                            backgroundColor: isPharmacy
+                                ? buttonColor
+                                : nextMeeting
+                                    ? AppColors.darkBlueColor
+                                    : Color(0xffE5E7EB),
                             textColor: nextMeeting
                                 ? AppColors.whiteColor
                                 : AppColors.darkBlueColor),

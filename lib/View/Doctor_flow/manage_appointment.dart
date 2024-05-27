@@ -57,6 +57,8 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                             Get.to(PatientProfileScreen());
                           },
                           child: MeetingCallScheduler(
+                            buttonColor: AppColors.darkBlueColor,
+                            bgColor: AppColors.lightishBlueColor5ff,
                             isActive: false,
                             imgPath: 'Assets/images/oldPerson.png',
                             name: '',
@@ -72,6 +74,8 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                               Get.to(PatientProfileScreen());
                             },
                             child: MeetingCallScheduler(
+                              buttonColor: AppColors.darkBlueColor,
+                              bgColor: AppColors.lightishBlueColor5ff,
                               isActive: false,
                               imgPath: 'Assets/images/oldPerson.png',
                               name: '',
@@ -86,6 +90,8 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                             Get.to(PatientProfileScreen());
                           },
                           child: MeetingCallScheduler(
+                            buttonColor: AppColors.darkBlueColor,
+                            bgColor: AppColors.lightishBlueColor5ff,
                             isActive: false,
                             imgPath: 'Assets/images/oldPerson.png',
                             name: '',

@@ -22,7 +22,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    final themeController = Get.put(ColorController());
+    //  final themeController = Get.put(ColorController());
     final HomeController _controller = Get.put(HomeController());
 
     @override
