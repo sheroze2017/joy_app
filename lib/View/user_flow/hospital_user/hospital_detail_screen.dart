@@ -5,7 +5,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../profile/my_profile.dart';
+import '../../profile/my_profile.dart';
 
 class ImagePage extends StatelessWidget {
   @override
@@ -244,6 +244,7 @@ class ImagePage extends StatelessWidget {
                       height: 0.5.h,
                     ),
                     MedicineCard(
+                      onPressed: () {},
                       btnText: "Add to Cart",
                       imgUrl:
                           'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
@@ -370,6 +371,7 @@ class MedicineCard extends StatelessWidget {
   final String count;
   final String name;
   final String btnText;
+  final VoidCallback onPressed;
 
   const MedicineCard(
       {super.key,
@@ -377,7 +379,8 @@ class MedicineCard extends StatelessWidget {
       required this.cost,
       required this.count,
       required this.name,
-      required this.btnText});
+      required this.btnText,
+      required this.onPressed});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -433,7 +436,7 @@ class MedicineCard extends StatelessWidget {
                   child: RoundedButtonSmall(
                       isSmall: true,
                       text: btnText,
-                      onPressed: () {},
+                      onPressed: onPressed,
                       backgroundColor: Color(0xff015104),
                       textColor: Color(0xffFFFFFF)),
                 )

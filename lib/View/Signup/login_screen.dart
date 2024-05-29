@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/View/Signup/signup_screen.dart';
-import 'package:joy_app/View/passwordReset/forgot_pass_screen.dart';
+import 'package:joy_app/View/Signup/passwordReset/forgot_pass_screen.dart';
 import 'package:joy_app/View/social_media/chats.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';

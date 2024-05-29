@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/Doctor_flow/all_appointment.dart';
-import 'package:joy_app/View/Doctor_flow/manage_appointment.dart';
-import 'package:joy_app/View/hospital_user/hospital_detail_screen.dart';
+import 'package:joy_app/View/user_flow/Doctor_flow/all_appointment.dart';
+import 'package:joy_app/View/user_flow/Doctor_flow/manage_appointment.dart';
+import 'package:joy_app/View/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../profile/my_profile.dart';
+import '../../profile/my_profile.dart';
 
 class DoctorHomeScreen extends StatelessWidget {
   const DoctorHomeScreen({super.key});
@@ -194,9 +194,11 @@ class MeetingCallScheduler extends StatelessWidget {
   final String time;
   final Color buttonColor;
   final Color bgColor;
+  final String? pharmacyButtonText;
   bool nextMeeting;
   bool isActive;
   bool isPharmacy;
+  bool? isDeliverd;
 
   MeetingCallScheduler(
       {super.key,
@@ -209,7 +211,9 @@ class MeetingCallScheduler extends StatelessWidget {
       this.isActive = true,
       required this.buttonColor,
       required this.bgColor,
-      this.isPharmacy = false});
+      this.isPharmacy = false,
+      this.pharmacyButtonText = '',
+      this.isDeliverd = false});
 
   @override
   Widget build(BuildContext context) {
@@ -282,6 +286,16 @@ class MeetingCallScheduler extends StatelessWidget {
                                     color: Color(0xff4B5563), size: 14))
                           ],
                         ),
+                        SizedBox(
+                          height: 1.h,
+                        ),
+                        isDeliverd == true 
+                            ? Text(
+                                'Delivered',
+                                style: CustomTextStyles.w600TextStyle(
+                                    size: 14, color: AppColors.darkGreenColor),
+                              )
+                            : SizedBox()
                       ],
                     ),
                   ),
@@ -300,7 +314,7 @@ class MeetingCallScheduler extends StatelessWidget {
                       Expanded(
                         child: RoundedButtonSmall(
                             text: isPharmacy
-                                ? "Mark as Delivered"
+                                ? pharmacyButtonText.toString()
                                 : nextMeeting
                                     ? "Start"
                                     : "Starts In 15 Mins",

@@ -7,8 +7,8 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 class MedicineDetailScreen extends StatefulWidget {
-  const MedicineDetailScreen({super.key});
-
+  final bool isPharmacyAdmin;
+  MedicineDetailScreen({required this.isPharmacyAdmin});
   @override
   State<MedicineDetailScreen> createState() => _MedicineDetailScreenState();
 }
@@ -26,32 +26,35 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
             // height: 6.w,
             // width: .w,
           ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: Stack(
-                children: [
-                  SvgPicture.asset('Assets/icons/cart.svg'),
-                  Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Container(
-                        height: 1.5.h,
-                        width: 1.5.h,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Color(0xffD65B5B)),
-                        child: Center(
-                          child: Text(
-                            '2',
-                            style: TextStyle(color: Colors.white, fontSize: 6),
-                          ),
-                        ),
-                      ))
+          actions: widget.isPharmacyAdmin
+              ? []
+              : [
+                  Padding(
+                    padding: EdgeInsets.only(right: 16),
+                    child: Stack(
+                      children: [
+                        SvgPicture.asset('Assets/icons/cart.svg'),
+                        Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Container(
+                              height: 1.5.h,
+                              width: 1.5.h,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Color(0xffD65B5B)),
+                              child: Center(
+                                child: Text(
+                                  '2',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 6),
+                                ),
+                              ),
+                            ))
+                      ],
+                    ),
+                  )
                 ],
-              ),
-            )
-          ],
           showIcon: true),
       body: SingleChildScrollView(
         child: Column(
@@ -159,28 +162,41 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                           color: AppColors.lightBlack393, size: 12),
                     ),
                     SizedBox(height: 1.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: RoundedButtonSmall(
-                              text: "Add to Cart",
-                              onPressed: () {},
-                              backgroundColor: AppColors.lightGreyColor,
-                              textColor: AppColors.darkGreenColor),
-                        ),
-                        SizedBox(
-                          width: 4.w,
-                        ),
-                        Expanded(
-                          child: RoundedButtonSmall(
-                              text: "Buy Now",
-                              onPressed: () {},
-                              backgroundColor: AppColors.darkGreenColor,
-                              textColor: AppColors.whiteColor),
-                        )
-                      ],
-                    ),
+                    widget.isPharmacyAdmin
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: RoundedButtonSmall(
+                                    text: "Edit Product",
+                                    onPressed: () {},
+                                    backgroundColor: AppColors.darkGreenColor,
+                                    textColor: AppColors.whiteColor),
+                              )
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: RoundedButtonSmall(
+                                    text: "Add to Cart",
+                                    onPressed: () {},
+                                    backgroundColor: AppColors.lightGreyColor,
+                                    textColor: AppColors.darkGreenColor),
+                              ),
+                              SizedBox(
+                                width: 4.w,
+                              ),
+                              Expanded(
+                                child: RoundedButtonSmall(
+                                    text: "Buy Now",
+                                    onPressed: () {},
+                                    backgroundColor: AppColors.darkGreenColor,
+                                    textColor: AppColors.whiteColor),
+                              )
+                            ],
+                          ),
                   ],
                 ),
               ),

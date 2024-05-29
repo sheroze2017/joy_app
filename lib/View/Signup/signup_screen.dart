@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/Doctor_flow/profile_form.dart';
+import 'package:joy_app/View/user_flow/Doctor_flow/profile_form.dart';
 import 'package:joy_app/View/Pharmacy_flow/home_screen.dart';
 import 'package:joy_app/View/Signup/login_screen.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
@@ -10,6 +10,9 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
+import '../Pharmacy_flow/profile_form.dart';
+import '../bloodbank_flow/home_screen.dart';
+import '../bloodbank_flow/profile_form.dart';
 import 'profileform_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -135,8 +138,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               selectedFieldValue == 1
                                   ? Get.to(DoctorFormScreen())
                                   : selectedFieldValue == 2
-                                      ? Get.to(PharmacyHomeScreen())
-                                      : print(selectedFieldValue);
+                                      ? Get.to(PharmacyFormScreen())
+                                      : selectedFieldValue == 3
+                                          ? Get.to(BloodBankFormScreen())
+                                          : print(selectedFieldValue);
                             }
                           },
                           backgroundColor: Color(0xff1C2A3A),

@@ -6,7 +6,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../styles/custom_textstyle.dart';
+import '../../../styles/custom_textstyle.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/View/hospital_user/hospital_detail_screen.dart';
+import 'package:joy_app/View/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/View/profile/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';

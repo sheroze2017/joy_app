@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/View/Doctor_flow/home_screen.dart';
-import 'package:joy_app/View/hospital_user/hospital_detail_screen.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:joy_app/View/user_flow/Doctor_flow/home_screen.dart';
+import 'package:joy_app/View/Pharmacy_flow/order_screen.dart';
+import 'package:joy_app/View/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/View/profile/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../styles/colors.dart';
+import 'product_screen.dart';
 
 class PharmacyHomeScreen extends StatelessWidget {
   const PharmacyHomeScreen({super.key});
@@ -73,7 +77,7 @@ class PharmacyHomeScreen extends StatelessWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        //  Get.to(AllAppointments());
+                        Get.to(MyOrderScreen());
                       },
                       child: HeaderMenu(
                         bgColor: AppColors.lightBlueColore5e,
@@ -90,9 +94,7 @@ class PharmacyHomeScreen extends StatelessWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        // Get.to(ManageAppointment(
-                        //   showPatientHistoryFromScreen: true,
-                        // ));
+                        Get.to(ProductScreen());
                       },
                       child: HeaderMenu(
                         bgColor: AppColors.lightGreenColor,
@@ -131,6 +133,7 @@ class PharmacyHomeScreen extends StatelessWidget {
               ),
               MeetingCallScheduler(
                 isPharmacy: true,
+                pharmacyButtonText: 'Marked as Deliverd',
                 buttonColor: AppColors.darkGreenColor,
                 bgColor: AppColors.lightGreenColor,
                 nextMeeting: true,
@@ -145,6 +148,7 @@ class PharmacyHomeScreen extends StatelessWidget {
               ),
               MeetingCallScheduler(
                 isPharmacy: true,
+                pharmacyButtonText: 'Marked as Deliverd',
                 buttonColor: AppColors.darkGreenColor,
                 bgColor: AppColors.lightGreenColor,
                 imgPath: 'Assets/images/tablet.jpg',

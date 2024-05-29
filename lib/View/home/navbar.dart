@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/Doctor_flow/home_screen.dart';
-import 'package:joy_app/View/Doctor_flow/manage_appointment.dart';
+import 'package:joy_app/View/user_flow/Doctor_flow/home_screen.dart';
+import 'package:joy_app/View/user_flow/Doctor_flow/manage_appointment.dart';
 import 'package:joy_app/View/Pharmacy_flow/product_screen.dart';
 import 'package:joy_app/View/Signup/signup_screen.dart';
 import 'package:joy_app/View/home/home_screen.dart';
@@ -17,8 +17,12 @@ import '../Pharmacy_flow/home_screen.dart';
 class NavBarScreen extends StatefulWidget {
   final bool? isDoctor;
   final bool? isPharmacy;
+  final bool? isBloodBank;
   const NavBarScreen(
-      {super.key, this.isDoctor = false, this.isPharmacy = false});
+      {super.key,
+      this.isDoctor = false,
+      this.isPharmacy = false,
+      this.isBloodBank = false});
   @override
   State<NavBarScreen> createState() => _NavBarState();
 }

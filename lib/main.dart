@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/View/home/navbar.dart';
+import 'package:joy_app/View/splash_screen.dart';
 import 'package:joy_app/controller/theme_controller.dart';
 import 'package:sizer/sizer.dart';
 
@@ -27,9 +28,7 @@ class MyApp extends StatelessWidget {
           ),
           // initialRoute: AppPage.getNavbar(),
           //getPages: AppPage.routes,
-          home: NavBarScreen(
-            isPharmacy: true,
-          )
+          home: SplashScreen()
           //initialBinding: YourBinding(),
           );
     });

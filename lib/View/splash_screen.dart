@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/View/onboarding/onboarding_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -29,27 +31,35 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
+                width: 24.93.w,
                 height: 30.h,
-                width: 23.46.w,
                 decoration: BoxDecoration(
                     color: Color(0xffACA1CD),
                     borderRadius:
                         BorderRadius.only(bottomRight: Radius.circular(24))),
               ),
-              Container(
-                  height: 30.h,
-                  width: 46.93.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(24),
-                          bottomLeft: Radius.circular(24))),
-                  child: Image.asset(
-                      fit: BoxFit.cover,
-                      width: 46.93.w,
-                      'Assets/images/splash/sp1.png')),
+              SizedBox(
+                width: 2.w,
+              ),
+              Expanded(
+                child: Container(
+                    height: 30.h,
+                    // width: 46.93.w,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(24),
+                            bottomLeft: Radius.circular(24))),
+                    child: Image.asset(
+                        fit: BoxFit.cover,
+                        // width: 46.93.w,
+                        'Assets/images/splash/sp1.png')),
+              ),
+              SizedBox(
+                width: 2.w,
+              ),
               Container(
                 height: 30.h,
-                width: 23.46.w,
+                width: 24.93.w,
                 decoration: BoxDecoration(
                     color: Color(0xffADC9497),
                     borderRadius:
@@ -61,40 +71,70 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                  height: 37.7.h,
-                  width: 23.46.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(24),
-                          topRight: Radius.circular(24))),
+                height: 37.7.h,
+                width: 24.93.w,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
                   child: Image.asset(
                     'Assets/images/splash/sp2.png',
                     height: 30.h,
-                    width: 23.46.w,
+                    width: 24.93.w,
                     fit: BoxFit.cover,
-                  )),
-              Container(
-                height: 37.7.h,
-                width: 46.93.w,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(24),
-                      bottomLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
-                      topLeft: Radius.circular(24)),
+                  ),
                 ),
-                child: Image.asset(scale: 1.3, 'Assets/images/splash/main.png'),
+              ),
+              SizedBox(
+                width: 2.w,
+              ),
+              Expanded(
+                child: Container(
+                  height: 37.7.h,
+                  width: 46.93.w,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(24),
+                        bottomLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                        topLeft: Radius.circular(24)),
+                  ),
+                  child:
+                      Image.asset(scale: 1.3, 'Assets/images/splash/main.png'),
+                ),
+              ),
+              SizedBox(
+                width: 2.w,
               ),
               Container(
                 height: 37.7.h,
-                width: 23.46.w,
+                width: 24.93.w,
                 decoration: BoxDecoration(
-                    color: Color(0xffACA1CD),
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(24),
-                        topLeft: Radius.circular(24))),
-                child: Image.asset('Assets/images/splash/sp3.png'),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    topLeft: Radius.circular(24),
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    topLeft: Radius.circular(24),
+                  ),
+                  child: Image.asset(
+                    'Assets/images/splash/sp3.png',
+                    height: 30.h,
+                    width: 24.93.w,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ],
           ),
@@ -103,23 +143,35 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               Container(
                 height: 30.h,
-                width: 23.46.w,
+                width: 24.93.w,
                 decoration: BoxDecoration(
                     color: Color(0xffD7A99C),
                     borderRadius:
                         BorderRadius.only(topRight: Radius.circular(24))),
               ),
-              Container(
-                  height: 30.h,
-                  width: 46.93.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
+              SizedBox(
+                width: 2.w,
+              ),
+              Expanded(
+                child: Container(
+                    height: 30.h,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24))),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(24),
                           topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24))),
-                  child: Image.asset('Assets/images/splash/sp4.png')),
+                        ),
+                        child: Image.asset('Assets/images/splash/sp4.png'))),
+              ),
+              SizedBox(
+                width: 2.w,
+              ),
               Container(
                 height: 30.h,
-                width: 23.46.w,
+                width: 24.93.w,
                 decoration: BoxDecoration(
                     color: Color(0xff4D9B91),
                     borderRadius:

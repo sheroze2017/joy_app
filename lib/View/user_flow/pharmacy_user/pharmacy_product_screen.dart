@@ -45,6 +45,7 @@ class PharmacyProductScreen extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: MedicineCard(
+                            onPressed: () {},
                             btnText: "Add to Cart",
                             imgUrl:
                                 'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
