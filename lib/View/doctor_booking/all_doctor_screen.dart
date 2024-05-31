@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/View/social_media/new_friend.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/view/bloodbank_flow/all_donor_screen.dart';
+import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
+import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
+import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
+import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -189,30 +194,36 @@ class DoctorsCardWidget extends StatelessWidget {
   }
 }
 
+
+
 class DoctorCategory extends StatelessWidget {
   final String catrgory;
   final String DoctorCount;
   final Color bgColor;
   final Color fgColor;
   final String imagePath;
+  bool isBloodBank;
 
-  const DoctorCategory(
+  DoctorCategory(
       {super.key,
       required this.catrgory,
       required this.DoctorCount,
       required this.bgColor,
       required this.fgColor,
-      required this.imagePath});
+      required this.imagePath,
+      this.isBloodBank = false});
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: Container(
-        width: 37.54.w,
+        width: isBloodBank ? 38.87.w : 37.54.w,
         decoration: BoxDecoration(
             color: bgColor, borderRadius: BorderRadius.circular(22.31)),
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: isBloodBank
+              ? EdgeInsets.fromLTRB(15.44, 30, 15.44, 9)
+              : EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -230,12 +241,17 @@ class DoctorCategory extends StatelessWidget {
               Text(
                 catrgory,
                 style: CustomTextStyles.w600TextStyle(
-                    color: AppColors.blackColor393, size: 18.86),
+                    color: AppColors.blackColor393,
+                    size: isBloodBank ? 16 : 18.86,
+                    letterspacing: -1),
               ),
               Text(
-                '${DoctorCount} Doctors',
+                isBloodBank
+                    ? '${DoctorCount}+ Patients waiting'
+                    : '${DoctorCount} Doctors',
                 style: CustomTextStyles.lightSmallTextStyle(
-                    color: AppColors.blackColor393, size: 15.44),
+                    color: AppColors.blackColor393,
+                    size: isBloodBank ? 8 : 15.44),
               ),
               SizedBox(
                 height: 1.h,
@@ -303,22 +319,41 @@ class HospitalName extends StatelessWidget {
 }
 
 class HorizontalDoctorCategories extends StatelessWidget {
+  bool isBloodBank;
+  HorizontalDoctorCategories({this.isBloodBank = false});
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: 5,
+      itemCount: isBloodBank ? bloodBankCategory.length : 5,
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            // Handle onTap event
+            if (isBloodBank) {
+              index == 0
+                  ? Get.to(BloodDonationAppeal(
+                      isBloodDontate: true,
+                    ))
+                  : index == 1
+                      ? Get.to(BloodDonationAppeal(
+                          isPlasmaDonate: true,
+                        ))
+                      : Get.to(AllDonorScreen());
+            }
           },
           child: DoctorCategory(
-            catrgory: 'Dental',
+            catrgory: isBloodBank ? bloodBankCategory[index] : 'Dental',
             DoctorCount: '$index',
-            bgColor: AppColors.lightBlueColore5e,
-            fgColor: AppColors.lightBlueColord0d,
-            imagePath: 'Assets/icons/dental.svg',
+            bgColor: isBloodBank
+                ? bgColors[index % 2 == 0 ? 0 : 1]
+                : AppColors.lightBlueColore5e,
+            fgColor: isBloodBank
+                ? fgColors[index % 2 == 0 ? 0 : 1]
+                : AppColors.lightBlueColord0d,
+            imagePath: isBloodBank
+                ? bloodBankCatImage[index % 2 == 0 ? 0 : 1]
+                : 'Assets/icons/dental.svg',
+            isBloodBank: isBloodBank,
           ),
         );
       },
@@ -344,3 +379,18 @@ class VerticalDoctorsList extends StatelessWidget {
     );
   }
 }
+
+
+
+List<String> bloodBankCategory = [
+  'Donate Blood',
+  'Donate Plasma',
+  'Appeal Blood'
+];
+
+List<String> bloodBankCatImage = [
+  'Assets/images/blood.svg',
+  'Assets/images/plasma.svg',
+];
+List bgColors = [AppColors.redLightColor, AppColors.yellowLightColor];
+List fgColors = [AppColors.redLightDarkColor, AppColors.yellowLightDarkColor];

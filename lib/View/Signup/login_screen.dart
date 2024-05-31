@@ -2,11 +2,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/Signup/signup_screen.dart';
-import 'package:joy_app/View/Signup/passwordReset/forgot_pass_screen.dart';
-import 'package:joy_app/View/social_media/chats.dart';
+import 'package:joy_app/view/Signup/signup_screen.dart';
+import 'package:joy_app/view/Signup/passwordReset/forgot_pass_screen.dart';
+import 'package:joy_app/view/home/navbar.dart';
+import 'package:joy_app/view/social_media/chats.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
@@ -20,6 +23,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     //  final themeController = Get.put(ColorController());
@@ -63,13 +69,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _emailController,
                   hintText: 'Your Email',
                   icon: 'Assets/images/sms.svg',
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _passwordController,
                   hintText: 'Your Password',
                   icon: 'Assets/images/lock.svg',
                 ),
@@ -81,7 +87,46 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: RoundedButton(
                           text: "Sign In",
                           onPressed: () {
-                            Get.to(AllChats());
+                            FocusScope.of(context).unfocus();
+                            print(_emailController.text);
+                            print(_passwordController.text);
+                            if (_emailController.text.toLowerCase().trim() ==
+                                    'pharmacy@gmail.com' &&
+                                _passwordController.text.toLowerCase().trim() ==
+                                    'admin123') {
+                              print(_emailController.text);
+                              print(_passwordController.text);
+                              Get.to(NavBarScreen(
+                                isPharmacy: true,
+                              ));
+                            } else if (_emailController.text
+                                        .toLowerCase()
+                                        .trim() ==
+                                    'bloodbank@gmail.com' &&
+                                _passwordController.text.toLowerCase().trim() ==
+                                    'admin123') {
+                              Get.to(NavBarScreen(
+                                isBloodBank: true,
+                              ));
+                            } else if (_emailController.text
+                                        .toLowerCase()
+                                        .trim() ==
+                                    'doctor@gmail.com' &&
+                                _passwordController.text.toLowerCase().trim() ==
+                                    'admin123') {
+                              Get.to(NavBarScreen(
+                                isDoctor: true,
+                              ));
+                            } else if (_emailController.text
+                                        .toLowerCase()
+                                        .trim() ==
+                                    'user@gmail.com' &&
+                                _passwordController.text.toLowerCase().trim() ==
+                                    'admin123') {
+                              Get.to(NavBarScreen());
+                            } else {
+                              Get.snackbar('Error', 'Invalid Credentials');
+                            }
                           },
                           backgroundColor: Color(0xff1C2A3A),
                           textColor: Color(0xffFFFFFF)),

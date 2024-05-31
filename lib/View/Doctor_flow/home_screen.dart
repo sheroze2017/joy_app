@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/user_flow/Doctor_flow/all_appointment.dart';
-import 'package:joy_app/View/user_flow/Doctor_flow/manage_appointment.dart';
-import 'package:joy_app/View/user_flow/hospital_user/hospital_detail_screen.dart';
+import 'package:joy_app/view/Doctor_flow/all_appointment.dart';
+import 'package:joy_app/view/Doctor_flow/manage_appointment.dart';
+import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../profile/my_profile.dart';
+import '../profile/my_profile.dart';
 
 class DoctorHomeScreen extends StatelessWidget {
   const DoctorHomeScreen({super.key});
@@ -136,10 +136,10 @@ class DoctorHomeScreen extends StatelessWidget {
                 bgColor: AppColors.lightishBlueColor5ff,
                 nextMeeting: true,
                 imgPath: 'Assets/images/onboard3.png',
-                name: '',
-                time: '',
-                location: '',
-                category: '',
+                name: 'Julie',
+                time: '10:30 Pm',
+                location: 'Imam Hospital',
+                category: 'Dental',
                 buttonColor: AppColors.darkBlueColor,
               ),
               SizedBox(
@@ -149,10 +149,10 @@ class DoctorHomeScreen extends StatelessWidget {
                 buttonColor: AppColors.darkBlueColor,
                 bgColor: AppColors.lightishBlueColor5ff,
                 imgPath: 'Assets/images/oldPerson.png',
-                name: '',
-                time: '',
-                location: '',
-                category: '',
+                name: 'James',
+                time: '10:30 Pm',
+                location: 'Imam Hospital',
+                category: 'Dental',
               ),
               SizedBox(height: 2.h),
               Padding(
@@ -289,7 +289,7 @@ class MeetingCallScheduler extends StatelessWidget {
                         SizedBox(
                           height: 1.h,
                         ),
-                        isDeliverd == true 
+                        isDeliverd == true
                             ? Text(
                                 'Delivered',
                                 style: CustomTextStyles.w600TextStyle(

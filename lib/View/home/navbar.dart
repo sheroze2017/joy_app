@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/user_flow/Doctor_flow/home_screen.dart';
-import 'package:joy_app/View/user_flow/Doctor_flow/manage_appointment.dart';
-import 'package:joy_app/View/Pharmacy_flow/product_screen.dart';
-import 'package:joy_app/View/Signup/signup_screen.dart';
-import 'package:joy_app/View/home/home_screen.dart';
-import 'package:joy_app/View/home/notification_screen.dart';
-import 'package:joy_app/View/home/profile_screen.dart';
-import 'package:joy_app/View/social_media/add_friend.dart';
+import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
+import 'package:joy_app/view/bloodbank_flow/home_screen.dart';
+import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
+import 'package:joy_app/view/Doctor_flow/home_screen.dart';
+import 'package:joy_app/view/Doctor_flow/manage_appointment.dart';
+import 'package:joy_app/view/Pharmacy_flow/product_screen.dart';
+import 'package:joy_app/view/Signup/signup_screen.dart';
+import 'package:joy_app/view/home/home_screen.dart';
+import 'package:joy_app/view/home/notification_screen.dart';
+import 'package:joy_app/view/home/profile_screen.dart';
+import 'package:joy_app/view/social_media/add_friend.dart';
 import 'package:joy_app/controller/navbar_controller.dart';
 import 'package:joy_app/styles/colors.dart';
 
@@ -53,16 +56,28 @@ class _NavBarState extends State<NavBarScreen> {
                       ProfileScreen()
                     ],
                   )
-                : IndexedStack(
-                    index: navbarController.tabIndex,
-                    children: [
-                      HomeScreen(),
-                      AddFriend(),
-                      SignupScreen(),
-                      NotificationScreen(),
-                      ProfileScreen()
-                    ],
-                  ),
+                : widget.isBloodBank == true
+                    ? IndexedStack(
+                        index: navbarController.tabIndex,
+                        children: [
+                          BloodBankHomeScreen(),
+                          BloodDonationAppeal(
+                            isBloodDontate: true,
+                          ),
+                          NotificationScreen(),
+                          ProfileScreen()
+                        ],
+                      )
+                    : IndexedStack(
+                        index: navbarController.tabIndex,
+                        children: [
+                          HomeScreen(),
+                          AddFriend(),
+                          //SignupScreen(),
+                          NotificationScreen(),
+                          ProfileScreen()
+                        ],
+                      ),
         bottomNavigationBar: BottomNavigationBar(
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -90,17 +105,29 @@ class _NavBarState extends State<NavBarScreen> {
                       _bottomBarItem('Assets/icons/frame.svg',
                           'Assets/icons/profiledark.svg'),
                     ]
-                  : [
-                      _bottomBarItem(
-                          'Assets/icons/home.svg', 'Assets/icons/Profile.svg'),
-                      _bottomBarItem('Assets/icons/health-care.svg', ''),
-                      _bottomBarItem('Assets/icons/profile-2light.svg',
-                          'Assets/icons/person2dark.svg'),
-                      _bottomBarItem('Assets/icons/notification.svg',
-                          'Assets/icons/notificationdark.svg'),
-                      _bottomBarItem('Assets/icons/frame.svg',
-                          'Assets/icons/profiledark.svg'),
-                    ],
+                  : widget.isBloodBank == true
+                      ? [
+                          _bottomBarItem('Assets/icons/home.svg',
+                              'Assets/icons/Profile.svg'),
+                          _bottomBarItem('Assets/icons/health-care.svg',
+                              'Assets/icons/Profile_rounded.svg'),
+                          _bottomBarItem('Assets/icons/notification.svg',
+                              'Assets/icons/notificationdark.svg'),
+                          _bottomBarItem('Assets/icons/frame.svg',
+                              'Assets/icons/profiledark.svg'),
+                        ]
+                      : [
+                          _bottomBarItem('Assets/icons/home.svg',
+                              'Assets/icons/Profile.svg'),
+                          _bottomBarItem('Assets/icons/health-care.svg',
+                              'Assets/icons/Profile_rounded.svg'),
+                          // _bottomBarItem('Assets/icons/profile-2light.svg',
+                          //     'Assets/icons/person2dark.svg'),
+                          _bottomBarItem('Assets/icons/notification.svg',
+                              'Assets/icons/notificationdark.svg'),
+                          _bottomBarItem('Assets/icons/frame.svg',
+                              'Assets/icons/profiledark.svg'),
+                        ],
         ),
       );
     });

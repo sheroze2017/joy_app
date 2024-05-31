@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/View/social_media/new_friend.dart';
+import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
@@ -155,9 +155,8 @@ class HospitalName extends StatelessWidget {
 }
 
 class LocationWidget extends StatelessWidget {
-  const LocationWidget({
-    super.key,
-  });
+  bool isBloodbank;
+  LocationWidget({this.isBloodbank = false});
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +168,8 @@ class LocationWidget extends StatelessWidget {
         ),
         Text('123 Oak Street, CA 98765',
             style: CustomTextStyles.lightTextStyle(
-                color: Color(0xff6B7280), size: 10.8))
+                color: isBloodbank ? Color(0xff383D44) : Color(0xff6B7280),
+                size: 10.8))
       ],
     );
   }

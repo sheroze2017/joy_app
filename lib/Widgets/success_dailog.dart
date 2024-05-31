@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/home/navbar.dart';
+import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -15,15 +15,19 @@ class CustomDialog extends StatelessWidget {
   bool showButton;
   bool isBookAppointment;
   Color? buttonColor;
-  bool isDoctorForm;
-
+  bool? isDoctorForm;
+  bool? isPharmacyForm;
+  bool? isBloodBankForm;
   CustomDialog(
       {super.key,
       required this.title,
       required this.content,
       this.buttonColor,
       this.showButton = false,
-      this.isBookAppointment = false,this.isDoctorForm=false});
+      this.isBookAppointment = false,
+      this.isDoctorForm = false,
+      this.isBloodBankForm = false,
+      this.isPharmacyForm = false});
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -72,7 +76,11 @@ class CustomDialog extends StatelessWidget {
                           child: RoundedButton(
                               text: 'Done',
                               onPressed: () {
-                                Get.to(NavBarScreen());
+                                Get.offAll(NavBarScreen(
+                                  isBloodBank: isBloodBankForm,
+                                  isPharmacy: isPharmacyForm,
+                                  isDoctor: isDoctorForm,
+                                ));
                               },
                               backgroundColor: buttonColor != null
                                   ? Color(0xff1C2A3A)

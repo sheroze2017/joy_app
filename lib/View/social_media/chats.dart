@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/social_media/add_friend.dart';
-import 'package:joy_app/View/social_media/direct_chat.dart';
+import 'package:joy_app/view/social_media/add_friend.dart';
+import 'package:joy_app/view/social_media/direct_chat.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
@@ -21,87 +21,89 @@ class AllChats extends StatelessWidget {
         showIcon: false,
         actions: [],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            RoundedSearchTextField(
-              hintText: 'Search',
-              controller: TextEditingController(),
-              onChanged: (value) {
-                print('Search text changed: $value');
-              },
-            ),
-            SizedBox(
-              height: 2.h,
-            ),
-            StoryWidget(
-              stories: [
-                'https://via.placeholder.com/150',
-                'https://via.placeholder.com/151',
-                'https://via.placeholder.com/152',
-                'https://via.placeholder.com/153',
-                'https://via.placeholder.com/154',
-                'https://via.placeholder.com/155',
-              ],
-            ),
-            SizedBox(
-              height: 1.h,
-            ),
-            InkWell(
-              onTap: () {
-                Get.to(DirectMessageScreen());
-              },
-              child: ChatBox(
-                profileImageUrl: 'https://via.placeholder.com/150',
-                personName: 'John Doe',
-                lastMessage: 'Hello there!',
-                dateTime: '2:30 PM',
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              RoundedSearchTextField(
+                hintText: 'Search',
+                controller: TextEditingController(),
+                onChanged: (value) {
+                  print('Search text changed: $value');
+                },
               ),
-            ),
-            SizedBox(
-              height: 2.h,
-            ),
-            InkWell(
-              onTap: () {
-                Get.to(DirectMessageScreen());
-              },
-              child: ChatBox(
-                profileImageUrl: 'https://via.placeholder.com/150',
-                personName: 'John Doe',
-                lastMessage: 'Hello there!',
-                dateTime: '2:30 PM',
+              SizedBox(
+                height: 2.h,
               ),
-            ),
-            SizedBox(
-              height: 2.h,
-            ),
-            InkWell(
-              onTap: () {
-                Get.to(AddFriend());
-              },
-              child: ChatBox(
-                profileImageUrl: 'https://via.placeholder.com/150',
-                personName: 'Add FRIEND',
-                lastMessage: 'Hello there!',
-                dateTime: '2:30 PM',
+              StoryWidget(
+                stories: [
+                  'https://via.placeholder.com/150',
+                  'https://via.placeholder.com/151',
+                  'https://via.placeholder.com/152',
+                  'https://via.placeholder.com/153',
+                  'https://via.placeholder.com/154',
+                  'https://via.placeholder.com/155',
+                ],
               ),
-            ),
-            SizedBox(
-              height: 2.h,
-            ),
-            InkWell(
-              onTap: () {
-                Get.to(AddNewFriend());
-              },
-              child: ChatBox(
-                profileImageUrl: 'https://via.placeholder.com/150',
-                personName: 'Add New FRIEND',
-                lastMessage: 'Hello there!',
-                dateTime: '2:30 PM',
+              SizedBox(
+                height: 1.h,
               ),
-            ),
-          ],
+              InkWell(
+                onTap: () {
+                  Get.to(DirectMessageScreen());
+                },
+                child: ChatBox(
+                  profileImageUrl: 'https://via.placeholder.com/150',
+                  personName: 'John Doe',
+                  lastMessage: 'Hello there!',
+                  dateTime: '2:30 PM',
+                ),
+              ),
+              SizedBox(
+                height: 2.h,
+              ),
+              InkWell(
+                onTap: () {
+                  Get.to(DirectMessageScreen());
+                },
+                child: ChatBox(
+                  profileImageUrl: 'https://via.placeholder.com/150',
+                  personName: 'John Doe',
+                  lastMessage: 'Hello there!',
+                  dateTime: '2:30 PM',
+                ),
+              ),
+              SizedBox(
+                height: 2.h,
+              ),
+              InkWell(
+                onTap: () {
+                  Get.to(AddFriend());
+                },
+                child: ChatBox(
+                  profileImageUrl: 'https://via.placeholder.com/150',
+                  personName: 'Add FRIEND',
+                  lastMessage: 'Hello there!',
+                  dateTime: '2:30 PM',
+                ),
+              ),
+              SizedBox(
+                height: 2.h,
+              ),
+              InkWell(
+                onTap: () {
+                  Get.to(AddNewFriend());
+                },
+                child: ChatBox(
+                  profileImageUrl: 'https://via.placeholder.com/150',
+                  personName: 'Add New FRIEND',
+                  lastMessage: 'Hello there!',
+                  dateTime: '2:30 PM',
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

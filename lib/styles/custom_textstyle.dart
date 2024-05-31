@@ -25,9 +25,11 @@ class CustomTextStyles {
     );
   }
 
-  static TextStyle w600TextStyle({Color? color, double size = 16}) {
+  static TextStyle w600TextStyle(
+      {Color? color, double size = 16, double? letterspacing = 1}) {
     return TextStyle(
       fontSize: size,
+      letterSpacing: letterspacing,
       fontWeight: FontWeight.w600,
       color: color ?? Color(0xff6B7280),
     );

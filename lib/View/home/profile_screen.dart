@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/Signup/login_screen.dart';
-import 'package:joy_app/View/home/editprofile_screen.dart';
-import 'package:joy_app/View/home/notification_screen.dart';
+import 'package:joy_app/view/Signup/login_screen.dart';
+import 'package:joy_app/view/home/editprofile_screen.dart';
+import 'package:joy_app/view/home/notification_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';

@@ -128,7 +128,7 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomDialog(
-                                  isDoctorForm: true,
+                                  isPharmacyForm: true,
                                   buttonColor: Color(0xff1C2A3A),
                                   showButton: true,
                                   title: 'Congratulations!',

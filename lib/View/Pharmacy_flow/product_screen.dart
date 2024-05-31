@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/Pharmacy_flow/add_medicine.dart';
-import 'package:joy_app/View/social_media/new_friend.dart';
+import 'package:joy_app/view/Pharmacy_flow/add_medicine.dart';
+import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
 

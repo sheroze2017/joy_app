@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../styles/custom_textstyle.dart';
 
@@ -23,7 +24,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: bgColor == null ? Colors.transparent : bgColor,
       elevation: 0,
-      leading: showIcon ? leading : null,
+      leading: showIcon
+          ? InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: leading)
+          : null,
       centerTitle: true,
       title: Text(
         title,

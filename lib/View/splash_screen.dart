@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/View/onboarding/onboarding_screen.dart';
+import 'package:joy_app/view/onboarding/onboarding_screen.dart';
 import 'package:sizer/sizer.dart';
 
 class SplashScreen extends StatefulWidget {

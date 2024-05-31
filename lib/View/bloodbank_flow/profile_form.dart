@@ -120,7 +120,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                               context: context,
                               builder: (BuildContext context) {
                                 return CustomDialog(
-                                  isDoctorForm: true,
+                                  isBloodBankForm: true,
                                   buttonColor: Color(0xff1C2A3A),
                                   showButton: true,
                                   title: 'Congratulations!',

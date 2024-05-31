@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:joy_app/View/user_flow/pharmacy_user/checkout/checkout_detail.dart';
+import 'package:joy_app/view/user_flow/pharmacy_user/checkout/checkout_detail.dart';
 
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
