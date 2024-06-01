@@ -124,6 +124,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _passwordController.text.toLowerCase().trim() ==
                                     'admin123') {
                               Get.to(NavBarScreen());
+                            } else if (_emailController.text
+                                        .toLowerCase()
+                                        .trim() ==
+                                    'hospital@gmail.com' &&
+                                _passwordController.text.toLowerCase().trim() ==
+                                    'admin123') {
+                              Get.to(NavBarScreen(
+                                isHospital: true,
+                              ));
                             } else {
                               Get.snackbar('Error', 'Invalid Credentials');
                             }

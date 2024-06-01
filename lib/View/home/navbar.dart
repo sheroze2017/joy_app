@@ -4,13 +4,17 @@ import 'package:get/get.dart';
 import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/home_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
-import 'package:joy_app/view/Doctor_flow/home_screen.dart';
-import 'package:joy_app/view/Doctor_flow/manage_appointment.dart';
+import 'package:joy_app/view/doctor_flow/home_screen.dart';
+import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
 import 'package:joy_app/view/Pharmacy_flow/product_screen.dart';
 import 'package:joy_app/view/Signup/signup_screen.dart';
+import 'package:joy_app/view/home/blog_screen.dart';
 import 'package:joy_app/view/home/home_screen.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
 import 'package:joy_app/view/home/profile_screen.dart';
+import 'package:joy_app/view/hospital_flow/dashboard.dart';
+import 'package:joy_app/view/hospital_flow/home_screen.dart';
+import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/view/social_media/add_friend.dart';
 import 'package:joy_app/controller/navbar_controller.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -21,11 +25,13 @@ class NavBarScreen extends StatefulWidget {
   final bool? isDoctor;
   final bool? isPharmacy;
   final bool? isBloodBank;
+  final bool? isHospital;
   const NavBarScreen(
       {super.key,
       this.isDoctor = false,
       this.isPharmacy = false,
-      this.isBloodBank = false});
+      this.isBloodBank = false,
+      this.isHospital = false});
   @override
   State<NavBarScreen> createState() => _NavBarState();
 }
@@ -68,16 +74,26 @@ class _NavBarState extends State<NavBarScreen> {
                           ProfileScreen()
                         ],
                       )
-                    : IndexedStack(
-                        index: navbarController.tabIndex,
-                        children: [
-                          HomeScreen(),
-                          AddFriend(),
-                          //SignupScreen(),
-                          NotificationScreen(),
-                          ProfileScreen()
-                        ],
-                      ),
+                    : widget.isHospital == true
+                        ? IndexedStack(
+                            index: navbarController.tabIndex,
+                            children: [
+                              HospitalDashBoard(),
+                              HospitalHomeScreen(),
+                              NotificationScreen(),
+                              ProfileScreen()
+                            ],
+                          )
+                        : IndexedStack(
+                            index: navbarController.tabIndex,
+                            children: [
+                              UserBlogScreen(),
+                              AddFriend(),
+                              HomeScreen(),
+                              NotificationScreen(),
+                              MyProfileScreen()
+                            ],
+                          ),
         bottomNavigationBar: BottomNavigationBar(
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -116,18 +132,29 @@ class _NavBarState extends State<NavBarScreen> {
                           _bottomBarItem('Assets/icons/frame.svg',
                               'Assets/icons/profiledark.svg'),
                         ]
-                      : [
-                          _bottomBarItem('Assets/icons/home.svg',
-                              'Assets/icons/Profile.svg'),
-                          _bottomBarItem('Assets/icons/health-care.svg',
-                              'Assets/icons/Profile_rounded.svg'),
-                          // _bottomBarItem('Assets/icons/profile-2light.svg',
-                          //     'Assets/icons/person2dark.svg'),
-                          _bottomBarItem('Assets/icons/notification.svg',
-                              'Assets/icons/notificationdark.svg'),
-                          _bottomBarItem('Assets/icons/frame.svg',
-                              'Assets/icons/profiledark.svg'),
-                        ],
+                      : widget.isHospital == true
+                          ? [
+                              _bottomBarItem('Assets/icons/home.svg',
+                                  'Assets/icons/Profile.svg'),
+                              _bottomBarItem('Assets/icons/health-care.svg',
+                                  'Assets/icons/Profile_rounded.svg'),
+                              _bottomBarItem('Assets/icons/notification.svg',
+                                  'Assets/icons/notificationdark.svg'),
+                              _bottomBarItem('Assets/icons/frame.svg',
+                                  'Assets/icons/profiledark.svg'),
+                            ]
+                          : [
+                              _bottomBarItem('Assets/icons/home.svg',
+                                  'Assets/icons/Profile.svg'),
+                              _bottomBarItem('Assets/icons/profile-2light.svg',
+                                  'Assets/icons/person2dark.svg'),
+                              _bottomBarItem('Assets/icons/health-care.svg',
+                                  'Assets/icons/Profile_rounded.svg'),
+                              _bottomBarItem('Assets/icons/notification.svg',
+                                  'Assets/icons/notificationdark.svg'),
+                              _bottomBarItem('Assets/icons/frame.svg',
+                                  'Assets/icons/profiledark.svg'),
+                            ],
         ),
       );
     });

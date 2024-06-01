@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/view/Doctor_flow/all_appointment.dart';
-import 'package:joy_app/view/Doctor_flow/manage_appointment.dart';
+import 'package:joy_app/view/doctor_flow/all_appointment.dart';
+import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -10,7 +10,7 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../profile/my_profile.dart';
+import '../home/my_profile.dart';
 
 class DoctorHomeScreen extends StatelessWidget {
   const DoctorHomeScreen({super.key});
@@ -40,16 +40,24 @@ class DoctorHomeScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(
-                    "What's on your mind, Hashem?",
-                    style: CustomTextStyles.lightTextStyle(
-                        color: AppColors.borderColor),
+                  Expanded(
+                    child: TextField(
+                      cursorColor: AppColors.borderColor,
+                      style: CustomTextStyles.lightTextStyle(
+                          color: AppColors.borderColor),
+                      decoration: InputDecoration(
+                        hintText: "What's on your mind, Hashem?",
+                        hintStyle: CustomTextStyles.lightTextStyle(
+                            color: AppColors.borderColor),
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
-                  Spacer(),
                   Container(
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(54),
-                        color: AppColors.whiteColorf9f),
+                      borderRadius: BorderRadius.circular(54),
+                      color: AppColors.whiteColorf9f,
+                    ),
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
@@ -60,7 +68,9 @@ class DoctorHomeScreen extends StatelessWidget {
                           Text(
                             "Photo",
                             style: CustomTextStyles.lightTextStyle(
-                                color: AppColors.borderColor, size: 12),
+                              color: AppColors.borderColor,
+                              size: 12,
+                            ),
                           ),
                         ],
                       ),

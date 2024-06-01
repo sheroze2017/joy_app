@@ -26,7 +26,7 @@ class CustomTextStyles {
   }
 
   static TextStyle w600TextStyle(
-      {Color? color, double size = 16, double? letterspacing = 1}) {
+      {Color? color, double size = 16, double? letterspacing = 0.5}) {
     return TextStyle(
       fontSize: size,
       letterSpacing: letterspacing,

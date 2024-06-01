@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sizer/sizer.dart';
 
@@ -31,12 +32,13 @@ class AddNewFriend extends StatelessWidget {
                 },
               ),
               NewFriendRequestWidget(
-                profileImage: 'https://via.placeholder.com/150',
-                userName: 'John Doe',
+                profileImage:
+                    'https://s3-alpha-sig.figma.com/img/d200/c571/c4db6c37dba3a4e963acefe9ca469ec5?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N9Y-bU6XLqGWyk1r~2hcF0F5H5Tx4tqyZL2lVJlSfHNM1pGZhf6xs~X3CQGxBSXmHoxIe7sBZm2-tF65MSyMd-kBsxm2WGBdr~REbm407gcj1KdlGBfLTJP06jULqm-ltao7Nv24hFvqhdcKRJp2HiXDP07QZDMDOjNDHI4FbyX65zFMXfFVpXQCVy7sAIDRALQrg-ShD~Uep5chrTunJ5aKGD9lNJarzEURJ5q6-n6a7gb2WfNaiYrs4Xeh1FcBQZTzhc9NdyHqjAWHga6d41NrcRcMCmokLftUJgMhNWYB3aDKp3NApPXjHBis6UXpwG04NrC7ZnnLuNhPSOGsfg__',
+                userName: 'Jim Hopper',
                 mutualFriends: [
-                  // 'https://via.placeholder.com/50',
-                  // 'https://via.placeholder.com/51',
-                  // 'https://via.placeholder.com/52',
+                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
+                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
+                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
                 ],
                 mutualFriendsCount: 3,
               ),
@@ -44,12 +46,13 @@ class AddNewFriend extends StatelessWidget {
                 height: 1.h,
               ),
               NewFriendRequestWidget(
-                profileImage: 'https://via.placeholder.com/150',
-                userName: 'John Doeeeeee',
+                profileImage:
+                    'https://s3-alpha-sig.figma.com/img/d200/c571/c4db6c37dba3a4e963acefe9ca469ec5?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N9Y-bU6XLqGWyk1r~2hcF0F5H5Tx4tqyZL2lVJlSfHNM1pGZhf6xs~X3CQGxBSXmHoxIe7sBZm2-tF65MSyMd-kBsxm2WGBdr~REbm407gcj1KdlGBfLTJP06jULqm-ltao7Nv24hFvqhdcKRJp2HiXDP07QZDMDOjNDHI4FbyX65zFMXfFVpXQCVy7sAIDRALQrg-ShD~Uep5chrTunJ5aKGD9lNJarzEURJ5q6-n6a7gb2WfNaiYrs4Xeh1FcBQZTzhc9NdyHqjAWHga6d41NrcRcMCmokLftUJgMhNWYB3aDKp3NApPXjHBis6UXpwG04NrC7ZnnLuNhPSOGsfg__',
+                userName: 'Jim Hopper',
                 mutualFriends: [
-                  // 'https://via.placeholder.com/50',
-                  // 'https://via.placeholder.com/51',
-                  // 'https://via.placeholder.com/52',
+                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
+                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
+                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
                 ],
                 mutualFriendsCount: 3,
               ),
@@ -81,7 +84,7 @@ class NewFriendRequestWidget extends StatelessWidget {
       decoration: BoxDecoration(
           color: Color(0xffFAFAFA), borderRadius: BorderRadius.circular(22.5)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 18.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 18.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -94,7 +97,7 @@ class NewFriendRequestWidget extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(width: 16),
+            SizedBox(width: 3.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,30 +129,26 @@ class NewFriendRequestWidget extends StatelessWidget {
                       SizedBox(
                         width: 2.w,
                       ),
-                      // Text(
-                      //   '$mutualFriendsCount mutual friends',
-                      //   style: CustomTextStyles.lightTextStyle(
-                      //       size: 9.4, color: Color(0xff99A1BE)),
-                      // ),
+                      Expanded(
+                        child: Text(
+                          '$mutualFriendsCount mutual friends',
+                          style: CustomTextStyles.lightTextStyle(
+                              size: 9.4, color: Color(0xff99A1BE)),
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-            Expanded(
-              child: Column(
-                children: [
-                  RoundedButtonSmall(
-                      text: "Add Friend",
-                      onPressed: () {},
-                      backgroundColor: Color(0xff1C2A3A),
-                      textColor: Color(0xffFFFFFF)),
-                  SizedBox(
-                    width: 4.w,
-                  ),
-                ],
-              ),
-            )
+            SizedBox(
+              width: 2.w,
+            ),
+            RoundedButtonSmall(
+                text: "Add Friend",
+                onPressed: () {},
+                backgroundColor: Color(0xff1C2A3A),
+                textColor: Color(0xffFFFFFF)),
           ],
         ),
       ),
@@ -194,7 +193,7 @@ class RoundedSearchTextField extends StatelessWidget {
                     hintText: hintText,
                     border: InputBorder.none,
                     hintStyle: CustomTextStyles.lightSmallTextStyle(
-                        color: Color(0xff9CA3AF), size: 17)),
+                        color: Color(0xff9CA3AF), size: 14)),
               ),
             ),
           ],

@@ -29,7 +29,7 @@ class DonorsCardWidget extends StatelessWidget {
       decoration:
           BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10.0, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -52,6 +52,7 @@ class DonorsCardWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
+                    maxLines: 1,
                     docName,
                     style: CustomTextStyles.darkHeadingTextStyle(size: 15),
                   ),
@@ -76,10 +77,12 @@ class DonorsCardWidget extends StatelessWidget {
             ),
             Text(
               Category,
+              maxLines: 1,
               style: CustomTextStyles.w600TextStyle(
                   size: 13, color: Color(0xff4B5563)),
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset('Assets/icons/location.svg'),
                 SizedBox(
@@ -87,6 +90,7 @@ class DonorsCardWidget extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(loction,
+                      maxLines: 2,
                       style: CustomTextStyles.lightTextStyle(
                           color: Color(0xff4B5563), size: 13)),
                 )

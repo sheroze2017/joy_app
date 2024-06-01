@@ -109,17 +109,17 @@ class _EditProfileState extends State<EditProfile> {
                       child: RoundedButton(
                           text: 'Change Password',
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CustomDialog(
-                                  
-                                  title: 'Congratulations!',
-                                  content:
-                                      'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                );
-                              },
-                            );
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (BuildContext context) {
+                            //     return CustomDialog(
+
+                            //       title: 'Congratulations!',
+                            //       content:
+                            //           'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                            //     );
+                            //   },
+                            // );
                           },
                           backgroundColor: Color(0xff1C2A3A),
                           textColor: Color(0xffFFFFFF)),

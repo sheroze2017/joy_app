@@ -1,22 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../home/my_profile.dart';
+import '../home/my_profile.dart';
+import '../user_flow/hospital_user/hospital_detail_screen.dart';
 
-class ImagePage extends StatelessWidget {
+class HospitalHomeScreen extends StatelessWidget {
+  const HospitalHomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
-          expandedHeight: 20.h, // Height of the app bar when it's expanded.
+          expandedHeight: 200.0, // Height of the app bar when it's expanded.
           flexibleSpace: Stack(
             children: <Widget>[
               Positioned.fill(
@@ -59,11 +64,75 @@ class ImagePage extends StatelessWidget {
           delegate: SliverChildListDelegate(
             [
               Container(
+                // height: 500.0, // Adjust height as needed
+                // color: Colors.grey[300],
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 0.0),
+                            child: SvgPicture.asset(
+                                'Assets/icons/joy-icon-small.svg'),
+                          ),
+                          Spacer(),
+                          SvgPicture.asset('Assets/icons/searchbg.svg'),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 0.0, left: 8),
+                            child:
+                                SvgPicture.asset('Assets/icons/messagebg.svg'),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 1.5.h,
+                      ),
+               Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        cursorColor: AppColors.borderColor,
+                        style: CustomTextStyles.lightTextStyle(
+                            color: AppColors.borderColor),
+                        decoration: InputDecoration(
+                          hintText: "What's on your mind, Hashem?",
+                          hintStyle: CustomTextStyles.lightTextStyle(
+                              color: AppColors.borderColor),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(54),
+                        color: AppColors.whiteColorf9f,
+                      ),
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('Assets/icons/camera.svg'),
+                            SizedBox(width: 2.w),
+                            Text(
+                              "Photo",
+                              style: CustomTextStyles.lightTextStyle(
+                                color: AppColors.borderColor,
+                                size: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                        SizedBox(
+                        height: 2.h,
+                      ),
                       Text(
                         'Sunrise Health Clinic',
                         style: CustomTextStyles.darkHeadingTextStyle(
@@ -305,6 +374,85 @@ class ImagePage extends StatelessWidget {
                         rating: '5',
                       ),
                       SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          Text(
+                            'My Posts',
+                            style: CustomTextStyles.darkHeadingTextStyle(),
+                          ),
+                          Spacer(),
+                          Text(
+                            'See All',
+                            style: CustomTextStyles.lightSmallTextStyle(),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 1.h,
+                      ),
+                      PostHeader(),
+                      SizedBox(
+                        height: 1.h,
+                      ),
+                      Text(
+                        'Our Hospital Complete 100 Surgeries today',
+                        style: CustomTextStyles.lightTextStyle(
+                            color: Color(0xff2D3F7B), size: 11.56),
+                      ),
+                      SizedBox(
+                        height: 1.h,
+                      ),
+                      Container(
+                        height: 20.h,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          image: DecorationImage(
+                            image: AssetImage('Assets/images/hospital.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 1.h,
+                      ),
+                      ReactionCount(
+                        comment: '3.4k',
+                        share: '46',
+                      ),
+                      SizedBox(
+                        height: 1.h,
+                      ),
+                      Row(
+                        children: [
+                          CircleButton(
+                            img: 'Assets/images/like.png',
+                            color: Color(0xff000000),
+                          ),
+                          SizedBox(
+                            width: 1.w,
+                          ),
+                          CircleButton(
+                            img: 'Assets/images/message.png',
+                            color: Color(0xFFF9FAFB),
+                          ),
+                          SizedBox(
+                            width: 1.w,
+                          ),
+                          CircleButton(
+                            img: 'Assets/images/send.png',
+                            color: Color(0xFFF9FAFB),
+                          ),
+                          Spacer(),
+                          LikeCount(
+                            like: '32.1K',
+                            name: 'Ali',
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      )
                     ],
                   ),
                 ),
@@ -312,228 +460,6 @@ class ImagePage extends StatelessWidget {
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildRoundedImage(String imageUrl, BoxFit fit) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20.0),
-      child: Image.network(
-        imageUrl,
-        fit: fit,
-      ),
-    );
-  }
-}
-
-class UserRatingWidget extends StatelessWidget {
-  final String docName;
-  final String reviewText;
-  final String rating;
-
-  const UserRatingWidget(
-      {super.key,
-      required this.docName,
-      required this.reviewText,
-      required this.rating});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50.0),
-              child: Image.network(
-                'https://www.nebosh.org.uk/public/case-studies/shyam-susivrithan.jpg',
-                width: 14.5.w,
-                height: 14.5.w,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(
-              width: 2.w,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Joe Doe',
-                    style: CustomTextStyles.darkHeadingTextStyle(),
-                  ),
-                  Row(
-                    children: [
-                      Text('5.0',
-                          style: CustomTextStyles.lightTextStyle(
-                              color: Color(0xff4B5563), size: 12)),
-                      SizedBox(
-                        width: 0.5.w,
-                      ),
-                      RatingBar.builder(
-                        itemSize: 15,
-                        initialRating: 6,
-                        minRating: 1,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        onRatingUpdate: (rating) {
-                          print(rating);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 0.5.h,
-        ),
-        Text(
-            'Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.',
-            style: CustomTextStyles.lightTextStyle(
-                color: Color(0xff4B5563), size: 14)),
-      ],
-    );
-  }
-}
-
-class MedicineCard extends StatelessWidget {
-  final String imgUrl;
-  final String cost;
-  final String count;
-  final String name;
-  final String btnText;
-  final VoidCallback onPressed;
-
-  const MedicineCard(
-      {super.key,
-      required this.imgUrl,
-      required this.cost,
-      required this.count,
-      required this.name,
-      required this.btnText,
-      required this.onPressed});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 43.w,
-      decoration: BoxDecoration(
-          color: Color(0xffE2FFE3), borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: Image.network(
-                    imgUrl,
-                    width: 12.5.w,
-                    height: 12.5.w,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(
-                  width: 2.w,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name ?? 'Panadol',
-                        style: CustomTextStyles.darkHeadingTextStyle(),
-                      ),
-                      Text(
-                        '${count} Tablets for ${cost}\$',
-                        style: CustomTextStyles.w600TextStyle(
-                            size: 14, color: Color(0xff4B5563)),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              width: 2.w,
-            ),
-            Divider(
-              color: Color(0xff6B7280),
-              thickness: 0.05.h,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: RoundedButtonSmall(
-                      isSmall: true,
-                      text: btnText,
-                      onPressed: onPressed,
-                      backgroundColor: Color(0xff015104),
-                      textColor: Color(0xffFFFFFF)),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RoundedSVGContainer extends StatelessWidget {
-  final String svgAsset;
-  final String numberText;
-  final String descriptionText;
-  final Color? bgColor;
-  final Color? iconColor;
-
-  RoundedSVGContainer({
-    required this.svgAsset,
-    required this.numberText,
-    required this.descriptionText,
-    this.bgColor,
-    this.iconColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          // You can adjust the size as needed
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            color: bgColor ??
-                Color(0xffF3F4F6), // Background color of the container
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(
-              child: SvgPicture.asset(
-                svgAsset,
-                color: iconColor,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 0.2.h),
-        Text(numberText,
-            style: CustomTextStyles.w600TextStyle(
-                color: Color(0xff4B5563), size: 14)),
-        Text(descriptionText,
-            style: CustomTextStyles.lightTextStyle(
-                color: Color(0xff4B5563), size: 14)),
       ],
     );
   }

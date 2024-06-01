@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:joy_app/view/Doctor_flow/home_screen.dart';
+import 'package:joy_app/view/doctor_flow/home_screen.dart';
 import 'package:joy_app/view/Pharmacy_flow/order_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
-import 'package:joy_app/view/profile/my_profile.dart';
+import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
@@ -41,16 +41,24 @@ class PharmacyHomeScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(
-                    "What's on your mind, Hashem?",
-                    style: CustomTextStyles.lightTextStyle(
-                        color: AppColors.borderColor),
+                  Expanded(
+                    child: TextField(
+                      cursorColor: AppColors.borderColor,
+                      style: CustomTextStyles.lightTextStyle(
+                          color: AppColors.borderColor),
+                      decoration: InputDecoration(
+                        hintText: "What's on your mind, Hashem?",
+                        hintStyle: CustomTextStyles.lightTextStyle(
+                            color: AppColors.borderColor),
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
-                  Spacer(),
                   Container(
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(54),
-                        color: AppColors.whiteColorf9f),
+                      borderRadius: BorderRadius.circular(54),
+                      color: AppColors.whiteColorf9f,
+                    ),
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
@@ -61,7 +69,9 @@ class PharmacyHomeScreen extends StatelessWidget {
                           Text(
                             "Photo",
                             style: CustomTextStyles.lightTextStyle(
-                                color: AppColors.borderColor, size: 12),
+                              color: AppColors.borderColor,
+                              size: 12,
+                            ),
                           ),
                         ],
                       ),

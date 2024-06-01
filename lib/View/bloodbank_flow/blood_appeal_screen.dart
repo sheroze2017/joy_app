@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
-import 'package:joy_app/view/Doctor_flow/all_appointment.dart';
+import 'package:joy_app/view/doctor_flow/all_appointment.dart';
 import 'package:joy_app/view/bloodbank_flow/component/blood_donation_widget.dart';
 import 'package:sizer/sizer.dart';
 

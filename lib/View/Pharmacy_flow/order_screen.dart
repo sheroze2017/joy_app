@@ -6,7 +6,7 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../Doctor_flow/home_screen.dart';
+import '../doctor_flow/home_screen.dart';
 
 class MyOrderScreen extends StatefulWidget {
   const MyOrderScreen({super.key});

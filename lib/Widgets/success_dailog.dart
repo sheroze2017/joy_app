@@ -18,6 +18,7 @@ class CustomDialog extends StatelessWidget {
   bool? isDoctorForm;
   bool? isPharmacyForm;
   bool? isBloodBankForm;
+  bool? isHospitalForm;
   CustomDialog(
       {super.key,
       required this.title,
@@ -27,7 +28,8 @@ class CustomDialog extends StatelessWidget {
       this.isBookAppointment = false,
       this.isDoctorForm = false,
       this.isBloodBankForm = false,
-      this.isPharmacyForm = false});
+      this.isPharmacyForm = false,
+      this.isHospitalForm = false});
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -80,6 +82,7 @@ class CustomDialog extends StatelessWidget {
                                   isBloodBank: isBloodBankForm,
                                   isPharmacy: isPharmacyForm,
                                   isDoctor: isDoctorForm,
+                                  isHospital: isHospitalForm,
                                 ));
                               },
                               backgroundColor: buttonColor != null
