@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/user_flow/pharmacy_user/mycart_screen.dart';
+import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 
 class MedicineDetailScreen extends StatefulWidget {
@@ -156,10 +159,18 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                           color: AppColors.lightBlack393),
                     ),
                     SizedBox(height: 1.h),
-                    Text(
-                      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquet arcu id tincidunt tellus arcu rhoncus, turpis nisl sed. Neque viverra ipsum orci, morbi semper. Nulla bibendum purus tempor semper purus. Ut curabitur platea sed blandit. Amet non at proin justo nulla et. A, blandit morbi suspendisse vel malesuada purus massa mi. Faucibus neque a mi hendrerit. viverra ipsum orci, morbi semper. Nulla bibendum purus tempor semper purus. Ut curabitur platea sed blandit. Amet non at proin justo nulla e',
-                      style: CustomTextStyles.lightTextStyle(
-                          color: AppColors.lightBlack393, size: 12),
+                    ReadMoreText(
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquet arcu id tincidunt tellus arcu rhoncus, turpis nisl sed. Neque viverra ipsum orci, morbi semper. Nulla bibendum purus tempor semper purus. Ut curabitur platea sed blandit. Amet non at proin justo nulla et. A, blandit morbi suspendisse vel malesuada purus massa mi. Faucibus neque a mi hendrerit. viverra ipsum orci, morbi semper. Nulla bibendum purus tempor semper purus. Ut curabitur platea sed blandit. Amet non at proin justo nulla e",
+                      trimMode: TrimMode.Line,
+                      trimLines: 5,
+                      colorClickableText: AppColors.blackColor,
+                      trimCollapsedText: ' view more',
+                      trimExpandedText: ' view less',
+                      style: CustomTextStyles.lightTextStyle(size: 14),
+                      moreStyle:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      lessStyle:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 1.h),
                     widget.isPharmacyAdmin
@@ -191,7 +202,9 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                               Expanded(
                                 child: RoundedButtonSmall(
                                     text: "Buy Now",
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Get.to(MyCartScreen());
+                                    },
                                     backgroundColor: AppColors.darkGreenColor,
                                     textColor: AppColors.whiteColor),
                               )

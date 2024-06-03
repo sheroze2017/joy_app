@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     'user@gmail.com' &&
                                 _passwordController.text.toLowerCase().trim() ==
                                     'admin123') {
-                              Get.to(NavBarScreen());
+                              Get.to(NavBarScreen(isUser: true));
                             } else if (_emailController.text
                                         .toLowerCase()
                                         .trim() ==

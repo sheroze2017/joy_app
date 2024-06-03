@@ -106,7 +106,7 @@ class BookAppointmentScreen extends StatelessWidget {
                   child: RoundedButton(
                       text: "Confirm",
                       onPressed: () {
-                        showPaymentBottomSheet(context, true);
+                        showPaymentBottomSheet(context, true, false);
                       },
                       backgroundColor: AppColors.darkBlueColor,
                       textColor: AppColors.whiteColor),

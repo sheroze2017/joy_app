@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/view/home/navbar.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../styles/custom_textstyle.dart';
@@ -84,7 +86,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     Expanded(
                       child: RoundedButton(
                           text: "Submit",
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.offAll(NavBarScreen(
+                              isUser: true,
+                            ));
+                          },
                           backgroundColor: AppColors.darkGreenColor,
                           textColor: AppColors.whiteColor),
                     ),

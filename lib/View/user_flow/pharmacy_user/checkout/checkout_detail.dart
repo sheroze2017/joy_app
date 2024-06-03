@@ -120,7 +120,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
                       child: RoundedButton(
                           text: 'Confirm Order',
                           onPressed: () {
-                            showPaymentBottomSheet(context, false);
+                            showPaymentBottomSheet(context, false, true);
                           },
                           backgroundColor: AppColors.darkGreenColor,
                           textColor: AppColors.whiteColor),
@@ -136,7 +136,8 @@ class _CheckoutFormState extends State<CheckoutForm> {
   }
 }
 
-void showPaymentBottomSheet(BuildContext context, bool isbookAppointment) {
+void showPaymentBottomSheet(
+    BuildContext context, bool isbookAppointment, bool? isPharmacyCheckout) {
   showModalBottomSheet(
     context: context,
     shape: RoundedRectangleBorder(
@@ -179,6 +180,7 @@ void showPaymentBottomSheet(BuildContext context, bool isbookAppointment) {
                     context: context,
                     builder: (BuildContext context) {
                       return CustomDialog(
+                        isPharmacyCheckout: true,
                         title: 'Congratulations!',
                         content: isbookAppointment
                             ? 'Your appointment with Dr. David Patel is confirmed for June 30, 2023, at 10:00 AM.'

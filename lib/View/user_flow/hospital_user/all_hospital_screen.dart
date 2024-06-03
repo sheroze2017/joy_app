@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:joy_app/view/Pharmacy_flow/product_screen.dart';
+import 'package:joy_app/view/hospital_flow/home_screen.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
+import '../pharmacy_user/pharmacy_product_screen.dart';
 import 'hospital_detail_screen.dart';
 
 class AllHospitalScreen extends StatelessWidget {
@@ -50,7 +53,11 @@ class AllHospitalScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ImagePage(),
+                      builder: (context) => isPharmacy
+                          ? PharmacyProductScreen()
+                          : HospitalHomeScreen(
+                              isUser: true,
+                            ),
                     ),
                   );
                 },

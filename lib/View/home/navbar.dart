@@ -26,12 +26,14 @@ class NavBarScreen extends StatefulWidget {
   final bool? isPharmacy;
   final bool? isBloodBank;
   final bool? isHospital;
+  final bool? isUser;
   const NavBarScreen(
       {super.key,
       this.isDoctor = false,
       this.isPharmacy = false,
       this.isBloodBank = false,
-      this.isHospital = false});
+      this.isHospital = false,
+      this.isUser = false});
   @override
   State<NavBarScreen> createState() => _NavBarState();
 }
@@ -79,21 +81,28 @@ class _NavBarState extends State<NavBarScreen> {
                             index: navbarController.tabIndex,
                             children: [
                               HospitalDashBoard(),
-                              HospitalHomeScreen(),
+                              HospitalHomeScreen(
+                                isHospital: true,
+                              ),
                               NotificationScreen(),
                               ProfileScreen()
                             ],
                           )
-                        : IndexedStack(
-                            index: navbarController.tabIndex,
-                            children: [
-                              UserBlogScreen(),
-                              AddFriend(),
-                              HomeScreen(),
-                              NotificationScreen(),
-                              MyProfileScreen()
-                            ],
-                          ),
+                        : widget.isUser == true
+                            ? IndexedStack(
+                                index: navbarController.tabIndex,
+                                children: [
+                                  UserBlogScreen(),
+                                  AddFriend(),
+                                  HomeScreen(),
+                                  NotificationScreen(),
+                                  MyProfileScreen()
+                                ],
+                              )
+                            : IndexedStack(
+                                index: navbarController.tabIndex,
+                                children: [],
+                              ),
         bottomNavigationBar: BottomNavigationBar(
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -143,18 +152,22 @@ class _NavBarState extends State<NavBarScreen> {
                               _bottomBarItem('Assets/icons/frame.svg',
                                   'Assets/icons/profiledark.svg'),
                             ]
-                          : [
-                              _bottomBarItem('Assets/icons/home.svg',
-                                  'Assets/icons/Profile.svg'),
-                              _bottomBarItem('Assets/icons/profile-2light.svg',
-                                  'Assets/icons/person2dark.svg'),
-                              _bottomBarItem('Assets/icons/health-care.svg',
-                                  'Assets/icons/Profile_rounded.svg'),
-                              _bottomBarItem('Assets/icons/notification.svg',
-                                  'Assets/icons/notificationdark.svg'),
-                              _bottomBarItem('Assets/icons/frame.svg',
-                                  'Assets/icons/profiledark.svg'),
-                            ],
+                          : widget.isUser == true
+                              ? [
+                                  _bottomBarItem('Assets/icons/home.svg',
+                                      'Assets/icons/Profile.svg'),
+                                  _bottomBarItem(
+                                      'Assets/icons/profile-2light.svg',
+                                      'Assets/icons/person2dark.svg'),
+                                  _bottomBarItem('Assets/icons/health-care.svg',
+                                      'Assets/icons/Profile_rounded.svg'),
+                                  _bottomBarItem(
+                                      'Assets/icons/notification.svg',
+                                      'Assets/icons/notificationdark.svg'),
+                                  _bottomBarItem('Assets/icons/frame.svg',
+                                      'Assets/icons/profiledark.svg'),
+                                ]
+                              : [],
         ),
       );
     });

@@ -6,12 +6,14 @@ import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/user_flow/pharmacy_user/review_screen.dart';
 import 'package:sizer/sizer.dart';
 
 // ignore: must_be_immutable
 class CustomDialog extends StatelessWidget {
   final String title;
   final String content;
+  bool? isPharmacyCheckout;
   bool showButton;
   bool isBookAppointment;
   Color? buttonColor;
@@ -24,6 +26,7 @@ class CustomDialog extends StatelessWidget {
       required this.title,
       required this.content,
       this.buttonColor,
+      this.isPharmacyCheckout = false,
       this.showButton = false,
       this.isBookAppointment = false,
       this.isDoctorForm = false,
@@ -78,12 +81,14 @@ class CustomDialog extends StatelessWidget {
                           child: RoundedButton(
                               text: 'Done',
                               onPressed: () {
-                                Get.offAll(NavBarScreen(
-                                  isBloodBank: isBloodBankForm,
-                                  isPharmacy: isPharmacyForm,
-                                  isDoctor: isDoctorForm,
-                                  isHospital: isHospitalForm,
-                                ));
+                                isPharmacyCheckout == true
+                                    ? Get.to(ReviewScreen())
+                                    : Get.offAll(NavBarScreen(
+                                        isBloodBank: isBloodBankForm,
+                                        isPharmacy: isPharmacyForm,
+                                        isDoctor: isDoctorForm,
+                                        isHospital: isHospitalForm,
+                                      ));
                               },
                               backgroundColor: buttonColor != null
                                   ? Color(0xff1C2A3A)

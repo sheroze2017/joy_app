@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
           ),
           // initialRoute: AppPage.getNavbar(),
           //getPages: AppPage.routes,
-          home: NavBarScreen()
+          home: NavBarScreen(
+            isUser: true,
+          )
           //initialBinding: YourBinding(),
           );
     });
