@@ -112,7 +112,6 @@ class OnBoardPage extends StatelessWidget {
       children: [
         Container(
           child: Image(
-            height: 63.h,
             fit: BoxFit.cover,
             image: AssetImage(image),
           ),

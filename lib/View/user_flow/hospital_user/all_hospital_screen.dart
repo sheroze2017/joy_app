@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/view/Pharmacy_flow/product_screen.dart';
+import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/view/hospital_flow/home_screen.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/user_flow/bloodbank_user/blood_donation_appeal.dart';
+import 'package:joy_app/widgets/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../bloodbank_flow/blood_appeal_screen.dart';
+import '../bloodbank_user/request_blood.dart';
 import '../pharmacy_user/pharmacy_product_screen.dart';
 import 'hospital_detail_screen.dart';
 
@@ -41,6 +48,96 @@ class AllHospitalScreen extends StatelessWidget {
               SizedBox(
                 height: 1.h,
               ),
+              isBloodBank
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(BloodDonationAppealUser(
+                                isBloodDontate: true,
+                                isUser: true,
+                              ));
+                            },
+                            child: DoctorCategory(
+                              isUser: false,
+                              catrgory: 'Donate Blood',
+                              DoctorCount: '1',
+                              bgColor: AppColors.redLightColor,
+                              fgColor: AppColors.redLightDarkColor,
+                              imagePath: 'Assets/images/blood.svg',
+                              isBloodBank: isBloodBank,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 1.w,
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(BloodDonationAppealUser(
+                                isPlasmaDonate: true,
+                                isUser: true,
+                              ));
+                            },
+                            child: DoctorCategory(
+                              isUser: false,
+                              catrgory: 'Donate Plasma',
+                              DoctorCount: '4',
+                              bgColor: AppColors.yellowLightColor,
+                              fgColor: AppColors.yellowLightDarkColor,
+                              imagePath: 'Assets/images/plasma.svg',
+                              isBloodBank: isBloodBank,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(),
+              isBloodBank
+                  ? SizedBox(
+                      height: 1.h,
+                    )
+                  : SizedBox(
+                      height: 0.h,
+                    ),
+              isBloodBank
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: RoundedButton(
+                              text: "Request Blood",
+                              onPressed: () {
+                                Get.to(RequestBlood());
+                              },
+                              backgroundColor: AppColors.redLightDarkColor,
+                              textColor: Colors.white),
+                        ),
+                        SizedBox(
+                          width: 1.w,
+                        ),
+                        Expanded(
+                          child: RoundedButton(
+                              text: "Register Donor",
+                              onPressed: () {
+                                Get.to(RequestBlood(
+                                  isRegister: true,
+                                ));
+                              },
+                              backgroundColor: AppColors.redLightDarkColor,
+                              textColor: Colors.white),
+                        )
+                      ],
+                    )
+                  : Container(),
+              isBloodBank
+                  ? SizedBox(height: 2.h)
+                  : SizedBox(
+                      height: 0.h,
+                    ),
               Text(
                 '532 found',
                 style: CustomTextStyles.darkHeadingTextStyle(),

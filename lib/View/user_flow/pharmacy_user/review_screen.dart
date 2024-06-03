@@ -11,8 +11,8 @@ import 'package:sizer/sizer.dart';
 import '../../../styles/custom_textstyle.dart';
 
 class ReviewScreen extends StatefulWidget {
-  const ReviewScreen({super.key});
-
+  Color buttonBgColor;
+  ReviewScreen({required this.buttonBgColor});
   @override
   State<ReviewScreen> createState() => _ReviewScreenState();
 }
@@ -91,7 +91,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                               isUser: true,
                             ));
                           },
-                          backgroundColor: AppColors.darkGreenColor,
+                          backgroundColor: widget.buttonBgColor,
                           textColor: AppColors.whiteColor),
                     ),
                   ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/view/doctor_booking/your_profileform_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -228,7 +230,9 @@ class DoctorDetailScreen extends StatelessWidget {
                 Expanded(
                   child: RoundedButton(
                       text: "Book Appointment",
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.to(ProfileFormScreen());
+                      },
                       backgroundColor: AppColors.darkBlueColor,
                       textColor: AppColors.whiteColor),
                 ),

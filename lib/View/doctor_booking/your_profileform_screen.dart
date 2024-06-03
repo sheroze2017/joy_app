@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/doctor_booking/book_appointment_screen.dart';
 import 'package:sizer/sizer.dart';
 
 class ProfileFormScreen extends StatefulWidget {
@@ -140,7 +142,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                 Expanded(
                   child: RoundedButton(
                       text: "Next",
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.to(BookAppointmentScreen());
+                      },
                       backgroundColor: AppColors.darkBlueColor,
                       textColor: AppColors.whiteColor),
                 ),

@@ -6,6 +6,7 @@ import 'package:joy_app/view/bloodbank_flow/all_donor_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
+import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -194,8 +195,6 @@ class DoctorsCardWidget extends StatelessWidget {
   }
 }
 
-
-
 class DoctorCategory extends StatelessWidget {
   final String catrgory;
   final String DoctorCount;
@@ -203,6 +202,7 @@ class DoctorCategory extends StatelessWidget {
   final Color fgColor;
   final String imagePath;
   bool isBloodBank;
+  bool? isUser;
 
   DoctorCategory(
       {super.key,
@@ -211,11 +211,12 @@ class DoctorCategory extends StatelessWidget {
       required this.bgColor,
       required this.fgColor,
       required this.imagePath,
-      this.isBloodBank = false});
+      this.isBloodBank = false,
+      this.isUser = true});
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
+      padding: EdgeInsets.only(right: isUser == false ? 0 : 8.0),
       child: Container(
         width: isBloodBank ? 38.87.w : 37.54.w,
         decoration: BoxDecoration(
@@ -249,52 +250,54 @@ class DoctorCategory extends StatelessWidget {
                 isBloodBank
                     ? '${DoctorCount}+ Patients waiting'
                     : '${DoctorCount} Doctors',
-                style: CustomTextStyles.lightSmallTextStyle(
+                style: CustomTextStyles.lightTextStyle(
                     color: AppColors.blackColor393,
                     size: isBloodBank ? 8 : 15.44),
               ),
               SizedBox(
                 height: 1.h,
               ),
-              Row(
-                children: [
-                  for (var i = 0; i < 3; i++)
-                    Container(
-                      width: 3.h,
-                      height: 3.h,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        border: Border.all(
-                          color: AppColors.whiteColor,
-                          width: 1,
-                        ),
-                      ),
-                      child: CircleAvatar(
-                        backgroundImage:
-                            NetworkImage('https://via.placeholder.com/150'),
-                      ),
-                    ),
-                  Container(
-                    width: 3.h,
-                    height: 3.h,
-                    decoration: BoxDecoration(
-                      color: Color(0xffD1C3E6),
-                      borderRadius: BorderRadius.circular(40),
-                      border: Border.all(
-                        color: AppColors.whiteColor,
-                        width: 1,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '+6',
-                        style: CustomTextStyles.lightTextStyle(
-                            size: 9.6, color: AppColors.blackColor393),
-                      ),
-                    ),
-                  )
-                ],
-              )
+              isUser == true
+                  ? Row(
+                      children: [
+                        for (var i = 0; i < 3; i++)
+                          Container(
+                            width: 3.h,
+                            height: 3.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(40),
+                              border: Border.all(
+                                color: AppColors.whiteColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  'https://via.placeholder.com/150'),
+                            ),
+                          ),
+                        Container(
+                          width: 3.h,
+                          height: 3.h,
+                          decoration: BoxDecoration(
+                            color: Color(0xffD1C3E6),
+                            borderRadius: BorderRadius.circular(40),
+                            border: Border.all(
+                              color: AppColors.whiteColor,
+                              width: 1,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '+6',
+                              style: CustomTextStyles.lightTextStyle(
+                                  size: 9.6, color: AppColors.blackColor393),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  : Container()
             ],
           ),
         ),
@@ -346,10 +349,10 @@ class HorizontalDoctorCategories extends StatelessWidget {
             DoctorCount: '$index',
             bgColor: isBloodBank
                 ? bgColors[index % 2 == 0 ? 0 : 1]
-                : AppColors.lightBlueColore5e,
+                : bgColorsDoctors[index % 2 == 0 ? 0 : 1],
             fgColor: isBloodBank
                 ? fgColors[index % 2 == 0 ? 0 : 1]
-                : AppColors.lightBlueColord0d,
+                : fgColorsDoctors[index % 2 == 0 ? 0 : 1],
             imagePath: isBloodBank
                 ? bloodBankCatImage[index % 2 == 0 ? 0 : 1]
                 : 'Assets/icons/dental.svg',
@@ -367,20 +370,27 @@ class VerticalDoctorsList extends StatelessWidget {
     return ListView.builder(
       itemCount: 10, // Change this according to your actual data count
       itemBuilder: (context, index) {
-        return DoctorsCardWidget(
-          imgUrl: '',
-          reviewCount: '1,872',
-          docName: 'Dr. David Patel',
-          Category: 'Cardiologist',
-          loction: 'Cardiology Center, USA',
-          rating: '5',
+        return InkWell(
+          onTap: () {
+            Get.to(DoctorDetailScreen(
+              docName: 'Dr. David Patel',
+              location: 'Golden Cardiology Center',
+              Category: 'Cardiologist',
+            ));
+          },
+          child: DoctorsCardWidget(
+            imgUrl: '',
+            reviewCount: '1,872',
+            docName: 'Dr. David Patel',
+            Category: 'Cardiologist',
+            loction: 'Cardiology Center, USA',
+            rating: '5',
+          ),
         );
       },
     );
   }
 }
-
-
 
 List<String> bloodBankCategory = [
   'Donate Blood',
@@ -394,3 +404,13 @@ List<String> bloodBankCatImage = [
 ];
 List bgColors = [AppColors.redLightColor, AppColors.yellowLightColor];
 List fgColors = [AppColors.redLightDarkColor, AppColors.yellowLightDarkColor];
+
+List bgColorsDoctors = [
+  AppColors.lightBlueColore5e,
+  AppColors.lightPurpleColore1e
+];
+
+List fgColorsDoctors = [
+  AppColors.lightBlueColord0d,
+  AppColors.lightPurpleColord2c
+];

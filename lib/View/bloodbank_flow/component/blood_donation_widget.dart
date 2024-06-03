@@ -14,6 +14,7 @@ class DonationApproval extends StatelessWidget {
   String priority;
   String location;
   String bloodType;
+  bool isUser;
 
   DonationApproval(
       {this.isBloodDonate = false,
@@ -23,7 +24,8 @@ class DonationApproval extends StatelessWidget {
       this.count = '4',
       this.priority = '',
       this.location = 'Cardiology Center, USA',
-      this.bloodType = 'B+'});
+      this.bloodType = 'B+',
+      this.isUser = false});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -133,7 +135,7 @@ class DonationApproval extends StatelessWidget {
                 ),
                 Expanded(
                   child: RoundedButtonSmall(
-                      text: 'Contact',
+                      text: isUser ? 'Share' : 'Contact',
                       onPressed: () {
                         //      showPaymentBottomSheet(context, true);
                       },

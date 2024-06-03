@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/view/Signup/login_screen.dart';
+import 'package:joy_app/view/doctor_booking/manage_booking.dart';
+import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
 import 'package:joy_app/view/home/editprofile_screen.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -123,7 +125,7 @@ class _FormScreenState extends State<ProfileScreen> {
               ),
               InkWell(
                 onTap: () {
-                  //  Get.to(BookAppointmentScreen());
+                  Get.to(ManageAllAppointmentUser());
                 },
                 child: Row(
                   children: [

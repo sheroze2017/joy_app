@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/view/home/components/hospital_card_widget.dart';
 import 'package:joy_app/view/hospital_flow/home_screen.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
@@ -79,9 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0),
-                  child: RoundedSearchTextField(
-                      hintText: 'Search doctor...',
-                      controller: TextEditingController()),
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(AllDoctorsScreen(appBarText: 'All Doctors'));
+                    },
+                    child: RoundedSearchTextField(
+                        isEnable: false,
+                        hintText: 'Search doctor...',
+                        controller: TextEditingController()),
+                  ),
                 ),
                 SizedBox(
                   height: 2.h,

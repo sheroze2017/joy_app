@@ -160,13 +160,15 @@ class RoundedSearchTextField extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
+  bool isEnable;
 
-  const RoundedSearchTextField({
-    Key? key,
-    required this.hintText,
-    required this.controller,
-    this.onChanged,
-  }) : super(key: key);
+  RoundedSearchTextField(
+      {Key? key,
+      required this.hintText,
+      required this.controller,
+      this.onChanged,
+      this.isEnable = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -187,6 +189,7 @@ class RoundedSearchTextField extends StatelessWidget {
             SizedBox(width: 1.w),
             Expanded(
               child: TextField(
+                enabled: isEnable,
                 controller: controller,
                 onChanged: onChanged,
                 decoration: InputDecoration(

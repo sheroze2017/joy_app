@@ -20,7 +20,9 @@ class CustomDialog extends StatelessWidget {
   bool? isDoctorForm;
   bool? isPharmacyForm;
   bool? isBloodBankForm;
+  bool? isDoctorAppointment;
   bool? isHospitalForm;
+  bool isBloodRequest;
   CustomDialog(
       {super.key,
       required this.title,
@@ -30,9 +32,11 @@ class CustomDialog extends StatelessWidget {
       this.showButton = false,
       this.isBookAppointment = false,
       this.isDoctorForm = false,
+      this.isDoctorAppointment = false,
       this.isBloodBankForm = false,
       this.isPharmacyForm = false,
-      this.isHospitalForm = false});
+      this.isHospitalForm = false,
+      this.isBloodRequest = false});
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -65,7 +69,9 @@ class CustomDialog extends StatelessWidget {
                 width: 100,
               ),
               SizedBox(height: 2.h),
-              Text(title, style: CustomTextStyles.darkTextStyle()),
+              Text(title,
+                  style: CustomTextStyles.darkTextStyle(
+                      color: isBloodRequest ? AppColors.redColor : null)),
               SizedBox(height: 2.h),
               Text(
                 content,
@@ -82,19 +88,27 @@ class CustomDialog extends StatelessWidget {
                               text: 'Done',
                               onPressed: () {
                                 isPharmacyCheckout == true
-                                    ? Get.to(ReviewScreen())
-                                    : Get.offAll(NavBarScreen(
-                                        isBloodBank: isBloodBankForm,
-                                        isPharmacy: isPharmacyForm,
-                                        isDoctor: isDoctorForm,
-                                        isHospital: isHospitalForm,
-                                      ));
+                                    ? Get.to(ReviewScreen(
+                                        buttonBgColor: AppColors.darkGreenColor,
+                                      ))
+                                    : isBloodRequest
+                                        ? Get.to(Get.offAll(NavBarScreen(
+                                            isUser: true,
+                                          )))
+                                        : Get.offAll(NavBarScreen(
+                                            isBloodBank: isBloodBankForm,
+                                            isPharmacy: isPharmacyForm,
+                                            isDoctor: isDoctorForm,
+                                            isHospital: isHospitalForm,
+                                          ));
                               },
                               backgroundColor: buttonColor != null
                                   ? Color(0xff1C2A3A)
                                   : isBookAppointment
                                       ? AppColors.darkBlueColor
-                                      : AppColors.darkGreenColor,
+                                      : isBloodRequest
+                                          ? AppColors.redColor
+                                          : AppColors.darkGreenColor,
                               textColor: AppColors.whiteColor),
                         ),
                       ],
