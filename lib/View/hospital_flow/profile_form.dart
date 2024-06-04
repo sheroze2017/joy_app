@@ -20,7 +20,24 @@ class HospitalFormScreen extends StatefulWidget {
 class _HospitalFormScreenState extends State<HospitalFormScreen> {
   String? selectedValue;
 
-  TextEditingController controller = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _timeController =
+      TextEditingController(text: 'May 22,2024 - 10:00 AM to 10:30 AM');
+
+  final TextEditingController _feesController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _aboutController = TextEditingController();
+
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode7 = FocusNode();
+  final FocusNode _focusNode8 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +83,9 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _nameController,
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   hintText: 'Hospital Name',
                   icon: '',
                 ),
@@ -74,7 +93,9 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _contactController,
+                  focusNode: _focusNode2,
+                  nextFocusNode: _focusNode3,
                   hintText: 'Contact',
                   icon: '',
                 ),
@@ -108,8 +129,10 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                     });
                   },
                   child: RoundedBorderTextField(
+                    controller: _timeController,
+                    focusNode: _focusNode3,
+                    nextFocusNode: _focusNode4,
                     isenable: false,
-                    controller: TextEditingController(),
                     hintText: 'Timings',
                     icon: '',
                   ),
@@ -118,7 +141,9 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _feesController,
+                  focusNode: _focusNode4,
+                  nextFocusNode: _focusNode5,
                   hintText: 'Check Up Fee',
                   icon: '',
                 ),
@@ -126,23 +151,29 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _locationController,
+                  focusNode: _focusNode5,
+                  nextFocusNode: _focusNode6,
                   hintText: 'Location',
                   icon: '',
                 ),
                 SizedBox(
                   height: 2.h,
                 ),
-                RoundedBorderTextField(
-                  controller: TextEditingController(),
+                SearchDropdown(
                   hintText: 'Public or Private Institute',
+                  items: ['Public', 'Private'],
+                  value: '',
+                  onChanged: (String? value) {},
                   icon: '',
                 ),
                 SizedBox(
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _aboutController,
+                  focusNode: _focusNode7,
+                  nextFocusNode: _focusNode8,
                   hintText: 'About',
                   icon: '',
                   maxlines: true,

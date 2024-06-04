@@ -11,16 +11,19 @@ class RoundedBorderTextField extends StatelessWidget {
   FocusNode? focusNode;
   FocusNode? nextFocusNode;
   TextInputType textInputType;
+  final FormFieldValidator<String>? validator;
 
-  RoundedBorderTextField(
-      {required this.controller,
-      required this.hintText,
-      required this.icon,
-      this.focusNode,
-      this.nextFocusNode,
-      this.maxlines = false,
-      this.isenable = true,
-      this.textInputType = TextInputType.text});
+  RoundedBorderTextField({
+    required this.controller,
+    required this.hintText,
+    required this.icon,
+    this.focusNode,
+    this.nextFocusNode,
+    this.maxlines = false,
+    this.isenable = true,
+    this.textInputType = TextInputType.text,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,8 @@ class RoundedBorderTextField extends StatelessWidget {
             SvgPicture.asset(icon),
             SizedBox(width: 8.0),
             Expanded(
-              child: TextField(
+              child: TextFormField(
+                validator: validator,
                 keyboardType: textInputType,
                 focusNode: focusNode,
                 enabled: isenable,
@@ -55,7 +59,7 @@ class RoundedBorderTextField extends StatelessWidget {
                       CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
                   border: InputBorder.none,
                 ),
-                onSubmitted: (value) {
+                onFieldSubmitted: (value) {
                   focusNode!.unfocus();
                   FocusScope.of(context).requestFocus(nextFocusNode);
                 },

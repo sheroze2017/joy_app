@@ -14,8 +14,26 @@ class OrderDetailScreen extends StatefulWidget {
 
 class _FormScreenState extends State<OrderDetailScreen> {
   String? selectedValue;
+  final TextEditingController _lnameController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _productsController = TextEditingController();
 
-  TextEditingController controller = TextEditingController();
+  final TextEditingController _fnameController = TextEditingController();
+
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _townController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _feeController = TextEditingController();
+
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode7 = FocusNode();
+  final FocusNode _focusNode8 = FocusNode();
+  final FocusNode _focusNode9 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +58,9 @@ class _FormScreenState extends State<OrderDetailScreen> {
                 ),
                 RoundedBorderTextField(
                   isenable: false,
-                  controller: TextEditingController(text: 'James'),
+                  controller: _fnameController,
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   hintText: 'James',
                   icon: '',
                 ),
@@ -48,8 +68,10 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  controller: _lnameController,
+                  focusNode: _focusNode2,
+                  nextFocusNode: _focusNode3,
                   isenable: false,
-                  controller: TextEditingController(text: 'Robinson'),
                   hintText: 'Robinson',
                   icon: '',
                 ),
@@ -58,7 +80,9 @@ class _FormScreenState extends State<OrderDetailScreen> {
                 ),
                 RoundedBorderTextField(
                   isenable: false,
-                  controller: TextEditingController(text: '0300-0000000'),
+                  controller: _contactController,
+                  focusNode: _focusNode3,
+                  nextFocusNode: _focusNode4,
                   hintText: 'Phone No',
                   icon: '',
                 ),
@@ -66,9 +90,10 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  focusNode: _focusNode4,
+                  nextFocusNode: _focusNode5,
                   isenable: false,
-                  controller: TextEditingController(
-                      text: 'Panadol 10 Tablets, 5 Injection '),
+                  controller: _productsController,
                   hintText: 'Products',
                   icon: '',
                 ),
@@ -83,9 +108,9 @@ class _FormScreenState extends State<OrderDetailScreen> {
                 ),
                 RoundedBorderTextField(
                   isenable: false,
-                  controller: TextEditingController(
-                      text:
-                          'e veritatis et quasi architecto beatae vitae dicta sunt explicabo.'),
+                  controller: _locationController,
+                  focusNode: _focusNode5,
+                  nextFocusNode: _focusNode6,
                   hintText: 'Location',
                   maxlines: true,
                   icon: '',
@@ -94,10 +119,10 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  focusNode: _focusNode6,
+                  nextFocusNode: _focusNode7,
                   isenable: false,
-                  controller: TextEditingController(
-                    text: 'City',
-                  ),
+                  controller: _cityController,
                   maxlines: true,
                   hintText: 'City',
                   icon: '',
@@ -106,10 +131,10 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  focusNode: _focusNode7,
+                  nextFocusNode: _focusNode8,
+                  controller: _townController,
                   isenable: false,
-                  controller: TextEditingController(
-                    text: 'Town',
-                  ),
                   maxlines: true,
                   hintText: 'Town',
                   icon: '',
@@ -119,8 +144,10 @@ class _FormScreenState extends State<OrderDetailScreen> {
                 ),
                 RoundedBorderTextField(
                   isenable: false,
-                  controller: TextEditingController(text: '20\$ Bill'),
-                  hintText: 'Bill',
+                  focusNode: _focusNode8,
+                  nextFocusNode: _focusNode9,
+                  controller: _feeController,
+                  hintText: '20\$ Bill',
                   icon: '',
                 ),
                 SizedBox(

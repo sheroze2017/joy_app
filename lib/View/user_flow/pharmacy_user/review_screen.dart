@@ -18,6 +18,8 @@ class ReviewScreen extends StatefulWidget {
 }
 
 class _ReviewScreenState extends State<ReviewScreen> {
+  final TextEditingController _reviewController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     @override
@@ -46,7 +48,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _reviewController,
                   hintText: 'How was your experience ?',
                   icon: '',
                 ),

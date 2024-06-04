@@ -16,6 +16,20 @@ class CheckoutForm extends StatefulWidget {
 
 class _CheckoutFormState extends State<CheckoutForm> {
   String? selectedValue;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode7 = FocusNode();
+  final FocusNode _focusNode8 = FocusNode();
+  final FocusNode _focusNode9 = FocusNode();
 
   TextEditingController controller = TextEditingController();
   bool isButtonSelectedCod = false;
@@ -43,7 +57,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _nameController,
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   hintText: 'Sheroze Rehman',
                   icon: '',
                 ),
@@ -51,7 +67,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _contactController,
+                  focusNode: _focusNode2,
+                  nextFocusNode: _focusNode3,
                   hintText: 'Contact Number',
                   icon: '',
                 ),
@@ -59,7 +77,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _addressController,
+                  focusNode: _focusNode3,
+                  nextFocusNode: _focusNode4,
                   hintText: 'Address',
                   icon: '',
                 ),
@@ -67,7 +87,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _cityController,
+                  focusNode: _focusNode4,
+                  nextFocusNode: _focusNode5,
                   hintText: 'City',
                   icon: '',
                 ),

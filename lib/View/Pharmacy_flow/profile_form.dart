@@ -16,8 +16,20 @@ class PharmacyFormScreen extends StatefulWidget {
 
 class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
   String? selectedValue;
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _prescriptionController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
-  TextEditingController controller = TextEditingController();
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode7 = FocusNode();
+  final FocusNode _focusNode8 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +63,9 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                   ],
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _nameController,
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   hintText: 'Pharmacy Name',
                   icon: '',
                 ),
@@ -59,7 +73,9 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _contactController,
+                  focusNode: _focusNode2,
+                  nextFocusNode: _focusNode3,
                   hintText: 'Contact',
                   icon: '',
                 ),
@@ -67,7 +83,9 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _locationController,
+                  focusNode: _focusNode3,
+                  nextFocusNode: _focusNode4,
                   hintText: 'Location',
                   icon: '',
                 ),
@@ -102,7 +120,9 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                   },
                   child: RoundedBorderTextField(
                     isenable: false,
-                    controller: TextEditingController(),
+                    controller: _timeController,
+                    focusNode: _focusNode4,
+                    nextFocusNode: _focusNode5,
                     hintText: 'Availability',
                     icon: '',
                   ),
@@ -111,7 +131,9 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _prescriptionController,
+                  focusNode: _focusNode5,
+                  nextFocusNode: _focusNode6,
                   hintText: 'Attach File of Prescription',
                   icon: 'Assets/icons/attach-icon.svg',
                 ),

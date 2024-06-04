@@ -18,6 +18,32 @@ class DoctorFormScreen extends StatefulWidget {
 
 class _DoctorFormScreenState extends State<DoctorFormScreen> {
   String? selectedValue;
+  final TextEditingController _qualificationController =
+      TextEditingController();
+  final TextEditingController _expertiseController = TextEditingController();
+
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _timeController =
+      TextEditingController(text: 'May 22,2024 - 10:00 AM to 10:30 AM');
+
+  final TextEditingController _feesController = TextEditingController();
+  final TextEditingController _lnameController = TextEditingController();
+  final TextEditingController _fnameController = TextEditingController();
+
+  final TextEditingController _medicalCertificateController =
+      TextEditingController();
+
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode7 = FocusNode();
+  final FocusNode _focusNode8 = FocusNode();
+  final FocusNode _focusNode9 = FocusNode();
+  final FocusNode _focusNode10 = FocusNode();
+  final FocusNode _focusNode11 = FocusNode();
 
   TextEditingController controller = TextEditingController();
 
@@ -51,7 +77,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   ],
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _fnameController,
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   hintText: 'First Name',
                   icon: '',
                 ),
@@ -59,7 +87,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _lnameController,
+                  focusNode: _focusNode2,
+                  nextFocusNode: _focusNode3,
                   hintText: 'Last Name',
                   icon: '',
                 ),
@@ -77,7 +107,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _expertiseController,
+                  focusNode: _focusNode4,
+                  nextFocusNode: _focusNode5,
                   hintText: 'Expertise',
                   icon: '',
                 ),
@@ -85,7 +117,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _locationController,
+                  focusNode: _focusNode5,
+                  nextFocusNode: _focusNode6,
                   hintText: 'Location',
                   icon: '',
                 ),
@@ -93,7 +127,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _feesController,
+                  focusNode: _focusNode6,
+                  nextFocusNode: _focusNode7,
                   hintText: 'Consultation Fee',
                   icon: '',
                 ),
@@ -101,7 +137,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _qualificationController,
+                  focusNode: _focusNode7,
+                  nextFocusNode: _focusNode8,
                   hintText: 'Qualification',
                   icon: '',
                 ),
@@ -109,7 +147,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _medicalCertificateController,
+                  focusNode: _focusNode8,
+                  nextFocusNode: _focusNode9,
                   hintText: 'Attach File of Medical Certificate',
                   icon: 'Assets/icons/attach-icon.svg',
                 ),
@@ -144,7 +184,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   },
                   child: RoundedBorderTextField(
                     isenable: false,
-                    controller: TextEditingController(),
+                    controller: _timeController,
+                    focusNode: _focusNode9,
+                    nextFocusNode: _focusNode10,
                     hintText: 'Select timings',
                     icon: 'Assets/images/calendar.svg',
                   ),

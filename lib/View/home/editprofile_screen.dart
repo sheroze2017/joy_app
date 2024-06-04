@@ -19,7 +19,19 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   String? selectedValue;
 
-  TextEditingController controller = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _timeController =
+      TextEditingController(text: 'May 22,2024 - 10:00 AM to 10:30 AM');
+
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +65,9 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _nameController,
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   hintText: 'Sheroze Rehman',
                   icon: '',
                 ),
@@ -81,7 +95,9 @@ class _EditProfileState extends State<EditProfile> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _locationController,
+                  focusNode: _focusNode4,
+                  nextFocusNode: _focusNode5,
                   hintText: 'Location',
                   icon: '',
                 ),
@@ -89,7 +105,9 @@ class _EditProfileState extends State<EditProfile> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _dobController,
+                  focusNode: _focusNode5,
+                  nextFocusNode: _focusNode6,
                   hintText: 'Date of Birth',
                   icon: 'Assets/images/calendar.svg',
                 ),
