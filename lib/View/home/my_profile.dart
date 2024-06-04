@@ -17,13 +17,19 @@ class MyProfileScreen extends StatelessWidget {
   MyProfileScreen({this.myProfile = false});
   @override
   Widget build(BuildContext context) {
-    List<String> userNames = ['User 1', 'User 2', 'User 3', 'User 4', 'User 5'];
+    List<String> userNames = [
+      'Erina',
+      'Willia',
+      'Millie',
+      'Rachael',
+      'Kate m.'
+    ];
     List<String> userAssets = [
-      'Assets/images/accountcreated.svg',
-      'Assets/images/accountcreated.svg',
-      'Assets/images/accountcreated.svg',
-      'Assets/images/accountcreated.svg',
-      'Assets/images/accountcreated.svg',
+      'https://s3-alpha-sig.figma.com/img/2e2c/f1b6/f441c6f28c3b0e1e0eb4863eb80b7401?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OyHaSwq3RQUwqVyFeX-s0TPwdVl3MyspHk4ha5TuocQQlfrZslhYWSc0Dt6SNY9t8cBucIE9M-yN0wL4hIMWEXnjcUoXiCV0qSnDl0PdCg6csLGUvC54HxbCR13nV9CWzIjXJ1GTEEwezdirXYAo8zxUvxA~NfBU7JSFvNku~xEBKBuiaejwOZBVcCIr-ZugxpQNLEPAfnKBubrSY3OLD3Ab6hS1pt-kZbX55g3efEA7Qea~PVNIYAgyl56P6nWFMYcxOBc560XVAtXCYszZSwyo-pVi1V5lnCW1fAr1xzQ4mAlrDUEQ0AS9RrS~shD4coWqimFOAN2KuBN6k~dMuA__',
+      'https://s3-alpha-sig.figma.com/img/2e2c/f1b6/f441c6f28c3b0e1e0eb4863eb80b7401?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OyHaSwq3RQUwqVyFeX-s0TPwdVl3MyspHk4ha5TuocQQlfrZslhYWSc0Dt6SNY9t8cBucIE9M-yN0wL4hIMWEXnjcUoXiCV0qSnDl0PdCg6csLGUvC54HxbCR13nV9CWzIjXJ1GTEEwezdirXYAo8zxUvxA~NfBU7JSFvNku~xEBKBuiaejwOZBVcCIr-ZugxpQNLEPAfnKBubrSY3OLD3Ab6hS1pt-kZbX55g3efEA7Qea~PVNIYAgyl56P6nWFMYcxOBc560XVAtXCYszZSwyo-pVi1V5lnCW1fAr1xzQ4mAlrDUEQ0AS9RrS~shD4coWqimFOAN2KuBN6k~dMuA__',
+      'https://s3-alpha-sig.figma.com/img/504b/c691/102d8a6217d1fc1f8e79a810b1842a0d?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Yd7Pi3bm~RQDDgnpWNarZdcqX5a-J9FbtvT63l5XLxLN2VSsDsMVn2kT2mb1PsKdZlBieZoJ6XoRVzDA~UkcqvdHMvd35qVGVR26M~DEOLWuWmbAmiCuq6KmQFurraqQxFoVQ9nI1GOJ5daoBF115ufImWcW6APxDftNToo2AszZ55MZssJ1Gxh9z7XoyxPTLuXsnPQ45vZ3bqRS7z20isaNyxI2eX1~6G2B7rFkMPpAv~opNaU9OxxN1NGq~9n-~0dVqZgzAM97ASPb-6h88Toavx4XLF7Mx4bp~RGj~mUdPpuc4hdFJnuGBjemLR1OBK4Ku-3J16V5DuHxXsK3FQ__',
+      'https://s3-alpha-sig.figma.com/img/2e2c/f1b6/f441c6f28c3b0e1e0eb4863eb80b7401?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OyHaSwq3RQUwqVyFeX-s0TPwdVl3MyspHk4ha5TuocQQlfrZslhYWSc0Dt6SNY9t8cBucIE9M-yN0wL4hIMWEXnjcUoXiCV0qSnDl0PdCg6csLGUvC54HxbCR13nV9CWzIjXJ1GTEEwezdirXYAo8zxUvxA~NfBU7JSFvNku~xEBKBuiaejwOZBVcCIr-ZugxpQNLEPAfnKBubrSY3OLD3Ab6hS1pt-kZbX55g3efEA7Qea~PVNIYAgyl56P6nWFMYcxOBc560XVAtXCYszZSwyo-pVi1V5lnCW1fAr1xzQ4mAlrDUEQ0AS9RrS~shD4coWqimFOAN2KuBN6k~dMuA__',
+      'https://s3-alpha-sig.figma.com/img/2e2c/f1b6/f441c6f28c3b0e1e0eb4863eb80b7401?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OyHaSwq3RQUwqVyFeX-s0TPwdVl3MyspHk4ha5TuocQQlfrZslhYWSc0Dt6SNY9t8cBucIE9M-yN0wL4hIMWEXnjcUoXiCV0qSnDl0PdCg6csLGUvC54HxbCR13nV9CWzIjXJ1GTEEwezdirXYAo8zxUvxA~NfBU7JSFvNku~xEBKBuiaejwOZBVcCIr-ZugxpQNLEPAfnKBubrSY3OLD3Ab6hS1pt-kZbX55g3efEA7Qea~PVNIYAgyl56P6nWFMYcxOBc560XVAtXCYszZSwyo-pVi1V5lnCW1fAr1xzQ4mAlrDUEQ0AS9RrS~shD4coWqimFOAN2KuBN6k~dMuA__',
     ];
     return Scaffold(
       appBar: HomeAppBar(
@@ -58,79 +64,91 @@ class MyProfileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                Container(
+                  height: 45.w,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            width: 100.w,
+                            height: 23.58.w,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xffF3F4F6)),
+                                color: Color(0xffFAFAFA),
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 4.w,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '1K',
+                                      style:
+                                          CustomTextStyles.darkHeadingTextStyle(
+                                              color: Color(0xff000000),
+                                              size: 15.41),
+                                    ),
+                                    Text(
+                                      'Posts',
+                                      style: CustomTextStyles.lightTextStyle(
+                                          color: Color(0xff000000),
+                                          size: 13.21),
+                                    )
+                                  ],
+                                ),
+                                Spacer(),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '2000',
+                                      style:
+                                          CustomTextStyles.darkHeadingTextStyle(
+                                              color: Color(0xff000000),
+                                              size: 15.41),
+                                    ),
+                                    Text(
+                                      'Friends',
+                                      style: CustomTextStyles.lightTextStyle(
+                                          color: Color(0xff000000),
+                                          size: 13.21),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 4.w,
+                                ),
+                              ],
+                            ),
+                          )),
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Column(
                           children: [
+                            CircleAvatar(
+                                radius: 65,
+                                backgroundImage:
+                                    AssetImage('Assets/images/onboard3.png')),
                             SizedBox(
                               height: 1.h,
                             ),
                             Text(
-                              '1K',
+                              'Sheroze Rehman',
                               style: CustomTextStyles.darkHeadingTextStyle(
-                                  color: Color(0xff000000), size: 15.41),
-                            ),
-                            SizedBox(
-                              height: 0.5.h,
-                            ),
-                            Text(
-                              'Posts',
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: Color(0xff000000), size: 13.21),
+                                  size: 14),
                             )
                           ],
                         ),
-                        SizedBox(
-                          width: 2.w,
-                        ),
-                        Center(
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                  radius: 65,
-                                  backgroundImage:
-                                      AssetImage('Assets/images/onboard3.png')),
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                              Text(
-                                'Sheroze Rehman',
-                                style: CustomTextStyles.darkHeadingTextStyle(
-                                    size: 14),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: 2.w,
-                        ),
-                        Column(
-                          children: [
-                            SizedBox(
-                              height: 1.h,
-                            ),
-                            Text(
-                              '2000',
-                              style: CustomTextStyles.darkHeadingTextStyle(
-                                  color: Color(0xff000000), size: 15.41),
-                            ),
-                            SizedBox(
-                              height: 0.5.h,
-                            ),
-                            Text(
-                              'Friends',
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: Color(0xff000000), size: 13.21),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 ),
                 SizedBox(
@@ -391,7 +409,7 @@ class UserSlider extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 28,
-                  backgroundImage: AssetImage(userAssets[index]),
+                  backgroundImage: NetworkImage(userAssets[index]),
                 ),
                 SizedBox(height: 1.h),
                 Text(userNames[index],
@@ -411,7 +429,6 @@ class CircleButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String img;
   bool isActive;
-  
 
   CircleButton(
       {Key? key,
