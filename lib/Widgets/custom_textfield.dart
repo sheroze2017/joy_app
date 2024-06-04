@@ -8,13 +8,19 @@ class RoundedBorderTextField extends StatelessWidget {
   final String icon;
   final bool maxlines;
   bool isenable;
+  FocusNode? focusNode;
+  FocusNode? nextFocusNode;
+  TextInputType textInputType;
 
   RoundedBorderTextField(
       {required this.controller,
       required this.hintText,
       required this.icon,
+      this.focusNode,
+      this.nextFocusNode,
       this.maxlines = false,
-      this.isenable = true});
+      this.isenable = true,
+      this.textInputType = TextInputType.text});
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +41,8 @@ class RoundedBorderTextField extends StatelessWidget {
             SizedBox(width: 8.0),
             Expanded(
               child: TextField(
+                keyboardType: textInputType,
+                focusNode: focusNode,
                 enabled: isenable,
                 style:
                     CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
@@ -47,6 +55,10 @@ class RoundedBorderTextField extends StatelessWidget {
                       CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
                   border: InputBorder.none,
                 ),
+                onSubmitted: (value) {
+                  focusNode!.unfocus();
+                  FocusScope.of(context).requestFocus(nextFocusNode);
+                },
               ),
             ),
           ],

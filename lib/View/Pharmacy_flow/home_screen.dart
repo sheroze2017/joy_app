@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
-import 'package:joy_app/view/Pharmacy_flow/order_screen.dart';
+import 'package:joy_app/view/pharmacy_flow/order_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';

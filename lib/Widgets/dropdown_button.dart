@@ -1,63 +1,57 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:joy_app/styles/custom_textstyle.dart';
 
-class RoundedBorderDropdown extends StatelessWidget {
+const List<Job> _list = [
+  Job('Developer', Icons.developer_mode),
+  Job('Designer', Icons.design_services),
+  Job('Consultant', Icons.account_balance),
+  Job('Student', Icons.school),
+];
+
+class SearchDropdown extends StatelessWidget {
   final String? value;
   final List<String> items;
   final ValueChanged<String?> onChanged;
   final String hintText;
   final String icon;
-
-  RoundedBorderDropdown({
+  FocusNode? focusNode;
+  FocusNode? nextFocusNode;
+  SearchDropdown({
     required this.value,
     required this.items,
     required this.onChanged,
     required this.hintText,
     required this.icon,
+    this.focusNode,
+    this.nextFocusNode,
   });
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
+    return CustomDropdown.multiSelectSearch(
+      decoration: CustomDropdownDecoration(
+        closedFillColor: Color(0xffF9FAFB),
+        closedBorder: Border.all(
           color: const Color(0xffD1D5DB),
           width: 1.0,
         ),
-        color: Color(0xffF9FAFB),
+        closedBorderRadius: BorderRadius.circular(8.0),
       ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Row(
-          children: [
-            SizedBox(width: 8.0),
-            Expanded(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: value,
-                  onChanged: onChanged,
-                  items: items.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: CustomTextStyles.lightTextStyle(
-                            color: Color(0xff9CA3AF)),
-                      ),
-                    );
-                  }).toList(),
-                  hint: Text(
-                    hintText,
-                    style: CustomTextStyles.lightTextStyle(
-                        color: Color(0xff9CA3AF)),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      hintText: hintText,
+      items: items,
+      onListChanged: (value) {
+        print('changing value to: $value');
+      },
     );
+  }
+}
+
+class Job {
+  final String name;
+  final IconData icon;
+  const Job(this.name, this.icon);
+
+  @override
+  String toString() {
+    return name;
   }
 }

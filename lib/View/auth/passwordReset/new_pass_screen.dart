@@ -10,7 +10,12 @@ import 'package:sizer/sizer.dart';
 import '../../../Widgets/appbar.dart';
 
 class NewPassScreen extends StatelessWidget {
-  const NewPassScreen({super.key});
+  NewPassScreen({super.key});
+
+  final TextEditingController _oldPass = TextEditingController();
+  final TextEditingController _newPass = TextEditingController();
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +54,17 @@ class NewPassScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _oldPass,
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   hintText: 'New Password',
                   icon: 'Assets/images/lock.svg',
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _newPass,
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   hintText: 'Confirm Password',
                   icon: 'Assets/images/lock.svg',
                 ),

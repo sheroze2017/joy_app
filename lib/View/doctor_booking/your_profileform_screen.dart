@@ -18,12 +18,27 @@ class ProfileFormScreen extends StatefulWidget {
 class _FormScreenState extends State<ProfileFormScreen> {
   String? selectedValue;
 
-  TextEditingController controller = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _complainController = TextEditingController();
+  final TextEditingController _symptomsController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _medicalCertificateController =
+      TextEditingController();
 
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode7 = FocusNode();
+  final FocusNode _focusNode8 = FocusNode();
+  final FocusNode _focusNode9 = FocusNode();
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
-
     return Scaffold(
       appBar: HomeAppBar(
         title: 'Fill Your Profile',
@@ -50,7 +65,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   height: 4.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
+                  controller: _nameController,
                   hintText: 'Patient Name',
                   icon: '',
                 ),
@@ -58,7 +75,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode2,
+                  nextFocusNode: _focusNode3,
+                  controller: _ageController,
                   hintText: 'Age',
                   icon: '',
                 ),
@@ -66,7 +85,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode3,
+                  nextFocusNode: _focusNode4,
+                  controller: _genderController,
                   hintText: 'Gender',
                   icon: '',
                 ),
@@ -80,7 +101,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   height: 1.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode4,
+                  nextFocusNode: _focusNode5,
+                  controller: _complainController,
                   hintText: 'Depression, Anxiety',
                   icon: '',
                 ),
@@ -94,7 +117,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   height: 1.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode5,
+                  nextFocusNode: _focusNode6,
+                  controller: _symptomsController,
                   hintText:
                       'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur',
                   icon: '',
@@ -103,7 +128,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode6,
+                  nextFocusNode: _focusNode7,
+                  controller: _locationController,
                   hintText: 'Location',
                   icon: '',
                 ),
@@ -111,7 +138,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode7,
+                  nextFocusNode: _focusNode8,
+                  controller: _timeController,
                   hintText: 'May 22,2024 - 10:00 AM to 10:30 AM',
                   icon: '',
                 ),
@@ -119,7 +148,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode8,
+                  nextFocusNode: _focusNode9,
+                  controller: _medicalCertificateController,
                   hintText: 'Upload Medical Certificate',
                   icon: 'Assets/icons/attach-icon.svg',
                 ),

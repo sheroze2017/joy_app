@@ -16,7 +16,17 @@ class BloodBankFormScreen extends StatefulWidget {
 
 class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
   String? selectedValue;
-
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _availabilityController = TextEditingController();
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode7 = FocusNode();
   TextEditingController controller = TextEditingController();
 
   @override
@@ -51,7 +61,9 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                   ],
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
+                  controller: _nameController,
                   hintText: 'Blood Bank Name',
                   icon: '',
                 ),
@@ -59,7 +71,9 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode2,
+                  nextFocusNode: _focusNode3,
+                  controller: _contactController,
                   hintText: 'Contact',
                   icon: '',
                 ),
@@ -67,7 +81,9 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode3,
+                  nextFocusNode: _focusNode4,
+                  controller: _locationController,
                   hintText: 'Location',
                   icon: '',
                 ),
@@ -101,8 +117,10 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                     });
                   },
                   child: RoundedBorderTextField(
+                    focusNode: _focusNode5,
+                    nextFocusNode: _focusNode6,
                     isenable: false,
-                    controller: TextEditingController(),
+                    controller: _availabilityController,
                     hintText: 'Availability',
                     icon: '',
                   ),

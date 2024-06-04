@@ -1,9 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/view/Signup/signup_screen.dart';
-import 'package:joy_app/view/Signup/passwordReset/forgot_pass_screen.dart';
+import 'package:joy_app/view/auth/signup_screen.dart';
+import 'package:joy_app/view/auth/passwordReset/forgot_pass_screen.dart';
 import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/view/social_media/chats.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
@@ -25,6 +26,23 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void changeFocus(
+      FocusNode currentFocus, nextFocus, TextEditingController controller) {
+    if (currentFocus.hasFocus) {
+      currentFocus.unfocus();
+      FocusScope.of(context).requestFocus(nextFocus);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,12 +87,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
-                  controller: _emailController,
-                  hintText: 'Your Email',
-                  icon: 'Assets/images/sms.svg',
-                ),
+                    focusNode: _focusNode1,
+                    nextFocusNode: _focusNode2,
+                    controller: _emailController,
+                    hintText: 'Your Email',
+                    icon: 'Assets/images/sms.svg',
+                    textInputType: TextInputType.emailAddress),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
+                  focusNode: _focusNode2,
                   controller: _passwordController,
                   hintText: 'Your Password',
                   icon: 'Assets/images/lock.svg',

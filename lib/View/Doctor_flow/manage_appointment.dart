@@ -21,6 +21,18 @@ class ManageAppointment extends StatefulWidget {
 
 class _ManageAppointmentState extends State<ManageAppointment> {
   bool showPatientHistory = false;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _daignosisController = TextEditingController(
+      text:
+          'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur');
+  final TextEditingController _prescriptionController = TextEditingController(
+      text:
+          'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur');
+
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +73,10 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                             bgColor: AppColors.lightishBlueColor5ff,
                             isActive: false,
                             imgPath: 'Assets/images/oldPerson.png',
-                            name: '',
-                            time: '',
-                            location: '',
-                            category: '',
+                            name: 'James',
+                            time: '22:30 Am - 23:00 Am',
+                            location: 'Imam Hospital',
+                            category: 'Cardiology',
                           ),
                         ),
                         Padding(
@@ -78,10 +90,10 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                               bgColor: AppColors.lightishBlueColor5ff,
                               isActive: false,
                               imgPath: 'Assets/images/oldPerson.png',
-                              name: '',
-                              time: '',
-                              location: '',
-                              category: '',
+                              name: 'James',
+                              time: '22:30 Am - 23:00 Am',
+                              location: 'Imam Hospital',
+                              category: 'Cardiology',
                             ),
                           ),
                         ),
@@ -94,10 +106,10 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                             bgColor: AppColors.lightishBlueColor5ff,
                             isActive: false,
                             imgPath: 'Assets/images/oldPerson.png',
-                            name: '',
-                            time: '',
-                            location: '',
-                            category: '',
+                            name: 'James',
+                            time: '22:30 Am - 23:00 Am',
+                            location: 'Imam Hospital',
+                            category: 'Cardiology',
                           ),
                         ),
                       ],
@@ -136,7 +148,9 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                               color: Color(0xff3D4859)),
                         ),
                         RoundedBorderTextField(
-                            controller: TextEditingController(),
+                            controller: _nameController,
+                            focusNode: _focusNode1,
+                            nextFocusNode: _focusNode2,
                             hintText: 'James Robinson',
                             icon: ''),
                         SizedBox(
@@ -148,10 +162,10 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                               color: Color(0xff3D4859)),
                         ),
                         RoundedBorderTextField(
+                            focusNode: _focusNode2,
+                            nextFocusNode: _focusNode3,
                             maxlines: true,
-                            controller: TextEditingController(
-                                text:
-                                    'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur'),
+                            controller: _daignosisController,
                             hintText:
                                 'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur',
                             icon: ''),
@@ -164,13 +178,13 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                               color: Color(0xff3D4859)),
                         ),
                         RoundedBorderTextField(
-                            maxlines: true,
-                            controller: TextEditingController(
-                                text:
-                                    'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur'),
-                            hintText:
-                                'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur',
-                            icon: ''),
+                          focusNode: _focusNode3,
+                          nextFocusNode: _focusNode4,
+                          maxlines: true,
+                          hintText: 'Medication Prescription',
+                          controller: _prescriptionController,
+                          icon: '',
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20.0, vertical: 12),

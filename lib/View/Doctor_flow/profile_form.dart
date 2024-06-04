@@ -6,6 +6,7 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/view/auth/profileform_screen.dart';
 import 'package:sizer/sizer.dart';
 
 class DoctorFormScreen extends StatefulWidget {
@@ -22,8 +23,6 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
-
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Fill Your Profile',
@@ -67,16 +66,12 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                 SizedBox(
                   height: 2.h,
                 ),
-                RoundedBorderDropdown(
-                  value: selectedValue,
-                  items: ['Male', 'Female'],
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedValue = newValue;
-                    });
-                  },
+                SearchDropdown(
                   hintText: 'Gender',
-                  icon: '', // Path to your icon
+                  items: ['Male', 'Female'],
+                  value: '',
+                  onChanged: (String? value) {},
+                  icon: '',
                 ),
                 SizedBox(
                   height: 2.h,

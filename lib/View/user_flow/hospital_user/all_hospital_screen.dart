@@ -3,7 +3,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
-import 'package:joy_app/view/Pharmacy_flow/product_screen.dart';
+import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/view/hospital_flow/home_screen.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';

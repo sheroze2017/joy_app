@@ -1,3 +1,4 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/appbar.dart';
@@ -5,20 +6,27 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
-import 'package:joy_app/styles/colors.dart';
-import 'package:joy_app/view/auth/profileform_screen.dart';
 import 'package:sizer/sizer.dart';
 
-class AddMedicine extends StatefulWidget {
-  AddMedicine({super.key});
+class FormScreen extends StatefulWidget {
+  FormScreen({super.key});
 
   @override
-  State<AddMedicine> createState() => _AddMedicineState();
+  State<FormScreen> createState() => _FormScreenState();
 }
 
-class _AddMedicineState extends State<AddMedicine> {
+class _FormScreenState extends State<FormScreen> {
   String? selectedValue;
-
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+  final FocusNode _focusNode5 = FocusNode();
+  final FocusNode _focusNode6 = FocusNode();
+  final FocusNode _focusNode7 = FocusNode();
   TextEditingController controller = TextEditingController();
 
   @override
@@ -27,12 +35,13 @@ class _AddMedicineState extends State<AddMedicine> {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Add Product',
+        title: 'Fill Your Profile',
         icon: Icons.arrow_back_sharp,
         onPressed: () {},
       ),
       body: SingleChildScrollView(
         child: Container(
+          color: Color(0xffFFFFFF),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
@@ -45,32 +54,35 @@ class _AddMedicineState extends State<AddMedicine> {
                           SvgPicture.asset('Assets/images/profile-circle.svg'),
                     ),
                     Positioned(
-                      bottom: 30,
-                      right: 105,
+                      bottom: 20,
+                      right: 100,
                       child: SvgPicture.asset('Assets/images/message-edit.svg'),
                     ),
                   ],
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
-                  hintText: 'Product Name',
-                  icon: '',
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                RoundedBorderTextField(
-                  maxlines: true,
-                  controller: TextEditingController(),
-                  hintText: 'Description',
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
+                  controller: _nameController,
+                  hintText: 'Sheroze Rehman',
                   icon: '',
                 ),
                 SizedBox(
                   height: 2.h,
                 ),
                 SearchDropdown(
-                  hintText: 'Select Category',
-                  items: [''],
+                  hintText: 'Disease',
+                  items: [],
+                  value: '',
+                  onChanged: (String? value) {},
+                  icon: '',
+                ),
+                SizedBox(
+                  height: 2.h,
+                ),
+                SearchDropdown(
+                  hintText: 'Gender',
+                  items: ['Male', 'Female'],
                   value: '',
                   onChanged: (String? value) {},
                   icon: '',
@@ -79,33 +91,21 @@ class _AddMedicineState extends State<AddMedicine> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  focusNode: _focusNode4,
+                  nextFocusNode: _focusNode5,
+                  controller: _locationController,
+                  hintText: 'Location',
+                  icon: '',
+                ),
+                SizedBox(
+                  height: 2.h,
+                ),
+                RoundedBorderTextField(
+                  focusNode: _focusNode5,
+                  nextFocusNode: _focusNode6,
+                  controller: _dobController,
                   hintText: 'Date of Birth',
                   icon: 'Assets/images/calendar.svg',
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                RoundedBorderTextField(
-                  controller: TextEditingController(),
-                  hintText: 'Dosage',
-                  icon: '',
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                RoundedBorderTextField(
-                  controller: TextEditingController(),
-                  hintText: 'Stock',
-                  icon: '',
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                RoundedBorderTextField(
-                  controller: TextEditingController(),
-                  hintText: 'Price',
-                  icon: '',
                 ),
                 SizedBox(
                   height: 2.h,
@@ -116,19 +116,19 @@ class _AddMedicineState extends State<AddMedicine> {
                       child: RoundedButton(
                           text: 'Save',
                           onPressed: () {
-                            // showDialog(
-                            //   context: context,
-                            //   builder: (BuildContext context) {
-                            //     return CustomDialog(
-                            //       showButton: true,
-                            //       title: 'Congratulations!',
-                            //       content:
-                            //           'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                            //     );
-                            //   },
-                            // );
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomDialog(
+                                  showButton: true,
+                                  title: 'Congratulations!',
+                                  content:
+                                      'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                );
+                              },
+                            );
                           },
-                          backgroundColor: AppColors.darkGreenColor,
+                          backgroundColor: Color(0xff1C2A3A),
                           textColor: Color(0xffFFFFFF)),
                     ),
                   ],

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/auth/profileform_screen.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/custom_textfield.dart';
@@ -59,30 +60,22 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(
                   height: 2.h,
                 ),
-                RoundedBorderDropdown(
-                  value: selectedValue,
-                  items: dropdownItems,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedValue = newValue;
-                    });
-                  },
+                SearchDropdown(
                   hintText: 'Disease',
-                  icon: '', // Path to your icon
+                  items: [],
+                  value: '',
+                  onChanged: (String? value) {},
+                  icon: '',
                 ),
                 SizedBox(
                   height: 2.h,
                 ),
-                RoundedBorderDropdown(
-                  value: selectedValue,
-                  items: dropdownItems,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedValue = newValue;
-                    });
-                  },
+                SearchDropdown(
                   hintText: 'Gender',
-                  icon: '', // Path to your icon
+                  items: ['Male', 'Female'],
+                  value: '',
+                  onChanged: (String? value) {},
+                  icon: '',
                 ),
                 SizedBox(
                   height: 2.h,

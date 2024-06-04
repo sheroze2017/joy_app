@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/view/Signup/passwordReset/verify_code_screen.dart';
+import 'package:joy_app/view/auth/passwordReset/verify_code_screen.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -9,7 +9,8 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 class ForgotPassScreen extends StatelessWidget {
-  const ForgotPassScreen({super.key});
+  ForgotPassScreen({super.key});
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class ForgotPassScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 RoundedBorderTextField(
-                  controller: TextEditingController(),
+                  controller: _passwordController,
                   hintText: 'Your Email',
                   icon: 'Assets/images/sms.svg',
                 ),

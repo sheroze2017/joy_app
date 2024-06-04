@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/view/doctor_flow/profile_form.dart';
-import 'package:joy_app/view/Pharmacy_flow/home_screen.dart';
-import 'package:joy_app/view/Signup/login_screen.dart';
+import 'package:joy_app/view/pharmacy_flow/home_screen.dart';
+import 'package:joy_app/view/auth/login_screen.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/hospital_flow/profile_form.dart';
 import 'package:sizer/sizer.dart';
 
-import '../Pharmacy_flow/profile_form.dart';
+import '../pharmacy_flow/profile_form.dart';
 import '../bloodbank_flow/home_screen.dart';
 import '../bloodbank_flow/profile_form.dart';
 import 'profileform_screen.dart';
@@ -24,6 +24,14 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final FocusNode _focusNode3 = FocusNode();
+  final FocusNode _focusNode4 = FocusNode();
+
   String selectedButton = "";
   int? selectedFieldValue;
   @override
@@ -56,18 +64,23 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
+                  focusNode: _focusNode1,
+                  nextFocusNode: _focusNode2,
                   controller: TextEditingController(),
                   hintText: 'Your Name',
                   icon: 'Assets/images/user.svg',
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
+                  focusNode: _focusNode2,
+                  nextFocusNode: _focusNode3,
                   controller: TextEditingController(),
                   hintText: 'Your Email',
                   icon: 'Assets/images/sms.svg',
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
+                  focusNode: _focusNode3,
                   controller: TextEditingController(),
                   hintText: 'Your Password',
                   icon: 'Assets/images/lock.svg',

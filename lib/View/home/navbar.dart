@@ -6,8 +6,8 @@ import 'package:joy_app/view/bloodbank_flow/home_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
 import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
-import 'package:joy_app/view/Pharmacy_flow/product_screen.dart';
-import 'package:joy_app/view/Signup/signup_screen.dart';
+import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
+import 'package:joy_app/view/auth/signup_screen.dart';
 import 'package:joy_app/view/home/blog_screen.dart';
 import 'package:joy_app/view/home/home_screen.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
@@ -19,7 +19,7 @@ import 'package:joy_app/view/social_media/add_friend.dart';
 import 'package:joy_app/controller/navbar_controller.dart';
 import 'package:joy_app/styles/colors.dart';
 
-import '../Pharmacy_flow/home_screen.dart';
+import '../pharmacy_flow/home_screen.dart';
 
 class NavBarScreen extends StatefulWidget {
   final bool? isDoctor;
