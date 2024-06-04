@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/view/social_media/add_friend.dart';
 import 'package:joy_app/view/social_media/direct_chat.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/custom_appbar.dart';
+import 'add_friend.dart';
 import 'new_friend.dart';
 
 class AllChats extends StatelessWidget {

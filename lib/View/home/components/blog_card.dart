@@ -5,7 +5,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
-class MyCustomWidget extends StatelessWidget {
+class MyCustomWidget extends StatefulWidget {
   bool? isReply;
   bool? showImg;
   String postName;
@@ -24,6 +24,12 @@ class MyCustomWidget extends StatelessWidget {
       this.recentName = '',
       this.isLiked = false,
       this.postName = ''});
+
+  @override
+  State<MyCustomWidget> createState() => _MyCustomWidgetState();
+}
+
+class _MyCustomWidgetState extends State<MyCustomWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -41,7 +47,7 @@ class MyCustomWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  postName.toString(),
+                  widget.postName.toString(),
                   style: CustomTextStyles.w600TextStyle(
                       letterspacing: 0.5,
                       size: 13.21,
@@ -63,16 +69,16 @@ class MyCustomWidget extends StatelessWidget {
             )
           ],
         ),
-        SizedBox(height: 1.h), // Adjust as needed
+        SizedBox(height: 1.h),
         Text(
-          text.toString(),
+          widget.text.toString(),
           style: CustomTextStyles.lightTextStyle(
               color: Color(0xff2D3F7B), size: 11.56),
         ),
-        SizedBox(height: 1.h), // Adjust as needed
-        showImg == true
+        SizedBox(height: 1.h),
+        widget.showImg == true
             ? Container(
-                height: 200, // Adjust as needed
+                height: 200,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
@@ -83,13 +89,19 @@ class MyCustomWidget extends StatelessWidget {
                 ),
               )
             : Container(),
-        SizedBox(height: 10), // Adjust as needed
+        SizedBox(height: 2.h), // Adjust as needed
         Row(
           children: [
-            CircleButton(
-              isActive: isLiked,
-              img: 'Assets/images/like.png',
-              color: isLiked ? Color(0XFF1C2A3A) : Color(0xFFF9FAFB),
+            InkWell(
+              onTap: () {
+                widget.isLiked = !widget.isLiked;
+                setState(() {});
+              },
+              child: CircleButton(
+                isActive: widget.isLiked,
+                img: 'Assets/images/like.png',
+                color: widget.isLiked ? Color(0XFF1C2A3A) : Color(0xFFF9FAFB),
+              ),
             ),
             SizedBox(width: 10), // Adjust as needed
             CircleButton(
@@ -115,7 +127,7 @@ class MyCustomWidget extends StatelessWidget {
         SizedBox(
           height: 1.5.h,
         ),
-        isReply == true
+        widget.isReply == true
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

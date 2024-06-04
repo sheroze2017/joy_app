@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
-import 'package:joy_app/widgets/custom_appbar.dart';
+import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
 
 import 'component/donors_card.dart';

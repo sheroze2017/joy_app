@@ -5,8 +5,11 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 
 class MultiTimeSelector extends StatefulWidget {
   final List<String> times;
+  final void Function(List<String>) onConfirm;
 
-  const MultiTimeSelector({Key? key, required this.times}) : super(key: key);
+  const MultiTimeSelector(
+      {Key? key, required this.times, required this.onConfirm})
+      : super(key: key);
 
   @override
   _MultiTimeSelectorState createState() => _MultiTimeSelectorState();
@@ -64,6 +67,8 @@ class _MultiTimeSelectorState extends State<MultiTimeSelector> {
               child: RoundedButton(
                   text: "Confirm",
                   onPressed: () {
+                    // Pass selected times to the callback function
+                    widget.onConfirm(selectedTimes);
                     Navigator.pop(context);
                   },
                   backgroundColor: Color(0xff1C2A3A),

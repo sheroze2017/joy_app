@@ -411,6 +411,7 @@ class CircleButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String img;
   bool isActive;
+  
 
   CircleButton(
       {Key? key,
@@ -432,9 +433,12 @@ class CircleButton extends StatelessWidget {
           color: color,
         ),
         child: Center(
-          child: Image.asset(
-            img,
-            color: isActive ? AppColors.whiteColor : Color(0xff1C2A3A),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              img,
+              color: isActive ? AppColors.whiteColor : Color(0xff1C2A3A),
+            ),
           ),
         ),
       ),

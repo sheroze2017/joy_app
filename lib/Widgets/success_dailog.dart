@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/view/home/navbar.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/review_screen.dart';
+import 'package:joy_app/widgets/rounded_button.dart';
+
 import 'package:sizer/sizer.dart';
 
 // ignore: must_be_immutable
@@ -23,6 +24,7 @@ class CustomDialog extends StatelessWidget {
   bool? isDoctorAppointment;
   bool? isHospitalForm;
   bool isBloodRequest;
+  bool isUser;
   CustomDialog(
       {super.key,
       required this.title,
@@ -36,6 +38,7 @@ class CustomDialog extends StatelessWidget {
       this.isBloodBankForm = false,
       this.isPharmacyForm = false,
       this.isHospitalForm = false,
+      this.isUser = false,
       this.isBloodRequest = false});
   @override
   Widget build(BuildContext context) {
@@ -100,7 +103,7 @@ class CustomDialog extends StatelessWidget {
                                             isPharmacy: isPharmacyForm,
                                             isDoctor: isDoctorForm,
                                             isHospital: isHospitalForm,
-                                          ));
+                                            isUser: isUser));
                               },
                               backgroundColor: buttonColor != null
                                   ? Color(0xff1C2A3A)

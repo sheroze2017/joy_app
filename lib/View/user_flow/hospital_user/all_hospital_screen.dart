@@ -10,7 +10,7 @@ import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/user_flow/bloodbank_user/blood_donation_appeal.dart';
-import 'package:joy_app/widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../bloodbank_flow/blood_appeal_screen.dart';

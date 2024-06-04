@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/view/home/profile_screen.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -8,6 +9,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../Widgets/appbar.dart';
+import '../utils/auth_utils.dart';
 
 class NewPassScreen extends StatelessWidget {
   NewPassScreen({super.key});
@@ -16,6 +18,8 @@ class NewPassScreen extends StatelessWidget {
   final TextEditingController _newPass = TextEditingController();
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -26,64 +30,79 @@ class NewPassScreen extends StatelessWidget {
           onPressed: () {
             Get.back();
           }),
-      body: SingleChildScrollView(
-        child: Container(
-          color: Color(0xffFFFFFF),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: SvgPicture.asset(
-                    'Assets/images/Logo.svg',
-                  ),
-                ),
-                Text(
-                  "Create new password",
-                  style: CustomTextStyles.darkTextStyle(),
-                ),
-                SizedBox(height: 2.h),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(
-                    "Your new password must be different form previously used password",
-                    style: CustomTextStyles.lightTextStyle(),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                RoundedBorderTextField(
-                  controller: _oldPass,
-                  focusNode: _focusNode1,
-                  nextFocusNode: _focusNode2,
-                  hintText: 'New Password',
-                  icon: 'Assets/images/lock.svg',
-                ),
-                SizedBox(height: 2.h),
-                RoundedBorderTextField(
-                  controller: _newPass,
-                  focusNode: _focusNode1,
-                  nextFocusNode: _focusNode2,
-                  hintText: 'Confirm Password',
-                  icon: 'Assets/images/lock.svg',
-                ),
-                SizedBox(height: 3.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: RoundedButton(
-                          text: "Reset Password",
-                          onPressed: () {
-                            Get.to(ProfileScreen());
-                          },
-                          backgroundColor: Color(0xff1C2A3A),
-                          textColor: Color(0xffFFFFFF)),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Container(
+            color: Color(0xffFFFFFF),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: SvgPicture.asset(
+                      'Assets/images/Logo.svg',
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  Text(
+                    "Create new password",
+                    style: CustomTextStyles.darkTextStyle(),
+                  ),
+                  SizedBox(height: 2.h),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      "Your new password must be different form previously used password",
+                      style: CustomTextStyles.lightTextStyle(),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  RoundedBorderTextField(
+                    validator: (value) {
+                      if (value!.isEmpty || value == null) {
+                        return 'Please enter password';
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: _oldPass,
+                    focusNode: _focusNode1,
+                    nextFocusNode: _focusNode2,
+                    hintText: 'New Password',
+                    icon: 'Assets/images/lock.svg',
+                  ),
+                  SizedBox(height: 2.h),
+                  RoundedBorderTextField(
+                    validator: (value) =>
+                        validatePasswordMatch(_oldPass.text, value),
+                    controller: _newPass,
+                    focusNode: _focusNode2,
+                    hintText: 'Confirm Password',
+                    icon: 'Assets/images/lock.svg',
+                  ),
+                  SizedBox(height: 3.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: RoundedButton(
+                            text: "Reset Password",
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              if (!_formKey.currentState!.validate()) {
+                              } else {
+                                Get.to(NavBarScreen(isUser: true));
+                              }
+                            },
+                            backgroundColor: Color(0xff1C2A3A),
+                            textColor: Color(0xffFFFFFF)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

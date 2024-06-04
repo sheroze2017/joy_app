@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 
 class RoundedBorderTextField extends StatelessWidget {
@@ -27,47 +28,66 @@ class RoundedBorderTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: const Color(0xffD1D5DB),
-          width: 1.0,
+    return TextFormField(
+      validator: validator,
+      keyboardType: textInputType,
+      focusNode: focusNode,
+      enabled: isenable,
+      style: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
+      cursorColor: const Color(0xffD1D5DB),
+      maxLines: maxlines == false ? 1 : null,
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: Color(0xffD1D5DB),
+            width: 1.0,
+          ),
         ),
-        color: Color(0xffF9FAFB),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Row(
-          children: [
-            SvgPicture.asset(icon),
-            SizedBox(width: 8.0),
-            Expanded(
-              child: TextFormField(
-                validator: validator,
-                keyboardType: textInputType,
-                focusNode: focusNode,
-                enabled: isenable,
-                style:
-                    CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
-                cursorColor: const Color(0xffD1D5DB),
-                maxLines: maxlines == false ? 1 : null,
-                controller: controller,
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  hintStyle:
-                      CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
-                  border: InputBorder.none,
-                ),
-                onFieldSubmitted: (value) {
-                  focusNode!.unfocus();
-                  FocusScope.of(context).requestFocus(nextFocusNode);
-                },
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: Color(0xffD1D5DB),
+            width: 1.0,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: Color(0xffD1D5DB),
+            width: 1.0,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: AppColors.redColor,
+            width: 1.0,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: AppColors.redColor,
+            width: 1.0,
+          ),
+        ),
+        prefixIcon: icon.isEmpty
+            ? null
+            : Padding(
+                padding: EdgeInsets.all(12.0),
+                child: SvgPicture.asset(icon),
               ),
-            ),
-          ],
-        ),
+        filled: true,
+        fillColor: Color(0xffF9FAFB),
       ),
+      onFieldSubmitted: (value) {
+        focusNode!.unfocus();
+        FocusScope.of(context).requestFocus(nextFocusNode);
+      },
     );
   }
 }

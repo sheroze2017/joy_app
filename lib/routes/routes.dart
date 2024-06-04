@@ -1,9 +1,8 @@
 import 'package:get/get.dart';
 import 'package:joy_app/view/auth/login_screen.dart';
 import 'package:joy_app/view/auth/signup_screen.dart';
+import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
-
-import '../view/home/navbar.dart';
 
 class AppPage {
   static List<GetPage> routes = [

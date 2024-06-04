@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/view/hospital_flow/home_screen.dart';
-import 'package:joy_app/view/social_media/new_friend.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
-import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
-import 'package:joy_app/widgets/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HosipitalCardWidget extends StatelessWidget {
   String? name;

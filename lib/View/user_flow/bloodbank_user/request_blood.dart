@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/view/user_flow/bloodbank_user/select_timing_screen.dart';
-import 'package:joy_app/widgets/custom_appbar.dart';
-import 'package:joy_app/widgets/custom_textfield.dart';
-import 'package:joy_app/widgets/dropdown_button.dart';
-import 'package:joy_app/widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/Widgets/custom_textfield.dart';
+import 'package:joy_app/Widgets/dropdown_button.dart';
+import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
 class RequestBlood extends StatefulWidget {

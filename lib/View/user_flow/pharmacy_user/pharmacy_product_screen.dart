@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:sizer/sizer.dart';
 
 import '../hospital_user/hospital_detail_screen.dart';
