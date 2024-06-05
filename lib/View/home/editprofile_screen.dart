@@ -4,6 +4,7 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/auth/profileform_screen.dart';
+import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/custom_textfield.dart';
@@ -84,7 +85,7 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(
                   height: 2.h,
                 ),
-                SearchDropdown(
+                SearchSingleDropdown(
                   hintText: 'Gender',
                   items: ['Male', 'Female'],
                   value: '',

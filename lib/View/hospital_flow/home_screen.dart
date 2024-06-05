@@ -240,86 +240,99 @@ class HospitalHomeScreen extends StatelessWidget {
                                 SizedBox(
                                   width: 2.w,
                                 ),
-                                Container(
-                                  width: 51.28.w,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 8, 0, 0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Dr. David Patel',
-                                          style: CustomTextStyles
-                                              .darkHeadingTextStyle(),
-                                        ),
-                                        Divider(
-                                          color: Color(0xff6B7280),
-                                          thickness: 0.05.h,
-                                        ),
-                                        Text(
-                                          'Cardiologist',
-                                          style: CustomTextStyles.w600TextStyle(
-                                              size: 14,
-                                              color: Color(0xff4B5563)),
-                                        ),
-                                        Row(
-                                          children: [
-                                            SvgPicture.asset(
-                                                'Assets/icons/location.svg'),
-                                            SizedBox(
-                                              width: 0.5.w,
-                                            ),
-                                            Text('Cardiology Center, USA',
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        // width: 51.28.w,
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              8, 8, 0, 0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Dr. David Patel',
                                                 style: CustomTextStyles
-                                                    .lightTextStyle(
-                                                        color:
-                                                            Color(0xff4B5563),
-                                                        size: 14))
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            RatingBar.builder(
-                                              itemSize: 15,
-                                              initialRating: 6,
-                                              minRating: 1,
-                                              direction: Axis.horizontal,
-                                              allowHalfRating: true,
-                                              itemCount: 1,
-                                              itemPadding: EdgeInsets.symmetric(
-                                                  horizontal: 0.0),
-                                              itemBuilder: (context, _) => Icon(
-                                                Icons.star,
-                                                color: Colors.amber,
+                                                    .darkHeadingTextStyle(),
                                               ),
-                                              onRatingUpdate: (rating) {
-                                                print(rating);
-                                              },
-                                            ),
-                                            Text('5',
+                                              Divider(
+                                                color: Color(0xff6B7280),
+                                                thickness: 0.05.h,
+                                              ),
+                                              Text(
+                                                'Cardiologist',
                                                 style: CustomTextStyles
-                                                    .lightTextStyle(
+                                                    .w600TextStyle(
+                                                        size: 14,
                                                         color:
-                                                            Color(0xff4B5563),
-                                                        size: 12)),
-                                            SizedBox(
-                                              width: 0.5.w,
-                                            ),
-                                            Text(' | 1,872 Reviews',
-                                                style: CustomTextStyles
-                                                    .lightTextStyle(
-                                                        color:
-                                                            Color(0xff6B7280),
-                                                        size: 10.8)),
-                                          ],
+                                                            Color(0xff4B5563)),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SvgPicture.asset(
+                                                      'Assets/icons/location.svg'),
+                                                  SizedBox(
+                                                    width: 0.5.w,
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(
+                                                        'Cardiology Center, USA',
+                                                        style: CustomTextStyles
+                                                            .lightTextStyle(
+                                                                color: Color(
+                                                                    0xff4B5563),
+                                                                size: 14)),
+                                                  )
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  RatingBar.builder(
+                                                    itemSize: 15,
+                                                    initialRating: 6,
+                                                    minRating: 1,
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: true,
+                                                    itemCount: 1,
+                                                    itemPadding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 0.0),
+                                                    itemBuilder: (context, _) =>
+                                                        Icon(
+                                                      Icons.star,
+                                                      color: Colors.amber,
+                                                    ),
+                                                    onRatingUpdate: (rating) {
+                                                      print(rating);
+                                                    },
+                                                  ),
+                                                  Text('5',
+                                                      style: CustomTextStyles
+                                                          .lightTextStyle(
+                                                              color: Color(
+                                                                  0xff4B5563),
+                                                              size: 12)),
+                                                  SizedBox(
+                                                    width: 0.5.w,
+                                                  ),
+                                                  Text(' | 1,872 Reviews',
+                                                      style: CustomTextStyles
+                                                          .lightTextStyle(
+                                                              color: Color(
+                                                                  0xff6B7280),
+                                                              size: 10.8)),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 )
                               ],
                             ),

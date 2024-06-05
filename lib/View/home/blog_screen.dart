@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/home/components/blog_card.dart';
+import 'package:joy_app/view/social_media/chats.dart';
 import 'package:sizer/sizer.dart';
 
 class UserBlogScreen extends StatelessWidget {
@@ -23,7 +25,11 @@ class UserBlogScreen extends StatelessWidget {
               SvgPicture.asset('Assets/icons/searchbg.svg'),
               Padding(
                 padding: const EdgeInsets.only(right: 16.0, left: 8),
-                child: SvgPicture.asset('Assets/icons/messagebg.svg'),
+                child: InkWell(
+                    onTap: () {
+                      Get.to(AllChats());
+                    },
+                    child: SvgPicture.asset('Assets/icons/messagebg.svg')),
               )
             ],
             showIcon: true),

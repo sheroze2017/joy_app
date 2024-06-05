@@ -24,8 +24,11 @@ class NotificationItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SvgPicture.asset(iconPath),
-          SizedBox(width: 5.w),
+          SvgPicture.asset(
+            iconPath,
+            height: 15.38.w,
+          ),
+          SizedBox(width: 3.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -103,7 +103,7 @@ class BookAppointmentScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: RoundedButton(
+                  child: RoundedButtonSmall(
                       text: "Confirm",
                       onPressed: () {
                         showPaymentBottomSheet(context, true, false);

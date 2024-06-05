@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/controller/theme_controller.dart';
+import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/auth/login_screen.dart';
 import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/view/splash_screen.dart';
 import 'package:joy_app/view/user_flow/bloodbank_user/request_blood.dart';
@@ -30,7 +32,9 @@ class MyApp extends StatelessWidget {
           ),
           // initialRoute: AppPage.getNavbar(),
           //getPages: AppPage.routes,
-          home: SplashScreen()
+          home: NavBarScreen(
+            isUser: true,
+          )
           //initialBinding: YourBinding(),
           );
     });

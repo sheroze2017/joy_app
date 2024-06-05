@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/view/auth/login_screen.dart';
+import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/view/doctor_booking/manage_booking.dart';
 import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
 import 'package:joy_app/view/home/editprofile_screen.dart';
@@ -12,8 +13,8 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({super.key});
-
+  bool isDoctor;
+  ProfileScreen({this.isDoctor = false});
   @override
   State<ProfileScreen> createState() => _FormScreenState();
 }
@@ -71,7 +72,14 @@ class _FormScreenState extends State<ProfileScreen> {
               ),
               InkWell(
                 onTap: () {
-                  Get.to(EditProfile());
+                  widget.isDoctor == true
+                      ? Get.to(DoctorDetailScreen(
+                          docName: 'Dr David Patel',
+                          location: 'USA Cantucky',
+                          Category: 'Cardiologist',
+                          isDoctor: widget.isDoctor,
+                        ))
+                      : Get.to(EditProfile());
                 },
                 child: Row(
                   children: [
@@ -98,7 +106,7 @@ class _FormScreenState extends State<ProfileScreen> {
               ),
               InkWell(
                 onTap: () {
-                  Get.to(NotificationScreen());
+                  Get.to(NotificationScreen(showBackIcon: true));
                 },
                 child: Row(
                   children: [

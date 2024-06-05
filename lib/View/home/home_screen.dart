@@ -23,10 +23,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<String> imageList = [
-    "https://cdn.pixabay.com/photo/2017/12/03/18/04/christmas-balls-2995437_960_720.jpg",
-    "https://cdn.pixabay.com/photo/2017/12/13/00/23/christmas-3015776_960_720.jpg",
-    "https://cdn.pixabay.com/photo/2019/12/19/10/55/christmas-market-4705877_960_720.jpg",
-    "https://cdn.pixabay.com/photo/2019/12/20/00/03/road-4707345_960_720.jpg",
+    'https://s3-alpha-sig.figma.com/img/6e76/389f/b8c80d0899c8c8ea2b2d81ea6e01642f?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=DpT0kQK2-QJ1fDTl2GYU3bYtMinfTzS7G-Mqm1NIsNG~BunVooDsLfpqkyWjuzsHoQhkEVCbeEelvh0ggQZ638a-zj0vQLU5hISjQRW4A0B-GYbYmDrN4YVUUwviLobWWsfB6VZd8JKkDkwyxRpZFtZQrAsdgnbEooOdQ5Bwj9WeUJeMGdjBf42YO2y-0OhHZnDtWwJ7u2B3r~S2Okk-K0L5Jt9EK~zJPPsiU0neTOg1JvwQGnt1vjfiJQ-i15RbtYGQD6U9enZ7Csma6CRrZXsqxHbhX0eNn7dVpKPZAyIbZIaGXOPKITR0r21PBP~BUmc~Df3xq9WkKTkVwHLJgw__',
+    'https://s3-alpha-sig.figma.com/img/9f50/e360/edb80c5d0e9f43d9cc9e7c48030fa945?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=JXIBoKZJ35lb2DkCVCjO5lLx8N0ZBzqMPCA0sumBmu~Z~6ShwyxBMkTk-YRg8NmzX0T-rfaOeiZXQGVhiugfHk1l4-FP7Slk0POX0KJY5cLp9elMAagLh7d789~76mJYxcWeabZBtWOjm6d9yfU0~0tkYWbJ4wGPQnxqXs9XlyVsFLGY97NsuHHGchcHs6I8KWZAauXAISwADSpS7lRKZmq3tJgiSXakLfgoKurjp3CWIcAiymD96F11UatJrYZa2DD5dtnekCtr91Sv5o2sIxeJNv17Ee6rql056c5l7~r3FGoFEiRmMBvY0z4Hyvil4iyTqFqCuK4C4~xN96HoNQ__',
+    'https://s3-alpha-sig.figma.com/img/0b53/b0b9/f213d7dbdf0e01693c868dd621270fcb?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pKMK73X8i32Wc6JFqNHnPxNQ8of-se4bJHmQRUmumKbfOl0RfRgftFjZ4Om0ufmFxEvvt4NAfcRwz5KS~9Cz9XqyHLZU5MStldJ1dx8cIt5QxpExeIxBdaf9ZwOw0ewe5mjeHfmrtIe64rH3KFtfOWBwWmNvAvsYkEb7fm1-wiB440IKp0CbMoZwYPZ-QvP~8xMUCKBps2gSlnI7sUVBoM60gxjlgdmlXbXtBiAtxllm3bkvGCMUGvpvu63TBNbIGZtHCmmp15kiN7YtEyeuyLsuJB531zN6RsuHajVDFYlyW6ZFvgoMI9o7HsN01h2XUAoxyPDvJZbePqLJz2lMfA__'
   ];
 
   List<String>? filePath;
@@ -38,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

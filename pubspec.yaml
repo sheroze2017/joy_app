@@ -94,7 +94,7 @@ flutter:
   fonts:
     - family: Inter
       fonts:
-        - asset: Assets/fonts/Inter-VariableFont_slnt,wght.ttf
+        - asset: Assets/fonts/Inter/Inter.ttf
  
   #
   # For details regarding fonts from package dependencies,

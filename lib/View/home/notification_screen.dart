@@ -5,13 +5,13 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import '../../Widgets/custom_appbar.dart';
 
 class NotificationScreen extends StatelessWidget {
-  const NotificationScreen({super.key});
-
+  bool showBackIcon;
+  NotificationScreen({this.showBackIcon = false});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
-        showIcon: true,
+        showIcon: showBackIcon,
         title: 'Notification',
         actions: [
           Padding(
@@ -42,22 +42,20 @@ class NotificationScreen extends StatelessWidget {
                 date: 'Today',
               ),
               NotificationItem(
-                  iconPath: 'Assets/icons/calendar-edit.svg',
+                  iconPath: 'Assets/icons/calendar-tick.svg',
                   title: 'Alexa texted you',
                   description:
                       'You have successfully booked your appointment with Dr. Emily Walker.',
                   time: '2h'),
               NotificationItem(
-                  iconPath: 'Assets/icons/calendar-edit.svg',
-                  title: 'Alexa texted you',
-                  description:
-                      'You have successfully booked your appointment with Dr. Emily Walker.',
+                  iconPath: 'Assets/icons/calendar-remove.svg',
+                  title: 'Blood Donor Needed Near You',
+                  description: 'A person near you is request blood donation.',
                   time: '2h'),
               NotificationItem(
                   iconPath: 'Assets/icons/calendar-edit.svg',
                   title: 'Alexa texted you',
-                  description:
-                      'You have successfully booked your appointment with Dr. Emily Walker.',
+                  description: 'How’s your day going ?',
                   time: '2h'),
             ],
           ),

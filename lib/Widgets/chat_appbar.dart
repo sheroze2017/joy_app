@@ -16,6 +16,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false, // Remove back arrow icon
       leading: IconButton(
         icon: Icon(Icons.arrow_back_ios),
         onPressed: () {

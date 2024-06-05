@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/chat_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
@@ -13,22 +14,97 @@ class DirectMessageScreen extends StatelessWidget {
       body: Container(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
+          child: Stack(
             children: [
-              MyMessage(
-                message: 'Hi hope you are doing well',
+              ListView.builder(
+                itemCount: 2, // Example message count
+                itemBuilder: (context, index) {
+                  // Replace this with your chat message widget
+                  return Column(
+                    children: [
+                      MyMessage(
+                        message: 'Hi hope you are doing well',
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+                        child: YourMessage(
+                          message:
+                              'Im fine how about you will come tomorrow for meeting',
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: YourMessage(
-                  message:
-                      'Im fine how about you will come tomorrow for meeting',
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset('Assets/icons/camera-2.svg'),
+                      SizedBox(
+                        width: 2.w,
+                      ),
+                      SvgPicture.asset('Assets/icons/gallery.svg'),
+                      SizedBox(
+                        width: 2.w,
+                      ),
+                      SvgPicture.asset('Assets/icons/microphone-2.svg'),
+                      SizedBox(
+                        width: 2.w,
+                      ),
+                      Expanded(
+                          child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 2.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200], // Background color
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Aa',
+                                ),
+                              ),
+                            ),
+                            Image.asset(
+                              'Assets/icons/emoji.png',
+                            ),
+                          ],
+                        ),
+                      )),
+                      SizedBox(width: 3.w),
+                      SvgPicture.asset('Assets/icons/send-2.svg'),
+                    ],
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),
       ),
+      // bottomNavigationBar: Stack(
+      //   alignment: new FractionalOffset(.5, 1.0),
+      //   children: [
+      //     Padding(
+      //       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6),
+      //       child: Row(
+      //         children: [
+      //           SvgPicture.asset('Assets/icons/camera-2.svg'),
+      //           SvgPicture.asset('Assets/icons/gallery.svg'),
+      //           SvgPicture.asset('Assets/icons/microphone-2.svg'),
+      //           SvgPicture.asset('Assets/icons/microphone-2.svg'),
+      //         ],
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

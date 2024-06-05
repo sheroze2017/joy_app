@@ -92,7 +92,7 @@ class PharmacyHomeScreen extends StatelessWidget {
                       child: HeaderMenu(
                         bgColor: AppColors.lightBlueColore5e,
                         imgbgColor: AppColors.lightBlueColord0d,
-                        imagepath: 'Assets/icons/menu-board.svg',
+                        imagepath: 'Assets/icons/calendar.svg',
                         title: 'Orders',
                         subTitle: 'Manage Orders',
                       ),
@@ -109,7 +109,7 @@ class PharmacyHomeScreen extends StatelessWidget {
                       child: HeaderMenu(
                         bgColor: AppColors.lightGreenColor,
                         imgbgColor: AppColors.lightGreenColorFC7,
-                        imagepath: 'Assets/icons/calendar.svg',
+                        imagepath: 'Assets/icons/menu-board.svg',
                         title: 'Stocks',
                         subTitle: 'Manage Stocks',
                       ),

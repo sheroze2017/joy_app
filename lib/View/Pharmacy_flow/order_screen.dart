@@ -45,7 +45,7 @@ class _MyOrderScreenState extends State<MyOrderScreen>
           indicatorColor: AppColors.darkGreenColor,
           labelColor: AppColors.darkGreenColor,
           unselectedLabelColor: Colors.grey,
-          labelStyle: CustomTextStyles.w600TextStyle(size: 16),
+          labelStyle: CustomTextStyles.w600TextStyle(size: 14),
           tabs: [
             Tab(
               text: 'Pending',

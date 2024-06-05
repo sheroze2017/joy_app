@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -113,77 +114,80 @@ class DoctorsCardWidget extends StatelessWidget {
               SizedBox(
                 width: 2.w,
               ),
-              Container(
-                width: 51.28.w,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            docName,
-                            style: CustomTextStyles.darkHeadingTextStyle(),
-                          ),
-                          Spacer(),
-                          InkWell(
-                              onTap: () {},
-                              child: SvgPicture.asset(
-                                'Assets/icons/favourite.svg',
-                              ))
-                        ],
-                      ),
-                      Divider(
-                        color: AppColors.lightGreyColor,
-                      ),
-                      Text(
-                        Category,
-                        style: CustomTextStyles.w600TextStyle(
-                            size: 14, color: Color(0xff4B5563)),
-                      ),
-                      Row(
-                        children: [
-                          SvgPicture.asset('Assets/icons/location.svg'),
-                          SizedBox(
-                            width: 0.5.w,
-                          ),
-                          Text(loction,
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: Color(0xff4B5563), size: 14))
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          RatingBar.builder(
-                            itemSize: 15,
-                            initialRating: 6,
-                            minRating: 1,
-                            direction: Axis.horizontal,
-                            allowHalfRating: true,
-                            itemCount: 1,
-                            itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
-                            itemBuilder: (context, _) => Icon(
-                              Icons.star,
-                              color: Colors.amber,
+              Expanded(
+                child: Container(
+                  width: 51.28.w,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              docName,
+                              style: CustomTextStyles.darkHeadingTextStyle(),
                             ),
-                            onRatingUpdate: (rating) {
-                              print(rating);
-                            },
-                          ),
-                          Text(rating,
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: Color(0xff4B5563), size: 12)),
-                          SizedBox(
-                            width: 0.5.w,
-                          ),
-                          Text(' | ${reviewCount} Reviews',
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: Color(0xff6B7280), size: 10.8)),
-                        ],
-                      ),
-                    ],
+                            Spacer(),
+                            InkWell(
+                                onTap: () {},
+                                child: SvgPicture.asset(
+                                  'Assets/icons/favourite.svg',
+                                ))
+                          ],
+                        ),
+                        Divider(
+                          color: AppColors.lightGreyColor,
+                        ),
+                        Text(
+                          Category,
+                          style: CustomTextStyles.w600TextStyle(
+                              size: 14, color: Color(0xff4B5563)),
+                        ),
+                        Row(
+                          children: [
+                            SvgPicture.asset('Assets/icons/location.svg'),
+                            SizedBox(
+                              width: 0.5.w,
+                            ),
+                            Text(loction,
+                                style: CustomTextStyles.lightTextStyle(
+                                    color: Color(0xff4B5563), size: 14))
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            RatingBar.builder(
+                              itemSize: 15,
+                              initialRating: 6,
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              allowHalfRating: true,
+                              itemCount: 1,
+                              itemPadding:
+                                  EdgeInsets.symmetric(horizontal: 0.0),
+                              itemBuilder: (context, _) => Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                              onRatingUpdate: (rating) {
+                                print(rating);
+                              },
+                            ),
+                            Text(rating,
+                                style: CustomTextStyles.lightTextStyle(
+                                    color: Color(0xff4B5563), size: 12)),
+                            SizedBox(
+                              width: 0.5.w,
+                            ),
+                            Text(' | ${reviewCount} Reviews',
+                                style: CustomTextStyles.lightTextStyle(
+                                    color: Color(0xff6B7280), size: 10.8)),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -223,39 +227,39 @@ class DoctorCategory extends StatelessWidget {
             color: bgColor, borderRadius: BorderRadius.circular(22.31)),
         child: Padding(
           padding: isBloodBank
-              ? EdgeInsets.fromLTRB(15.44, 30, 15.44, 9)
+              ? EdgeInsets.fromLTRB(15.44, 15.44, 12, 15.44)
               : EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
                 decoration: BoxDecoration(
-                    color: fgColor, borderRadius: BorderRadius.circular(50)),
+                    color: fgColor, borderRadius: BorderRadius.circular(20)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SvgPicture.asset(imagePath),
                 ),
               ),
-              SizedBox(
-                height: 1.h,
-              ),
-              Text(
-                catrgory,
-                style: CustomTextStyles.w600TextStyle(
-                    color: AppColors.blackColor393,
-                    size: isBloodBank ? 16 : 18.86,
-                    letterspacing: -1),
-              ),
-              Text(
-                isBloodBank
-                    ? '${DoctorCount}+ Patients waiting'
-                    : '${DoctorCount} Doctors',
-                style: CustomTextStyles.lightTextStyle(
-                    color: AppColors.blackColor393,
-                    size: isBloodBank ? 8 : 15.44),
-              ),
-              SizedBox(
-                height: 1.h,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    catrgory,
+                    style: CustomTextStyles.w600TextStyle(
+                        color: AppColors.blackColor393,
+                        size: isBloodBank ? 16 : 18.86,
+                        letterspacing: -1),
+                  ),
+                  Text(
+                    isBloodBank
+                        ? '${DoctorCount}+ Patients waiting'
+                        : '${DoctorCount} Doctors',
+                    style: CustomTextStyles.lightTextStyle(
+                        color: AppColors.blackColor393,
+                        size: isBloodBank ? 8 : 15.44),
+                  ),
+                ],
               ),
               isUser == true
                   ? Row(
@@ -273,7 +277,7 @@ class DoctorCategory extends StatelessWidget {
                             ),
                             child: CircleAvatar(
                               backgroundImage: NetworkImage(
-                                  'https://via.placeholder.com/150'),
+                                  'https://s3-alpha-sig.figma.com/img/03f8/d194/48dd31b8127b7f6577d5ff98da01cf59?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lgLceP1ZBkEXbOBgkLxwPEqC~XNBIv8ttTKC8oLRSutfDk3qzEwbwicLgmk6ck-utlWYJsPIw-N4~zYhSpW9xy8F3RVnsS6c-JH7gXOAszbQREfqlywHKb~qxnVTLZEdGtniH7XzTgyNNaI6f67HuUYN~YSh0brcpTS2lolLBxHo0Aj77cTy~7My4KdTR52XEUTm-0ojlJL6H-KvF6hzPFZa4LjyV6x5XO8kCpIPfBSo~9OccwFKXGgGlxfLqR5yAgt3VChGyZlDYIkgdWc9hmceD2~WmVaQvS6HtzF0W4Mc0T26ON-R8JTQc~iOvfm7gHB-dJwxN0GOVe8q8B-wIA__'),
                             ),
                           ),
                         Container(
@@ -368,7 +372,7 @@ class VerticalDoctorsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 10, // Change this according to your actual data count
+      itemCount: 10,
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {

@@ -7,6 +7,7 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
+import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:sizer/sizer.dart';
 
 class FormScreen extends StatefulWidget {
@@ -87,7 +88,7 @@ class _FormScreenState extends State<FormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  SearchDropdown(
+                  SearchSingleDropdown(
                     hintText: 'Gender',
                     items: ['Male', 'Female'],
                     value: '',

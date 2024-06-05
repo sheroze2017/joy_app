@@ -51,7 +51,9 @@ class _NavBarState extends State<NavBarScreen> {
                   DoctorHomeScreen(),
                   ManageAppointment(),
                   NotificationScreen(),
-                  ProfileScreen()
+                  ProfileScreen(
+                    isDoctor: true,
+                  )
                 ],
               )
             : widget.isPharmacy == true

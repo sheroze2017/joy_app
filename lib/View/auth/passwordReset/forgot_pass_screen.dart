@@ -51,6 +51,7 @@ class ForgotPassScreen extends StatelessWidget {
                   Text(
                     "Enter your Email, we will send you a verification code.",
                     style: CustomTextStyles.lightTextStyle(),
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 4.h),
                   RoundedBorderTextField(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -249,112 +250,88 @@ class AddFriendWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 30.h,
-      width: 46.15.w,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24), color: Color(0xffFAFAFA)),
-      child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Stack(children: [
-            Positioned(
-              top: -10,
-              right: 0,
-              child: IconButton(
-                icon: Icon(
-                  Icons.close,
-                  size: 1.5.h,
-                ),
-                onPressed: onRemove,
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Stack(
-                  children: [
-                    ClipOval(
-                      child: Image.network(
-                        profileImage,
-                        width: 6.6.h,
-                        height: 6.6.h,
-                        fit: BoxFit.cover,
-                      ),
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Container(
+        height: 54.61.w,
+        width: 46.15.w,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24), color: Color(0xffFAFAFA)),
+        child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                      child: Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Align(
+                        alignment: Alignment.topRight,
+                        child: Icon(
+                          Icons.close,
+                          size: 16,
+                        )),
+                  )),
+                  ClipOval(
+                    child: Image.network(
+                      profileImage,
+                      width: 7.6.h,
+                      height: 7.6.h,
+                      fit: BoxFit.cover,
                     ),
-                    // Positioned(
-                    //     bottom: 5,
-                    //     right: -10,
-                    //     child: Container(
-                    //       width: 8.w,
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.all(4.0),
-                    //         child: Center(
-                    //           child: Text(
-                    //             'NEW',
-                    //             style: CustomTextStyles.w600TextStyle(
-                    //                 color: Colors.white, size: 6),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //       decoration: BoxDecoration(
-                    //         color: Color(0xff1C2A3A),
-                    //         borderRadius: BorderRadius.circular(20),
-                    //       ),
-                    //     ))
-                  ],
-                ),
-                Center(
-                  child: Text(
-                    userName,
-                    style: CustomTextStyles.darkHeadingTextStyle(
-                        color: Color(0xff19295C), size: 15),
-                    maxLines: 1,
                   ),
-                ),
-                SizedBox(height: 0.5.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: List.generate(
-                        mutualFriends.length,
-                        (index) => ClipOval(
-                          child: Image.network(
-                            mutualFriends[index],
-                            width: 1.9.h,
-                            height: 1.9.h,
-                            fit: BoxFit.cover,
+                  Center(
+                    child: Text(
+                      userName,
+                      style: CustomTextStyles.darkHeadingTextStyle(
+                          color: Color(0xff19295C), size: 15),
+                      maxLines: 1,
+                    ),
+                  ),
+                  SizedBox(height: 0.5.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: List.generate(
+                          mutualFriends.length,
+                          (index) => ClipOval(
+                            child: Image.network(
+                              mutualFriends[index],
+                              width: 1.9.h,
+                              height: 1.9.h,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 2.w,
-                    ),
-                    Text(
-                      '$mutualFriendsCount mutual friends',
-                      style: CustomTextStyles.lightTextStyle(
-                          size: 9.4, color: Color(0xff99A1BE)),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 0.5.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: RoundedButtonSmall(
-                          text: 'Add Friend',
-                          onPressed: () {},
-                          backgroundColor: Color(0xff1C2A3A),
-                          textColor: Color(0xFFFFFFFF)),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 0.5.h),
-              ],
-            ),
-          ])),
+                      SizedBox(
+                        width: 2.w,
+                      ),
+                      Expanded(
+                        child: Text(
+                          '$mutualFriendsCount mutual friends',
+                          style: CustomTextStyles.lightTextStyle(
+                              size: 9.4, color: Color(0xff99A1BE)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 0.5.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RoundedButtonSmall(
+                            text: 'Add Friend',
+                            onPressed: () {},
+                            backgroundColor: Color(0xff1C2A3A),
+                            textColor: Color(0xFFFFFFFF)),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 0.5.h),
+                ])),
+      ),
     );
   }
 }

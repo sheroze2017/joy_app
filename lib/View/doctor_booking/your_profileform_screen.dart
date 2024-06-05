@@ -108,7 +108,7 @@ class _FormScreenState extends State<ProfileFormScreen> {
                     focusNode: _focusNode3,
                     nextFocusNode: _focusNode4,
                     controller: _genderController,
-                    hintText: 'Genden',
+                    hintText: 'Gender',
                     icon: '',
                   ),
                   SizedBox(

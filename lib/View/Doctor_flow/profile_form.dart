@@ -11,6 +11,7 @@ import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/view/auth/profileform_screen.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
+import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
 
 import 'package:sizer/sizer.dart';
@@ -107,7 +108,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  SearchDropdown(
+                  SearchSingleDropdown(
                     hintText: 'Gender',
                     items: ['Male', 'Female'],
                     value: '',

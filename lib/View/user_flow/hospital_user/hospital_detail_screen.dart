@@ -458,7 +458,7 @@ class MedicineCard extends StatelessWidget {
                       Text(
                         '${count} Tablets for ${cost}\$',
                         style: CustomTextStyles.w600TextStyle(
-                            size: 14, color: Color(0xff4B5563)),
+                            size: 13, color: Color(0xff4B5563)),
                       ),
                     ],
                   ),

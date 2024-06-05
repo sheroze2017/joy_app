@@ -3,36 +3,36 @@ import 'package:flutter/material.dart';
 class CustomTextStyles {
   static TextStyle darkTextStyle({Color? color}) {
     return TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.w600,
-      color: color,
-    );
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: color,
+        fontFamily: 'Inter');
   }
 
   static TextStyle darkHeadingTextStyle({Color? color, double? size = 16}) {
     return TextStyle(
-      fontSize: size,
-      fontWeight: FontWeight.w700,
-      color: color ?? Color(0xff1F2A37),
-    );
+        fontSize: size,
+        fontWeight: FontWeight.w700,
+        color: color ?? Color(0xff1F2A37),
+        fontFamily: 'Inter');
   }
 
   static TextStyle lightTextStyle({Color? color, double size = 14}) {
     return TextStyle(
-      fontSize: size,
-      fontWeight: FontWeight.w400,
-      color: color ?? Color(0xff6B7280),
-    );
+        fontSize: size,
+        fontWeight: FontWeight.w400,
+        color: color ?? Color(0xff6B7280),
+        fontFamily: 'Inter');
   }
 
   static TextStyle w600TextStyle(
       {Color? color, double size = 16, double? letterspacing = 0.5}) {
     return TextStyle(
-      fontSize: size,
-      letterSpacing: letterspacing,
-      fontWeight: FontWeight.w600,
-      color: color ?? Color(0xff6B7280),
-    );
+        fontSize: size,
+        letterSpacing: letterspacing,
+        fontWeight: FontWeight.w600,
+        color: color ?? Color(0xff6B7280),
+        fontFamily: 'Inter');
   }
 
   // static const TextStyle lightSmallTextStyle = TextStyle(
@@ -43,9 +43,9 @@ class CustomTextStyles {
 
   static TextStyle lightSmallTextStyle({Color? color, double size = 12}) {
     return TextStyle(
-      fontSize: size,
-      fontWeight: FontWeight.w500,
-      color: color ?? Color(0xff6B7280),
-    );
+        fontSize: size,
+        fontWeight: FontWeight.w500,
+        color: color ?? Color(0xff6B7280),
+        fontFamily: 'Inter');
   }
 }

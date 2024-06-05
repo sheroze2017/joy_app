@@ -38,7 +38,7 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Orders',
+          'My Bookings',
           style: CustomTextStyles.darkTextStyle(color: Color(0xff374151)),
         ),
         centerTitle: true,

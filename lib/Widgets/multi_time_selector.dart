@@ -64,7 +64,7 @@ class _MultiTimeSelectorState extends State<MultiTimeSelector> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: RoundedButton(
+              child: RoundedButtonSmall(
                   text: "Confirm",
                   onPressed: () {
                     // Pass selected times to the callback function

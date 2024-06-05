@@ -14,18 +14,20 @@ class DoctorDetailScreen extends StatelessWidget {
   final String docName;
   final String location;
   final String Category;
+  bool isDoctor;
 
-  const DoctorDetailScreen(
+  DoctorDetailScreen(
       {super.key,
       required this.docName,
       required this.location,
-      required this.Category});
+      required this.Category,
+      this.isDoctor = false});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
           bgColor: AppColors.lightishBlueColorebf,
-          title: 'Doctor Details',
+          title: isDoctor ? 'Your Profile' : 'Doctor Details',
           leading: Icon(Icons.arrow_back),
           actions: [
             Padding(
@@ -62,7 +64,7 @@ class DoctorDetailScreen extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 8),
+                          horizontal: 24, vertical: 8),
                       child: Column(
                         children: [
                           Row(
@@ -77,46 +79,52 @@ class DoctorDetailScreen extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(
-                                width: 2.w,
+                                width: 1.w,
                               ),
-                              Container(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8, 8, 0, 0),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        docName,
-                                        style: CustomTextStyles
-                                            .darkHeadingTextStyle(),
-                                      ),
-                                      Divider(
-                                        color: Color(0XFFE5E7EB),
-                                      ),
-                                      Text(
-                                        Category,
-                                        style: CustomTextStyles.w600TextStyle(
-                                            size: 14, color: Color(0xff4B5563)),
-                                      ),
-                                      Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                              'Assets/icons/location.svg'),
-                                          SizedBox(
-                                            width: 0.5.w,
-                                          ),
-                                          Text(location,
-                                              style: CustomTextStyles
-                                                  .lightTextStyle(
-                                                      color: Color(0xff4B5563),
-                                                      size: 14))
-                                        ],
-                                      ),
-                                    ],
+                              Expanded(
+                                child: Container(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 8, 0, 0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          docName,
+                                          style: CustomTextStyles
+                                              .darkHeadingTextStyle(),
+                                        ),
+                                        Divider(
+                                          color: Color(0XFFE5E7EB),
+                                        ),
+                                        Text(
+                                          Category,
+                                          style: CustomTextStyles.w600TextStyle(
+                                              size: 14,
+                                              color: Color(0xff4B5563)),
+                                        ),
+                                        Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                                'Assets/icons/location.svg'),
+                                            SizedBox(
+                                              width: 0.5.w,
+                                            ),
+                                            Expanded(
+                                              child: Text(location,
+                                                  style: CustomTextStyles
+                                                      .lightTextStyle(
+                                                          color:
+                                                              Color(0xff4B5563),
+                                                          size: 14)),
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               )
@@ -229,9 +237,11 @@ class DoctorDetailScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: RoundedButton(
-                      text: "Book Appointment",
+                      text: isDoctor ? 'Edit Profile' : "Book Appointment",
                       onPressed: () {
-                        Get.to(ProfileFormScreen());
+                        isDoctor
+                            ? print('yet to find')
+                            : Get.to(ProfileFormScreen());
                       },
                       backgroundColor: AppColors.darkBlueColor,
                       textColor: AppColors.whiteColor),
