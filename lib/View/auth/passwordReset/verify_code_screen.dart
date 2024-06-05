@@ -41,7 +41,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
           }),
       body: SingleChildScrollView(
         child: Container(
-          color: Color(0xffFFFFFF),
+          //color: Color(0xffFFFFFF),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: Column(

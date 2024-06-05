@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/passwordReset/forgot_pass_screen.dart';
 import 'package:joy_app/view/auth/signup_screen.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
@@ -185,8 +187,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                               }
                             },
-                            backgroundColor: Color(0xff1C2A3A),
-                            textColor: Color(0xffFFFFFF)),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : Color(0xffFFFFFF)),
                       ),
                     ],
                   ),
@@ -205,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   SizedBox(height: 3.h),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       RoundedContainer(
@@ -216,6 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       RoundedContainer(
                         imagePath: 'Assets/images/apple.png',
+                        isApple: true,
                       ),
                     ],
                   ),
@@ -273,8 +280,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class RoundedContainer extends StatelessWidget {
   final String imagePath;
-
-  const RoundedContainer({Key? key, required this.imagePath}) : super(key: key);
+  bool isApple;
+  RoundedContainer({Key? key, required this.imagePath, this.isApple = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -282,12 +290,13 @@ class RoundedContainer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color:
+              ThemeUtil.isDarkMode(context) ? Color(0xff0D0D0D) : Colors.white,
           borderRadius: BorderRadius.circular(6.11),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
+              spreadRadius: 1,
               blurRadius: 5,
               offset: Offset(0, 3),
             ),
@@ -300,6 +309,7 @@ class RoundedContainer extends StatelessWidget {
             child: Image.asset(
               imagePath,
               fit: BoxFit.cover,
+              color: isApple ? AppColors.whiteColor : null,
             ),
           ),
         ),

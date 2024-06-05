@@ -33,57 +33,23 @@ class RoundedBorderTextField extends StatelessWidget {
       keyboardType: textInputType,
       focusNode: focusNode,
       enabled: isenable,
-      style: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
-      cursorColor: const Color(0xffD1D5DB),
+      // style: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
+      // cursorColor: const Color(0xffD1D5DB),
       maxLines: maxlines == false ? 1 : null,
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(
-            color: Color(0xffD1D5DB),
-            width: 1.0,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(
-            color: Color(0xffD1D5DB),
-            width: 1.0,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(
-            color: Color(0xffD1D5DB),
-            width: 1.0,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(
-            color: AppColors.redColor,
-            width: 1.0,
-          ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(
-            color: AppColors.redColor,
-            width: 1.0,
-          ),
-        ),
         prefixIcon: icon.isEmpty
             ? null
             : Padding(
                 padding: EdgeInsets.all(12.0),
                 child: SvgPicture.asset(icon),
               ),
-        filled: true,
-        fillColor: Color(0xffF9FAFB),
+        // filled: true,
+        // fillColor: Color(0xffF9FAFB),
       ),
+
       onFieldSubmitted: (value) {
         focusNode!.unfocus();
         FocusScope.of(context).requestFocus(nextFocusNode);

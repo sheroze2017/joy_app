@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/controller/theme_controller.dart';
+import 'package:joy_app/styles/theme.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/login_screen.dart';
 import 'package:joy_app/view/home/navbar.dart';
@@ -24,17 +25,16 @@ class MyApp extends StatelessWidget {
       return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Joy App',
-          // theme: CustomTheme.lightTheme,
-          // darkTheme: CustomTheme.darkTheme,
+
+          // theme: MyAppThemes.lightTheme,
+          // darkTheme: MyAppThemes.darkTheme,
           // themeMode: ThemeMode.system,
           theme: ThemeData(
             useMaterial3: true,
           ),
           // initialRoute: AppPage.getNavbar(),
           //getPages: AppPage.routes,
-          home: NavBarScreen(
-            isUser: true,
-          )
+          home: SplashScreen()
           //initialBinding: YourBinding(),
           );
     });

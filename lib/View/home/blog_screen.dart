@@ -46,11 +46,13 @@ class UserBlogScreen extends StatelessWidget {
                         style: CustomTextStyles.lightTextStyle(
                             color: AppColors.borderColor),
                         decoration: InputDecoration(
-                          hintText: "What's on your mind, Hashem?",
-                          hintStyle: CustomTextStyles.lightTextStyle(
-                              color: AppColors.borderColor),
-                          border: InputBorder.none,
-                        ),
+                            fillColor: Colors.transparent,
+                            hintText: "What's on your mind, Hashem?",
+                            hintStyle: CustomTextStyles.lightTextStyle(
+                                color: AppColors.borderColor),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none),
                       ),
                     ),
                     Container(

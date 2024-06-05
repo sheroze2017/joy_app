@@ -34,7 +34,7 @@ class NewPassScreen extends StatelessWidget {
         key: _formKey,
         child: SingleChildScrollView(
           child: Container(
-            color: Color(0xffFFFFFF),
+            // color: Color(0xffFFFFFF),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Column(

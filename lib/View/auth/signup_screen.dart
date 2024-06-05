@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/doctor_flow/profile_form.dart';
 import 'package:joy_app/view/pharmacy_flow/home_screen.dart';
@@ -45,7 +46,7 @@ class _SignupScreenState extends State<SignupScreen> {
         key: _formKey,
         child: SingleChildScrollView(
           child: Container(
-            color: Color(0xffFFFFFF),
+            // color: Color(0xffFFFFFF),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Column(
@@ -121,11 +122,15 @@ class _SignupScreenState extends State<SignupScreen> {
                             });
                           },
                           backgroundColor: selectedButton == "User"
-                              ? Color(0xff1C2A3A)
+                              ? ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : Color(0xff1C2A3A)
                               : Color(
-                                  0xffF9FAFB), // Change background color based on selection
+                                  0xff121212), // Change background color based on selection
                           textColor: selectedButton == "User"
-                              ? Colors.white
+                              ? ThemeUtil.isDarkMode(context)
+                                  ? Color(0XFF0D0D0D)
+                                  : Colors.white
                               : Color(
                                   0xff9CA3AF), // Change text color based on selection
                         ),
@@ -151,11 +156,15 @@ class _SignupScreenState extends State<SignupScreen> {
                             );
                           },
                           backgroundColor: selectedButton == "Professional"
-                              ? Color(0xff1C2A3A)
+                              ? ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : Color(0xff1C2A3A)
                               : Color(
-                                  0xffF9FAFB), // Change background color based on selection
+                                  0xff121212), // Change background color based on selection
                           textColor: selectedButton == "Professional"
-                              ? Colors.white
+                              ? ThemeUtil.isDarkMode(context)
+                                  ? Color(0XFF0D0D0D)
+                                  : Colors.white
                               : Color(
                                   0xff9CA3AF), // Change text color based on selection
                         ),
@@ -190,8 +199,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                 }
                               }
                             },
-                            backgroundColor: Color(0xff1C2A3A),
-                            textColor: Color(0xFFFFFFFF)),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0XFF0D0D0D)
+                                : Color(0xFFFFFFFF)),
                       ),
                     ],
                   ),
@@ -211,7 +224,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ],
                   ),
                   SizedBox(height: 2.h),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       RoundedContainer(
@@ -222,6 +235,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       RoundedContainer(
                         imagePath: 'Assets/images/apple.png',
+                        isApple: true,
                       ),
                     ],
                   ),
