@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/appbar.dart';
@@ -8,7 +10,9 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/view/auth/profileform_screen.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
+import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:pinput/pinput.dart';
+
 import 'package:sizer/sizer.dart';
 
 class DoctorFormScreen extends StatefulWidget {
@@ -46,6 +50,8 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
 
   TextEditingController controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  var selectedFilePath = [];
 
   @override
   Widget build(BuildContext context) {
@@ -173,19 +179,62 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    controller: _medicalCertificateController,
-                    focusNode: _focusNode8,
-                    nextFocusNode: _focusNode9,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please attach documents';
-                      } else {
-                        return null;
-                      }
+                  InkWell(
+                    onTap: () {
+                      pickFiles().then((filePaths) {
+                        selectedFilePath = filePaths;
+                        _medicalCertificateController.setText(
+                            filePaths.length.toString() + ' file selected');
+                        setState(() {});
+                      });
                     },
-                    hintText: 'Attach File of Medical Certificate',
-                    icon: 'Assets/icons/attach-icon.svg',
+                    child: RoundedBorderTextField(
+                      isenable: false,
+                      controller: _medicalCertificateController,
+                      focusNode: _focusNode8,
+                      nextFocusNode: _focusNode9,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please attach documents';
+                        } else if (selectedFilePath.isEmpty) {
+                          return 'Please attach files';
+                        } else {
+                          return null;
+                        }
+                      },
+                      hintText: 'Attach File of Medical Certificate',
+                      icon: 'Assets/icons/attach-icon.svg',
+                    ),
+                  ),
+                  Column(
+                    children: selectedFilePath.map((path) {
+                      return Row(
+                        children: [
+                          Image.file(
+                            File(path),
+                            width: 4.h,
+                            height: 4.h,
+                            fit: BoxFit.cover,
+                          ),
+                          Expanded(
+                              child: Text(
+                            getFileName(path),
+                            maxLines: 1,
+                          )),
+                          IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () {
+                              setState(() {
+                                selectedFilePath.remove(path);
+                                _medicalCertificateController.setText(
+                                    selectedFilePath.length.toString() +
+                                        ' file selected');
+                              });
+                            },
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ),
                   SizedBox(
                     height: 2.h,
@@ -220,6 +269,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                       );
                     },
                     child: RoundedBorderTextField(
+                      maxlines: true,
                       focusNode: _focusNode9,
                       nextFocusNode: _focusNode10,
                       isenable: false,

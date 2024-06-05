@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -6,7 +8,9 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
+import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:joy_app/view/doctor_booking/book_appointment_screen.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 class ProfileFormScreen extends StatefulWidget {
@@ -40,6 +44,7 @@ class _FormScreenState extends State<ProfileFormScreen> {
   final FocusNode _focusNode9 = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
+  var selectedFilePath = [];
 
   @override
   Widget build(BuildContext context) {
@@ -190,19 +195,62 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    focusNode: _focusNode8,
-                    nextFocusNode: _focusNode9,
-                    controller: _medicalCertificateController,
-                    hintText: 'Upload Medical Certificate',
-                    icon: 'Assets/icons/attach-icon.svg',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please attach your medical certificate';
-                      } else {
-                        return null;
-                      }
+                  InkWell(
+                    onTap: () {
+                      pickFiles().then((filePaths) {
+                        selectedFilePath = filePaths;
+                        _medicalCertificateController.setText(
+                            filePaths.length.toString() + ' file selected');
+                        setState(() {});
+                      });
                     },
+                    child: RoundedBorderTextField(
+                      isenable: false,
+                      controller: _medicalCertificateController,
+                      focusNode: _focusNode8,
+                      nextFocusNode: _focusNode9,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please attach documents';
+                        } else if (selectedFilePath.isEmpty) {
+                          return 'Please attach files';
+                        } else {
+                          return null;
+                        }
+                      },
+                      hintText: 'Attach File of Medical Certificate',
+                      icon: 'Assets/icons/attach-icon.svg',
+                    ),
+                  ),
+                  Column(
+                    children: selectedFilePath.map((path) {
+                      return Row(
+                        children: [
+                          Image.file(
+                            File(path),
+                            width: 4.h,
+                            height: 4.h,
+                            fit: BoxFit.cover,
+                          ),
+                          Expanded(
+                              child: Text(
+                            getFileName(path),
+                            maxLines: 1,
+                          )),
+                          IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () {
+                              setState(() {
+                                selectedFilePath.remove(path);
+                                _medicalCertificateController.setText(
+                                    selectedFilePath.length.toString() +
+                                        ' file selected');
+                              });
+                            },
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ),
                   SizedBox(
                     height: 2.h,

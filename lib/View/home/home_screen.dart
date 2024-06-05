@@ -29,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "https://cdn.pixabay.com/photo/2019/12/20/00/03/road-4707345_960_720.jpg",
   ];
 
+  List<String>? filePath;
+
   final _pageController = PageController(viewportFraction: 1, keepPage: true);
   int _currentIndex = 0;
 
@@ -57,7 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             size: 14, color: Color(0xff374151)),
                       ),
                     ],
-                  )
+                  ),
+                  SizedBox(height: 1.h),
                 ],
               ),
               Container(
@@ -74,12 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 0.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
+                  padding: const EdgeInsets.only(right: 16.0, left: 16),
                   child: InkWell(
                     onTap: () {
                       Get.to(AllDoctorsScreen(appBarText: 'All Doctors'));
@@ -107,13 +110,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10.0)),
                               ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                child: Image.network(
-                                  url,
-                                  fit: BoxFit.cover,
-                                  width: 100.w,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    right: 16.0, left: 16),
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                  child: Image.network(
+                                    url,
+                                    fit: BoxFit.cover,
+                                    width: 100.w,
+                                  ),
                                 ),
                               ),
                             );
@@ -121,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }).toList(),
                       options: CarouselOptions(
+                        viewportFraction: 1,
                         autoPlay: true,
                         autoPlayInterval: Duration(seconds: 3),
                         autoPlayAnimationDuration: Duration(milliseconds: 800),
@@ -162,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 3.h,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
+                  padding: const EdgeInsets.only(right: 16.0, left: 16),
                   child: Row(
                     children: [
                       Text(
@@ -193,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: 3,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
+                        padding: const EdgeInsets.only(right: 16.0, left: 16),
                         child: HosipitalCardWidget(),
                       );
                     },
@@ -203,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 3.h,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
+                  padding: const EdgeInsets.only(right: 16.0, left: 16),
                   child: Row(
                     children: [
                       Text(
@@ -228,13 +236,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 1.h,
                 ),
                 Container(
-                  height: 70.w, // Set a fixed height
+                  height: 70.w,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 3,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
+                        padding: const EdgeInsets.only(right: 16.0, left: 16),
                         child: HosipitalCardWidget(),
                       );
                     },
@@ -244,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 3.h,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
+                  padding: const EdgeInsets.only(right: 16.0, left: 16),
                   child: Row(
                     children: [
                       Text(
@@ -276,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: 3,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
+                        padding: const EdgeInsets.only(right: 16.0, left: 16),
                         child: HosipitalCardWidget(),
                       );
                     },
