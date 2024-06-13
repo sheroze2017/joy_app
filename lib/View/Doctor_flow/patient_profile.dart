@@ -55,7 +55,6 @@ class _FormScreenState extends State<PatientProfileScreen> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Color(0xffFFFFFF),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(

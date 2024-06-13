@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/custom_appbar.dart';
@@ -33,12 +35,11 @@ class AddNewFriend extends StatelessWidget {
               ),
               NewFriendRequestWidget(
                 profileImage:
-                    'https://s3-alpha-sig.figma.com/img/d200/c571/c4db6c37dba3a4e963acefe9ca469ec5?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N9Y-bU6XLqGWyk1r~2hcF0F5H5Tx4tqyZL2lVJlSfHNM1pGZhf6xs~X3CQGxBSXmHoxIe7sBZm2-tF65MSyMd-kBsxm2WGBdr~REbm407gcj1KdlGBfLTJP06jULqm-ltao7Nv24hFvqhdcKRJp2HiXDP07QZDMDOjNDHI4FbyX65zFMXfFVpXQCVy7sAIDRALQrg-ShD~Uep5chrTunJ5aKGD9lNJarzEURJ5q6-n6a7gb2WfNaiYrs4Xeh1FcBQZTzhc9NdyHqjAWHga6d41NrcRcMCmokLftUJgMhNWYB3aDKp3NApPXjHBis6UXpwG04NrC7ZnnLuNhPSOGsfg__',
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
                 userName: 'Jim Hopper',
                 mutualFriends: [
-                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
-                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
-                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
+                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
                 ],
                 mutualFriendsCount: 3,
               ),
@@ -47,12 +48,12 @@ class AddNewFriend extends StatelessWidget {
               ),
               NewFriendRequestWidget(
                 profileImage:
-                    'https://s3-alpha-sig.figma.com/img/d200/c571/c4db6c37dba3a4e963acefe9ca469ec5?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=N9Y-bU6XLqGWyk1r~2hcF0F5H5Tx4tqyZL2lVJlSfHNM1pGZhf6xs~X3CQGxBSXmHoxIe7sBZm2-tF65MSyMd-kBsxm2WGBdr~REbm407gcj1KdlGBfLTJP06jULqm-ltao7Nv24hFvqhdcKRJp2HiXDP07QZDMDOjNDHI4FbyX65zFMXfFVpXQCVy7sAIDRALQrg-ShD~Uep5chrTunJ5aKGD9lNJarzEURJ5q6-n6a7gb2WfNaiYrs4Xeh1FcBQZTzhc9NdyHqjAWHga6d41NrcRcMCmokLftUJgMhNWYB3aDKp3NApPXjHBis6UXpwG04NrC7ZnnLuNhPSOGsfg__',
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
                 userName: 'Jim Hopper',
                 mutualFriends: [
-                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
-                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
-                  'https://s3-alpha-sig.figma.com/img/6ec9/4186/cc6e3e60f69ecac1443984f93e6078eb?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aKFiRVmZKAXGKoZbAAC7VvnYHXDphd0IBXkz1BC~JQrvHCeH84~SuipUHO2QuWvPZ2QiDAEoyersbSLNl3SGq3kMFxIv-Nkhoinx5C-pkinmDt1yavaOCD6O-rbRsxayfCnvsrJIQ5240qDsqvLQeeHRZyHltZ6bWFvh-vKkwrgfi5m9T37iXrMdCUfSH8IunN97m~i6rHOa0FClmP7p5GJERgG6l-akaRBwpirolS3Luja4M34z44wtIb5WT~CsrLD7jfUf5XBj9QFzYGaES2Bzx40~6B~n5dI6MOqiy6rboFeXeoY5OOPNYpb93FHiXF2MugCPfu1Dh6~t1EpYbA__',
+                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
                 ],
                 mutualFriendsCount: 3,
               ),
@@ -82,7 +83,10 @@ class NewFriendRequestWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xffFAFAFA), borderRadius: BorderRadius.circular(22.5)),
+          color: ThemeUtil.isDarkMode(context)
+              ? Color(0xff121212)
+              : Color(0xffFAFAFA),
+          borderRadius: BorderRadius.circular(22.5)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 18.0),
         child: Row(
@@ -106,7 +110,10 @@ class NewFriendRequestWidget extends StatelessWidget {
                   Text(
                     userName,
                     style: CustomTextStyles.darkHeadingTextStyle(
-                        color: Color(0xff19295C), size: 15),
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : Color(0xff19295C),
+                        size: 15),
                   ),
 
                   SizedBox(height: 0.5.h),
@@ -147,8 +154,12 @@ class NewFriendRequestWidget extends StatelessWidget {
             RoundedButtonSmall(
                 text: "Add Friend",
                 onPressed: () {},
-                backgroundColor: Color(0xff1C2A3A),
-                textColor: Color(0xffFFFFFF)),
+                backgroundColor: ThemeUtil.isDarkMode(context)
+                    ? Color(0xffC5D3E3)
+                    : Color(0xff1C2A3A),
+                textColor: ThemeUtil.isDarkMode(context)
+                    ? AppColors.blackColor
+                    : Color(0xffFFFFFF)),
           ],
         ),
       ),
@@ -175,9 +186,12 @@ class RoundedSearchTextField extends StatelessWidget {
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        color: Colors.grey[200],
-      ),
+          borderRadius: BorderRadius.circular(25),
+          color: ThemeUtil.isDarkMode(context)
+              ? Color(0xff171717)
+              : Color(0xffF9FAFB)
+          // color: Colors.grey[200],
+          ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
@@ -193,8 +207,13 @@ class RoundedSearchTextField extends StatelessWidget {
                 controller: controller,
                 onChanged: onChanged,
                 decoration: InputDecoration(
+                    fillColor: Colors.transparent,
                     hintText: hintText,
-                    border: InputBorder.none,
+                    enabledBorder:
+                        OutlineInputBorder(borderSide: BorderSide.none),
+                    focusedBorder:
+                        OutlineInputBorder(borderSide: BorderSide.none),
+                    border: OutlineInputBorder(borderSide: BorderSide.none),
                     hintStyle: CustomTextStyles.lightSmallTextStyle(
                         color: Color(0xff9CA3AF), size: 14)),
               ),

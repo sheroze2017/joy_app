@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -24,7 +26,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           Text(
             title,
-            style: CustomTextStyles.darkTextStyle(color: Color(0xff374151)),
+            style: CustomTextStyles.darkTextStyle(
+                color: ThemeUtil.isDarkMode(context)
+                    ? AppColors.whiteColor
+                    : Color(0xff374151)),
           ),
         ],
       ),

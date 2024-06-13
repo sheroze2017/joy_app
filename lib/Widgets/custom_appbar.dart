@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
+import 'package:sizer/sizer.dart';
 
 import '../styles/custom_textstyle.dart';
 
@@ -22,6 +25,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      scrolledUnderElevation: 0,
       backgroundColor: bgColor == null ? Colors.transparent : bgColor,
       elevation: 0,
       leading: showIcon
@@ -29,12 +33,15 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               onTap: () {
                 Get.back();
               },
-              child: leading)
+              child: leading,)
           : null,
       centerTitle: true,
       title: Text(
         title,
-        style: CustomTextStyles.darkTextStyle(color: Color(0xff374151)),
+        style: CustomTextStyles.darkTextStyle(
+            color: ThemeUtil.isDarkMode(context)
+                ? AppColors.whiteColor
+                : Color(0xff374151)),
       ),
       actions: actions,
       bottom: showBottom == true
@@ -43,6 +50,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Divider(
+                  thickness: 0.2,
                   color: Color(0xffF1F4F5),
                 ),
               ))

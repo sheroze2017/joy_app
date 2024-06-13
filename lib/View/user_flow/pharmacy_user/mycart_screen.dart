@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/checkout/checkout_detail.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/medicine_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -35,13 +36,18 @@ class _MyCartScreenState extends State<MyCartScreen> {
               padding: EdgeInsets.only(right: 16),
               child: Stack(
                 children: [
-                  SvgPicture.asset('Assets/icons/cart.svg'),
+                  SvgPicture.asset(
+                    'Assets/icons/cart.svg',
+                    color: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightGreenColoreb1
+                        : null,
+                  ),
                   Positioned(
                       top: 0,
                       right: 0,
                       child: Container(
-                        height: 1.3.h,
-                        width: 1.3.h,
+                        height: 1.1.h,
+                        width: 1.1.h,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
                             color: Color(0xffD65B5B)),
@@ -65,6 +71,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
               children: [
                 Divider(
                   color: Color(0xffE5E7EB),
+                  thickness: 0.5,
                 ),
                 Column(
                   children: [
@@ -124,8 +131,13 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                       isSmall: true,
                                       text: "Total 25\$",
                                       onPressed: () {},
-                                      backgroundColor: AppColors.lightGreyColor,
-                                      textColor: AppColors.darkGreenColor),
+                                      backgroundColor:
+                                          ThemeUtil.isDarkMode(context)
+                                              ? Color(0xff1F2228)
+                                              : AppColors.lightGreyColor,
+                                      textColor: ThemeUtil.isDarkMode(context)
+                                          ? AppColors.lightGreenColoreb1
+                                          : AppColors.darkGreenColor),
                                 ),
                                 Row(
                                   children: [
@@ -141,13 +153,20 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                           width: 7.6.w,
                                           height: 7.6.w,
                                           decoration: BoxDecoration(
-                                              color: AppColors.whiteColor,
+                                              color:
+                                                  ThemeUtil.isDarkMode(context)
+                                                      ? Color(0xff1F2228)
+                                                      : AppColors.whiteColor,
                                               border: Border.all(
                                                   color: Color(0xffBABABA)),
                                               borderRadius:
                                                   BorderRadius.circular(10)),
                                           child: Center(
                                               child: SvgPicture.asset(
+                                                  color: ThemeUtil.isDarkMode(
+                                                          context)
+                                                      ? AppColors.whiteColor
+                                                      : null,
                                                   'Assets/icons/minus.svg')),
                                         ),
                                       ),
@@ -168,7 +187,10 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                           width: 7.6.w,
                                           height: 7.6.w,
                                           decoration: BoxDecoration(
-                                              color: AppColors.whiteColor,
+                                              color:
+                                                  ThemeUtil.isDarkMode(context)
+                                                      ? Color(0xff1F2228)
+                                                      : AppColors.whiteColor,
                                               border: Border.all(
                                                   color: Color(0xffBABABA)),
                                               borderRadius:
@@ -223,8 +245,12 @@ class _MyCartScreenState extends State<MyCartScreen> {
                           onPressed: () {
                             Get.to(CheckoutForm());
                           },
-                          backgroundColor: AppColors.darkGreenColor,
-                          textColor: Color(0xffFFFFFF),
+                          backgroundColor: ThemeUtil.isDarkMode(context)
+                              ? AppColors.lightGreenColoreb1
+                              : AppColors.darkGreenColor,
+                          textColor: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff1F2228)
+                              : Color(0xffFFFFFF),
                         ),
                       ),
                     ],
@@ -278,6 +304,7 @@ class NameCharges extends StatelessWidget {
         !isTotal
             ? Divider(
                 color: Color(0xffE5E7EB),
+                thickness: ThemeUtil.isDarkMode(context) ? 0.2 : 1,
               )
             : Container()
       ],

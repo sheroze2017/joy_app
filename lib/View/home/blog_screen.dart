@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/components/blog_card.dart';
 import 'package:joy_app/view/social_media/chats.dart';
 import 'package:sizer/sizer.dart';
@@ -22,14 +23,41 @@ class UserBlogScreen extends StatelessWidget {
               child: SvgPicture.asset('Assets/icons/joy-icon-small.svg'),
             ),
             actions: [
-              SvgPicture.asset('Assets/icons/searchbg.svg'),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: ThemeUtil.isDarkMode(context)
+                      ? Color(0xff191919)
+                      : Color(0xffF3F4F6),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Center(
+                    child: SvgPicture.asset('Assets/icons/search-normal.svg'),
+                  ),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(right: 16.0, left: 8),
                 child: InkWell(
-                    onTap: () {
-                      Get.to(AllChats());
-                    },
-                    child: SvgPicture.asset('Assets/icons/messagebg.svg')),
+                  onTap: () {
+                    Get.to(AllChats());
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff191919)
+                          : Color(0xffF3F4F6),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Center(
+                        child: SvgPicture.asset('Assets/icons/sms.svg'),
+                      ),
+                    ),
+                  ),
+                ),
               )
             ],
             showIcon: true),
@@ -46,19 +74,25 @@ class UserBlogScreen extends StatelessWidget {
                         style: CustomTextStyles.lightTextStyle(
                             color: AppColors.borderColor),
                         decoration: InputDecoration(
-                            fillColor: Colors.transparent,
-                            hintText: "What's on your mind, Hashem?",
-                            hintStyle: CustomTextStyles.lightTextStyle(
-                                color: AppColors.borderColor),
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none),
+                          enabledBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          focusedBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          border:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          fillColor: Colors.transparent,
+                          hintText: "What's on your mind, Hashem?",
+                          hintStyle: CustomTextStyles.lightTextStyle(
+                              color: AppColors.borderColor),
+                        ),
                       ),
                     ),
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(54),
-                        color: AppColors.whiteColorf9f,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xff121212)
+                            : AppColors.whiteColorf9f,
                       ),
                       child: Padding(
                         padding:

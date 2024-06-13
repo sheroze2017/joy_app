@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
@@ -30,7 +31,9 @@ class AllDonorScreen extends StatelessWidget {
             ),
             Text(
               '532 found',
-              style: CustomTextStyles.darkHeadingTextStyle(),
+              style: CustomTextStyles.darkHeadingTextStyle(
+                  color:
+                      ThemeUtil.isDarkMode(context) ? Color(0xffC8D3E0) : null),
             ),
             SizedBox(
               height: 2.h,

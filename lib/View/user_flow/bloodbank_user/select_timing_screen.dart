@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/checkout/checkout_detail.dart';
 
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -35,7 +36,9 @@ class SelectTimingScreen extends StatelessWidget {
               ),
               SfDateRangePicker(
                 showNavigationArrow: true,
-                backgroundColor: AppColors.redLightColor,
+                backgroundColor: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff161616)
+                    : AppColors.redLightColor,
                 todayHighlightColor: Colors.transparent,
                 monthCellStyle: DateRangePickerMonthCellStyle(
                   todayTextStyle: TextStyle(
@@ -64,10 +67,14 @@ class SelectTimingScreen extends StatelessWidget {
                 headerStyle: DateRangePickerHeaderStyle(
                   textAlign: TextAlign.left,
                   textStyle: TextStyle(
-                      color: Color(0xff111928),
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffD7DFEE)
+                          : Color(0xff111928),
                       fontSize: 14,
                       fontWeight: FontWeight.w700),
-                  backgroundColor: AppColors.redLightColor,
+                  backgroundColor: ThemeUtil.isDarkMode(context)
+                      ? Color(0xff161616)
+                      : AppColors.redLightColor,
                 ),
               ),
               SizedBox(
@@ -177,7 +184,11 @@ class _TimeSelectorState extends State<TimeSelector> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.redColor : Colors.white,
+                  color: isSelected
+                      ? AppColors.redColor
+                      : ThemeUtil.isDarkMode(context)
+                          ? Color(0xff121212)
+                          : Colors.white,
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Text(time,

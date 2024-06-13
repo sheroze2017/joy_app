@@ -5,6 +5,7 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/theme.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
@@ -204,8 +205,12 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                                 );
                               }
                             },
-                            backgroundColor: Color(0xff1C2A3A),
-                            textColor: Color(0xffFFFFFF)),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : Color(0xffFFFFFF)),
                       ),
                     ],
                   ),

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
 class DonationApproval extends StatelessWidget {
@@ -139,10 +140,14 @@ class DonationApproval extends StatelessWidget {
                       onPressed: () {
                         //      showPaymentBottomSheet(context, true);
                       },
-                      backgroundColor: AppColors.whiteColor,
-                      textColor: isBloodDonate
-                          ? AppColors.redColor
-                          : AppColors.yellowColor),
+                      backgroundColor: ThemeUtil.isDarkMode(context)
+                          ? AppColors.blackColor
+                          : AppColors.whiteColor,
+                      textColor: ThemeUtil.isDarkMode(context)
+                          ? AppColors.whiteColor
+                          : isBloodDonate
+                              ? AppColors.redColor
+                              : AppColors.yellowColor),
                 ),
               ],
             )

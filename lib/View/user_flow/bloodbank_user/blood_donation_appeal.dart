@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/bloodbank_flow/component/blood_donation_widget.dart';
 import 'package:sizer/sizer.dart';
 
@@ -43,7 +44,10 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
         leading: null,
         title: Text(
           widget.isBloodDontate ? 'Blood Appeals' : 'Plasma Appeals',
-          style: CustomTextStyles.darkTextStyle(color: Color(0xff374151)),
+          style: CustomTextStyles.darkTextStyle(
+              color: ThemeUtil.isDarkMode(context)
+                  ? AppColors.whiteColor
+                  : Color(0xff374151)),
         ),
         centerTitle: true,
         bottom: TabBar(
@@ -72,9 +76,6 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: [
-                  Divider(
-                    color: Color(0xffE5E7EB),
-                  ),
                   SizedBox(
                     height: 2.h,
                   ),

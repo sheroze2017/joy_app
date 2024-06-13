@@ -5,6 +5,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
 class CheckoutForm extends StatefulWidget {
@@ -50,7 +51,6 @@ class _CheckoutFormState extends State<CheckoutForm> {
           showIcon: true),
       body: SingleChildScrollView(
         child: Container(
-          color: Color(0xffFFFFFF),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
             child: Column(
@@ -101,35 +101,53 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   children: [
                     Expanded(
                         child: RoundedButtonSmall(
-                            text: "Cash On Delivery",
-                            onPressed: () {
-                              setState(() {
-                                isButtonSelectedCod = !isButtonSelectedCod;
-                              });
-                            },
-                            backgroundColor: isButtonSelectedCod
-                                ? AppColors.darkGreenColor
-                                : AppColors.bgBackGroundColor,
-                            textColor: isButtonSelectedCod
-                                ? AppColors.whiteColor
-                                : AppColors.borderColor)),
+                      text: "Cash On Delivery",
+                      onPressed: () {
+                        setState(() {
+                          isButtonSelectedCod = !isButtonSelectedCod;
+                        });
+                      },
+                      backgroundColor: ThemeUtil.isDarkMode(context)
+                          ? isButtonSelectedOp
+                              ? AppColors.lightGreenColoreb1
+                              : Color(0xff121212)
+                          : isButtonSelectedOp
+                              ? AppColors.darkGreenColor
+                              : AppColors.bgBackGroundColor,
+                      textColor: ThemeUtil.isDarkMode(context)
+                          ? isButtonSelectedOp
+                              ? AppColors.blackColor
+                              : AppColors.borderColor
+                          : isButtonSelectedOp
+                              ? AppColors.whiteColor
+                              : AppColors.borderColor,
+                    )),
                     SizedBox(
                       width: 4.w,
                     ),
                     Expanded(
                       child: RoundedButtonSmall(
-                          text: "Online Payment",
-                          onPressed: () {
-                            setState(() {
-                              isButtonSelectedOp = !isButtonSelectedOp;
-                            });
-                          },
-                          backgroundColor: isButtonSelectedOp
-                              ? AppColors.darkGreenColor
-                              : AppColors.bgBackGroundColor,
-                          textColor: isButtonSelectedOp
-                              ? AppColors.whiteColor
-                              : AppColors.borderColor),
+                        text: "Online Payment",
+                        onPressed: () {
+                          setState(() {
+                            isButtonSelectedOp = !isButtonSelectedOp;
+                          });
+                        },
+                        backgroundColor: ThemeUtil.isDarkMode(context)
+                            ? isButtonSelectedOp
+                                ? AppColors.lightGreenColoreb1
+                                : Color(0xff121212)
+                            : isButtonSelectedOp
+                                ? AppColors.darkGreenColor
+                                : AppColors.bgBackGroundColor,
+                        textColor: ThemeUtil.isDarkMode(context)
+                            ? isButtonSelectedOp
+                                ? AppColors.blackColor
+                                : AppColors.borderColor
+                            : isButtonSelectedOp
+                                ? AppColors.whiteColor
+                                : AppColors.borderColor,
+                      ),
                     ),
                   ],
                 ),
@@ -140,13 +158,18 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   children: [
                     Expanded(
                       child: RoundedButton(
-                          text: 'Confirm Order',
-                          onPressed: () {
-                            showPaymentBottomSheet(context, false, true);
-                          },
-                          backgroundColor: AppColors.darkGreenColor,
-                          textColor: AppColors.whiteColor),
-                    ),
+                        text: 'Confirm Order',
+                        onPressed: () {
+                          showPaymentBottomSheet(context, false, true);
+                        },
+                        backgroundColor: ThemeUtil.isDarkMode(context)
+                            ? AppColors.lightGreenColoreb1
+                            : AppColors.darkGreenColor,
+                        textColor: ThemeUtil.isDarkMode(context)
+                            ? Color(0xff1F2228)
+                            : Color(0xffFFFFFF),
+                      ),
+                    )
                   ],
                 )
               ],
@@ -161,6 +184,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
 void showPaymentBottomSheet(
     BuildContext context, bool isbookAppointment, bool? isPharmacyCheckout) {
   showModalBottomSheet(
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     context: context,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
@@ -171,8 +195,9 @@ void showPaymentBottomSheet(
     builder: (BuildContext context) {
       return Container(
         decoration: BoxDecoration(
-            color: AppColors.whiteColor,
-            borderRadius: BorderRadius.circular(50)),
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50), topRight: Radius.circular(50))),
         padding: EdgeInsets.all(25),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -180,20 +205,28 @@ void showPaymentBottomSheet(
           children: [
             Center(
               child: Text('Pharmacy Online Payment',
-                  style: CustomTextStyles.darkHeadingTextStyle(size: 18)),
+                  style: CustomTextStyles.darkHeadingTextStyle(
+                      size: 18,
+                      color: ThemeUtil.isDarkMode(context)
+                          ? AppColors.whiteColor
+                          : null)),
             ),
             SizedBox(height: 4.h),
-            _buildRoundedInputField(label: 'Card Number'),
+            _buildRoundedInputField(context: context, label: 'Card Number'),
             SizedBox(height: 2.h),
             Row(
               children: [
-                Expanded(child: _buildRoundedInputField(label: 'Expiry')),
+                Expanded(
+                    child: _buildRoundedInputField(
+                        context: context, label: 'Expiry')),
                 SizedBox(width: 4.w),
-                Expanded(child: _buildRoundedInputField(label: 'CVV')),
+                Expanded(
+                    child: _buildRoundedInputField(
+                        context: context, label: 'CVV')),
               ],
             ),
             SizedBox(height: 2.h),
-            _buildRoundedInputField(label: 'Name on Card'),
+            _buildRoundedInputField(context: context, label: 'Name on Card'),
             SizedBox(height: 2.h),
             RoundedButton(
                 text: 'Pay Now',
@@ -215,8 +248,12 @@ void showPaymentBottomSheet(
                 },
                 backgroundColor: isbookAppointment!
                     ? AppColors.darkBlueColor
-                    : AppColors.darkGreenColor,
-                textColor: AppColors.whiteColor)
+                    : ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightGreenColoreb1
+                        : AppColors.darkGreenColor,
+                textColor: ThemeUtil.isDarkMode(context)
+                    ? AppColors.blackColor
+                    : AppColors.whiteColor)
           ],
         ),
       );
@@ -224,24 +261,35 @@ void showPaymentBottomSheet(
   );
 }
 
-Widget _buildRoundedInputField({required String label}) {
+Widget _buildRoundedInputField(
+    {required BuildContext context, required String label}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         label,
         style: CustomTextStyles.lightTextStyle(
-            color: Color(0xff000000), size: 16.35),
+            color: ThemeUtil.isDarkMode(context)
+                ? AppColors.whiteColor
+                : Color(0xff000000),
+            size: 16.35),
       ),
       Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
-          color: AppColors.whiteColorf9f,
+          color: ThemeUtil.isDarkMode(context)
+              ? Color(0xff121212)
+              : AppColors.whiteColorf9f,
         ),
         child: TextFormField(
           style: TextStyle(fontSize: 14, color: AppColors.blackColor),
           decoration: InputDecoration(
-            border: InputBorder.none,
+            fillColor: Colors.transparent,
+            enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
+            border: OutlineInputBorder(borderSide: BorderSide.none),
+            hintStyle: CustomTextStyles.lightSmallTextStyle(
+                color: Color(0xff9CA3AF), size: 14),
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 25), // Padding for text input
           ),

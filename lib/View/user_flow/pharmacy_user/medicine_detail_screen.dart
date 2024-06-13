@@ -5,6 +5,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/mycart_screen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
@@ -28,6 +29,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
             image: AssetImage('Assets/icons/arrow-left.png'),
             // height: 6.w,
             // width: .w,
+            color: ThemeUtil.isDarkMode(context) ? Color(0xffE8E8E8) : null,
           ),
           actions: widget.isPharmacyAdmin
               ? []
@@ -64,6 +66,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
           children: [
             Divider(
               color: Color(0xffE5E7EB),
+              thickness: 0.2,
             ),
             Padding(
               padding:
@@ -94,13 +97,19 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                               Text(
                                 'Panadol',
                                 style: CustomTextStyles.lightSmallTextStyle(
-                                    size: 16, color: AppColors.lightBlack393),
+                                    size: 16,
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xffE8E8E8)
+                                        : AppColors.lightBlack393),
                               ),
                               SizedBox(height: 1.h),
                               Text(
                                 "10 Tablets for 5\$",
                                 style: CustomTextStyles.w600TextStyle(
-                                    size: 16, color: AppColors.lightBlack393),
+                                    size: 16,
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xffE8E8E8)
+                                        : AppColors.lightBlack393),
                               )
                             ],
                           ),
@@ -123,13 +132,19 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Center(
                                       child: SvgPicture.asset(
-                                          'Assets/icons/minus.svg')),
+                                          'Assets/icons/minus.svg',
+                                          color: ThemeUtil.isDarkMode(context)
+                                              ? Color(0xffE8E8E8)
+                                              : null)),
                                 ),
                               ),
                             ),
                             Text(count.toString(),
                                 style: CustomTextStyles.lightTextStyle(
-                                    size: 16, color: Color(0xff000000))),
+                                    size: 16,
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xffE8E8E8)
+                                        : Color(0xff000000))),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: InkWell(
@@ -156,7 +171,9 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                     Text(
                       'Description of product',
                       style: CustomTextStyles.w600TextStyle(
-                          color: AppColors.lightBlack393),
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xffE8E8E8)
+                              : AppColors.lightBlack393),
                     ),
                     SizedBox(height: 1.h),
                     ReadMoreText(
@@ -181,8 +198,13 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                 child: RoundedButtonSmall(
                                     text: "Edit Product",
                                     onPressed: () {},
-                                    backgroundColor: AppColors.darkGreenColor,
-                                    textColor: AppColors.whiteColor),
+                                    backgroundColor:
+                                        ThemeUtil.isDarkMode(context)
+                                            ? AppColors.lightGreenColoreb1
+                                            : AppColors.darkGreenColor,
+                                    textColor: ThemeUtil.isDarkMode(context)
+                                        ? AppColors.blackColor
+                                        : AppColors.whiteColor),
                               )
                             ],
                           )
@@ -193,8 +215,13 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                 child: RoundedButtonSmall(
                                     text: "Add to Cart",
                                     onPressed: () {},
-                                    backgroundColor: AppColors.lightGreyColor,
-                                    textColor: AppColors.darkGreenColor),
+                                    backgroundColor:
+                                        ThemeUtil.isDarkMode(context)
+                                            ? Color(0xff1F2228)
+                                            : AppColors.lightGreyColor,
+                                    textColor: ThemeUtil.isDarkMode(context)
+                                        ? AppColors.lightGreenColoreb1
+                                        : AppColors.darkGreenColor),
                               ),
                               SizedBox(
                                 width: 4.w,
@@ -205,8 +232,13 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                     onPressed: () {
                                       Get.to(MyCartScreen());
                                     },
-                                    backgroundColor: AppColors.darkGreenColor,
-                                    textColor: AppColors.whiteColor),
+                                    backgroundColor:
+                                        ThemeUtil.isDarkMode(context)
+                                            ? AppColors.lightGreenColoreb1
+                                            : AppColors.darkGreenColor,
+                                    textColor: ThemeUtil.isDarkMode(context)
+                                        ? AppColors.blackColor
+                                        : AppColors.whiteColor),
                               )
                             ],
                           ),

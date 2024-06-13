@@ -6,6 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/home/components/blog_card.dart';
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
@@ -52,7 +54,7 @@ class HospitalHomeScreen extends StatelessWidget {
                   child: Container(
                     height: 5.h,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -82,12 +84,39 @@ class HospitalHomeScreen extends StatelessWidget {
                                   'Assets/icons/joy-icon-small.svg'),
                             ),
                             Spacer(),
-                            SvgPicture.asset('Assets/icons/searchbg.svg'),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff191919)
+                                    : Color(0xffF3F4F6),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                      'Assets/icons/search-normal.svg'),
+                                ),
+                              ),
+                            ),
                             Padding(
                               padding:
                                   const EdgeInsets.only(right: 0.0, left: 8),
-                              child: SvgPicture.asset(
-                                  'Assets/icons/messagebg.svg'),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xff191919)
+                                      : Color(0xffF3F4F6),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                        'Assets/icons/sms.svg'),
+                                  ),
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -102,17 +131,25 @@ class HospitalHomeScreen extends StatelessWidget {
                                 style: CustomTextStyles.lightTextStyle(
                                     color: AppColors.borderColor),
                                 decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                  fillColor: Colors.transparent,
                                   hintText: "What's on your mind, Hashem?",
                                   hintStyle: CustomTextStyles.lightTextStyle(
                                       color: AppColors.borderColor),
-                                  border: InputBorder.none,
                                 ),
                               ),
                             ),
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(54),
-                                color: AppColors.whiteColorf9f,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff121212)
+                                    : AppColors.whiteColorf9f,
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
@@ -140,7 +177,10 @@ class HospitalHomeScreen extends StatelessWidget {
                         Text(
                           'Sunrise Health Clinic',
                           style: CustomTextStyles.darkHeadingTextStyle(
-                              size: 30, color: Color(0xff383D44)),
+                              size: 30,
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffFFFFFF)
+                                  : Color(0xff383D44)),
                         ),
                         LocationWidget(),
                         SizedBox(
@@ -156,21 +196,33 @@ class HospitalHomeScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             RoundedSVGContainer(
+                              iconColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : null,
                               svgAsset: 'Assets/icons/profile-2user.svg',
                               numberText: '50+',
                               descriptionText: 'Doctors',
                             ),
                             RoundedSVGContainer(
+                              iconColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : null,
                               svgAsset: 'Assets/icons/medal.svg',
                               numberText: '10+',
                               descriptionText: 'Experience',
                             ),
                             RoundedSVGContainer(
+                              iconColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : null,
                               svgAsset: 'Assets/icons/star.svg',
                               numberText: '5',
                               descriptionText: 'Rating',
                             ),
                             RoundedSVGContainer(
+                              iconColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : null,
                               svgAsset: 'Assets/icons/messages.svg',
                               numberText: '1872',
                               descriptionText: 'Reviews',
@@ -209,7 +261,10 @@ class HospitalHomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Our Doctors',
-                              style: CustomTextStyles.darkHeadingTextStyle(),
+                              style: CustomTextStyles.darkHeadingTextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC8D3E0)
+                                      : null),
                             ),
                             Spacer(),
                             Text(
@@ -222,7 +277,9 @@ class HospitalHomeScreen extends StatelessWidget {
                         Container(
                           width: 57.5.w,
                           decoration: BoxDecoration(
-                              color: Color(0xffEEF5FF),
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? AppColors.purpleBlueColor
+                                  : Color(0xffEEF5FF),
                               borderRadius: BorderRadius.circular(12)),
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
@@ -343,7 +400,10 @@ class HospitalHomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Visit Our Pharmacy',
-                              style: CustomTextStyles.darkHeadingTextStyle(),
+                              style: CustomTextStyles.darkHeadingTextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC8D3E0)
+                                      : null),
                             ),
                             Spacer(),
                             Text(
@@ -399,7 +459,10 @@ class HospitalHomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               'My Posts',
-                              style: CustomTextStyles.darkHeadingTextStyle(),
+                              style: CustomTextStyles.darkHeadingTextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC8D3E0)
+                                      : null),
                             ),
                             Spacer(),
                             Text(
@@ -411,69 +474,22 @@ class HospitalHomeScreen extends StatelessWidget {
                         SizedBox(
                           height: 1.h,
                         ),
-                        PostHeader(),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        Text(
-                          'Our Hospital Complete 100 Surgeries today',
-                          style: CustomTextStyles.lightTextStyle(
-                              color: Color(0xff2D3F7B), size: 11.56),
+                        MyCustomWidget(
+                          isLiked: true,
+                          isReply: true,
+                          postName: 'Sheroze',
+                          text:
+                              'Hey pals ! Had my third day of chemo. feeling much better.',
                         ),
                         SizedBox(
-                          height: 1.h,
+                          height: 3.h,
                         ),
-                        Container(
-                          height: 20.h,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            image: DecorationImage(
-                              image: AssetImage('Assets/images/hospital.png'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        ReactionCount(
-                          comment: '3.4k',
-                          share: '46',
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        Row(
-                          children: [
-                            CircleButton(
-                              isActive: true,
-                              img: 'Assets/images/like.png',
-                              color: Color(0xff000000),
-                            ),
-                            SizedBox(
-                              width: 1.w,
-                            ),
-                            CircleButton(
-                              img: 'Assets/images/message.png',
-                              color: Color(0xFFF9FAFB),
-                            ),
-                            SizedBox(
-                              width: 1.w,
-                            ),
-                            CircleButton(
-                              img: 'Assets/images/send.png',
-                              color: Color(0xFFF9FAFB),
-                            ),
-                            Spacer(),
-                            LikeCount(
-                              like: '32.1K',
-                              name: 'Ali',
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10.h,
+                        MyCustomWidget(
+                          isLiked: false,
+                          showImg: false,
+                          isReply: false,
+                          postName: 'Mille Brown',
+                          text: 'Feeling depressed today.',
                         )
                       ],
                     ),

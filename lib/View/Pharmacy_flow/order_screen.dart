@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/pharmacy_flow/order_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -37,13 +38,20 @@ class _MyOrderScreenState extends State<MyOrderScreen>
       appBar: AppBar(
         title: Text(
           'My Orders',
-          style: CustomTextStyles.darkTextStyle(color: Color(0xff374151)),
+          style: CustomTextStyles.darkTextStyle(
+              color: ThemeUtil.isDarkMode(context)
+                  ? AppColors.whiteColor
+                  : Color(0xff374151)),
         ),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppColors.darkGreenColor,
-          labelColor: AppColors.darkGreenColor,
+          indicatorColor: ThemeUtil.isDarkMode(context)
+              ? AppColors.lightGreenColoreb1
+              : AppColors.darkGreenColor,
+          labelColor: ThemeUtil.isDarkMode(context)
+              ? AppColors.lightGreenColoreb1
+              : AppColors.darkGreenColor,
           unselectedLabelColor: Colors.grey,
           labelStyle: CustomTextStyles.w600TextStyle(size: 14),
           tabs: [
@@ -69,7 +77,9 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                   child: MeetingCallScheduler(
                     pharmacyButtonText: 'Marked as Shipped',
                     isPharmacy: true,
-                    buttonColor: AppColors.darkGreenColor,
+                    buttonColor: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightGreenColoreb1
+                        : AppColors.darkGreenColor,
                     bgColor: AppColors.lightGreenColor,
                     nextMeeting: true,
                     imgPath: 'Assets/images/tablet.jpg',
@@ -89,7 +99,9 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                   child: MeetingCallScheduler(
                     isPharmacy: true,
                     pharmacyButtonText: 'Marked as Shipped',
-                    buttonColor: AppColors.darkGreenColor,
+                    buttonColor: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightGreenColoreb1
+                        : AppColors.darkGreenColor,
                     bgColor: AppColors.lightGreenColor,
                     imgPath: 'Assets/images/tablet.jpg',
                     nextMeeting: true,
@@ -113,7 +125,9 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                   child: MeetingCallScheduler(
                     pharmacyButtonText: 'Marked as Deliverd',
                     isPharmacy: true,
-                    buttonColor: AppColors.darkGreenColor,
+                    buttonColor: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightGreenColoreb1
+                        : AppColors.darkGreenColor,
                     bgColor: AppColors.lightGreenColor,
                     nextMeeting: true,
                     imgPath: 'Assets/images/tablet.jpg',
@@ -133,7 +147,9 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                   child: MeetingCallScheduler(
                     isPharmacy: true,
                     pharmacyButtonText: 'Marked as Deliverd',
-                    buttonColor: AppColors.darkGreenColor,
+                    buttonColor: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightGreenColoreb1
+                        : AppColors.darkGreenColor,
                     bgColor: AppColors.lightGreenColor,
                     imgPath: 'Assets/images/tablet.jpg',
                     nextMeeting: true,
@@ -158,7 +174,9 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                     isDeliverd: true,
                     isPharmacy: true,
                     isActive: false,
-                    buttonColor: AppColors.darkGreenColor,
+                    buttonColor: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightGreenColoreb1
+                        : AppColors.darkGreenColor,
                     bgColor: AppColors.lightGreenColor,
                     nextMeeting: true,
                     imgPath: 'Assets/images/tablet.jpg',
@@ -179,7 +197,9 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                     isActive: false,
                     isDeliverd: true,
                     isPharmacy: true,
-                    buttonColor: AppColors.darkGreenColor,
+                    buttonColor: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightGreenColoreb1
+                        : AppColors.darkGreenColor,
                     bgColor: AppColors.lightGreenColor,
                     imgPath: 'Assets/images/tablet.jpg',
                     nextMeeting: true,

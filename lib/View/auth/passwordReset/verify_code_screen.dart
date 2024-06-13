@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/passwordReset/new_pass_screen.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -59,11 +60,17 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                 SizedBox(height: 2.h),
                 Text(
                   "Enter the Code",
-                  style: CustomTextStyles.lightTextStyle(),
+                  style: CustomTextStyles.lightTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffAAAAAA)
+                          : null),
                 ),
                 Text(
                   "we just sent you on your registered Email",
-                  style: CustomTextStyles.lightTextStyle(),
+                  style: CustomTextStyles.lightTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffAAAAAA)
+                          : null),
                 ),
                 SizedBox(height: 4.h),
                 Pinput(
@@ -81,8 +88,12 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           onPressed: () {
                             Get.to(NewPassScreen());
                           },
-                          backgroundColor: Color(0xff1C2A3A),
-                          textColor: Color(0xffFFFFFF)),
+                          backgroundColor: ThemeUtil.isDarkMode(context)
+                              ? Color(0xffC5D3E3)
+                              : Color(0xff1C2A3A),
+                          textColor: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff121212)
+                              : Color(0xffFFFFFF)),
                     ),
                   ],
                 ),
@@ -92,7 +103,10 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                     children: [
                       TextSpan(
                         text: 'Didn’t get the Code? ',
-                        style: CustomTextStyles.lightTextStyle(),
+                        style: CustomTextStyles.lightTextStyle(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffAAAAAA)
+                                : null),
                       ),
                       TextSpan(
                         text: 'Resend ',

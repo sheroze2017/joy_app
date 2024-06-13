@@ -82,7 +82,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 2.h),
                   Text(
                     "Hope you’re doing fine.",
-                    style: CustomTextStyles.lightTextStyle(),
+                    style: CustomTextStyles.lightTextStyle(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffAAAAAA)
+                            : null),
                   ),
                   SizedBox(height: 2.h),
                   RoundedBorderTextField(
@@ -215,6 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       RoundedContainer(
+                        
                         imagePath: 'Assets/images/google.png',
                       ),
                       RoundedContainer(
@@ -251,7 +255,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         TextSpan(
                           text: 'Don’t have an account yet? ',
-                          style: CustomTextStyles.lightTextStyle(),
+                          style: CustomTextStyles.lightTextStyle(
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffAAAAAA)
+                                  : null),
                         ),
                         TextSpan(
                           text: 'Sign up',
@@ -296,9 +303,9 @@ class RoundedContainer extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: Offset(0, 3),
+              spreadRadius: 0.5,
+              blurRadius: 1,
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -309,7 +316,7 @@ class RoundedContainer extends StatelessWidget {
             child: Image.asset(
               imagePath,
               fit: BoxFit.cover,
-              color: isApple ? AppColors.whiteColor : null,
+              color: isApple ? Theme.of(context).primaryColor : null,
             ),
           ),
         ),

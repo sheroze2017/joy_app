@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/review_screen.dart';
 import 'package:joy_app/widgets/rounded_button.dart';
@@ -42,13 +45,25 @@ class CustomDialog extends StatelessWidget {
       this.isBloodRequest = false});
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      child: dialogContent(context, isBookAppointment),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+              color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
+            ),
+          ),
+        ),
+        Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 0,
+          backgroundColor: Theme.of(context).dialogBackgroundColor,
+          child: dialogContent(context, isBookAppointment),
+        ),
+      ],
     );
   }
 
@@ -59,7 +74,6 @@ class CustomDialog extends StatelessWidget {
           padding: EdgeInsets.only(top: 20, left: 35, right: 35, bottom: 20),
           margin: EdgeInsets.only(top: 20),
           decoration: BoxDecoration(
-            color: Colors.white,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(48),
           ),
@@ -78,7 +92,10 @@ class CustomDialog extends StatelessWidget {
               SizedBox(height: 2.h),
               Text(
                 content,
-                style: CustomTextStyles.lightTextStyle(),
+                style: CustomTextStyles.lightTextStyle(
+                    color: ThemeUtil.isDarkMode(context)
+                        ? Color(0xffAAAAAA)
+                        : null),
                 textAlign: TextAlign.center,
                 maxLines: 5,
               ),
@@ -92,7 +109,10 @@ class CustomDialog extends StatelessWidget {
                               onPressed: () {
                                 isPharmacyCheckout == true
                                     ? Get.to(ReviewScreen(
-                                        buttonBgColor: AppColors.darkGreenColor,
+                                        buttonBgColor:
+                                            ThemeUtil.isDarkMode(context)
+                                                ? AppColors.lightGreenColoreb1
+                                                : AppColors.darkGreenColor,
                                       ))
                                     : isBloodRequest
                                         ? Get.to(Get.offAll(NavBarScreen(
@@ -106,13 +126,17 @@ class CustomDialog extends StatelessWidget {
                                             isUser: isUser));
                               },
                               backgroundColor: buttonColor != null
-                                  ? Color(0xff1C2A3A)
+                                  ? ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC5D3E3)
+                                      : Color(0xff1C2A3A)
                                   : isBookAppointment
                                       ? AppColors.darkBlueColor
                                       : isBloodRequest
                                           ? AppColors.redColor
                                           : AppColors.darkGreenColor,
-                              textColor: AppColors.whiteColor),
+                              textColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xff121212)
+                                  : AppColors.whiteColor),
                         ),
                       ],
                     )

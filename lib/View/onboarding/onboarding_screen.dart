@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/login_screen.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -45,14 +47,18 @@ class OnboardingScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: RoundedButton(
-                      backgroundColor: Color(0xff1C2A3A),
+                      backgroundColor: ThemeUtil.isDarkMode(context)
+                          ? AppColors.lightBlueColor3e3
+                          : Color(0xff1C2A3A),
                       text: 'Next',
                       onPressed: () {
                         _pageController.nextPage(
                             duration: Duration(milliseconds: 300),
                             curve: Curves.linear);
                       },
-                      textColor: Color(0xffE5E7EB),
+                      textColor: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff0D0D0D)
+                          : Color(0xffE5E7EB),
                     ),
                   ),
                 ],
@@ -73,7 +79,9 @@ class OnboardingScreen extends StatelessWidget {
                     dotWidth: 1.5.h,
                     dotHeight: 1.2.h,
                     dotColor: Colors.grey,
-                    activeDotColor: Color(0xff26232F)),
+                    activeDotColor: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightBlueColor3e3
+                        : Color(0xff26232F)),
               ),
             ),
           ),
@@ -126,7 +134,8 @@ class OnBoardPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: Text(
                   title,
-                  style: CustomTextStyles.darkHeadingTextStyle(size: 18),
+                  style: CustomTextStyles.darkHeadingTextStyle(
+                      size: 18, color: Theme.of(context).primaryColor),
                 ),
               ),
               SizedBox(
@@ -136,7 +145,10 @@ class OnBoardPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Text(
                   desc,
-                  style: CustomTextStyles.lightTextStyle(),
+                  style: CustomTextStyles.lightTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffAAAAAA)
+                          : null),
                   textAlign: TextAlign.center,
                 ),
               )

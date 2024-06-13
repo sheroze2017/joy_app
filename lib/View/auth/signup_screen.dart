@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/doctor_flow/profile_form.dart';
@@ -67,7 +70,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   SizedBox(height: 2.h),
                   Text(
                     "We are here to give you joy!",
-                    style: CustomTextStyles.lightTextStyle(),
+                    style: CustomTextStyles.lightTextStyle(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffAAAAAA)
+                            : null),
                   ),
                   SizedBox(height: 2.h),
                   RoundedBorderTextField(
@@ -126,7 +132,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ? Color(0xffC5D3E3)
                                   : Color(0xff1C2A3A)
                               : Color(
-                                  0xff121212), // Change background color based on selection
+                                  0xffF9FAFB), // Change background color based on selection
                           textColor: selectedButton == "User"
                               ? ThemeUtil.isDarkMode(context)
                                   ? Color(0XFF0D0D0D)
@@ -160,7 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ? Color(0xffC5D3E3)
                                   : Color(0xff1C2A3A)
                               : Color(
-                                  0xff121212), // Change background color based on selection
+                                  0xffF9FAFB), // Change background color based on selection
                           textColor: selectedButton == "Professional"
                               ? ThemeUtil.isDarkMode(context)
                                   ? Color(0XFF0D0D0D)
@@ -245,7 +251,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       children: [
                         TextSpan(
                           text: 'Already have an account ? ',
-                          style: CustomTextStyles.lightTextStyle(),
+                          style: CustomTextStyles.lightTextStyle(
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffAAAAAA)
+                                  : null),
                         ),
                         TextSpan(
                           text: 'Sign In',
@@ -293,13 +302,25 @@ class _CustomDialogState extends State<CustomDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      child: contentBox(context),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+              color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
+            ),
+          ),
+        ),
+        Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: contentBox(context),
+        ),
+      ],
     );
   }
 
@@ -308,7 +329,7 @@ class _CustomDialogState extends State<CustomDialog> {
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -323,49 +344,76 @@ class _CustomDialogState extends State<CustomDialog> {
               onPressed: () {
                 _selectButton(1);
                 widget.callback(selectedField!);
+                Get.back();
               },
 
               backgroundColor: selectedField == 1
-                  ? Color(0xff1C2A3A)
-                  : Color(
-                      0xffF9FAFB), // Change background color based on selection
-              textColor: selectedField == 1 ? Colors.white : Color(0xff9CA3AF),
+                  ? ThemeUtil.isDarkMode(context)
+                      ? AppColors.lightBlueColor3e3
+                      : Color(0xff1C2A3A)
+                  : ThemeUtil.isDarkMode(context)
+                      ? Color(0xff121212)
+                      : Color(
+                          0xffF9FAFB), // Change background color based on selection
+              textColor: selectedField == 1
+                  ? Theme.of(context).scaffoldBackgroundColor
+                  : Color(0xff9CA3AF),
             ),
             RoundedButtonSmall(
               text: "Continue as Pharmacy",
               onPressed: () {
                 _selectButton(2);
                 widget.callback(selectedField!);
+                Get.back();
               },
               backgroundColor: selectedField == 2
-                  ? Color(0xff1C2A3A)
-                  : Color(
-                      0xffF9FAFB), // Change background color based on selection
-              textColor: selectedField == 2 ? Colors.white : Color(0xff9CA3AF),
+                  ? ThemeUtil.isDarkMode(context)
+                      ? AppColors.lightBlueColor3e3
+                      : Color(0xff1C2A3A)
+                  : ThemeUtil.isDarkMode(context)
+                      ? Color(0xff121212)
+                      : Color(0xffF9FAFB),
+              textColor: selectedField == 2
+                  ? Theme.of(context).scaffoldBackgroundColor
+                  : Color(0xff9CA3AF),
             ),
             RoundedButtonSmall(
               text: "Continue as Blood bank",
               onPressed: () {
                 _selectButton(3);
                 widget.callback(selectedField!);
+                Get.back();
               },
               backgroundColor: selectedField == 3
-                  ? Color(0xff1C2A3A)
-                  : Color(
-                      0xffF9FAFB), // Change background color based on selection
-              textColor: selectedField == 3 ? Colors.white : Color(0xff9CA3AF),
+                  ? ThemeUtil.isDarkMode(context)
+                      ? AppColors.lightBlueColor3e3
+                      : Color(0xff1C2A3A)
+                  : ThemeUtil.isDarkMode(context)
+                      ? Color(0xff121212)
+                      : Color(
+                          0xffF9FAFB), // Change background color based on selection
+              textColor: selectedField == 3
+                  ? Theme.of(context).scaffoldBackgroundColor
+                  : Color(0xff9CA3AF),
             ),
             RoundedButtonSmall(
               text: "Continue as Hospital",
               onPressed: () {
                 _selectButton(4);
                 widget.callback(selectedField!);
+                Get.back();
               },
               backgroundColor: selectedField == 4
-                  ? Color(0xff1C2A3A)
-                  : Color(
-                      0xffF9FAFB), // Change background color based on selection
-              textColor: selectedField == 4 ? Colors.white : Color(0xff9CA3AF),
+                  ? ThemeUtil.isDarkMode(context)
+                      ? AppColors.lightBlueColor3e3
+                      : Color(0xff1C2A3A)
+                  : ThemeUtil.isDarkMode(context)
+                      ? Color(0xff121212)
+                      : Color(
+                          0xffF9FAFB), // Change background color based on selection
+              textColor: selectedField == 4
+                  ? Theme.of(context).scaffoldBackgroundColor
+                  : Color(0xff9CA3AF),
             ),
             SizedBox(height: 20),
           ],

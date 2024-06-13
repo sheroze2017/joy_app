@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:joy_app/Widgets/notification_item.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 
 import '../../Widgets/custom_appbar.dart';
 
@@ -18,14 +20,19 @@ class NotificationScreen extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Container(
               decoration: BoxDecoration(
-                  color: Color(0xff4B5563),
+                  color: ThemeUtil.isDarkMode(context)
+                      ? Color(0xffC5D3E3)
+                      : Color(0xff4B5563),
                   borderRadius: BorderRadius.circular(8)),
               child: Padding(
                 padding: const EdgeInsets.all(6.0),
                 child: Text(
                   '1 New',
                   style: CustomTextStyles.w600TextStyle(
-                      color: Color(0xffFFFFFF), size: 14),
+                      color: ThemeUtil.isDarkMode(context)
+                          ? AppColors.blackColor
+                          : AppColors.whiteColor,
+                      size: 14),
                 ),
               ),
             ),

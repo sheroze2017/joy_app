@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
@@ -51,7 +53,9 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                   style: CustomTextStyles.w600TextStyle(
                       letterspacing: 0.5,
                       size: 13.21,
-                      color: Color(0xff19295C)),
+                      color: ThemeUtil.isDarkMode(context)
+                          ? AppColors.whiteColor
+                          : Color(0xff19295C)),
                 ),
                 Row(
                   children: [
@@ -73,7 +77,8 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
         Text(
           widget.text.toString(),
           style: CustomTextStyles.lightTextStyle(
-              color: Color(0xff2D3F7B), size: 11.56),
+              color: ThemeUtil.isDarkMode(context) ? null : Color(0xff2D3F7B),
+              size: 11.56),
         ),
         SizedBox(height: 1.h),
         widget.showImg == true
@@ -89,6 +94,14 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                 ),
               )
             : Container(),
+        SizedBox(
+          height: 1.h,
+        ),
+        ReactionCount(
+          comment: '3.4k',
+          share: '46',
+        ),
+
         SizedBox(height: 2.h), // Adjust as needed
         Row(
           children: [
@@ -100,18 +113,22 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
               child: CircleButton(
                 isActive: widget.isLiked,
                 img: 'Assets/images/like.png',
-                color: widget.isLiked ? Color(0XFF1C2A3A) : Color(0xFFF9FAFB),
+                color: widget.isLiked
+                    ? ThemeUtil.isDarkMode(context)
+                        ? Color(0xffC5D3E3)
+                        : Color(0XFF1C2A3A)
+                    : Color(0xff121212),
               ),
             ),
             SizedBox(width: 10), // Adjust as needed
             CircleButton(
               img: 'Assets/images/message.png',
-              color: Color(0xFFF9FAFB),
+              color: Color(0xff121212),
             ),
             SizedBox(width: 10), // Adjust as needed
             CircleButton(
               img: 'Assets/images/send.png',
-              color: Color(0xFFF9FAFB),
+              color: Color(0xff121212),
             ),
             Spacer(),
             LikeCount(
@@ -146,7 +163,9 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                         style: CustomTextStyles.w600TextStyle(
                             letterspacing: 0.5,
                             size: 13.21,
-                            color: Color(0xff19295C)),
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : Color(0xff19295C)),
                       ),
                       Row(
                         children: [
@@ -163,17 +182,26 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                         children: [
                           Text('Like',
                               style: CustomTextStyles.darkHeadingTextStyle(
-                                  size: 10, color: Color(0xff60709D))),
+                                  size: 10,
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC9C9C9)
+                                      : Color(0xff60709D))),
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 30.0),
                             child: Text('Reply',
                                 style: CustomTextStyles.darkHeadingTextStyle(
-                                    size: 10, color: Color(0xff60709D))),
+                                    size: 10,
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xffC9C9C9)
+                                        : Color(0xff60709D))),
                           ),
                           Text('2m',
                               style: CustomTextStyles.lightTextStyle(
-                                  size: 10, color: Color(0xff60709D)))
+                                  size: 10,
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC9C9C9)
+                                      : Color(0xff60709D)))
                         ],
                       ),
                     ],

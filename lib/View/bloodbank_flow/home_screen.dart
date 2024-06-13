@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
@@ -20,6 +21,9 @@ class BloodBankHomeScreen extends StatelessWidget {
           title: 'Donate Blood',
           leading: Image(
             image: AssetImage('Assets/icons/arrow-left.png'),
+            color: ThemeUtil.isDarkMode(context)
+                ? AppColors.whiteColor
+                : Color(0xff374151),
           ),
           actions: [],
           showIcon: true),
@@ -47,7 +51,10 @@ class BloodBankHomeScreen extends StatelessWidget {
               Text(
                 'Allied Blood Bank',
                 style: CustomTextStyles.darkHeadingTextStyle(
-                    size: 20, color: Color(0xff383D44)),
+                    size: 20,
+                    color: ThemeUtil.isDarkMode(context)
+                        ? Color(0xFFFFFFFF)
+                        : Color(0xff383D44)),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
@@ -71,28 +78,36 @@ class BloodBankHomeScreen extends StatelessWidget {
                   children: [
                     RoundedSVGContainer(
                       bgColor: AppColors.lightishBlueColorebf,
-                      iconColor: Color(0xff1C2A3A),
+                      iconColor: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffC5D3E3)
+                          : Color(0xff1C2A3A),
                       svgAsset: 'Assets/icons/profile-2user.svg',
                       numberText: '50+',
                       descriptionText: 'Patients',
                     ),
                     RoundedSVGContainer(
                       bgColor: AppColors.lightishBlueColorebf,
-                      iconColor: Color(0xff1C2A3A),
+                      iconColor: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffC5D3E3)
+                          : Color(0xff1C2A3A),
                       svgAsset: 'Assets/icons/medal.svg',
                       numberText: '10+',
                       descriptionText: 'experience',
                     ),
                     RoundedSVGContainer(
                       bgColor: AppColors.lightishBlueColorebf,
-                      iconColor: Color(0xff1C2A3A),
+                      iconColor: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffC5D3E3)
+                          : Color(0xff1C2A3A),
                       svgAsset: 'Assets/icons/star.svg',
                       numberText: '5',
                       descriptionText: 'rating',
                     ),
                     RoundedSVGContainer(
                       bgColor: AppColors.silverColor4f6,
-                      iconColor: Color(0xff1C2A3A),
+                      iconColor: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffC5D3E3)
+                          : Color(0xff1C2A3A),
                       svgAsset: 'Assets/icons/messages.svg',
                       numberText: '1872',
                       descriptionText: 'reviews',
@@ -108,7 +123,10 @@ class BloodBankHomeScreen extends StatelessWidget {
                   Text(
                     'About Blood Bank',
                     style: CustomTextStyles.darkHeadingTextStyle(
-                        size: 20, color: Color(0xff383D44)),
+                        size: 20,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffC8D3E0)
+                            : Color(0xff383D44)),
                   ),
                   Spacer(),
                   Padding(
@@ -145,7 +163,10 @@ class BloodBankHomeScreen extends StatelessWidget {
                   Text(
                     'Blood Bank Timings',
                     style: CustomTextStyles.darkHeadingTextStyle(
-                        size: 20, color: Color(0xff383D44)),
+                        size: 20,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffC8D3E0)
+                            : Color(0xff383D44)),
                   ),
                   Spacer(),
                   Padding(

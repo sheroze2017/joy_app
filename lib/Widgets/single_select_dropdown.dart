@@ -1,5 +1,6 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:joy_app/theme.dart';
 
 class SearchSingleDropdown extends StatelessWidget {
   final String? value;
@@ -22,10 +23,15 @@ class SearchSingleDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomDropdown.search(
       decoration: CustomDropdownDecoration(
-        closedFillColor: Color(0xffF9FAFB),
+        expandedFillColor: ThemeUtil.isDarkMode(context)
+            ? Color(0xff121212)
+            : Color(0xffF9FAFB),
+        closedFillColor: ThemeUtil.isDarkMode(context)
+            ? Color(0xff121212)
+            : Color(0xffF9FAFB),
         closedBorder: Border.all(
           color: const Color(0xffD1D5DB),
-          width: 1.0,
+          width: 0.1,
         ),
         closedBorderRadius: BorderRadius.circular(8.0),
       ),

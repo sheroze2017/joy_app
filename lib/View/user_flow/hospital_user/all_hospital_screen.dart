@@ -3,6 +3,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/view/hospital_flow/home_screen.dart';
@@ -140,7 +141,10 @@ class AllHospitalScreen extends StatelessWidget {
                     ),
               Text(
                 '532 found',
-                style: CustomTextStyles.darkHeadingTextStyle(),
+                style: CustomTextStyles.darkHeadingTextStyle(
+                    color: ThemeUtil.isDarkMode(context)
+                        ? Color(0xffC8D3E0)
+                        : null),
               ),
               SizedBox(
                 height: 1.h,
@@ -244,16 +248,14 @@ class AllHospitalScreen extends StatelessWidget {
 }
 
 class HospitalName extends StatelessWidget {
-  const HospitalName({
-    super.key,
-  });
-
+  String? hospitalName;
+  HospitalName({this.hospitalName});
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Sunrise Health Clinic',
+      hospitalName ?? 'Sunrise Health Clinic',
       style: CustomTextStyles.darkHeadingTextStyle(
-          size: 12.67, color: Color(0xff4B5563)),
+          size: 12.67, color:ThemeUtil.isDarkMode(context)?AppColors.whiteColor: Color(0xff4B5563)),
     );
   }
 }

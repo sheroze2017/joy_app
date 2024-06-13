@@ -5,6 +5,8 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
@@ -56,14 +58,18 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                   Stack(
                     children: <Widget>[
                       Center(
-                        child: SvgPicture.asset(
-                            'Assets/images/profile-circle.svg'),
+                        child: SvgPicture.asset(ThemeUtil.isDarkMode(context)
+                            ? 'Assets/images/profile-circle-dark.svg'
+                            : 'Assets/images/profile-circle.svg'),
                       ),
                       Positioned(
                         bottom: 20,
-                        right: 110,
-                        child:
-                            SvgPicture.asset('Assets/images/message-edit.svg'),
+                        right: 100,
+                        child: SvgPicture.asset(
+                          ThemeUtil.isDarkMode(context)
+                              ? 'Assets/images/message-edit-dark.svg'
+                              : 'Assets/images/message-edit.svg',
+                        ),
                       ),
                     ],
                   ),
@@ -183,8 +189,12 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                 );
                               }
                             },
-                            backgroundColor: Color(0xff1C2A3A),
-                            textColor: Color(0xffFFFFFF)),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : Color(0xffFFFFFF)),
                       ),
                     ],
                   ),

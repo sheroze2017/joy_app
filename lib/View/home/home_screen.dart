@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/view/home/components/hospital_card_widget.dart';
 import 'package:joy_app/view/hospital_flow/home_screen.dart';
@@ -37,6 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,12 +49,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     'Location',
-                    style: CustomTextStyles.lightTextStyle(),
+                    style: CustomTextStyles.lightTextStyle(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffAAAAAA)
+                            : null),
                   ),
                   SizedBox(height: 1.w),
                   Row(
                     children: [
-                      SvgPicture.asset('Assets/icons/pindrop.svg'),
+                      SvgPicture.asset(
+                        'Assets/icons/pindrop.svg',
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffC5D3E3)
+                            : Color(0xff1C2A3A),
+                      ),
                       SizedBox(width: 1.w),
                       Text(
                         'Seattle, USA',
@@ -66,7 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
-                      color: Color(0xffF3F4F6)),
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff171717)
+                          : Color(0xffF3F4F6)),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child:
@@ -175,7 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         'Nearby Pharmacies',
-                        style: CustomTextStyles.darkHeadingTextStyle(),
+                        style: CustomTextStyles.darkHeadingTextStyle(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : null),
                       ),
                       Spacer(),
                       InkWell(
@@ -202,7 +218,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 16.0, left: 16),
-                        child: HosipitalCardWidget(),
+                        child: HosipitalCardWidget(
+                          isPharmacy: true,
+                        ),
                       );
                     },
                   ),
@@ -216,7 +234,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         'Nearby Medical Centers',
-                        style: CustomTextStyles.darkHeadingTextStyle(),
+                        style: CustomTextStyles.darkHeadingTextStyle(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : null),
                       ),
                       Spacer(),
                       InkWell(
@@ -257,7 +278,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         'Nearby Blood Bank',
-                        style: CustomTextStyles.darkHeadingTextStyle(),
+                        style: CustomTextStyles.darkHeadingTextStyle(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : null),
                       ),
                       Spacer(),
                       InkWell(

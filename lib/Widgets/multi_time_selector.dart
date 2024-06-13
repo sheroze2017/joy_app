@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 
 class MultiTimeSelector extends StatefulWidget {
   final List<String> times;
@@ -21,10 +22,11 @@ class _MultiTimeSelectorState extends State<MultiTimeSelector> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).dialogBackgroundColor,
       title: Text(
         'Select Hour',
-        style: CustomTextStyles.w600TextStyle(color: Color(0xff1C2A3A)),
+        style: CustomTextStyles.w600TextStyle(
+            color: Theme.of(context).primaryColorDark),
       ),
       content: Wrap(
         alignment: WrapAlignment.center,
@@ -45,14 +47,18 @@ class _MultiTimeSelectorState extends State<MultiTimeSelector> {
             child: Container(
               padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: isSelected ? Color(0xff1C2A3A) : Color(0xffF9FAFB),
+                color: isSelected
+                    ? Theme.of(context).primaryColorDark
+                    : Color(0xffF9FAFB),
                 borderRadius: BorderRadius.circular(6.17),
               ),
               child: Text(
                 time,
                 style: CustomTextStyles.w600TextStyle(
                   size: 10.7,
-                  color: isSelected ? Colors.white : Color(0xff6B7280),
+                  color: isSelected
+                      ? Theme.of(context).scaffoldBackgroundColor
+                      : Color(0xff6B7280),
                 ),
               ),
             ),
@@ -71,8 +77,12 @@ class _MultiTimeSelectorState extends State<MultiTimeSelector> {
                     widget.onConfirm(selectedTimes);
                     Navigator.pop(context);
                   },
-                  backgroundColor: Color(0xff1C2A3A),
-                  textColor: AppColors.whiteColor),
+                  backgroundColor: ThemeUtil.isDarkMode(context)
+                      ? Color(0xffC5D3E3)
+                      : Color(0xff1C2A3A),
+                  textColor: ThemeUtil.isDarkMode(context)
+                      ? Color(0xff121212)
+                      : Color(0xffFFFFFF)),
             ),
           ],
         ),

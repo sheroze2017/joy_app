@@ -5,6 +5,7 @@ import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
 
 import 'package:sizer/sizer.dart';
@@ -50,7 +51,10 @@ class ForgotPassScreen extends StatelessWidget {
                   SizedBox(height: 2.h),
                   Text(
                     "Enter your Email, we will send you a verification code.",
-                    style: CustomTextStyles.lightTextStyle(),
+                    style: CustomTextStyles.lightTextStyle(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffAAAAAA)
+                            : null),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 4.h),
@@ -81,8 +85,12 @@ class ForgotPassScreen extends StatelessWidget {
                                 Get.to(VerifyCodeScreen());
                               }
                             },
-                            backgroundColor: Color(0xff1C2A3A),
-                            textColor: Color(0xffFFFFFF)),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : Color(0xffFFFFFF)),
                       ),
                     ],
                   ),

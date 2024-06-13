@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/navbar.dart';
 import 'package:sizer/sizer.dart';
 
@@ -44,7 +45,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 SizedBox(height: 2.h),
                 Text(
                   "Your Order Has been Delivered",
-                  style: CustomTextStyles.lightTextStyle(),
+                  style: CustomTextStyles.lightTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffAAAAAA)
+                          : null),
                 ),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
@@ -94,7 +98,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             ));
                           },
                           backgroundColor: widget.buttonBgColor,
-                          textColor: AppColors.whiteColor),
+                          textColor: ThemeUtil.isDarkMode(context)
+                              ? AppColors.blackColor
+                              : AppColors.whiteColor),
                     ),
                   ],
                 ),

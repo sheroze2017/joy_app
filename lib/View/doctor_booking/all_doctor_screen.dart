@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/bloodbank_flow/all_donor_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
@@ -56,7 +57,10 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
               Text(
                 '532 found',
-                style: CustomTextStyles.darkHeadingTextStyle(),
+                style: CustomTextStyles.darkHeadingTextStyle(
+                    color: ThemeUtil.isDarkMode(context)
+                        ? Color(0xffC8D3E0)
+                        : null),
               ),
               SizedBox(
                 height: 1.h,

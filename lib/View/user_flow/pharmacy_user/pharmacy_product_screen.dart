@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:sizer/sizer.dart';
 
@@ -17,14 +19,22 @@ class PharmacyProductScreen extends StatelessWidget {
       appBar: HomeAppBar(
           title: 'Products',
           leading: Image(
-            image: AssetImage('Assets/icons/arrow-left.png'),
+            image: AssetImage(
+              'Assets/icons/arrow-left.png',
+            ),
+
             // height: 6.w,
             // width: .w,
           ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 16),
-              child: SvgPicture.asset('Assets/icons/cart.svg'),
+              child: SvgPicture.asset(
+                'Assets/icons/cart.svg',
+                color: ThemeUtil.isDarkMode(context)
+                    ? AppColors.lightGreenColoreb1
+                    : null,
+              ),
             )
           ],
           showIcon: true),
@@ -53,6 +63,7 @@ class PharmacyProductScreen extends StatelessWidget {
                               ));
                             },
                             child: MedicineCard(
+                              isUserProductScreen: true,
                               onPressed: () {},
                               btnText: "Add to Cart",
                               imgUrl:

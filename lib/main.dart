@@ -25,13 +25,12 @@ class MyApp extends StatelessWidget {
       return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Joy App',
-
-          // theme: MyAppThemes.lightTheme,
-          // darkTheme: MyAppThemes.darkTheme,
-          // themeMode: ThemeMode.system,
-          theme: ThemeData(
-            useMaterial3: true,
-          ),
+          theme: MyAppThemes.lightTheme,
+          darkTheme: MyAppThemes.darkTheme,
+          themeMode: ThemeMode.system,
+          // theme: ThemeData(
+          //   useMaterial3: true,
+          // ),
           // initialRoute: AppPage.getNavbar(),
           //getPages: AppPage.routes,
           home: SplashScreen()

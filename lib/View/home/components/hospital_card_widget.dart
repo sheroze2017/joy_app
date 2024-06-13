@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -8,17 +9,31 @@ import 'package:sizer/sizer.dart';
 class HosipitalCardWidget extends StatelessWidget {
   String? name;
   String? location;
-  HosipitalCardWidget({this.name, this.location});
+  bool isPharmacy;
+  bool isHospital;
+  bool isDoctor;
+  bool isBloodBank;
+  bool isUser;
+  HosipitalCardWidget(
+      {this.name,
+      this.location,
+      this.isBloodBank = false,
+      this.isHospital = false,
+      this.isDoctor = false,
+      this.isPharmacy = false,
+      this.isUser = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 59.4.w,
       decoration: BoxDecoration(
-          border: Border.all(color: Color(0xffE5E7EB)),
+          border: Border.all(
+              color: Color(0xffE5E7EB),
+              width: ThemeUtil.isDarkMode(context) ? 0.1 : 1),
           borderRadius: BorderRadius.circular(12)),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
@@ -56,6 +71,7 @@ class HosipitalCardWidget extends StatelessWidget {
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: Divider(
               color: Color(0xffE5E7EB),
+              thickness: ThemeUtil.isDarkMode(context) ? 0.2 : 0.6,
             ),
           ),
           Padding(
@@ -76,11 +92,13 @@ class HosipitalCardWidget extends StatelessWidget {
                 Spacer(),
                 Row(
                   children: [
-                    SvgPicture.asset('Assets/icons/hospital.svg'),
+                    SvgPicture.asset(isPharmacy
+                        ? 'Assets/icons/pharmacy.svg'
+                        : 'Assets/icons/hospital.svg'),
                     SizedBox(
                       width: 0.5.w,
                     ),
-                    Text('Hospital',
+                    Text(isPharmacy ? 'Pharmacy' : 'Hospital',
                         style: CustomTextStyles.lightTextStyle(
                             color: Color(0xff6B7280), size: 10.8))
                   ],

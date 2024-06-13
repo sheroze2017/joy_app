@@ -6,6 +6,7 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
 
 import 'package:sizer/sizer.dart';
@@ -63,10 +64,26 @@ class _AddMedicineState extends State<AddMedicine> {
                             'Assets/images/profile-circle.svg'),
                       ),
                       Positioned(
-                        bottom: 30,
-                        right: 105,
-                        child:
-                            SvgPicture.asset('Assets/images/message-edit.svg'),
+                        bottom: 20,
+                        right: 100,
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.lightGreenColoreb1
+                                    : AppColors.darkGreenColor,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10.0),
+                                  topRight: Radius.circular(10.0),
+                                  bottomRight: Radius.circular(10.0),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: SvgPicture.asset(
+                                'Assets/icons/pen.svg',
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                              ),
+                            )),
                       ),
                     ],
                   ),
@@ -180,8 +197,12 @@ class _AddMedicineState extends State<AddMedicine> {
                               //   },
                               // );
                             },
-                            backgroundColor: AppColors.darkGreenColor,
-                            textColor: Color(0xffFFFFFF)),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : Color(0xffFFFFFF)),
                       ),
                     ],
                   )

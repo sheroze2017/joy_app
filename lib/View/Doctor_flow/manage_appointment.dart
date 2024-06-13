@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
@@ -60,6 +61,7 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                       children: [
                         Divider(
                           color: Color(0xffE5E7EB),
+                          thickness: 0.3,
                         ),
                         SizedBox(
                           height: 2.h,
@@ -70,7 +72,9 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                           },
                           child: MeetingCallScheduler(
                             buttonColor: AppColors.darkBlueColor,
-                            bgColor: AppColors.lightishBlueColor5ff,
+                            bgColor: ThemeUtil.isDarkMode(context)
+                                ? AppColors.purpleBlueColor
+                                : AppColors.lightishBlueColor5ff,
                             isActive: false,
                             imgPath: 'Assets/images/oldPerson.png',
                             name: 'James',
@@ -87,7 +91,9 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                             },
                             child: MeetingCallScheduler(
                               buttonColor: AppColors.darkBlueColor,
-                              bgColor: AppColors.lightishBlueColor5ff,
+                              bgColor: ThemeUtil.isDarkMode(context)
+                                  ? AppColors.purpleBlueColor
+                                  : AppColors.lightishBlueColor5ff,
                               isActive: false,
                               imgPath: 'Assets/images/oldPerson.png',
                               name: 'James',
@@ -103,7 +109,9 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                           },
                           child: MeetingCallScheduler(
                             buttonColor: AppColors.darkBlueColor,
-                            bgColor: AppColors.lightishBlueColor5ff,
+                            bgColor: ThemeUtil.isDarkMode(context)
+                                ? AppColors.purpleBlueColor
+                                : AppColors.lightishBlueColor5ff,
                             isActive: false,
                             imgPath: 'Assets/images/oldPerson.png',
                             name: 'James',
@@ -138,14 +146,19 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                         ),
                         Text('Review to Patient ',
                             style: CustomTextStyles.w600TextStyle(
-                                color: AppColors.blackColor151, size: 20)),
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.whiteColor
+                                    : AppColors.blackColor151,
+                                size: 20)),
                         SizedBox(
                           height: 2.h,
                         ),
                         Text(
                           "Patient's Name",
                           style: CustomTextStyles.lightTextStyle(
-                              color: Color(0xff3D4859)),
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffDBDBDB)
+                                  : Color(0xff3D4859)),
                         ),
                         RoundedBorderTextField(
                             controller: _nameController,
@@ -159,7 +172,9 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                         Text(
                           "Your Daignosis",
                           style: CustomTextStyles.lightTextStyle(
-                              color: Color(0xff3D4859)),
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffDBDBDB)
+                                  : Color(0xff3D4859)),
                         ),
                         RoundedBorderTextField(
                             focusNode: _focusNode2,
@@ -175,7 +190,9 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                         Text(
                           "Medications Prescribed",
                           style: CustomTextStyles.lightTextStyle(
-                              color: Color(0xff3D4859)),
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffDBDBDB)
+                                  : Color(0xff3D4859)),
                         ),
                         RoundedBorderTextField(
                           focusNode: _focusNode3,

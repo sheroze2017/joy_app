@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/view/home/profile_screen.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
@@ -54,7 +55,10 @@ class NewPassScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Text(
                       "Your new password must be different form previously used password",
-                      style: CustomTextStyles.lightTextStyle(),
+                      style: CustomTextStyles.lightTextStyle(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xffAAAAAA)
+                              : null),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -96,8 +100,12 @@ class NewPassScreen extends StatelessWidget {
                                 Get.to(NavBarScreen(isUser: true));
                               }
                             },
-                            backgroundColor: Color(0xff1C2A3A),
-                            textColor: Color(0xffFFFFFF)),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : Color(0xffFFFFFF)),
                       ),
                     ],
                   ),

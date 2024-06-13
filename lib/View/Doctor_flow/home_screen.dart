@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_flow/all_appointment.dart';
 import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
@@ -27,10 +28,36 @@ class DoctorHomeScreen extends StatelessWidget {
             child: SvgPicture.asset('Assets/icons/joy-icon-small.svg'),
           ),
           actions: [
-            SvgPicture.asset('Assets/icons/searchbg.svg'),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff191919)
+                    : Color(0xffF3F4F6),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: SvgPicture.asset('Assets/icons/search-normal.svg'),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 16.0, left: 8),
-              child: SvgPicture.asset('Assets/icons/messagebg.svg'),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: ThemeUtil.isDarkMode(context)
+                      ? Color(0xff191919)
+                      : Color(0xffF3F4F6),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Center(
+                    child: SvgPicture.asset('Assets/icons/sms.svg'),
+                  ),
+                ),
+              ),
             )
           ],
           showIcon: true),
@@ -47,17 +74,24 @@ class DoctorHomeScreen extends StatelessWidget {
                       style: CustomTextStyles.lightTextStyle(
                           color: AppColors.borderColor),
                       decoration: InputDecoration(
+                        enabledBorder:
+                            OutlineInputBorder(borderSide: BorderSide.none),
+                        focusedBorder:
+                            OutlineInputBorder(borderSide: BorderSide.none),
+                        border: OutlineInputBorder(borderSide: BorderSide.none),
+                        fillColor: Colors.transparent,
                         hintText: "What's on your mind, Hashem?",
                         hintStyle: CustomTextStyles.lightTextStyle(
                             color: AppColors.borderColor),
-                        border: InputBorder.none,
                       ),
                     ),
                   ),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(54),
-                      color: AppColors.whiteColorf9f,
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff121212)
+                          : AppColors.whiteColorf9f,
                     ),
                     child: Padding(
                       padding:
@@ -90,9 +124,13 @@ class DoctorHomeScreen extends StatelessWidget {
                         Get.to(AllAppointments());
                       },
                       child: HeaderMenu(
-                        bgColor: AppColors.lightBlueColore5e,
-                        imgbgColor: AppColors.lightBlueColord0d,
-                        imagepath: 'Assets/icons/menu-board.svg',
+                        bgColor: ThemeUtil.isDarkMode(context)
+                            ? AppColors.purpleBlueColor
+                            : AppColors.lightBlueColore5e,
+                        imgbgColor: ThemeUtil.isDarkMode(context)
+                            ? AppColors.darkishBlueColorb46
+                            : AppColors.lightBlueColord0d,
+                        imagepath: 'Assets/icons/calendar.svg',
                         title: 'Appointments',
                         subTitle: 'Manage Appointments',
                       ),
@@ -110,8 +148,13 @@ class DoctorHomeScreen extends StatelessWidget {
                       },
                       child: HeaderMenu(
                         bgColor: AppColors.lightGreenColor,
-                        imgbgColor: AppColors.lightGreenColorFC7,
-                        imagepath: 'Assets/icons/calendar.svg',
+                        imgbgColor: ThemeUtil.isDarkMode(context)
+                            ? AppColors.darkGreenColor
+                            : AppColors.lightGreenColorFC7,
+                        iconColor: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.darkGreenColor,
+                        imagepath: 'Assets/icons/menu-board.svg',
                         title: 'Patient History',
                         subTitle: 'Manage Patient’s History',
                       ),
@@ -126,7 +169,10 @@ class DoctorHomeScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Upcoming Appointments',
-                    style: CustomTextStyles.darkHeadingTextStyle(),
+                    style: CustomTextStyles.darkHeadingTextStyle(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.lightBlueColor3e3
+                            : null),
                   ),
                   Spacer(),
                   InkWell(
@@ -144,21 +190,27 @@ class DoctorHomeScreen extends StatelessWidget {
                 height: 1.5.h,
               ),
               MeetingCallScheduler(
-                bgColor: AppColors.lightishBlueColor5ff,
+                bgColor: ThemeUtil.isDarkMode(context)
+                    ? AppColors.purpleBlueColor
+                    : AppColors.lightishBlueColor5ff,
+                isHospital: true,
                 nextMeeting: true,
                 imgPath: 'Assets/images/onboard3.png',
                 name: 'Julie',
-                time: '10:30 Pm',
+                time: 'May 22, 2023 - 10.00 AM',
                 location: 'Imam Hospital',
                 category: 'Dental',
-                buttonColor: AppColors.darkBlueColor,
+                buttonColor: Color(0xff0443A9),
               ),
               SizedBox(
                 height: 0.75.h,
               ),
               MeetingCallScheduler(
-                buttonColor: AppColors.darkBlueColor,
-                bgColor: AppColors.lightishBlueColor5ff,
+                buttonColor: Color(0xff00143D),
+                bgColor: ThemeUtil.isDarkMode(context)
+                    ? AppColors.purpleBlueColor
+                    : AppColors.lightishBlueColor5ff,
+                isHospital: true,
                 imgPath: 'Assets/images/oldPerson.png',
                 name: 'James',
                 time: '10:30 Pm',
@@ -210,6 +262,7 @@ class MeetingCallScheduler extends StatelessWidget {
   bool isActive;
   bool isPharmacy;
   bool? isDeliverd;
+  bool? isHospital;
 
   MeetingCallScheduler(
       {super.key,
@@ -220,6 +273,7 @@ class MeetingCallScheduler extends StatelessWidget {
       required this.time,
       this.nextMeeting = false,
       this.isActive = true,
+      this.isHospital = false,
       required this.buttonColor,
       required this.bgColor,
       this.isPharmacy = false,
@@ -244,7 +298,8 @@ class MeetingCallScheduler extends StatelessWidget {
                 : Container(),
             !isPharmacy
                 ? Divider(
-                    color: Color(0xffE5E7EB),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    thickness: 0.3,
                   )
                 : Container(),
             SizedBox(
@@ -308,7 +363,9 @@ class MeetingCallScheduler extends StatelessWidget {
                                   'Delivered',
                                   style: CustomTextStyles.w600TextStyle(
                                       size: 14,
-                                      color: AppColors.darkGreenColor),
+                                      color: ThemeUtil.isDarkMode(context)
+                                          ? AppColors.lightGreenColoreb1
+                                          : AppColors.darkGreenColor),
                                 )
                               : SizedBox()
                         ],
@@ -320,7 +377,8 @@ class MeetingCallScheduler extends StatelessWidget {
             ),
             isActive
                 ? Divider(
-                    color: Color(0xffE5E7EB),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    thickness: 0.3,
                   )
                 : Container(),
             isActive
@@ -340,11 +398,20 @@ class MeetingCallScheduler extends StatelessWidget {
                             backgroundColor: isPharmacy
                                 ? buttonColor
                                 : nextMeeting
-                                    ? AppColors.darkBlueColor
-                                    : Color(0xffE5E7EB),
-                            textColor: nextMeeting
+                                    ? ThemeUtil.isDarkMode(context)
+                                        ? buttonColor
+                                        : AppColors.darkBlueColor
+                                    : ThemeUtil.isDarkMode(context)
+                                        ? Color(0xff00143D)
+                                        : Color(0xffE5E7EB),
+                            textColor: (ThemeUtil.isDarkMode(context) &&
+                                    (isHospital != null && isHospital == true))
                                 ? AppColors.whiteColor
-                                : AppColors.darkBlueColor),
+                                : ThemeUtil.isDarkMode(context)
+                                    ? AppColors.blackColor
+                                    : nextMeeting
+                                        ? AppColors.whiteColor
+                                        : AppColors.darkBlueColor),
                       ),
                     ],
                   )
@@ -362,14 +429,16 @@ class HeaderMenu extends StatelessWidget {
   final String subTitle;
   final Color bgColor;
   final Color imgbgColor;
+  Color? iconColor;
 
-  const HeaderMenu(
+  HeaderMenu(
       {super.key,
       required this.imagepath,
       required this.title,
       required this.bgColor,
       required this.imgbgColor,
-      required this.subTitle});
+      required this.subTitle,
+      this.iconColor});
 
   @override
   Widget build(BuildContext context) {
@@ -377,7 +446,7 @@ class HeaderMenu extends StatelessWidget {
       decoration: BoxDecoration(
           color: bgColor, borderRadius: BorderRadius.circular(22.31)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+        padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -389,7 +458,10 @@ class HeaderMenu extends StatelessWidget {
                 child: Center(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(imagepath),
+                  child: SvgPicture.asset(
+                    imagepath,
+                    color: iconColor,
+                  ),
                 ))),
             SizedBox(
               height: 2.h,
@@ -402,7 +474,7 @@ class HeaderMenu extends StatelessWidget {
             Text(
               subTitle,
               style: CustomTextStyles.lightTextStyle(
-                  size: 12, color: AppColors.blackColor393),
+                  size: 11, color: AppColors.blackColor393),
             ),
             SizedBox(
               height: 1.h,

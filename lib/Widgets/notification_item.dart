@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
 import '../styles/custom_textstyle.dart';
@@ -35,11 +37,17 @@ class NotificationItem extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: CustomTextStyles.darkHeadingTextStyle(),
+                  style: CustomTextStyles.darkHeadingTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? AppColors.whiteColor
+                          : null),
                 ),
                 Text(
                   description,
-                  style: CustomTextStyles.lightTextStyle(),
+                  style: CustomTextStyles.lightTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffAAAAAA)
+                          : null),
                 ),
               ],
             ),
@@ -71,7 +79,10 @@ class NotificationDate extends StatelessWidget {
           ),
           Spacer(),
           Text('Mark all as read',
-              style: CustomTextStyles.darkHeadingTextStyle(size: 14))
+              style: CustomTextStyles.darkHeadingTextStyle(
+                  color:
+                      ThemeUtil.isDarkMode(context) ? Color(0xffC5D3E3) : null,
+                  size: 14))
         ],
       ),
     );

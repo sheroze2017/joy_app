@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
@@ -362,13 +363,19 @@ class UserRatingWidget extends StatelessWidget {
                 children: [
                   Text(
                     'Joe Doe',
-                    style: CustomTextStyles.darkHeadingTextStyle(),
+                    style: CustomTextStyles.darkHeadingTextStyle(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : null),
                   ),
                   Row(
                     children: [
                       Text('5.0',
                           style: CustomTextStyles.lightTextStyle(
-                              color: Color(0xff4B5563), size: 12)),
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? null
+                                  : Color(0xff4B5563),
+                              size: 12)),
                       SizedBox(
                         width: 0.5.w,
                       ),
@@ -401,7 +408,8 @@ class UserRatingWidget extends StatelessWidget {
         Text(
             'Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.',
             style: CustomTextStyles.lightTextStyle(
-                color: Color(0xff4B5563), size: 14)),
+                color: ThemeUtil.isDarkMode(context) ? null : Color(0xff4B5563),
+                size: 14)),
       ],
     );
   }
@@ -414,14 +422,16 @@ class MedicineCard extends StatelessWidget {
   final String name;
   final String btnText;
   final VoidCallback onPressed;
+  bool isUserProductScreen;
 
-  const MedicineCard(
+  MedicineCard(
       {super.key,
       required this.imgUrl,
       required this.cost,
       required this.count,
       required this.name,
       required this.btnText,
+      this.isUserProductScreen = false,
       required this.onPressed});
   @override
   Widget build(BuildContext context) {
@@ -479,8 +489,14 @@ class MedicineCard extends StatelessWidget {
                       isSmall: true,
                       text: btnText,
                       onPressed: onPressed,
-                      backgroundColor: Color(0xff015104),
-                      textColor: Color(0xffFFFFFF)),
+                      backgroundColor: ThemeUtil.isDarkMode(context)
+                          ? isUserProductScreen
+                              ? Color(0xff1DAA61)
+                              : AppColors.lightGreenColoreb1
+                          : AppColors.darkGreenColor,
+                      textColor: ThemeUtil.isDarkMode(context)
+                          ? AppColors.blackColor
+                          : AppColors.whiteColor),
                 )
               ],
             )
@@ -514,8 +530,10 @@ class RoundedSVGContainer extends StatelessWidget {
           // You can adjust the size as needed
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50),
-            color: bgColor ??
-                Color(0xffF3F4F6), // Background color of the container
+            color: ThemeUtil.isDarkMode(context)
+                ? Color(0xff171717)
+                : bgColor ??
+                    Color(0xffF3F4F6), // Background color of the container
           ),
           child: Padding(
             padding: const EdgeInsets.all(10.0),

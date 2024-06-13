@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/components/blog_card.dart';
 import 'package:joy_app/view/home/profile_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -76,8 +77,13 @@ class MyProfileScreen extends StatelessWidget {
                             width: 100.w,
                             height: 23.58.w,
                             decoration: BoxDecoration(
-                                border: Border.all(color: Color(0xffF3F4F6)),
-                                color: Color(0xffFAFAFA),
+                                border: Border.all(
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Colors.transparent
+                                        : Color(0xffF3F4F6)),
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff121212)
+                                    : Color(0xffFAFAFA),
                                 borderRadius: BorderRadius.circular(12)),
                             child: Row(
                               children: [
@@ -91,13 +97,18 @@ class MyProfileScreen extends StatelessWidget {
                                       '1K',
                                       style:
                                           CustomTextStyles.darkHeadingTextStyle(
-                                              color: Color(0xff000000),
+                                              color:
+                                                  ThemeUtil.isDarkMode(context)
+                                                      ? AppColors.whiteColor
+                                                      : Color(0xff000000),
                                               size: 15.41),
                                     ),
                                     Text(
                                       'Posts',
                                       style: CustomTextStyles.lightTextStyle(
-                                          color: Color(0xff000000),
+                                          color: ThemeUtil.isDarkMode(context)
+                                              ? AppColors.whiteColor
+                                              : Color(0xff000000),
                                           size: 13.21),
                                     )
                                   ],
@@ -110,13 +121,18 @@ class MyProfileScreen extends StatelessWidget {
                                       '2000',
                                       style:
                                           CustomTextStyles.darkHeadingTextStyle(
-                                              color: Color(0xff000000),
+                                              color:
+                                                  ThemeUtil.isDarkMode(context)
+                                                      ? AppColors.whiteColor
+                                                      : Color(0xff000000),
                                               size: 15.41),
                                     ),
                                     Text(
                                       'Friends',
                                       style: CustomTextStyles.lightTextStyle(
-                                          color: Color(0xff000000),
+                                          color: ThemeUtil.isDarkMode(context)
+                                              ? AppColors.whiteColor
+                                              : Color(0xff000000),
                                           size: 13.21),
                                     )
                                   ],
@@ -143,6 +159,9 @@ class MyProfileScreen extends StatelessWidget {
                             Text(
                               'Sheroze Rehman',
                               style: CustomTextStyles.darkHeadingTextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC8D3E0)
+                                      : null,
                                   size: 14),
                             )
                           ],
@@ -165,8 +184,12 @@ class MyProfileScreen extends StatelessWidget {
                                   isSmall: true,
                                   text: "Message",
                                   onPressed: () {},
-                                  backgroundColor: Color(0xffE5E7EB),
-                                  textColor: Color(0xff1C2A3A)),
+                                  backgroundColor: ThemeUtil.isDarkMode(context)
+                                      ? Color(0XFF1F2228)
+                                      : Color(0xffE5E7EB),
+                                  textColor: ThemeUtil.isDarkMode(context)
+                                      ? Color(0XFFC5D3E3)
+                                      : Color(0xff1C2A3A)),
                             ),
                             SizedBox(
                               width: 4.w,
@@ -176,8 +199,12 @@ class MyProfileScreen extends StatelessWidget {
                                   isSmall: true,
                                   text: "Add Friend",
                                   onPressed: () {},
-                                  backgroundColor: Color(0xff1C2A3A),
-                                  textColor: Color(0xffFFFFFF)),
+                                  backgroundColor: ThemeUtil.isDarkMode(context)
+                                      ? Color(0XFFC5D3E3)
+                                      : Color(0xff1C2A3A),
+                                  textColor: ThemeUtil.isDarkMode(context)
+                                      ? AppColors.blackColor
+                                      : Color(0xffFFFFFF)),
                             )
                           ],
                         ),
@@ -190,7 +217,10 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(height: 1.h),
                 Text(
                   'I’m Alexa David, diagnosed with Cancer last year. Starting getting chemotherapeutic treatment and now i’m getting better day by day.',
-                  style: CustomTextStyles.lightTextStyle(),
+                  style: CustomTextStyles.lightTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffAAAAAA)
+                          : null),
                 ),
                 SizedBox(height: 2.h),
                 Heading(
@@ -202,7 +232,10 @@ class MyProfileScreen extends StatelessWidget {
                   children: [
                     Text(
                       'My Photos',
-                      style: CustomTextStyles.darkHeadingTextStyle(),
+                      style: CustomTextStyles.darkHeadingTextStyle(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xffC5D3E3)
+                              : null),
                     ),
                     Spacer(),
                     Text(
@@ -230,7 +263,10 @@ class MyProfileScreen extends StatelessWidget {
                   children: [
                     Text(
                       'My Posts',
-                      style: CustomTextStyles.darkHeadingTextStyle(),
+                      style: CustomTextStyles.darkHeadingTextStyle(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xffC5D3E3)
+                              : null),
                     ),
                     Spacer(),
                     Text(
@@ -244,6 +280,7 @@ class MyProfileScreen extends StatelessWidget {
                 ),
 
                 MyCustomWidget(
+                  postName: 'Sheroze',
                   isReply: true,
                   showImg: true,
                   text:
@@ -328,7 +365,10 @@ class PostHeader extends StatelessWidget {
             Text(
               'Sheroze',
               style: CustomTextStyles.w600TextStyle(
-                  size: 13.21, color: Color(0xff19295C)),
+                  size: 13.21,
+                  color: ThemeUtil.isDarkMode(context)
+                      ? Color(0xffFFFFFF)
+                      : Color(0xff19295C)),
             ),
             Row(
               children: [
@@ -358,7 +398,11 @@ class Heading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: CustomTextStyles.w600TextStyle(size: 20, color: Color(0xff1F2A37)),
+      style: CustomTextStyles.w600TextStyle(
+          size: 20,
+          color: ThemeUtil.isDarkMode(context)
+              ? Color(0xffC8D3E0)
+              : Color(0xff1F2A37)),
     );
   }
 }
@@ -454,7 +498,7 @@ class CircleButton extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Image.asset(
               img,
-              color: isActive ? AppColors.whiteColor : Color(0xff1C2A3A),
+              color: isActive ? Color(0xff1C2A3A) : Color(0xFFC5D3E3),
             ),
           ),
         ),

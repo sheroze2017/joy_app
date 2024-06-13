@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/profileform_screen.dart';
 import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:sizer/sizer.dart';
@@ -41,7 +43,6 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          color: Color(0xffFFFFFF),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
@@ -133,8 +134,12 @@ class _EditProfileState extends State<EditProfile> {
                             //   },
                             // );
                           },
-                          backgroundColor: Color(0xff1C2A3A),
-                          textColor: Color(0xffFFFFFF)),
+                          backgroundColor: ThemeUtil.isDarkMode(context)
+                              ? Color(0xffC5D3E3)
+                              : Color(0xff1C2A3A),
+                          textColor: ThemeUtil.isDarkMode(context)
+                              ? AppColors.blackColor
+                              : Color(0xffFFFFFF)),
                     ),
                   ],
                 )

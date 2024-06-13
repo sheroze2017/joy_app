@@ -6,6 +6,7 @@ import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
@@ -66,7 +67,9 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                         width: 100.w,
                         height: 42.56.w,
                         decoration: BoxDecoration(
-                            color: AppColors.silverColor4f6,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff161616)
+                                : AppColors.silverColor4f6,
                             borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(29),
                                 bottomRight: Radius.circular(12),
@@ -241,8 +244,12 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                 },
                               );
                             },
-                            backgroundColor: Color(0xff1C2A3A),
-                            textColor: Color(0xffFFFFFF)),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : Color(0xffFFFFFF)),
                       ),
                     ],
                   ),

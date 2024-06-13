@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
 import '../social_media/new_friend.dart';
@@ -19,13 +21,24 @@ class ProductScreen extends StatelessWidget {
           title: 'Products',
           leading: Image(
             image: AssetImage('Assets/icons/arrow-left.png'),
+            color: ThemeUtil.isDarkMode(context) ? AppColors.whiteColor : null,
             // height: 6.w,
             // width: .w,
           ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10),
-              child: SvgPicture.asset('Assets/icons/cartred.svg'),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: Color(0xffBABABA))),
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: SvgPicture.asset(
+                    'Assets/icons/cardreddot.svg',
+                  ),
+                ),
+              ),
             ),
             InkWell(
               onTap: () {
@@ -33,7 +46,14 @@ class ProductScreen extends StatelessWidget {
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 24),
-                child: SvgPicture.asset('Assets/icons/addrounded.svg'),
+                child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(color: Color(0xffBABABA))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: SvgPicture.asset('Assets/icons/plus.svg'),
+                    )),
               ),
             ),
           ],

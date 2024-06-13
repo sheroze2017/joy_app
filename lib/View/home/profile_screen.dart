@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/login_screen.dart';
 import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/view/doctor_booking/manage_booking.dart';
@@ -34,7 +36,6 @@ class _FormScreenState extends State<ProfileScreen> {
         showIcon: true,
       ),
       body: Container(
-        color: Color(0xffFFFFFF),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
@@ -61,7 +62,10 @@ class _FormScreenState extends State<ProfileScreen> {
               ),
               Text(
                 'Sheroze Rehman',
-                style: CustomTextStyles.darkHeadingTextStyle(),
+                style: CustomTextStyles.darkHeadingTextStyle(
+                    color: ThemeUtil.isDarkMode(context)
+                        ? AppColors.whiteColor
+                        : null),
               ),
               SizedBox(
                 height: 1.h,
@@ -83,7 +87,10 @@ class _FormScreenState extends State<ProfileScreen> {
                 },
                 child: Row(
                   children: [
-                    SvgPicture.asset('Assets/images/user-edit.svg'),
+                    SvgPicture.asset(
+                      'Assets/images/user-edit.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
                     SizedBox(
                       width: 3.w,
                     ),
@@ -91,10 +98,16 @@ class _FormScreenState extends State<ProfileScreen> {
                       child: Text(
                         'Edit Profile',
                         style: CustomTextStyles.lightTextStyle(
-                            color: Color(0xff6B7280), size: 18),
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : Color(0xff6B7280),
+                            size: 18),
                       ),
                     ),
-                    SvgPicture.asset('Assets/images/arrow-right.svg'),
+                    SvgPicture.asset(
+                      'Assets/images/arrow-right.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ],
                 ),
               ),
@@ -110,7 +123,10 @@ class _FormScreenState extends State<ProfileScreen> {
                 },
                 child: Row(
                   children: [
-                    SvgPicture.asset('Assets/images/notification.svg'),
+                    SvgPicture.asset(
+                      'Assets/images/notification.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
                     SizedBox(
                       width: 3.w,
                     ),
@@ -118,10 +134,16 @@ class _FormScreenState extends State<ProfileScreen> {
                       child: Text(
                         'Notifications',
                         style: CustomTextStyles.lightTextStyle(
-                            color: Color(0xff6B7280), size: 18),
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : Color(0xff6B7280),
+                            size: 18),
                       ),
                     ),
-                    SvgPicture.asset('Assets/images/arrow-right.svg'),
+                    SvgPicture.asset(
+                      'Assets/images/arrow-right.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ],
                 ),
               ),
@@ -137,7 +159,10 @@ class _FormScreenState extends State<ProfileScreen> {
                 },
                 child: Row(
                   children: [
-                    SvgPicture.asset('Assets/images/appointment.svg'),
+                    SvgPicture.asset(
+                      'Assets/images/appointment.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
                     SizedBox(
                       width: 3.w,
                     ),
@@ -145,10 +170,16 @@ class _FormScreenState extends State<ProfileScreen> {
                       child: Text(
                         'Appointments',
                         style: CustomTextStyles.lightTextStyle(
-                            color: Color(0xff6B7280), size: 18),
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : Color(0xff6B7280),
+                            size: 18),
                       ),
                     ),
-                    SvgPicture.asset('Assets/images/arrow-right.svg'),
+                    SvgPicture.asset(
+                      'Assets/images/arrow-right.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ],
                 ),
               ),
@@ -161,12 +192,12 @@ class _FormScreenState extends State<ProfileScreen> {
               InkWell(
                 onTap: () {
                   showModalBottomSheet(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     context: context,
                     builder: (BuildContext context) {
                       return Container(
                         height: 30.h,
                         decoration: BoxDecoration(
-                            color: Color(0xffFFFFFF),
                             borderRadius: BorderRadius.circular(54)),
                         child: Padding(
                           padding: const EdgeInsets.all(24.0),
@@ -175,7 +206,8 @@ class _FormScreenState extends State<ProfileScreen> {
                             children: <Widget>[
                               Text(
                                 'Logout',
-                                style: CustomTextStyles.darkTextStyle(),
+                                style: CustomTextStyles.darkTextStyle(
+                                    color: Theme.of(context).primaryColor),
                               ),
                               Padding(
                                 padding:
@@ -197,8 +229,13 @@ class _FormScreenState extends State<ProfileScreen> {
                                       onPressed: () {
                                         Get.back();
                                       },
-                                      backgroundColor: Color(0xffE5E7EB),
-                                      textColor: Color(0xff1C2A3A),
+                                      backgroundColor:
+                                          ThemeUtil.isDarkMode(context)
+                                              ? Color(0xff1F2228)
+                                              : Color(0xffE5E7EB),
+                                      textColor: ThemeUtil.isDarkMode(context)
+                                          ? AppColors.lightBlueColor3e3
+                                          : Color(0xff1C2A3A),
                                     ),
                                   ),
                                   SizedBox(
@@ -210,8 +247,12 @@ class _FormScreenState extends State<ProfileScreen> {
                                         onPressed: () {
                                           Get.offAll(LoginScreen());
                                         },
-                                        backgroundColor: Color(0xff1C2A3A),
-                                        textColor: Color(0xffFFFFFF)),
+                                        backgroundColor:
+                                            ThemeUtil.isDarkMode(context)
+                                                ? AppColors.lightBlueColor3e3
+                                                : Color(0xff1C2A3A),
+                                        textColor: Theme.of(context)
+                                            .scaffoldBackgroundColor),
                                   )
                                 ],
                               ),
@@ -224,7 +265,10 @@ class _FormScreenState extends State<ProfileScreen> {
                 },
                 child: Row(
                   children: [
-                    SvgPicture.asset('Assets/images/logout.svg'),
+                    SvgPicture.asset(
+                      'Assets/images/logout.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
                     SizedBox(
                       width: 3.w,
                     ),
@@ -232,10 +276,16 @@ class _FormScreenState extends State<ProfileScreen> {
                       child: Text(
                         'Log Out',
                         style: CustomTextStyles.lightTextStyle(
-                            color: Color(0xff6B7280), size: 18),
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : Color(0xff6B7280),
+                            size: 18),
                       ),
                     ),
-                    SvgPicture.asset('Assets/images/arrow-right.svg'),
+                    SvgPicture.asset(
+                      'Assets/images/arrow-right.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ],
                 ),
               )
