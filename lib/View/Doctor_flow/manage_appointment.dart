@@ -303,7 +303,9 @@ class _TimerWidgetState extends State<TimerWidget>
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.w500,
-                color: Colors.black,
+                color: ThemeUtil.isDarkMode(context)
+                    ? AppColors.whiteColor
+                    : Colors.black,
               ),
             ),
           ],

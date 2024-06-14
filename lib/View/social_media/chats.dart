@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/social_media/direct_chat.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
@@ -190,7 +191,10 @@ class ChatBox extends StatelessWidget {
               Text(
                 personName,
                 style: CustomTextStyles.darkHeadingTextStyle(
-                    size: 17, color: Color(0Xff000000)),
+                    size: 17,
+                    color: ThemeUtil.isDarkMode(context)
+                        ? AppColors.whiteColor
+                        : Color(0Xff000000)),
               ),
               SizedBox(height: 0.2.h),
               Container(

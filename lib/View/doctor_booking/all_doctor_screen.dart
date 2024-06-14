@@ -101,7 +101,10 @@ class DoctorsCardWidget extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Container(
         decoration: BoxDecoration(
-            color: Color(0xffEEF5FF), borderRadius: BorderRadius.circular(12)),
+            color: ThemeUtil.isDarkMode(context)
+                ? Color(0xff151515)
+                : Color(0xffEEF5FF),
+            borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
@@ -131,18 +134,26 @@ class DoctorsCardWidget extends StatelessWidget {
                           children: [
                             Text(
                               docName,
-                              style: CustomTextStyles.darkHeadingTextStyle(),
+                              style: CustomTextStyles.darkHeadingTextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC8D3E0)
+                                      : null),
                             ),
                             Spacer(),
                             InkWell(
                                 onTap: () {},
                                 child: SvgPicture.asset(
                                   'Assets/icons/favourite.svg',
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC8D3E0)
+                                      : null,
                                 ))
                           ],
                         ),
                         Divider(
-                          color: AppColors.lightGreyColor,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff1F2228)
+                              : AppColors.lightGreyColor,
                         ),
                         Text(
                           Category,
@@ -357,7 +368,7 @@ class HorizontalDoctorCategories extends StatelessWidget {
             DoctorCount: '$index',
             bgColor: isBloodBank
                 ? bgColors[index % 2 == 0 ? 0 : 1]
-                : bgColorsDoctors[index % 2 == 0 ? 0 : 1],
+                :ThemeUtil.isDarkMode(context)?bgColorsDoctorsDark[index % 2 == 0 ? 0 : 1]: bgColorsDoctors[index % 2 == 0 ? 0 : 1],
             fgColor: isBloodBank
                 ? fgColors[index % 2 == 0 ? 0 : 1]
                 : fgColorsDoctors[index % 2 == 0 ? 0 : 1],
@@ -417,6 +428,8 @@ List bgColorsDoctors = [
   AppColors.lightBlueColore5e,
   AppColors.lightPurpleColore1e
 ];
+
+List bgColorsDoctorsDark = [AppColors.purpleBlueColor, Color(0xff8B66C8)];
 
 List fgColorsDoctors = [
   AppColors.lightBlueColord0d,

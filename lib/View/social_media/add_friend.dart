@@ -358,7 +358,7 @@ class AddFriendWidget extends StatelessWidget {
                                 : Color(0xff1C2A3A),
                             textColor: ThemeUtil.isDarkMode(context)
                                 ? AppColors.blackColor
-                                : AppColors.blackColor),
+                                : AppColors.whiteColor),
                       ),
                     ],
                   ),

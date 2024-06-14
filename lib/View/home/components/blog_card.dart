@@ -111,24 +111,38 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                 setState(() {});
               },
               child: CircleButton(
+                isLikeButton: true,
                 isActive: widget.isLiked,
                 img: 'Assets/images/like.png',
-                color: widget.isLiked
-                    ? ThemeUtil.isDarkMode(context)
+                // color: widget.isLiked
+                //     ? ThemeUtil.isDarkMode(context)
+                // ? Color(0xffC5D3E3)
+                // : Color(0XFF1C2A3A)
+                //     : Color(0xff121212),
+                color: ThemeUtil.isDarkMode(context)
+                    ? widget.isLiked
                         ? Color(0xffC5D3E3)
-                        : Color(0XFF1C2A3A)
-                    : Color(0xff121212),
+                        : Color(0xff121212)
+                    : !widget.isLiked
+                        ? Color(0xff121212)
+                        : AppColors.whiteColorf9f,
               ),
             ),
             SizedBox(width: 10), // Adjust as needed
             CircleButton(
+              isLikeButton: false,
               img: 'Assets/images/message.png',
-              color: Color(0xff121212),
+              color: ThemeUtil.isDarkMode(context)
+                  ? Color(0xff121212)
+                  : AppColors.whiteColorf9f,
             ),
             SizedBox(width: 10), // Adjust as needed
             CircleButton(
+              isLikeButton: false,
               img: 'Assets/images/send.png',
-              color: Color(0xff121212),
+              color: ThemeUtil.isDarkMode(context)
+                  ? Color(0xff121212)
+                  : AppColors.whiteColorf9f,
             ),
             Spacer(),
             LikeCount(

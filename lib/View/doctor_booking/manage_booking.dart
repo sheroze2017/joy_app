@@ -6,6 +6,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/review_screen.dart';
 import 'package:sizer/sizer.dart';
 
@@ -39,7 +40,10 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
       appBar: AppBar(
         title: Text(
           'My Bookings',
-          style: CustomTextStyles.darkTextStyle(color: Color(0xff374151)),
+          style: CustomTextStyles.darkTextStyle(
+              color: ThemeUtil.isDarkMode(context)
+                  ? AppColors.whiteColor
+                  : Color(0xff374151)),
         ),
         centerTitle: true,
         bottom: TabBar(
@@ -122,7 +126,9 @@ class AppointmentCardUser extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: AppColors.lightishBlueColor5ff),
+          color: ThemeUtil.isDarkMode(context)
+              ? AppColors.purpleBlueColor
+              : AppColors.lightishBlueColor5ff),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -133,7 +139,9 @@ class AppointmentCardUser extends StatelessWidget {
               style: CustomTextStyles.darkHeadingTextStyle(size: 14),
             ),
             Divider(
-              color: Color(0xffE5E7EB),
+              color: ThemeUtil.isDarkMode(context)
+                  ? Color(0xff1f2228)
+                  : Color(0xffE5E7EB),
             ),
             SizedBox(
               height: 0.5.h,
@@ -194,7 +202,9 @@ class AppointmentCardUser extends StatelessWidget {
               ],
             ),
             Divider(
-              color: Color(0xffE5E7EB),
+              color: ThemeUtil.isDarkMode(context)
+                  ? Color(0xff1f2228)
+                  : Color(0xffE5E7EB),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -205,8 +215,12 @@ class AppointmentCardUser extends StatelessWidget {
                       onPressed: () {
                         //      showPaymentBottomSheet(context, true);
                       },
-                      backgroundColor: AppColors.lightGreyColor,
-                      textColor: AppColors.darkBlueColor),
+                      backgroundColor: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff00143D)
+                          : AppColors.lightGreyColor,
+                      textColor: ThemeUtil.isDarkMode(context)
+                          ? AppColors.whiteColor
+                          : AppColors.darkBlueColor),
                 ),
                 SizedBox(
                   width: 2.w,
@@ -221,7 +235,9 @@ class AppointmentCardUser extends StatelessWidget {
                               ))
                             : print('');
                       },
-                      backgroundColor: AppColors.darkBlueColor,
+                      backgroundColor: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff0443A9)
+                          : AppColors.darkBlueColor,
                       textColor: AppColors.whiteColor),
                 ),
               ],

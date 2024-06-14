@@ -3,6 +3,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
 class PatientProfileScreen extends StatefulWidget {
@@ -105,7 +106,9 @@ class _FormScreenState extends State<PatientProfileScreen> {
                 ),
                 Text('Main Complain',
                     style: CustomTextStyles.lightTextStyle(
-                        color: AppColors.blackColor3D4)),
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor3D4)),
                 SizedBox(
                   height: 1.h,
                 ),
@@ -123,7 +126,9 @@ class _FormScreenState extends State<PatientProfileScreen> {
                 ),
                 Text('Symptoms',
                     style: CustomTextStyles.lightTextStyle(
-                        color: AppColors.blackColor3D4)),
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor3D4)),
                 SizedBox(
                   height: 1.h,
                 ),

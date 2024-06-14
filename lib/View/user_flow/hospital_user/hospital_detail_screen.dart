@@ -513,6 +513,7 @@ class RoundedSVGContainer extends StatelessWidget {
   final String descriptionText;
   final Color? bgColor;
   final Color? iconColor;
+  bool isDoctor;
 
   RoundedSVGContainer({
     required this.svgAsset,
@@ -520,6 +521,7 @@ class RoundedSVGContainer extends StatelessWidget {
     required this.descriptionText,
     this.bgColor,
     this.iconColor,
+    this.isDoctor = false,
   });
 
   @override
@@ -530,10 +532,12 @@ class RoundedSVGContainer extends StatelessWidget {
           // You can adjust the size as needed
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50),
-            color: ThemeUtil.isDarkMode(context)
-                ? Color(0xff171717)
-                : bgColor ??
-                    Color(0xffF3F4F6), // Background color of the container
+            color: isDoctor
+                ? null
+                : ThemeUtil.isDarkMode(context)
+                    ? Color(0xff171717)
+                    : bgColor ??
+                        Color(0xffF3F4F6), // Background color of the container
           ),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
@@ -549,9 +553,7 @@ class RoundedSVGContainer extends StatelessWidget {
         Text(numberText,
             style: CustomTextStyles.w600TextStyle(
                 color: Color(0xff4B5563), size: 14)),
-        Text(descriptionText,
-            style: CustomTextStyles.lightTextStyle(
-                color: Color(0xff4B5563), size: 14)),
+        Text(descriptionText, style: CustomTextStyles.lightTextStyle(size: 14)),
       ],
     );
   }

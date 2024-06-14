@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/controller/theme_controller.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/login_screen.dart';
@@ -25,6 +26,7 @@ class _FormScreenState extends State<ProfileScreen> {
   String? selectedValue;
 
   TextEditingController controller = TextEditingController();
+  final ThemeController _themeController = Get.find<ThemeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -183,6 +185,49 @@ class _FormScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: Divider(
+                  color: Color(0xffE5E7EB),
+                ),
+              ),
+              Row(
+                children: [
+                  Icon(Icons.sunny),
+                  SizedBox(
+                    width: 3.w,
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Switch Theme',
+                      style: CustomTextStyles.lightTextStyle(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : Color(0xff6B7280),
+                          size: 18),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.dark_mode),
+                    onPressed: () {
+                      _themeController.toggleTheme();
+                    },
+                  ),
+                  Switch(
+                    value: _themeController.isDarkMode,
+                    onChanged: (value) {
+                      _themeController.toggleTheme();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.light_mode),
+                    onPressed: () {
+                      _themeController.toggleTheme();
+                    },
+                  ),
+                ],
+              ),
+
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 4.0),
                 child: Divider(

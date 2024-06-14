@@ -205,18 +205,6 @@ class DoctorHomeScreen extends StatelessWidget {
               SizedBox(
                 height: 0.75.h,
               ),
-              MeetingCallScheduler(
-                buttonColor: Color(0xff00143D),
-                bgColor: ThemeUtil.isDarkMode(context)
-                    ? AppColors.purpleBlueColor
-                    : AppColors.lightishBlueColor5ff,
-                isHospital: true,
-                imgPath: 'Assets/images/oldPerson.png',
-                name: 'James',
-                time: '10:30 Pm',
-                location: 'Imam Hospital',
-                category: 'Dental',
-              ),
               SizedBox(height: 2.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),

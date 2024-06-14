@@ -473,13 +473,15 @@ class CircleButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String img;
   bool isActive;
+  bool isLikeButton;
 
   CircleButton(
       {Key? key,
       required this.color,
       this.onPressed,
       required this.img,
-      this.isActive = false})
+      this.isActive = false,
+      this.isLikeButton = false})
       : super(key: key);
 
   @override
@@ -498,7 +500,9 @@ class CircleButton extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Image.asset(
               img,
-              color: isActive ? Color(0xff1C2A3A) : Color(0xFFC5D3E3),
+              color: (isActive || !isLikeButton)
+                  ? Color(0xff1C2A3A)
+                  : Color(0xFFC5D3E3),
             ),
           ),
         ),

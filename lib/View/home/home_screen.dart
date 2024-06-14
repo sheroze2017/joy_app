@@ -12,6 +12,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/view/user_flow/pharmacy_user/pharmacy_product_screen.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -218,8 +219,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 16.0, left: 16),
-                        child: HosipitalCardWidget(
-                          isPharmacy: true,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PharmacyProductScreen()),
+                            );
+                          },
+                          child: HosipitalCardWidget(
+                            isPharmacy: true,
+                          ),
                         ),
                       );
                     },
@@ -264,7 +275,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 16.0, left: 16),
-                        child: HosipitalCardWidget(),
+                        child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HospitalHomeScreen(
+                                          isUser: true,
+                                        )),
+                              );
+                            },
+                            child: HosipitalCardWidget()),
                       );
                     },
                   ),

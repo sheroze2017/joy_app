@@ -21,6 +21,7 @@ class AppColors {
   static final Color blackColor393 = Color(0xff393A3F);
   static final Color blackColor3D4 = Color(0xff3D4859);
   static final Color blackColor151 = Color(0xff374151);
+  static final Color blackColor171 = Color(0XFF171717);
 
   static final Color lightBlueColore5e = Color(0xffE5EDFA);
   static final Color lightBlueColord0d = Color(0xffD0DEFB);
@@ -28,9 +29,7 @@ class AppColors {
 
   static final Color lightishBlueColorebf = Color(0xffebf0f7);
   static final Color lightishBlueColor5ff = Color(0xffEEF5FF);
-    static final Color darkishBlueColorb46 = Color(0xff061B46);
-
-  
+  static final Color darkishBlueColorb46 = Color(0xff061B46);
 
   static final Color lightPurpleColore1e = Color(0xffE1E1F9);
   static final Color lightPurpleColord2c = Color(0xffD2C4E5);

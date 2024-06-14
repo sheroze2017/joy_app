@@ -7,6 +7,7 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:joy_app/view/doctor_booking/book_appointment_screen.dart';
@@ -59,7 +60,6 @@ class _FormScreenState extends State<ProfileFormScreen> {
         key: _formKey,
         child: SingleChildScrollView(
           child: Container(
-            color: Color(0xffFFFFFF),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
@@ -116,7 +116,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   ),
                   Text('Main Complain',
                       style: CustomTextStyles.lightTextStyle(
-                          color: AppColors.blackColor3D4)),
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor3D4)),
                   SizedBox(
                     height: 1.h,
                   ),
@@ -139,7 +141,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   ),
                   Text('Symptoms',
                       style: CustomTextStyles.lightTextStyle(
-                          color: AppColors.blackColor3D4)),
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor3D4)),
                   SizedBox(
                     height: 1.h,
                   ),

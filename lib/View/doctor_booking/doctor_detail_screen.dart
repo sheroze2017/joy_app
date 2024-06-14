@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_booking/your_profileform_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
@@ -26,7 +27,9 @@ class DoctorDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
-          bgColor: AppColors.lightishBlueColorebf,
+          bgColor: ThemeUtil.isDarkMode(context)
+              ? Color(0xff1B1B1B)
+              : AppColors.lightishBlueColorebf,
           title: isDoctor ? 'Your Profile' : 'Doctor Details',
           leading: Icon(Icons.arrow_back),
           actions: [
@@ -36,6 +39,9 @@ class DoctorDetailScreen extends StatelessWidget {
                   onTap: () {},
                   child: SvgPicture.asset(
                     'Assets/icons/favourite.svg',
+                    color: ThemeUtil.isDarkMode(context)
+                        ? AppColors.whiteColor
+                        : null,
                   )),
             )
           ],
@@ -49,14 +55,18 @@ class DoctorDetailScreen extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
+                        ThemeUtil.isDarkMode(context)
+                            ? BoxShadow()
+                            : BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
                       ],
-                      color: AppColors.lightishBlueColorebf,
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff1B1B1B)
+                          : AppColors.lightishBlueColorebf,
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(50.0),
                         bottomRight: Radius.circular(50.0),
@@ -95,10 +105,16 @@ class DoctorDetailScreen extends StatelessWidget {
                                         Text(
                                           docName,
                                           style: CustomTextStyles
-                                              .darkHeadingTextStyle(),
+                                              .darkHeadingTextStyle(
+                                                  color: ThemeUtil.isDarkMode(
+                                                          context)
+                                                      ? Color(0xffC8D3E0)
+                                                      : null),
                                         ),
                                         Divider(
-                                          color: Color(0XFFE5E7EB),
+                                          color: ThemeUtil.isDarkMode(context)
+                                              ? Color(0xff1F2228)
+                                              : Color(0XFFE5E7EB),
                                         ),
                                         Text(
                                           Category,
@@ -141,23 +157,29 @@ class DoctorDetailScreen extends StatelessWidget {
                                 iconColor: Color(0xff023477),
                                 svgAsset: 'Assets/icons/profile-2user.svg',
                                 numberText: '50+',
-                                descriptionText: 'Doctors',
+                                isDoctor: true,
+                                descriptionText:
+                                    isDoctor ? 'Patients' : 'Doctors',
                               ),
                               RoundedSVGContainer(
                                 bgColor: AppColors.lightishBlueColorebf,
                                 iconColor: Color(0xff023477),
                                 svgAsset: 'Assets/icons/medal.svg',
                                 numberText: '10+',
-                                descriptionText: 'medal',
+                                isDoctor: true,
+                                descriptionText:
+                                    isDoctor ? 'experience' : 'medal',
                               ),
                               RoundedSVGContainer(
                                 bgColor: AppColors.lightishBlueColorebf,
                                 iconColor: Color(0xff023477),
                                 svgAsset: 'Assets/icons/star.svg',
                                 numberText: '5',
-                                descriptionText: 'star',
+                                descriptionText: isDoctor ? 'medal' : 'star',
+                                isDoctor: true,
                               ),
                               RoundedSVGContainer(
+                                isDoctor: true,
                                 bgColor: AppColors.lightishBlueColorebf,
                                 iconColor: Color(0xff023477),
                                 svgAsset: 'Assets/icons/messages.svg',

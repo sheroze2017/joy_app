@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -46,7 +48,10 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Text(
                 username,
-                style: CustomTextStyles.darkTextStyle(color: Color(0xff374151)),
+                style: CustomTextStyles.darkTextStyle(
+                    color: ThemeUtil.isDarkMode(context)
+                        ? AppColors.whiteColor
+                        : Color(0xff374151)),
               ),
               Text(status, style: CustomTextStyles.lightSmallTextStyle()),
             ],
@@ -57,7 +62,10 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         InkWell(
           onTap: () {},
           child: Image(
-            image: AssetImage('Assets/icons/call.png'),
+            color: ThemeUtil.isDarkMode(context) ? Color(0XFFC5D3E3) : null,
+            image: AssetImage(
+              'Assets/icons/call.png',
+            ),
           ),
         ),
         SizedBox(
@@ -66,6 +74,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         InkWell(
           onTap: () {},
           child: Image(
+            color: ThemeUtil.isDarkMode(context) ? Color(0XFFC5D3E3) : null,
             image: AssetImage('Assets/icons/camera.png'),
           ),
         ),

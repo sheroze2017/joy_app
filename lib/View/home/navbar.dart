@@ -19,6 +19,7 @@ import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/view/social_media/add_friend.dart';
 import 'package:joy_app/controller/navbar_controller.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:sizer/sizer.dart';
 
 import '../pharmacy_flow/home_screen.dart';
 
@@ -114,61 +115,61 @@ class _NavBarState extends State<NavBarScreen> {
           items: widget.isDoctor == true
               ? [
                   _bottomBarItem(
-                      'Assets/icons/home.svg', 'Assets/icons/Profile.svg'),
+                      'Assets/icons/home.svg', 'Assets/icons/homebold.svg'),
                   _bottomBarItem('Assets/icons/calendar.svg',
-                      'Assets/icons/calenderbground.svg'),
+                      'Assets/icons/calendardark.svg'),
                   _bottomBarItem('Assets/icons/notification.svg',
-                      'Assets/icons/notificationdark.svg'),
+                      'Assets/icons/notificationbold.svg'),
                   _bottomBarItem(
-                      'Assets/icons/frame.svg', 'Assets/icons/profiledark.svg'),
+                      'Assets/icons/frame.svg', 'Assets/icons/profilebold.svg'),
                 ]
               : widget.isPharmacy == true
                   ? [
                       _bottomBarItem(
-                          'Assets/icons/home.svg', 'Assets/icons/Profile.svg'),
+                          'Assets/icons/home.svg', 'Assets/icons/homebold.svg'),
                       _bottomBarItem('Assets/icons/cartsilver.svg',
-                          'Assets/icons/cartbground.svg'),
+                          'Assets/icons/cartdark.svg'),
                       _bottomBarItem('Assets/icons/notification.svg',
-                          'Assets/icons/notificationdark.svg'),
+                          'Assets/icons/notificationbold.svg'),
                       _bottomBarItem('Assets/icons/frame.svg',
-                          'Assets/icons/profiledark.svg'),
+                          'Assets/icons/profilebold.svg'),
                     ]
                   : widget.isBloodBank == true
                       ? [
                           _bottomBarItem('Assets/icons/home.svg',
-                              'Assets/icons/Profile.svg'),
+                              'Assets/icons/homebold.svg'),
                           _bottomBarItem('Assets/icons/health-care.svg',
-                              'Assets/icons/Profile_rounded.svg'),
+                              'Assets/icons/healthbold.svg'),
                           _bottomBarItem('Assets/icons/notification.svg',
-                              'Assets/icons/notificationdark.svg'),
+                              'Assets/icons/notificationbold.svg'),
                           _bottomBarItem('Assets/icons/frame.svg',
-                              'Assets/icons/profiledark.svg'),
+                              'Assets/icons/profilebold.svg'),
                         ]
                       : widget.isHospital == true
                           ? [
                               _bottomBarItem('Assets/icons/home.svg',
-                                  'Assets/icons/Profile.svg'),
+                                  'Assets/icons/homebold.svg'),
                               _bottomBarItem('Assets/icons/health-care.svg',
-                                  'Assets/icons/Profile_rounded.svg'),
+                                  'Assets/icons/healthbold.svg'),
                               _bottomBarItem('Assets/icons/notification.svg',
-                                  'Assets/icons/notificationdark.svg'),
+                                  'Assets/icons/notificationbold.svg'),
                               _bottomBarItem('Assets/icons/frame.svg',
-                                  'Assets/icons/profiledark.svg'),
+                                  'Assets/icons/profilebold.svg'),
                             ]
                           : widget.isUser == true
                               ? [
                                   _bottomBarItem('Assets/icons/home.svg',
-                                      'Assets/icons/Profile.svg'),
+                                      'Assets/icons/homebold.svg'),
                                   _bottomBarItem(
                                       'Assets/icons/profile-2light.svg',
-                                      'Assets/icons/person2dark.svg'),
+                                      'Assets/icons/profile-2user.svg'),
                                   _bottomBarItem('Assets/icons/health-care.svg',
-                                      'Assets/icons/Profile_rounded.svg'),
+                                      'Assets/icons/healthbold.svg'),
                                   _bottomBarItem(
                                       'Assets/icons/notification.svg',
-                                      'Assets/icons/notificationdark.svg'),
+                                      'Assets/icons/notificationbold.svg'),
                                   _bottomBarItem('Assets/icons/frame.svg',
-                                      'Assets/icons/profiledark.svg'),
+                                      'Assets/icons/profilebold.svg'),
                                 ]
                               : [],
         ),
@@ -178,8 +179,20 @@ class _NavBarState extends State<NavBarScreen> {
 
   _bottomBarItem(String asset, String activeSting) {
     return BottomNavigationBarItem(
-        activeIcon: SvgPicture.asset(
-          activeSting,
+        activeIcon: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: ThemeUtil.isDarkMode(context)
+                  ? AppColors.blackColor171
+                  : AppColors.silverColor4f6),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: SvgPicture.asset(
+              activeSting,
+              color: ThemeUtil.isDarkMode(context) ? Color(0xffCDD1D6) : null,
+              height: 3.h,
+            ),
+          ),
         ),
         icon: SvgPicture.asset(
           asset,

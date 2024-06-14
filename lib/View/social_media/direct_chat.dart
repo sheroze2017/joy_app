@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/chat_appbar.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
 class DirectMessageScreen extends StatelessWidget {
@@ -39,7 +41,6 @@ class DirectMessageScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  color: Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
                   child: Row(
                     children: [
@@ -60,7 +61,9 @@ class DirectMessageScreen extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 2.0),
                         decoration: BoxDecoration(
-                          color: Colors.grey[200], // Background color
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff121212)
+                              : AppColors.bgBackGroundColor,
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                         child: Row(
@@ -68,14 +71,19 @@ class DirectMessageScreen extends StatelessWidget {
                             Expanded(
                               child: TextField(
                                 decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Aa',
-                                ),
+                                    border: InputBorder.none,
+                                    hintText: 'Aa',
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    fillColor: Colors.transparent),
                               ),
                             ),
-                            Image.asset(
-                              'Assets/icons/emoji.png',
-                            ),
+                            Icon(
+                              Icons.emoji_emotions,
+                              color: Color(0xffA5ABB3),
+                            )
                           ],
                         ),
                       )),
@@ -131,13 +139,18 @@ class MyMessage extends StatelessWidget {
         Container(
           width: 56.4.w,
           decoration: BoxDecoration(
-              color: Color.fromRGBO(0, 0, 0, 0.06),
+              color: ThemeUtil.isDarkMode(context)
+                  ? Color(0xff151515)
+                  : Color.fromRGBO(0, 0, 0, 0.06),
               borderRadius: BorderRadius.circular(24)),
           child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text('Your Message dsf dsf sdf sdfsd fsdf sdf',
                   style: CustomTextStyles.lightTextStyle(
-                      color: Colors.black, size: 16))),
+                      color: ThemeUtil.isDarkMode(context)
+                          ? AppColors.whiteColor
+                          : Colors.black,
+                      size: 16))),
         )
       ],
     );
@@ -158,18 +171,28 @@ class YourMessage extends StatelessWidget {
         Container(
           width: 56.4.w,
           decoration: BoxDecoration(
-              color: Color(0xff1C2A3A),
+              color: ThemeUtil.isDarkMode(context)
+                  ? Color(0xffC5D3E3)
+                  : Color(0xff1C2A3A),
               borderRadius: BorderRadius.circular(24)),
           child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(message,
                   style: CustomTextStyles.lightTextStyle(
-                      color: Colors.white, size: 16))),
+                      color: ThemeUtil.isDarkMode(context)
+                          ? AppColors.blackColor
+                          : Colors.white,
+                      size: 16))),
         ),
         SizedBox(
           width: 2.w,
         ),
-        Image(image: AssetImage('Assets/icons/read.png'))
+        Image(
+          image: AssetImage(
+            'Assets/icons/read.png',
+          ),
+          color: ThemeUtil.isDarkMode(context) ? Color(0xffC5D3E3) : null,
+        )
       ],
     );
   }
