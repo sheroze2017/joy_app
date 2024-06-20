@@ -28,7 +28,7 @@ class AllChats extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-              RoundedSearchTextField(
+              RoundedSearchTextFieldLarge(
                 hintText: 'Search',
                 controller: TextEditingController(),
                 onChanged: (value) {

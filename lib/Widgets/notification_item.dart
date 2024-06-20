@@ -22,7 +22,7 @@ class NotificationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -45,6 +45,7 @@ class NotificationItem extends StatelessWidget {
                 Text(
                   description,
                   style: CustomTextStyles.lightTextStyle(
+                      size: 13,
                       color: ThemeUtil.isDarkMode(context)
                           ? Color(0xffAAAAAA)
                           : null),

@@ -16,103 +16,113 @@ class UserBlogScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: HomeAppBar(
-            showBottom: true,
-            title: '',
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: SvgPicture.asset('Assets/icons/joy-icon-small.svg'),
-            ),
-            actions: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: ThemeUtil.isDarkMode(context)
-                      ? Color(0xff191919)
-                      : Color(0xffF3F4F6),
+          isImage: true,
+          leading: Text(''),
+          showBottom: true,
+          title: '',
+          actions: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff191919)
+                    : Color(0xffF3F4F6),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: SvgPicture.asset('Assets/icons/search-normal.svg'),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Center(
-                    child: SvgPicture.asset('Assets/icons/search-normal.svg'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 22.56, left: 8),
+              child: InkWell(
+                onTap: () {
+                  Get.to(AllChats());
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: ThemeUtil.isDarkMode(context)
+                        ? Color(0xff191919)
+                        : Color(0xffF3F4F6),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: SvgPicture.asset('Assets/icons/sms.svg'),
+                    ),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0, left: 8),
-                child: InkWell(
-                  onTap: () {
-                    Get.to(AllChats());
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: ThemeUtil.isDarkMode(context)
-                          ? Color(0xff191919)
-                          : Color(0xffF3F4F6),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Center(
-                        child: SvgPicture.asset('Assets/icons/sms.svg'),
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-            showIcon: true),
+            )
+          ],
+          showIcon: true,
+        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        cursorColor: AppColors.borderColor,
-                        style: CustomTextStyles.lightTextStyle(
-                            color: AppColors.borderColor),
-                        decoration: InputDecoration(
-                          enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          focusedBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          border:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          fillColor: Colors.transparent,
-                          hintText: "What's on your mind, Hashem?",
-                          hintStyle: CustomTextStyles.lightTextStyle(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6.56),
+                  child: Divider(
+                    color: ThemeUtil.isDarkMode(context)
+                        ? Color(0xff1F2228)
+                        : AppColors.lightGreyColor,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 6.56),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          cursorColor: AppColors.borderColor,
+                          style: CustomTextStyles.lightTextStyle(
                               color: AppColors.borderColor),
+                          decoration: InputDecoration(
+                            enabledBorder:
+                                OutlineInputBorder(borderSide: BorderSide.none),
+                            focusedBorder:
+                                OutlineInputBorder(borderSide: BorderSide.none),
+                            border:
+                                OutlineInputBorder(borderSide: BorderSide.none),
+                            fillColor: Colors.transparent,
+                            hintText: "What's on your mind, Hashem?",
+                            hintStyle: CustomTextStyles.lightTextStyle(
+                                color: AppColors.borderColor),
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(54),
-                        color: ThemeUtil.isDarkMode(context)
-                            ? Color(0xff121212)
-                            : AppColors.whiteColorf9f,
-                      ),
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset('Assets/icons/camera.svg'),
-                            SizedBox(width: 2.w),
-                            Text(
-                              "Photo",
-                              style: CustomTextStyles.lightTextStyle(
-                                color: AppColors.borderColor,
-                                size: 12,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(54),
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff121212)
+                              : AppColors.whiteColorf9f,
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 8),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset('Assets/icons/camera.svg'),
+                              SizedBox(width: 2.w),
+                              Text(
+                                "Photo",
+                                style: CustomTextStyles.lightTextStyle(
+                                  color: AppColors.borderColor,
+                                  size: 12,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 1.5.h,

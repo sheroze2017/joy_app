@@ -442,45 +442,50 @@ class MedicineCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(
+            Column(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: Image.network(
-                    imgUrl,
-                    width: 12.5.w,
-                    height: 12.5.w,
-                    fit: BoxFit.cover,
-                  ),
+                Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Image.network(
+                        imgUrl,
+                        width: 12.5.w,
+                        height: 12.5.w,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 2.w,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name ?? 'Panadol',
+                            style: CustomTextStyles.darkHeadingTextStyle(),
+                          ),
+                          Text(
+                            '${count} Tablets for ${cost}\$',
+                            style: CustomTextStyles.w600TextStyle(
+                                size: 13, color: Color(0xff4B5563)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   width: 2.w,
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name ?? 'Panadol',
-                        style: CustomTextStyles.darkHeadingTextStyle(),
-                      ),
-                      Text(
-                        '${count} Tablets for ${cost}\$',
-                        style: CustomTextStyles.w600TextStyle(
-                            size: 13, color: Color(0xff4B5563)),
-                      ),
-                    ],
-                  ),
+                Divider(
+                  color: Color(0xff6B7280),
+                  thickness: 0.05.h,
                 ),
               ],
-            ),
-            SizedBox(
-              width: 2.w,
-            ),
-            Divider(
-              color: Color(0xff6B7280),
-              thickness: 0.05.h,
             ),
             Row(
               children: [

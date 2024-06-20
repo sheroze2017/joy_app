@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
@@ -11,8 +12,22 @@ import '../user_flow/hospital_user/hospital_detail_screen.dart';
 import '../user_flow/pharmacy_user/medicine_detail_screen.dart';
 import 'add_medicine.dart';
 
-class ProductScreen extends StatelessWidget {
-  const ProductScreen({super.key});
+class ProductScreen extends StatefulWidget {
+  final String userId;
+  ProductScreen({required this.userId});
+
+  @override
+  State<ProductScreen> createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends State<ProductScreen> {
+  final pharmacyController = Get.put(AllPharmacyController());
+
+  @override
+  void initState() {
+    super.initState();
+    pharmacyController.getPharmacyProduct(widget.userId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,31 +83,45 @@ class ProductScreen extends StatelessWidget {
               height: 2.h,
             ),
             Expanded(
-              child: ListView.builder(
-                  itemCount: 10,
+                child: Obx(
+              () => GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 3.0,
+                    mainAxisSpacing: 3,
+                    childAspectRatio:
+                        0.75, // Set the aspect ratio of the children
+                  ),
+                  itemCount: pharmacyController.pharmacyProducts.length,
                   itemBuilder: (context, index) {
+                    final data = pharmacyController.pharmacyProducts[index];
                     return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(2, (index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: MedicineCard(
-                            onPressed: () {
-                              Get.to(
-                                  MedicineDetailScreen(isPharmacyAdmin: true));
-                            },
-                            btnText: 'Edit',
-                            imgUrl:
-                                'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
-                            count: '10',
-                            cost: '5',
-                            name: 'Panadol',
-                          ),
-                        );
-                      }),
-                    );
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: InkWell(
+                              onTap: () {
+                                Get.to(MedicineDetailScreen(
+                                  isPharmacyAdmin: false,
+                                  productId: data.productId.toString(),
+                                ));
+                              },
+                              child: MedicineCard(
+                                isUserProductScreen: true,
+                                onPressed: () {},
+                                btnText: "Add to Cart",
+                                imgUrl:
+                                    'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
+                                count: data.quantity.toString(),
+                                cost: data.price.toString(),
+                                name: data.name.toString(),
+                              ),
+                            ),
+                          )
+                        ]);
                   }),
-            )
+            ))
           ],
         ),
       ),

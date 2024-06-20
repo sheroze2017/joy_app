@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/utils/auth_utils.dart';
@@ -37,7 +39,7 @@ class _AddMedicineState extends State<AddMedicine> {
   final FocusNode _focusNode8 = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
-
+  final productsController = Get.put(ProductController());
   @override
   Widget build(BuildContext context) {
     List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
@@ -179,12 +181,27 @@ class _AddMedicineState extends State<AddMedicine> {
                   Row(
                     children: [
                       Expanded(
-                        child: RoundedButton(
+                          child: Obx(
+                        () => RoundedButton(
+                            showLoader:
+                                productsController.createProLoader.value,
                             text: 'Save',
                             onPressed: () {
                               FocusScope.of(context).unfocus();
 
-                              if (!_formKey.currentState!.validate()) {}
+                              if (!_formKey.currentState!.validate()) {
+                              } else {
+                                productsController.createProduct(
+                                    _nameController.text,
+                                    _descController.text,
+                                    '1',
+                                    '2',
+                                    _priceController.text,
+                                    '0',
+                                    '3',
+                                    _stockController.text,
+                                    context);
+                              }
                               // showDialog(
                               //   context: context,
                               //   builder: (BuildContext context) {
@@ -203,7 +220,7 @@ class _AddMedicineState extends State<AddMedicine> {
                             textColor: ThemeUtil.isDarkMode(context)
                                 ? Color(0xff121212)
                                 : Color(0xffFFFFFF)),
-                      ),
+                      ))
                     ],
                   )
                 ],

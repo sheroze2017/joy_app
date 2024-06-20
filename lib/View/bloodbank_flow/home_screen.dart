@@ -18,6 +18,7 @@ class BloodBankHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
+        
           title: 'Donate Blood',
           leading: Image(
             image: AssetImage('Assets/icons/arrow-left.png'),

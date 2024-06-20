@@ -63,7 +63,9 @@ class _NavBarState extends State<NavBarScreen> {
                     index: navbarController.tabIndex,
                     children: [
                       PharmacyHomeScreen(),
-                      ProductScreen(),
+                      ProductScreen(
+                        userId: '3',
+                      ),
                       NotificationScreen(),
                       ProfileScreen()
                     ],

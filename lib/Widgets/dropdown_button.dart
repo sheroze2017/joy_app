@@ -1,6 +1,8 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
+import 'package:sizer/sizer.dart';
 
 const List<Job> _list = [
   Job('Developer', Icons.developer_mode),
@@ -29,6 +31,10 @@ class SearchDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown.multiSelectSearch(
+      listItemPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      closedHeaderPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      expandedHeaderPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      itemsListPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: CustomDropdownDecoration(
         expandedFillColor: ThemeUtil.isDarkMode(context)
             ? Color(0xff121212)

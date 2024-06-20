@@ -142,7 +142,9 @@ class PharmacyHomeScreen extends StatelessWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Get.to(ProductScreen());
+                        Get.to(ProductScreen(
+                          userId: '3',
+                        ));
                       },
                       child: HeaderMenu(
                         bgColor: AppColors.lightGreenColor,

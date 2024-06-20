@@ -50,7 +50,7 @@ class _EditProfileState extends State<EditProfile> {
               children: [
                 SizedBox(height: 8.h),
                 Text(
-                  'Edit Profile',
+                  'Profile',
                   style: CustomTextStyles.darkTextStyle(),
                 ),
                 Stack(
@@ -65,6 +65,21 @@ class _EditProfileState extends State<EditProfile> {
                       child: SvgPicture.asset('Assets/images/message-edit.svg'),
                     ),
                   ],
+                ),
+                Text(
+                  'Sheroze Rehman',
+                  style: CustomTextStyles.darkHeadingTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? AppColors.whiteColor
+                          : null),
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                Text('+123 856479683',
+                    style: CustomTextStyles.lightTextStyle()),
+                SizedBox(
+                  height: 1.h,
                 ),
                 RoundedBorderTextField(
                   controller: _nameController,

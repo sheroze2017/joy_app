@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/core/network/request.dart';
+import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
+import 'package:joy_app/modules/auth/bloc/auth_api.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/auth/passwordReset/forgot_pass_screen.dart';
@@ -29,10 +33,12 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final authController = Get.put(AuthController());
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
+  final dio = Dio();
 
   @override
   void dispose() {
@@ -123,12 +129,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: RoundedButton(
+                        child: Obx(() => RoundedButton(
+                            showLoader: authController.loginLoader.value,
                             text: "Sign In",
-                            onPressed: () {
+                            onPressed: () async {
                               FocusScope.of(context).unfocus();
                               if (!_formKey.currentState!.validate()) {
                               } else {
+                                await authController.login(
+                                    _emailController.text,
+                                    _passwordController.text,
+                                    context);
                                 if (_emailController.text
                                             .toLowerCase()
                                             .trim() ==
@@ -195,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 : Color(0xff1C2A3A),
                             textColor: ThemeUtil.isDarkMode(context)
                                 ? Color(0xff121212)
-                                : Color(0xffFFFFFF)),
+                                : Color(0xffFFFFFF))),
                       ),
                     ],
                   ),
@@ -218,7 +229,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       RoundedContainer(
-                        
                         imagePath: 'Assets/images/google.png',
                       ),
                       RoundedContainer(
@@ -315,7 +325,7 @@ class RoundedContainer extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
             child: Image.asset(
               imagePath,
-              fit: BoxFit.cover,
+              fit: BoxFit.scaleDown,
               color: isApple ? Theme.of(context).primaryColor : null,
             ),
           ),

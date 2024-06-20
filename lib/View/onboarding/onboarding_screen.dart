@@ -52,6 +52,10 @@ class OnboardingScreen extends StatelessWidget {
                           : Color(0xff1C2A3A),
                       text: 'Next',
                       onPressed: () {
+                        if (_pageController.page == 2) {
+                          Get.offAll(LoginScreen(),
+                              transition: Transition.native);
+                        }
                         _pageController.nextPage(
                             duration: Duration(milliseconds: 300),
                             curve: Curves.linear);

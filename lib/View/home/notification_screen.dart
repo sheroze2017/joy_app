@@ -17,7 +17,7 @@ class NotificationScreen extends StatelessWidget {
         title: 'Notification',
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12.0),
+            padding: const EdgeInsets.only(right: 24.0),
             child: Container(
               decoration: BoxDecoration(
                   color: ThemeUtil.isDarkMode(context)
@@ -25,7 +25,7 @@ class NotificationScreen extends StatelessWidget {
                       : Color(0xff4B5563),
                   borderRadius: BorderRadius.circular(8)),
               child: Padding(
-                padding: const EdgeInsets.all(6.0),
+                padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
                 child: Text(
                   '1 New',
                   style: CustomTextStyles.w600TextStyle(
@@ -46,11 +46,11 @@ class NotificationScreen extends StatelessWidget {
           child: Column(
             children: [
               NotificationDate(
-                date: 'Today',
+                date: 'TODAY',
               ),
               NotificationItem(
                   iconPath: 'Assets/icons/calendar-tick.svg',
-                  title: 'Alexa texted you',
+                  title: 'Appointment Success',
                   description:
                       'You have successfully booked your appointment with Dr. Emily Walker.',
                   time: '2h'),
@@ -63,6 +63,15 @@ class NotificationScreen extends StatelessWidget {
                   iconPath: 'Assets/icons/calendar-edit.svg',
                   title: 'Alexa texted you',
                   description: 'How’s your day going ?',
+                  time: '2h'),
+              NotificationDate(
+                date: 'YESTERDAY',
+              ),
+              NotificationItem(
+                  iconPath: 'Assets/icons/calendar-tick.svg',
+                  title: 'Appointment Success',
+                  description:
+                      'You have successfully booked your appointment with Dr. David Patel.',
                   time: '2h'),
             ],
           ),

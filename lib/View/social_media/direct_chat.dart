@@ -58,12 +58,12 @@ class DirectMessageScreen extends StatelessWidget {
                       ),
                       Expanded(
                           child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 2.0),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                         decoration: BoxDecoration(
                           color: ThemeUtil.isDarkMode(context)
                               ? Color(0xff121212)
-                              : AppColors.bgBackGroundColor,
+                              : Color(0x05000000),
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                         child: Row(
@@ -71,6 +71,7 @@ class DirectMessageScreen extends StatelessWidget {
                             Expanded(
                               child: TextField(
                                 decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.all(0),
                                     border: InputBorder.none,
                                     hintText: 'Aa',
                                     enabledBorder: OutlineInputBorder(

@@ -22,6 +22,10 @@ class SearchSingleDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown.search(
+      listItemPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      closedHeaderPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      expandedHeaderPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      itemsListPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: CustomDropdownDecoration(
         expandedFillColor: ThemeUtil.isDarkMode(context)
             ? Color(0xff121212)
@@ -31,7 +35,7 @@ class SearchSingleDropdown extends StatelessWidget {
             : Color(0xffF9FAFB),
         closedBorder: Border.all(
           color: const Color(0xffD1D5DB),
-          width: 0.1,
+          width: 1,
         ),
         closedBorderRadius: BorderRadius.circular(8.0),
       ),

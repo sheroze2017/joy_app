@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -34,6 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final _pageController = PageController(viewportFraction: 1, keepPage: true);
   int _currentIndex = 0;
+  final pharmacyController = Get.put(AllPharmacyController());
+  @override
+  void initState() {
+    super.initState();
+    pharmacyController.getAllPharmacy();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,11 +219,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 1.h,
                 ),
                 Container(
-                  height: 70.w, // Set a fixed height
+                  height: 70.w,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 3,
+                    itemCount: pharmacyController.pharmacies.length,
                     itemBuilder: (context, index) {
+                      final data = pharmacyController.pharmacies[index];
                       return Padding(
                         padding: const EdgeInsets.only(right: 16.0, left: 16),
                         child: InkWell(
@@ -224,11 +232,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      PharmacyProductScreen()),
+                                  builder: (context) => PharmacyProductScreen(
+                                        userId: data.userId.toString(),
+                                      )),
                             );
                           },
                           child: HosipitalCardWidget(
+                            data: data,
                             isPharmacy: true,
                           ),
                         ),

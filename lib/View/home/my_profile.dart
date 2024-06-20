@@ -216,7 +216,8 @@ class MyProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 1.h),
                 Text(
-                  'I’m Alexa David, diagnosed with Cancer last year. Starting getting chemotherapeutic treatment and now i’m getting better day by day.',
+                  "I’m Alexa David, diagnosed with Cancer last year. Starting getting chemotherapeutic treatment and now i’m getting better day by day.",
+                  textAlign: TextAlign.justify,
                   style: CustomTextStyles.lightTextStyle(
                       color: ThemeUtil.isDarkMode(context)
                           ? Color(0xffAAAAAA)
@@ -244,18 +245,77 @@ class MyProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Row(
-                //   children: [
-                //     Image.asset('Assets/images/onboard1.png'),
-                //     Column(
-                //       children: [
-                //         Image.asset('Assets/images/onboard1.png'),
-                //         Image.asset('Assets/images/onboard1.png'),
-                //       ],
-                //     ),
-                //   ],
-                // ),
-
+                SizedBox(height: 1.h),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 49.52.w,
+                        height: 47.9.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(12),
+                            topLeft: Radius.circular(12),
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(12),
+                            topLeft: Radius.circular(12),
+                          ),
+                          child: Image.network(
+                            'https://s3-alpha-sig.figma.com/img/3bde/5fa1/9ddfb5ff7fe8cb0e46e8a057916c84ea?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Eu01T1nSUTUea~6s6LseRnloN5KBWlYEStHvRAK6phG87NaLGOxwljNisAs~ge8K2O3NcT~hOUYa6oWt2EiftirxGlx2JhHdzJzgFDnjsBsEIFBa-zVoBUNK5br86ws~G2iGSwWeleJN0dfLpxTx9lMXLtregG7CEWr748ysqVEn96XkW~UbEdZTPf1CyVOGI1nnQ6sbsTe2cBRNFbKSl0mXw7nJUzbK8R~xm3z0L-lfFfctbNLcluO78d5wmu4Sjw9oUslC77XXvJB~9pucZnAvADWnmvY1bCVjAqF7LLw5dUMsVp2q0ma8CeN3H~FvuGj4ATwwEan-N0ncl-of2g__',
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            width: 35.5.w,
+                            height: 22.8.w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(12),
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(12),
+                              ),
+                              child: Image.network(
+                                'https://s3-alpha-sig.figma.com/img/3bde/5fa1/9ddfb5ff7fe8cb0e46e8a057916c84ea?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Eu01T1nSUTUea~6s6LseRnloN5KBWlYEStHvRAK6phG87NaLGOxwljNisAs~ge8K2O3NcT~hOUYa6oWt2EiftirxGlx2JhHdzJzgFDnjsBsEIFBa-zVoBUNK5br86ws~G2iGSwWeleJN0dfLpxTx9lMXLtregG7CEWr748ysqVEn96XkW~UbEdZTPf1CyVOGI1nnQ6sbsTe2cBRNFbKSl0mXw7nJUzbK8R~xm3z0L-lfFfctbNLcluO78d5wmu4Sjw9oUslC77XXvJB~9pucZnAvADWnmvY1bCVjAqF7LLw5dUMsVp2q0ma8CeN3H~FvuGj4ATwwEan-N0ncl-of2g__',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 1.h,
+                          ),
+                          Container(
+                            width: 35.5.w,
+                            height: 22.8.w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(12),
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(12),
+                              ),
+                              child: Image.network(
+                                'https://s3-alpha-sig.figma.com/img/3bde/5fa1/9ddfb5ff7fe8cb0e46e8a057916c84ea?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Eu01T1nSUTUea~6s6LseRnloN5KBWlYEStHvRAK6phG87NaLGOxwljNisAs~ge8K2O3NcT~hOUYa6oWt2EiftirxGlx2JhHdzJzgFDnjsBsEIFBa-zVoBUNK5br86ws~G2iGSwWeleJN0dfLpxTx9lMXLtregG7CEWr748ysqVEn96XkW~UbEdZTPf1CyVOGI1nnQ6sbsTe2cBRNFbKSl0mXw7nJUzbK8R~xm3z0L-lfFfctbNLcluO78d5wmu4Sjw9oUslC77XXvJB~9pucZnAvADWnmvY1bCVjAqF7LLw5dUMsVp2q0ma8CeN3H~FvuGj4ATwwEan-N0ncl-of2g__',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
                 SizedBox(
                   height: 2.h,
                 ),
@@ -278,7 +338,6 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(
                   height: 1.h,
                 ),
-
                 MyCustomWidget(
                   postName: 'Sheroze',
                   isReply: true,
@@ -500,9 +559,11 @@ class CircleButton extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Image.asset(
               img,
-              color: (isActive || !isLikeButton)
-                  ? Color(0xff1C2A3A)
-                  : Color(0xFFC5D3E3),
+              color: isLikeButton
+                  ? (isActive || !isLikeButton)
+                      ? Color(0xff1C2A3A)
+                      : Color(0xFFC5D3E3)
+                  : null,
             ),
           ),
         ),

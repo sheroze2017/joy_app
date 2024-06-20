@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:joy_app/styles/colors.dart';
 
 class RoundedButton extends StatelessWidget {
   final String text;
@@ -6,6 +7,7 @@ class RoundedButton extends StatelessWidget {
   final Color textColor;
   final VoidCallback onPressed;
   bool? isSmall = false;
+  bool showLoader;
 
   RoundedButton({
     required this.text,
@@ -13,6 +15,7 @@ class RoundedButton extends StatelessWidget {
     required this.backgroundColor,
     required this.textColor,
     this.isSmall,
+    this.showLoader = false,
   });
 
   @override
@@ -27,11 +30,17 @@ class RoundedButton extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0),
-        child: Text(
-          text,
-          style: TextStyle(
-              color: textColor, fontWeight: FontWeight.w500, fontSize: 16),
-        ),
+        child: showLoader
+            ? CircularProgressIndicator(
+                color: AppColors.whiteColor,
+              )
+            : Text(
+                text,
+                style: TextStyle(
+                    color: textColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16),
+              ),
       ),
     );
   }

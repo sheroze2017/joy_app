@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
+import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
@@ -19,7 +23,7 @@ import '../bloodbank_user/request_blood.dart';
 import '../pharmacy_user/pharmacy_product_screen.dart';
 import 'hospital_detail_screen.dart';
 
-class AllHospitalScreen extends StatelessWidget {
+class AllHospitalScreen extends StatefulWidget {
   bool isPharmacy;
   bool isBloodBank;
   bool isHospital;
@@ -30,11 +34,25 @@ class AllHospitalScreen extends StatelessWidget {
       this.isBloodBank = false,
       this.isHospital = false,
       required this.appBarText});
+
+  @override
+  State<AllHospitalScreen> createState() => _AllHospitalScreenState();
+}
+
+class _AllHospitalScreenState extends State<AllHospitalScreen> {
+  final pharmacyController = Get.put(AllPharmacyController());
+
+  @override
+  void initState() {
+    super.initState();
+    pharmacyController.getAllPharmacy();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
-          title: appBarText,
+          title: widget.appBarText,
           leading: Icon(Icons.arrow_back),
           actions: [],
           showIcon: true),
@@ -49,7 +67,7 @@ class AllHospitalScreen extends StatelessWidget {
               SizedBox(
                 height: 1.h,
               ),
-              isBloodBank
+              widget.isBloodBank
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -68,7 +86,7 @@ class AllHospitalScreen extends StatelessWidget {
                               bgColor: AppColors.redLightColor,
                               fgColor: AppColors.redLightDarkColor,
                               imagePath: 'Assets/images/blood.svg',
-                              isBloodBank: isBloodBank,
+                              isBloodBank: widget.isBloodBank,
                             ),
                           ),
                         ),
@@ -90,21 +108,21 @@ class AllHospitalScreen extends StatelessWidget {
                               bgColor: AppColors.yellowLightColor,
                               fgColor: AppColors.yellowLightDarkColor,
                               imagePath: 'Assets/images/plasma.svg',
-                              isBloodBank: isBloodBank,
+                              isBloodBank: widget.isBloodBank,
                             ),
                           ),
                         ),
                       ],
                     )
                   : Container(),
-              isBloodBank
+              widget.isBloodBank
                   ? SizedBox(
                       height: 1.h,
                     )
                   : SizedBox(
                       height: 0.h,
                     ),
-              isBloodBank
+              widget.isBloodBank
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -134,109 +152,140 @@ class AllHospitalScreen extends StatelessWidget {
                       ],
                     )
                   : Container(),
-              isBloodBank
+              widget.isBloodBank
                   ? SizedBox(height: 2.h)
                   : SizedBox(
                       height: 0.h,
                     ),
-              Text(
-                '532 found',
-                style: CustomTextStyles.darkHeadingTextStyle(
-                    color: ThemeUtil.isDarkMode(context)
-                        ? Color(0xffC8D3E0)
-                        : null),
+              Obx(
+                () => Text(
+                  pharmacyController.pharmacies.length.toString() + ' found',
+                  style: CustomTextStyles.darkHeadingTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffC8D3E0)
+                          : null),
+                ),
               ),
               SizedBox(
                 height: 1.h,
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => isPharmacy
-                          ? PharmacyProductScreen()
-                          : HospitalHomeScreen(
-                              isUser: true,
-                            ),
-                    ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: isPharmacy
-                          ? Color(0xffE2FFE3)
-                          : isBloodBank
-                              ? Color(0xffFFECEC)
-                              : Color(0xffEEF5FF),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12.0),
-                          child: Image.network(
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg',
-                            width: 28.w,
-                            height: 28.w,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 2.w,
-                        ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              HospitalName(),
-                              LocationWidget(),
-                              ReviewBar(),
-                              Divider(
-                                color: Color(0xff6B7280),
-                                thickness: 0.1.h,
+              Expanded(
+                child: Obx(
+                  () => ListView.separated(
+                      itemCount: pharmacyController.pharmacies.length,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 2.w),
+                      itemBuilder: (context, index) {
+                        final data = pharmacyController.pharmacies[index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => widget.isPharmacy
+                                    ? PharmacyProductScreen(
+                                        userId: data.userId.toString(),
+                                      )
+                                    : HospitalHomeScreen(
+                                        isUser: true,
+                                      ),
                               ),
-                              Row(
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: widget.isPharmacy
+                                    ? Color(0xffE2FFE3)
+                                    : widget.isBloodBank
+                                        ? Color(0xffFFECEC)
+                                        : Color(0xffEEF5FF),
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                          'Assets/icons/routing.svg'),
-                                      SizedBox(
-                                        width: 0.5.w,
-                                      ),
-                                      Text('2.5 km/40min',
-                                          style:
-                                              CustomTextStyles.lightTextStyle(
-                                                  color: Color(0xff6B7280),
-                                                  size: 10.8))
-                                    ],
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Image.network(
+                                      data.image ??
+                                          'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg',
+                                      width: 28.w,
+                                      height: 28.w,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                  Spacer(),
-                                  Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                          'Assets/icons/hospital.svg'),
-                                      SizedBox(
-                                        width: 0.5.w,
-                                      ),
-                                      Text('Hospital',
-                                          style:
-                                              CustomTextStyles.lightTextStyle(
-                                                  color: Color(0xff6B7280),
-                                                  size: 10.8))
-                                    ],
+                                  SizedBox(
+                                    width: 2.w,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        HospitalName(
+                                          hospitalName: data.firstName,
+                                        ),
+                                        LocationWidget(
+                                          location: data.address.toString() +
+                                              ' ' +
+                                              data.location.toString(),
+                                        ),
+                                        ReviewBar(),
+                                        Divider(
+                                          color: Color(0xff6B7280),
+                                          thickness: 0.1.h,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                SvgPicture.asset(
+                                                    'Assets/icons/routing.svg'),
+                                                SizedBox(
+                                                  width: 0.5.w,
+                                                ),
+                                                Text('2.5 km/40min',
+                                                    style: CustomTextStyles
+                                                        .lightTextStyle(
+                                                            color: Color(
+                                                                0xff6B7280),
+                                                            size: 10.8))
+                                              ],
+                                            ),
+                                            Spacer(),
+                                            Row(
+                                              children: [
+                                                SvgPicture.asset(widget
+                                                        .isPharmacy
+                                                    ? 'Assets/icons/pharmacy.svg'
+                                                    : 'Assets/icons/hospital.svg'),
+                                                SizedBox(
+                                                  width: 0.5.w,
+                                                ),
+                                                Text(
+                                                    widget.isPharmacy
+                                                        ? 'Pharmacy'
+                                                        : 'Hospital',
+                                                    style: CustomTextStyles
+                                                        .lightTextStyle(
+                                                            color: Color(
+                                                                0xff6B7280),
+                                                            size: 10.8))
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),
-                            ],
+                            ),
                           ),
-                        )
-                      ],
-                    ),
-                  ),
+                        );
+                      }),
                 ),
               )
             ],
@@ -255,14 +304,18 @@ class HospitalName extends StatelessWidget {
     return Text(
       hospitalName ?? 'Sunrise Health Clinic',
       style: CustomTextStyles.darkHeadingTextStyle(
-          size: 12.67, color:ThemeUtil.isDarkMode(context)?AppColors.whiteColor: Color(0xff4B5563)),
+          size: 12.67,
+          color: ThemeUtil.isDarkMode(context)
+              ? AppColors.whiteColor
+              : Color(0xff4B5563)),
     );
   }
 }
 
 class LocationWidget extends StatelessWidget {
   bool isBloodbank;
-  LocationWidget({this.isBloodbank = false});
+  String? location;
+  LocationWidget({this.isBloodbank = false, this.location});
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +325,7 @@ class LocationWidget extends StatelessWidget {
         SizedBox(
           width: 0.5.w,
         ),
-        Text('123 Oak Street, CA 98765',
+        Text(location ?? '123 Oak Street, CA 98765',
             style: CustomTextStyles.lightTextStyle(
                 color: isBloodbank ? Color(0xff383D44) : Color(0xff6B7280),
                 size: 10.8))
