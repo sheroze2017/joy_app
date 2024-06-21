@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:sizer/sizer.dart';
 
 class RoundedButton extends StatelessWidget {
   final String text;
@@ -8,6 +10,7 @@ class RoundedButton extends StatelessWidget {
   final VoidCallback onPressed;
   bool? isSmall = false;
   bool showLoader;
+  bool isReview;
 
   RoundedButton({
     required this.text,
@@ -16,6 +19,7 @@ class RoundedButton extends StatelessWidget {
     required this.textColor,
     this.isSmall,
     this.showLoader = false,
+    this.isReview = false,
   });
 
   @override
@@ -25,7 +29,7 @@ class RoundedButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(isReview ? 50 : 20.0),
         ),
       ),
       child: Padding(
@@ -36,10 +40,8 @@ class RoundedButton extends StatelessWidget {
               )
             : Text(
                 text,
-                style: TextStyle(
-                    color: textColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
+                style: CustomTextStyles.lightSmallTextStyle(
+                    color: textColor, size: 16),
               ),
       ),
     );
@@ -82,7 +84,7 @@ class RoundedButtonSmall extends StatelessWidget {
             style: TextStyle(
                 color: textColor,
                 fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-                fontSize: isBold ? 14 : 12.18),
+                fontSize: isBold ? (14 / 3.9).w : (12.18 / 3.9).w),
           ),
         ),
       ),

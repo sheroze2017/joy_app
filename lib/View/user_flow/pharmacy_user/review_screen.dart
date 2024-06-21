@@ -42,14 +42,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     'Assets/images/applogo.svg',
                   ),
                 ),
-                SizedBox(height: 2.h),
-                Text(
-                  "Your Order Has been Delivered",
-                  style: CustomTextStyles.lightTextStyle(
+                Text("Your Order Has been Delivered",
+                    style: CustomTextStyles.lightSmallTextStyle(
+                      size: 16,
                       color: ThemeUtil.isDarkMode(context)
                           ? Color(0xffAAAAAA)
-                          : null),
-                ),
+                          : Color(0xff757575),
+                    )),
                 SizedBox(height: 2.h),
                 RoundedBorderTextField(
                   controller: _reviewController,
@@ -97,6 +96,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                               isUser: true,
                             ));
                           },
+                          isReview: true,
                           backgroundColor: widget.buttonBgColor,
                           textColor: ThemeUtil.isDarkMode(context)
                               ? AppColors.blackColor

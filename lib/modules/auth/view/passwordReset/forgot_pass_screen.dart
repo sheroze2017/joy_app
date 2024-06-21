@@ -6,7 +6,7 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/auth/utils/auth_utils.dart';
+import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 
 import 'package:sizer/sizer.dart';
 

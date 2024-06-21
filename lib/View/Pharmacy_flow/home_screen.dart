@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
 import 'package:joy_app/view/pharmacy_flow/order_screen.dart';
@@ -14,8 +15,21 @@ import 'package:sizer/sizer.dart';
 import '../../styles/colors.dart';
 import 'product_screen.dart';
 
-class PharmacyHomeScreen extends StatelessWidget {
+class PharmacyHomeScreen extends StatefulWidget {
   const PharmacyHomeScreen({super.key});
+
+  @override
+  State<PharmacyHomeScreen> createState() => _PharmacyHomeScreenState();
+}
+
+class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
+  final pharmacyController = Get.put(AllPharmacyController());
+
+  @override
+  void initState() {
+    super.initState();
+    pharmacyController.getPharmacyProduct('3');
+  }
 
   @override
   Widget build(BuildContext context) {

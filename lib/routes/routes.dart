@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:joy_app/view/auth/login_screen.dart';
-import 'package:joy_app/view/auth/signup_screen.dart';
+import 'package:joy_app/modules/auth/view/login_screen.dart';
+import 'package:joy_app/modules/auth/view/signup_screen.dart';
 import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
 

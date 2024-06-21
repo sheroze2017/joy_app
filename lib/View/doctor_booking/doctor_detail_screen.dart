@@ -149,44 +149,46 @@ class DoctorDetailScreen extends StatelessWidget {
                           SizedBox(
                             height: 1.h,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              RoundedSVGContainer(
-                                bgColor: AppColors.lightishBlueColorebf,
-                                iconColor: Color(0xff023477),
-                                svgAsset: 'Assets/icons/profile-2user.svg',
-                                numberText: '50+',
-                                isDoctor: true,
-                                descriptionText:
-                                    isDoctor ? 'Patients' : 'Doctors',
-                              ),
-                              RoundedSVGContainer(
-                                bgColor: AppColors.lightishBlueColorebf,
-                                iconColor: Color(0xff023477),
-                                svgAsset: 'Assets/icons/medal.svg',
-                                numberText: '10+',
-                                isDoctor: true,
-                                descriptionText:
-                                    isDoctor ? 'experience' : 'medal',
-                              ),
-                              RoundedSVGContainer(
-                                bgColor: AppColors.lightishBlueColorebf,
-                                iconColor: Color(0xff023477),
-                                svgAsset: 'Assets/icons/star.svg',
-                                numberText: '5',
-                                descriptionText: isDoctor ? 'medal' : 'star',
-                                isDoctor: true,
-                              ),
-                              RoundedSVGContainer(
-                                isDoctor: true,
-                                bgColor: AppColors.lightishBlueColorebf,
-                                iconColor: Color(0xff023477),
-                                svgAsset: 'Assets/icons/messages.svg',
-                                numberText: '1872',
-                                descriptionText: 'reviews',
-                              ),
-                            ],
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 6.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RoundedSVGContainer(
+                                  bgColor: AppColors.lightishBlueColorebf,
+                                  iconColor: Color(0xff023477),
+                                  svgAsset: 'Assets/icons/profile-2user.svg',
+                                  numberText: '50+',
+                                  isDoctor: true,
+                                  descriptionText: 'Patients',
+                                ),
+                                RoundedSVGContainer(
+                                  bgColor: AppColors.lightishBlueColorebf,
+                                  iconColor: Color(0xff023477),
+                                  svgAsset: 'Assets/icons/medal.svg',
+                                  numberText: '10+',
+                                  isDoctor: true,
+                                  descriptionText: 'experience',
+                                ),
+                                RoundedSVGContainer(
+                                  bgColor: AppColors.lightishBlueColorebf,
+                                  iconColor: Color(0xff023477),
+                                  svgAsset: 'Assets/icons/star.svg',
+                                  numberText: '5',
+                                  descriptionText: 'rating',
+                                  isDoctor: true,
+                                ),
+                                RoundedSVGContainer(
+                                  isDoctor: true,
+                                  bgColor: AppColors.lightishBlueColorebf,
+                                  iconColor: Color(0xff023477),
+                                  svgAsset: 'Assets/icons/messages.svg',
+                                  numberText: '1872',
+                                  descriptionText: 'reviews',
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 3.h,
@@ -197,7 +199,7 @@ class DoctorDetailScreen extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8),
+                        horizontal: 20.0, vertical: 8),
                     child: Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,29 +208,25 @@ class DoctorDetailScreen extends StatelessWidget {
                           Heading(
                             title: 'About me',
                           ),
-                          SizedBox(height: 0.5.h),
+                          SizedBox(height: 1.h),
                           Text(
                               'Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA. ',
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: Color(0xff4B5563), size: 14)),
-                          SizedBox(height: 1.h),
+                              style: CustomTextStyles.lightTextStyle(size: 14)),
+                          SizedBox(height: 1.5.h),
                           Heading(
-                            title: 'Working Timings',
+                            title: 'Working Time',
                           ),
-                          SizedBox(height: 0.5.h),
-                          Text('Monday-Friday, 08.00 AM-18.00 pM',
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: Color(0xff4B5563), size: 14)),
-                          SizedBox(height: 0.5.h),
                           SizedBox(height: 1.h),
+                          Text('Monday-Friday, 08:00 AM - 10:00 PM',
+                              style: CustomTextStyles.lightTextStyle(size: 14)),
+                          SizedBox(height: 1.5.h),
                           Heading(
                             title: 'Appointment Cost',
                           ),
-                          SizedBox(height: 0.5.h),
-                          Text('150\$ for 1 Hour Consultation',
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: Color(0xff4B5563), size: 14)),
                           SizedBox(height: 1.h),
+                          Text('150\$ for 1 Hour Consultation',
+                              style: CustomTextStyles.lightTextStyle(size: 14)),
+                          SizedBox(height: 1.5.h),
                           Heading(
                             title: 'Reviews',
                           ),
@@ -238,7 +236,7 @@ class DoctorDetailScreen extends StatelessWidget {
                             reviewText: '',
                             rating: '5',
                           ),
-                          SizedBox(height: 0.h),
+                          SizedBox(height: 5.h),
                         ],
                       ),
                     ),

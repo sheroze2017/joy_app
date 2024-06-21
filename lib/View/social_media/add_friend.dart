@@ -24,49 +24,70 @@ class AddFriend extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: Container(
-          child: Column(
-            children: [
-              countRequest(
-                title: 'Requests',
-                requestCount: ' (331)',
-                showCount: true,
-              ),
-              FriendRequestWidget(
-                profileImage:
+        child: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 5.h,
+                ),
+                countRequest(
+                  title: 'Requests',
+                  requestCount: ' (331)',
+                  showCount: true,
+                ),
+                FriendRequestWidget(
+                  profileImage:
+                      'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  userName: 'Jim Hopper',
+                  mutualFriends: [
                     'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                userName: 'Jim Hopper',
-                mutualFriends: [
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                ],
-                mutualFriendsCount: 34,
-              ),
-              SizedBox(
-                height: 1.h,
-              ),
-              FriendRequestWidget(
-                profileImage:
                     'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                userName: 'Jim Hopper',
-                mutualFriends: [
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                ],
-                mutualFriendsCount: 34,
-              ),
-              SizedBox(
-                height: 2.h,
-              ),
-              countRequest(
-                title: 'People you may know',
-                requestCount: '',
-                showCount: false,
-              ),
-              Container(
-                child: Flexible(
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  ],
+                  mutualFriendsCount: 34,
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                FriendRequestWidget(
+                  profileImage:
+                      'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  userName: 'Jim Hopper',
+                  mutualFriends: [
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  ],
+                  mutualFriendsCount: 34,
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                FriendRequestWidget(
+                  profileImage:
+                      'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  userName: 'Jim Hopper',
+                  mutualFriends: [
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  ],
+                  mutualFriendsCount: 34,
+                ),
+                SizedBox(
+                  height: 3.h,
+                ),
+                countRequest(
+                  title: 'People you may know',
+                  requestCount: '',
+                  showCount: false,
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                Container(
+                  height: 60.w,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 4,
@@ -85,9 +106,9 @@ class AddFriend extends StatelessWidget {
                           onAddFriend: () {});
                     },
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -113,10 +134,11 @@ class countRequest extends StatelessWidget {
         Text(
           title,
           style: CustomTextStyles.lightSmallTextStyle(
-              color: ThemeUtil.isDarkMode(context)
-                  ? AppColors.whiteColor
-                  : Color(0xff19295C),
-              size: 18),
+            size: 18,
+            color: ThemeUtil.isDarkMode(context)
+                ? AppColors.whiteColor
+                : Color(0xff19295C),
+          ),
         ),
         Text(
           showCount ? ' ${requestCount}' : '',
@@ -301,8 +323,8 @@ class AddFriendWidget extends StatelessWidget {
                   ClipOval(
                     child: Image.network(
                       profileImage,
-                      width: 7.6.h,
-                      height: 7.6.h,
+                      width: 15.38.w,
+                      height: 15.38.w,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -313,7 +335,7 @@ class AddFriendWidget extends StatelessWidget {
                           color: ThemeUtil.isDarkMode(context)
                               ? AppColors.whiteColor
                               : Color(0xff19295C),
-                          size: 15),
+                          size: 16),
                       maxLines: 1,
                     ),
                   ),
@@ -341,7 +363,7 @@ class AddFriendWidget extends StatelessWidget {
                         child: Text(
                           '$mutualFriendsCount mutual friends',
                           style: CustomTextStyles.lightTextStyle(
-                              size: 9.4, color: Color(0xff99A1BE)),
+                              size: 10, color: Color(0xff99A1BE)),
                         ),
                       ),
                     ],

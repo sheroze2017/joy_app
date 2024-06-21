@@ -58,3 +58,4 @@ String? validateCurrencyAmount(String? value) {
   }
   return null;
 }
+

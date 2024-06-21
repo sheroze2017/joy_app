@@ -8,7 +8,7 @@ import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
 import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
 import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
-import 'package:joy_app/view/auth/signup_screen.dart';
+import 'package:joy_app/modules/auth/view/signup_screen.dart';
 import 'package:joy_app/view/home/blog_screen.dart';
 import 'package:joy_app/view/home/home_screen.dart';
 import 'package:joy_app/view/home/notification_screen.dart';

@@ -8,7 +8,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/auth/utils/auth_utils.dart';
+import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:joy_app/view/doctor_booking/book_appointment_screen.dart';
 import 'package:pinput/pinput.dart';
@@ -51,7 +51,7 @@ class _FormScreenState extends State<ProfileFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
-        title: 'Fill Your Profile',
+        title: 'Fill Your Details',
         showIcon: true,
         actions: [],
         leading: Icon(Icons.arrow_back),

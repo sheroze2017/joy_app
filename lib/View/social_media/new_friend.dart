@@ -22,7 +22,7 @@ class AddNewFriend extends StatelessWidget {
         actions: [],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 30),
         child: Container(
           child: Column(
             children: [
@@ -192,12 +192,12 @@ class RoundedSearchTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(25),
           color: ThemeUtil.isDarkMode(context)
               ? Color(0xff171717)
-              : Color(0xffF9FAFB)
+              : Color(0xffF3F4F6)
           // color: Colors.grey[200],
           ),
       child: Row(
         children: [
-          SizedBox(width: 2.w),
+          SizedBox(width: 4.w),
 
           SvgPicture.asset('Assets/icons/search-icon.svg'),
           //  Icon(leadingIcon),
@@ -208,6 +208,8 @@ class RoundedSearchTextField extends StatelessWidget {
               controller: controller,
               onChanged: onChanged,
               decoration: InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
                   fillColor: Colors.transparent,
                   hintText: hintText,
                   enabledBorder:

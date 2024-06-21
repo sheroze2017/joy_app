@@ -46,6 +46,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
   void initState() {
     super.initState();
     pharmacyController.getAllPharmacy();
+    pharmacyController.getPharmacyProduct('3');
   }
 
   @override
@@ -63,7 +64,12 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RoundedSearchTextField(
-                  hintText: 'Search', controller: TextEditingController()),
+                  hintText: widget.isPharmacy
+                      ? 'Search Pharmacies'
+                      : widget.isHospital
+                          ? 'Search Hospitals'
+                          : 'Search Blood Bank',
+                  controller: TextEditingController()),
               SizedBox(
                 height: 1.h,
               ),
@@ -188,6 +194,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                       )
                                     : HospitalHomeScreen(
                                         isUser: true,
+                                        hospitalId: data.userId.toString(),
                                       ),
                               ),
                             );

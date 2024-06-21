@@ -176,7 +176,7 @@ class AppointmentCardUser extends StatelessWidget {
                             height: 1.h,
                           ),
                           Text(
-                            'Cancer Patient',
+                            'Gastroenterologist',
                             style: CustomTextStyles.w600TextStyle(
                                 size: 14, color: Color(0xff4B5563)),
                           ),
@@ -189,7 +189,7 @@ class AppointmentCardUser extends StatelessWidget {
                               SizedBox(
                                 width: 0.5.w,
                               ),
-                              Text('USA',
+                              Text('Elite Ortho Clinic, USA',
                                   style: CustomTextStyles.lightTextStyle(
                                       color: Color(0xff4B5563), size: 14))
                             ],
@@ -211,6 +211,8 @@ class AppointmentCardUser extends StatelessWidget {
               children: [
                 Expanded(
                   child: RoundedButtonSmall(
+                      isSmall: true,
+                      isBold: true,
                       text: isCompleted ? 'Re-Book' : 'Cancel',
                       onPressed: () {
                         //      showPaymentBottomSheet(context, true);
@@ -220,7 +222,7 @@ class AppointmentCardUser extends StatelessWidget {
                           : AppColors.lightGreyColor,
                       textColor: ThemeUtil.isDarkMode(context)
                           ? AppColors.whiteColor
-                          : AppColors.darkBlueColor),
+                          : Color(0xff033890)),
                 ),
                 SizedBox(
                   width: 2.w,
@@ -231,7 +233,7 @@ class AppointmentCardUser extends StatelessWidget {
                       onPressed: () {
                         isCompleted
                             ? Get.to(ReviewScreen(
-                                buttonBgColor: AppColors.darkBlueColor,
+                                buttonBgColor: Color(0xff033890),
                               ))
                             : print('');
                       },

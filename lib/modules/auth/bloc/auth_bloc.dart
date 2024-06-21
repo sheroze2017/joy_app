@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
+import 'package:hive/hive.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:joy_app/modules/auth/bloc/auth_api.dart';
 import 'package:joy_app/modules/auth/models/auth.model.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/view/home/navbar.dart';
 
 import '../../../core/network/request.dart';
+import '../models/user.dart';
+import '../utils/route.dart';
 
 class AuthController extends GetxController {
   late DioClient dioClient;
@@ -28,9 +32,24 @@ class AuthController extends GetxController {
       LoginModel response = await authApi.login(email, password, '4', '1');
       if (response.data != null) {
         showSuccessMessage(context, 'Login Successfully');
-        if (response.data!.userRole == 1) {
-          Get.offAll(NavBarScreen(isUser: true));
-        }
+        var user = User(
+          userId: response.data!.userId!.toInt(),
+          firstName: response.data!.firstName.toString(),
+          email: response.data!.email.toString(),
+          password: response.data!.password.toString(),
+          image: response.data!.image.toString(),
+          userRole: response.data!.userRole!.toInt(),
+          authType: response.data!.authType!.toInt(),
+          phone: response.data!.phone.toString(),
+          lastName: response.data!.lastName.toString(),
+          deviceToken: response.data!.deviceToken.toString(),
+        );
+        await Hive.openBox<User>('users');
+
+        final userBox = await Hive.openBox<User>('users');
+        await userBox.put('current_user', user);
+
+        handleUserRoleNavigation(response.data!.userRole!);
       } else {
         showSuccessMessage(context, response.message.toString());
       }

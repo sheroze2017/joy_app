@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/controller/theme_controller.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/auth/login_screen.dart';
+import 'package:joy_app/modules/auth/view/login_screen.dart';
 import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/view/doctor_booking/manage_booking.dart';
 import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
@@ -290,6 +291,7 @@ class _FormScreenState extends State<ProfileScreen> {
                                     child: RoundedButton(
                                         text: "Yes, Logout",
                                         onPressed: () {
+                                          clearUserInformation();
                                           Get.offAll(LoginScreen());
                                         },
                                         backgroundColor:

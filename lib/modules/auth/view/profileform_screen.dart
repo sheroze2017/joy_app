@@ -8,7 +8,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/auth/utils/auth_utils.dart';
+import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:sizer/sizer.dart';
 

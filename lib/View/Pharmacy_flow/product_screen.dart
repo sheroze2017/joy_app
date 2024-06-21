@@ -26,7 +26,7 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   void initState() {
     super.initState();
-    pharmacyController.getPharmacyProduct(widget.userId);
+    //pharmacyController.getPharmacyProduct(widget.userId);
   }
 
   @override

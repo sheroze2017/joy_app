@@ -534,7 +534,6 @@ class RoundedSVGContainer extends StatelessWidget {
     return Column(
       children: [
         Container(
-          // You can adjust the size as needed
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50),
             color: isDoctor

@@ -34,40 +34,47 @@ class AllDoctorsScreen extends StatelessWidget {
           leading: Icon(Icons.arrow_back),
           actions: [],
           showIcon: true),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      body: SingleChildScrollView(
+        child: Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 height: 1.h,
               ),
-              RoundedSearchTextField(
-                  hintText: 'Search', controller: TextEditingController()),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: RoundedSearchTextField(
+                    hintText: 'Search doctor...',
+                    controller: TextEditingController()),
+              ),
               SizedBox(
                 height: 2.h,
               ),
-              Container(
-                height: 45.w,
-                child: HorizontalDoctorCategories(),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Container(
+                  height: 45.w,
+                  child: HorizontalDoctorCategories(),
+                ),
               ),
               SizedBox(
                 height: 1.h,
               ),
-              Text(
-                '532 found',
-                style: CustomTextStyles.darkHeadingTextStyle(
-                    color: ThemeUtil.isDarkMode(context)
-                        ? Color(0xffC8D3E0)
-                        : null),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  '532 found',
+                  style: CustomTextStyles.darkHeadingTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffC8D3E0)
+                          : null),
+                ),
               ),
               SizedBox(
                 height: 1.h,
               ),
-              Expanded(
-                child: VerticalDoctorsList(),
-              ),
+              VerticalDoctorsList(),
             ],
           ),
         ),
@@ -368,7 +375,9 @@ class HorizontalDoctorCategories extends StatelessWidget {
             DoctorCount: '$index',
             bgColor: isBloodBank
                 ? bgColors[index % 2 == 0 ? 0 : 1]
-                :ThemeUtil.isDarkMode(context)?bgColorsDoctorsDark[index % 2 == 0 ? 0 : 1]: bgColorsDoctors[index % 2 == 0 ? 0 : 1],
+                : ThemeUtil.isDarkMode(context)
+                    ? bgColorsDoctorsDark[index % 2 == 0 ? 0 : 1]
+                    : bgColorsDoctors[index % 2 == 0 ? 0 : 1],
             fgColor: isBloodBank
                 ? fgColors[index % 2 == 0 ? 0 : 1]
                 : fgColorsDoctors[index % 2 == 0 ? 0 : 1],
@@ -386,27 +395,32 @@ class HorizontalDoctorCategories extends StatelessWidget {
 class VerticalDoctorsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return InkWell(
-          onTap: () {
-            Get.to(DoctorDetailScreen(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              Get.to(DoctorDetailScreen(
+                docName: 'Dr. David Patel',
+                location: 'Golden Cardiology Center',
+                Category: 'Cardiologist',
+              ));
+            },
+            child: DoctorsCardWidget(
+              imgUrl: '',
+              reviewCount: '1,872',
               docName: 'Dr. David Patel',
-              location: 'Golden Cardiology Center',
               Category: 'Cardiologist',
-            ));
-          },
-          child: DoctorsCardWidget(
-            imgUrl: '',
-            reviewCount: '1,872',
-            docName: 'Dr. David Patel',
-            Category: 'Cardiologist',
-            loction: 'Cardiology Center, USA',
-            rating: '5',
-          ),
-        );
-      },
+              loction: 'Cardiology Center, USA',
+              rating: '5',
+            ),
+          );
+        },
+      ),
     );
   }
 }

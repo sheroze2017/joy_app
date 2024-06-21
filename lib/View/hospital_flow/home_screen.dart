@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -15,11 +17,32 @@ import 'package:sizer/sizer.dart';
 import '../home/my_profile.dart';
 import '../user_flow/hospital_user/hospital_detail_screen.dart';
 
-class HospitalHomeScreen extends StatelessWidget {
-  bool? isHospital;
-  bool? isUser;
+class HospitalHomeScreen extends StatefulWidget {
+  bool isHospital;
+  bool isUser;
+  String? hospitalId;
 
-  HospitalHomeScreen({this.isHospital = false, this.isUser = false});
+  HospitalHomeScreen(
+      {this.isHospital = false, this.isUser = false, this.hospitalId});
+
+  @override
+  State<HospitalHomeScreen> createState() => _HospitalHomeScreenState();
+}
+
+class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
+  final _hospitalDetailController = Get.find<HospitalDetailController>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.hospitalId != null || !widget.hospitalId!.isEmpty) {
+      _hospitalDetailController.getAllDoctorHospital(
+          widget.hospitalId.toString(), context);
+      _hospitalDetailController.getAllDoctorPharmacies(
+          widget.hospitalId.toString(), context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,103 +99,111 @@ class HospitalHomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 0.0),
-                              child: SvgPicture.asset(
-                                  'Assets/icons/joy-icon-small.svg'),
-                            ),
-                            Spacer(),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: ThemeUtil.isDarkMode(context)
-                                    ? Color(0xff191919)
-                                    : Color(0xffF3F4F6),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                      'Assets/icons/search-normal.svg'),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(right: 0.0, left: 8),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xff191919)
-                                      : Color(0xffF3F4F6),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Center(
+                        widget.isHospital
+                            ? Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 0.0),
                                     child: SvgPicture.asset(
-                                        'Assets/icons/sms.svg'),
+                                        'Assets/icons/joy-icon-small.svg'),
                                   ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 1.5.h,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                cursorColor: AppColors.borderColor,
-                                style: CustomTextStyles.lightTextStyle(
-                                    color: AppColors.borderColor),
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none),
-                                  fillColor: Colors.transparent,
-                                  hintText: "What's on your mind, Hashem?",
-                                  hintStyle: CustomTextStyles.lightTextStyle(
-                                      color: AppColors.borderColor),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(54),
-                                color: ThemeUtil.isDarkMode(context)
-                                    ? Color(0xff121212)
-                                    : AppColors.whiteColorf9f,
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 8),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset('Assets/icons/camera.svg'),
-                                    SizedBox(width: 2.w),
-                                    Text(
-                                      "Photo",
-                                      style: CustomTextStyles.lightTextStyle(
-                                        color: AppColors.borderColor,
-                                        size: 12,
+                                  Spacer(),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      color: ThemeUtil.isDarkMode(context)
+                                          ? Color(0xff191919)
+                                          : Color(0xffF3F4F6),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                            'Assets/icons/search-normal.svg'),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 0.0, left: 8),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: ThemeUtil.isDarkMode(context)
+                                            ? Color(0xff191919)
+                                            : Color(0xffF3F4F6),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Center(
+                                          child: SvgPicture.asset(
+                                              'Assets/icons/sms.svg'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Container(),
                         SizedBox(
-                          height: 2.h,
+                          height: widget.isHospital ? 0.h : 1.5.h,
+                        ),
+                        widget.isHospital
+                            ? Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      cursorColor: AppColors.borderColor,
+                                      style: CustomTextStyles.lightTextStyle(
+                                          color: AppColors.borderColor),
+                                      decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        fillColor: Colors.transparent,
+                                        hintText:
+                                            "What's on your mind, Hashem?",
+                                        hintStyle:
+                                            CustomTextStyles.lightTextStyle(
+                                                color: AppColors.borderColor),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(54),
+                                      color: ThemeUtil.isDarkMode(context)
+                                          ? Color(0xff121212)
+                                          : AppColors.whiteColorf9f,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 12.0, vertical: 8),
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                              'Assets/icons/camera.svg'),
+                                          SizedBox(width: 2.w),
+                                          Text(
+                                            "Photo",
+                                            style:
+                                                CustomTextStyles.lightTextStyle(
+                                              color: AppColors.borderColor,
+                                              size: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Container(),
+                        SizedBox(
+                          height: widget.isHospital ? 0.h : 2.h,
                         ),
                         Text(
                           'Sunrise Health Clinic',
@@ -255,7 +286,14 @@ class HospitalHomeScreen extends StatelessWidget {
                         Text('Monday-Friday, 08.00 AM-18.00 pM',
                             style: CustomTextStyles.lightTextStyle(
                                 color: Color(0xff4B5563), size: 14)),
+                        SizedBox(height: 1.5.h),
+                        Heading(
+                          title: 'Check up Fee',
+                        ),
                         SizedBox(height: 1.h),
+                        Text('150\$',
+                            style: CustomTextStyles.lightTextStyle(
+                                color: Color(0xff4B5563), size: 14)),
                         SizedBox(height: 1.h),
                         Row(
                           children: [
@@ -274,127 +312,171 @@ class HospitalHomeScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 0.5.h),
-                        Container(
-                          width: 57.5.w,
-                          decoration: BoxDecoration(
-                              color: ThemeUtil.isDarkMode(context)
-                                  ? AppColors.purpleBlueColor
-                                  : Color(0xffEEF5FF),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Image.network(
-                                    'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg',
-                                    width: 51.28.w,
-                                    height: 27.9.w,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 2.w,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        // width: 51.28.w,
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              8, 8, 0, 0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Dr. David Patel',
-                                                style: CustomTextStyles
-                                                    .darkHeadingTextStyle(),
-                                              ),
-                                              Divider(
-                                                color: Color(0xff6B7280),
-                                                thickness: 0.05.h,
-                                              ),
-                                              Text(
-                                                'Cardiologist',
-                                                style: CustomTextStyles
-                                                    .w600TextStyle(
-                                                        size: 14,
-                                                        color:
-                                                            Color(0xff4B5563)),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  SvgPicture.asset(
-                                                      'Assets/icons/location.svg'),
-                                                  SizedBox(
-                                                    width: 0.5.w,
+                        Obx(
+                            () =>
+                                _hospitalDetailController
+                                            .hospitalDoctors.length ==
+                                        0
+                                    ? Center(
+                                        child: Text('No Doctors Found'),
+                                      )
+                                    : Container(
+                                        height: 70.w,
+                                        child: ListView.separated(
+                                            shrinkWrap: true,
+                                            separatorBuilder:
+                                                (context, index) =>
+                                                    SizedBox(width: 2.w),
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: _hospitalDetailController
+                                                .hospitalDoctors.length,
+                                            itemBuilder: (context, index) {
+                                              final data =
+                                                  _hospitalDetailController
+                                                      .hospitalDoctors[index];
+                                              return Container(
+                                                width: 57.5.w,
+                                                decoration: BoxDecoration(
+                                                    color: ThemeUtil.isDarkMode(
+                                                            context)
+                                                        ? AppColors
+                                                            .purpleBlueColor
+                                                        : Color(0xffEEF5FF),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      12.0),
+                                                  child: Column(
+                                                    children: [
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12.0),
+                                                        child: Image.network(
+                                                          data.image ??
+                                                              'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg',
+                                                          width: 51.28.w,
+                                                          height: 27.9.w,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 2.w,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Container(
+                                                              // width: 51.28.w,
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        8,
+                                                                        8,
+                                                                        0,
+                                                                        0),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Text(
+                                                                      data.firstName
+                                                                          .toString(),
+                                                                      style: CustomTextStyles
+                                                                          .darkHeadingTextStyle(),
+                                                                    ),
+                                                                    Divider(
+                                                                      color: Color(
+                                                                          0xff6B7280),
+                                                                      thickness:
+                                                                          0.05.h,
+                                                                    ),
+                                                                    Text(
+                                                                      'Cardiologist',
+                                                                      style: CustomTextStyles.w600TextStyle(
+                                                                          size:
+                                                                              14,
+                                                                          color:
+                                                                              Color(0xff4B5563)),
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        SvgPicture.asset(
+                                                                            'Assets/icons/location.svg'),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              0.5.w,
+                                                                        ),
+                                                                        Expanded(
+                                                                          child: Text(
+                                                                              'Cardiology Center, USA',
+                                                                              style: CustomTextStyles.lightTextStyle(color: Color(0xff4B5563), size: 14)),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        RatingBar
+                                                                            .builder(
+                                                                          itemSize:
+                                                                              15,
+                                                                          initialRating:
+                                                                              6,
+                                                                          minRating:
+                                                                              1,
+                                                                          direction:
+                                                                              Axis.horizontal,
+                                                                          allowHalfRating:
+                                                                              true,
+                                                                          itemCount:
+                                                                              1,
+                                                                          itemPadding:
+                                                                              EdgeInsets.symmetric(horizontal: 0.0),
+                                                                          itemBuilder: (context, _) =>
+                                                                              Icon(
+                                                                            Icons.star,
+                                                                            color:
+                                                                                Colors.amber,
+                                                                          ),
+                                                                          onRatingUpdate:
+                                                                              (rating) {
+                                                                            print(rating);
+                                                                          },
+                                                                        ),
+                                                                        Text(
+                                                                            '5',
+                                                                            style:
+                                                                                CustomTextStyles.lightTextStyle(color: Color(0xff4B5563), size: 12)),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              0.5.w,
+                                                                        ),
+                                                                        Text(
+                                                                            ' | 1,872 Reviews',
+                                                                            style:
+                                                                                CustomTextStyles.lightTextStyle(color: Color(0xff6B7280), size: 10.8)),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
                                                   ),
-                                                  Expanded(
-                                                    child: Text(
-                                                        'Cardiology Center, USA',
-                                                        style: CustomTextStyles
-                                                            .lightTextStyle(
-                                                                color: Color(
-                                                                    0xff4B5563),
-                                                                size: 14)),
-                                                  )
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  RatingBar.builder(
-                                                    itemSize: 15,
-                                                    initialRating: 6,
-                                                    minRating: 1,
-                                                    direction: Axis.horizontal,
-                                                    allowHalfRating: true,
-                                                    itemCount: 1,
-                                                    itemPadding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 0.0),
-                                                    itemBuilder: (context, _) =>
-                                                        Icon(
-                                                      Icons.star,
-                                                      color: Colors.amber,
-                                                    ),
-                                                    onRatingUpdate: (rating) {
-                                                      print(rating);
-                                                    },
-                                                  ),
-                                                  Text('5',
-                                                      style: CustomTextStyles
-                                                          .lightTextStyle(
-                                                              color: Color(
-                                                                  0xff4B5563),
-                                                              size: 12)),
-                                                  SizedBox(
-                                                    width: 0.5.w,
-                                                  ),
-                                                  Text(' | 1,872 Reviews',
-                                                      style: CustomTextStyles
-                                                          .lightTextStyle(
-                                                              color: Color(
-                                                                  0xff6B7280),
-                                                              size: 10.8)),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
+                                                ),
+                                              );
+                                            }),
+                                      )),
                         SizedBox(height: 2.h),
                         Row(
                           children: [
@@ -407,7 +489,7 @@ class HospitalHomeScreen extends StatelessWidget {
                             ),
                             Spacer(),
                             Text(
-                              isHospital == true ? 'Edit' : 'See All',
+                              widget.isHospital == true ? 'Edit' : 'See All',
                               style: CustomTextStyles.lightSmallTextStyle(),
                             ),
                           ],
@@ -454,43 +536,55 @@ class HospitalHomeScreen extends StatelessWidget {
                           reviewText: '',
                           rating: '5',
                         ),
-                        SizedBox(height: 2.h),
-                        Row(
-                          children: [
-                            Text(
-                              'My Posts',
-                              style: CustomTextStyles.darkHeadingTextStyle(
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xffC8D3E0)
-                                      : null),
-                            ),
-                            Spacer(),
-                            Text(
-                              'See All',
-                              style: CustomTextStyles.lightSmallTextStyle(),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        MyCustomWidget(
-                          isLiked: true,
-                          isReply: true,
-                          postName: 'Sheroze',
-                          text:
-                              'Hey pals ! Had my third day of chemo. feeling much better.',
-                        ),
-                        SizedBox(
-                          height: 3.h,
-                        ),
-                        MyCustomWidget(
-                          isLiked: false,
-                          showImg: false,
-                          isReply: false,
-                          postName: 'Mille Brown',
-                          text: 'Feeling depressed today.',
-                        )
+                        widget.isUser ? Container() : SizedBox(height: 2.h),
+                        widget.isUser
+                            ? Container()
+                            : Row(
+                                children: [
+                                  Text(
+                                    'My Posts',
+                                    style:
+                                        CustomTextStyles.darkHeadingTextStyle(
+                                            color: ThemeUtil.isDarkMode(context)
+                                                ? Color(0xffC8D3E0)
+                                                : null),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    'See All',
+                                    style:
+                                        CustomTextStyles.lightSmallTextStyle(),
+                                  ),
+                                ],
+                              ),
+                        widget.isUser
+                            ? Container()
+                            : SizedBox(
+                                height: 1.h,
+                              ),
+                        widget.isUser
+                            ? Container()
+                            : MyCustomWidget(
+                                isLiked: true,
+                                isReply: true,
+                                postName: 'Sheroze',
+                                text:
+                                    'Hey pals ! Had my third day of chemo. feeling much better.',
+                              ),
+                        widget.isUser
+                            ? Container()
+                            : SizedBox(
+                                height: 3.h,
+                              ),
+                        widget.isUser
+                            ? Container()
+                            : MyCustomWidget(
+                                isLiked: false,
+                                showImg: false,
+                                isReply: false,
+                                postName: 'Mille Brown',
+                                text: 'Feeling depressed today.',
+                              )
                       ],
                     ),
                   ),

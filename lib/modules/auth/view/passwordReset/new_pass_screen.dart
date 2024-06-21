@@ -9,8 +9,8 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../Widgets/appbar.dart';
-import '../utils/auth_utils.dart';
+import '../../../../Widgets/appbar.dart';
+import '../../utils/auth_utils.dart';
 
 class NewPassScreen extends StatelessWidget {
   NewPassScreen({super.key});

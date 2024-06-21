@@ -14,4 +14,13 @@ class Endpoints {
   static String getPharmacyProductDetails = '/pharmacy/getProductDetails';
 
   static String createProduct = '/pharmacy/createProduct';
+
+  //Hospial Details
+
+  static String getAllHospitalPharmacies = '/hospital/getHospitalPharmacies';
+  static String getAllHospitalDoctors = '/hospital/getHospitalDoctors';
+
+  //Social Media
+  static String getAllPosts = '/auth/getAllPosts';
+  static String getAllPostById = '/auth/getPosts';
 }

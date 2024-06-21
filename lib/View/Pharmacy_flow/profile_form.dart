@@ -9,7 +9,7 @@ import 'package:joy_app/theme.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
-import '../auth/utils/auth_utils.dart';
+import '../../modules/auth/utils/auth_utils.dart';
 
 class PharmacyFormScreen extends StatefulWidget {
   PharmacyFormScreen({super.key});
