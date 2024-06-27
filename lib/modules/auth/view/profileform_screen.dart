@@ -1,19 +1,32 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/modules/auth/components/calendar_dob.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/widgets/single_select_dropdown.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
+import '../bloc/auth_bloc.dart';
+
 class FormScreen extends StatefulWidget {
-  FormScreen({super.key});
+  final String email;
+  final String password;
+  final String name;
+
+  FormScreen(
+      {required this.email,
+      required this.password,
+      required this.name,
+      super.key});
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -24,6 +37,9 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
@@ -32,13 +48,14 @@ class _FormScreenState extends State<FormScreen> {
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
   TextEditingController controller = TextEditingController();
+  final authController = Get.put(AuthController());
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
-
+    _nameController.setText(widget.name);
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Fill Your Profile',
@@ -109,7 +126,9 @@ class _FormScreenState extends State<FormScreen> {
                     hintText: 'Gender',
                     items: ['Male', 'Female'],
                     value: '',
-                    onChanged: (String? value) {},
+                    onChanged: (String? value) {
+                      _genderController.text = value.toString();
+                    },
                     icon: '',
                   ),
                   SizedBox(
@@ -132,44 +151,80 @@ class _FormScreenState extends State<FormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your DOB';
-                      } else {
-                        return null;
-                      }
+                  InkWell(
+                    onTap: () async {
+                      String dob = await showDatePickerDialog(context);
+                      _dobController.setText(dob);
                     },
-                    focusNode: _focusNode5,
-                    nextFocusNode: _focusNode6,
-                    controller: _dobController,
-                    hintText: 'Date of Birth',
-                    icon: 'Assets/images/calendar.svg',
+                    child: RoundedBorderTextField(
+                      isenable: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your DOB';
+                        } else {
+                          return null;
+                        }
+                      },
+                      focusNode: _focusNode5,
+                      nextFocusNode: _focusNode6,
+                      controller: _dobController,
+                      hintText: 'Date of Birth',
+                      icon: 'Assets/images/calendar.svg',
+                    ),
                   ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                      validator: validatePhoneNumber,
+                      textInputType: TextInputType.number,
+                      focusNode: _focusNode6,
+                      nextFocusNode: _focusNode7,
+                      controller: _phoneController,
+                      hintText: 'Phone No',
+                      icon: ''),
                   SizedBox(
                     height: 2.h,
                   ),
                   Row(
                     children: [
                       Expanded(
-                        child: RoundedButton(
+                          child: Obx(
+                        () => RoundedButton(
+                            showLoader: authController.registerLoader.value,
                             text: 'Save',
-                            onPressed: () {
+                            onPressed: () async {
                               FocusScope.of(context).unfocus();
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      isUser: true,
-                                      showButton: true,
-                                      title: 'Congratulations!',
-                                      content:
-                                          'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                    );
-                                  },
-                                );
+                                bool success =
+                                    await authController.userRegister(
+                                        _nameController.text,
+                                        _locationController.text,
+                                        _phoneController.text,
+                                        "",
+                                        'EMAIL',
+                                        "USER",
+                                        widget.email,
+                                        widget.password,
+                                        _dobController.text,
+                                        _genderController.text,
+                                        context);
+                                if (success == true) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Obx(() => CustomDialog(
+                                            isUser: true,
+                                            showButton: !authController
+                                                .registerLoader.value,
+                                            title: 'Congratulations!',
+                                            content:
+                                                'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                          ));
+                                    },
+                                  );
+                                }
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
@@ -178,7 +233,7 @@ class _FormScreenState extends State<FormScreen> {
                             textColor: ThemeUtil.isDarkMode(context)
                                 ? Color(0xff121212)
                                 : Color(0xffFFFFFF)),
-                      ),
+                      )),
                     ],
                   )
                 ],

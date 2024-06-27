@@ -38,7 +38,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
   final FocusNode _focusNode4 = FocusNode();
-  final authController = Get.put(AuthController());
+  final authController = Get.find<AuthController>();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -183,52 +183,66 @@ class _SignupScreenState extends State<SignupScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: Obx(() => RoundedButton(
-                            text: "Create Account",
-                            showLoader: authController.registerLoader.value,
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                              if (!_formKey.currentState!.validate()) {
-                              } else if (selectedButton.isEmpty) {
-                                showErrorMessage(
-                                    context, 'Select Account Category');
-                              } else {
-                                authController.register(
-                                    _nameController.text.split(' ')[0],
-                                    _nameController.text.split(' ')[1],
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    '4',
-                                    '1',
-                                    _emailController.text,
-                                    _passwordController.text,
-                                    context);
-
-                                // if (selectedButton == 'User') {
-                                //   Get.to(FormScreen());
-                                // } else if (selectedButton == 'Professional') {
-                                //   selectedFieldValue == 1
-                                //       ? Get.to(DoctorFormScreen())
-                                //       : selectedFieldValue == 2
-                                //           ? Get.to(PharmacyFormScreen())
-                                //           : selectedFieldValue == 3
-                                //               ? Get.to(BloodBankFormScreen())
-                                //               : selectedFieldValue == 4
-                                //                   ? Get.to(HospitalFormScreen())
-                                //                   : print(selectedFieldValue);
-                                // }
-                              }
-                            },
-                            backgroundColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0xffC5D3E3)
-                                : Color(0xff1C2A3A),
-                            textColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0XFF0D0D0D)
-                                : Color(0xFFFFFFFF))),
-                      ),
+                          child: Obx(() => RoundedButton(
+                              showLoader: authController.registerLoader.value,
+                              text: "Create Account",
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
+                                if (!_formKey.currentState!.validate()) {
+                                } else if (selectedButton.isEmpty) {
+                                  showErrorMessage(
+                                      context, 'Select Account Category');
+                                } else if (await authController.isValidMail(
+                                    _emailController.text, context)) {
+                                  if (selectedButton == 'User') {
+                                    Get.to(FormScreen(
+                                      email: _emailController.text,
+                                      password: _passwordController.text,
+                                      name: _nameController.text,
+                                    ));
+                                  } else if (selectedButton == 'Professional') {
+                                    selectedFieldValue == 1
+                                        ? Get.to(DoctorFormScreen(
+                                            email: _emailController.text,
+                                            password: _passwordController.text,
+                                            name: _nameController.text,
+                                          ))
+                                        : selectedFieldValue == 2
+                                            ? Get.to(PharmacyFormScreen(
+                                                email: _emailController.text,
+                                                password:
+                                                    _passwordController.text,
+                                                name: _nameController.text,
+                                              ))
+                                            : selectedFieldValue == 3
+                                                ? Get.to(BloodBankFormScreen(
+                                                    email:
+                                                        _emailController.text,
+                                                    password:
+                                                        _passwordController
+                                                            .text,
+                                                    name: _nameController.text,
+                                                  ))
+                                                : selectedFieldValue == 4
+                                                    ? Get.to(HospitalFormScreen(
+                                                        email: _emailController
+                                                            .text,
+                                                        password:
+                                                            _passwordController
+                                                                .text,
+                                                        name: _nameController
+                                                            .text,
+                                                      ))
+                                                    : print(selectedFieldValue);
+                                  }
+                                } else {}
+                              },
+                              backgroundColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : Color(0xff1C2A3A),
+                              textColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0XFF0D0D0D)
+                                  : Color(0xFFFFFFFF)))),
                     ],
                   ),
                   SizedBox(height: 2.h),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
@@ -10,11 +11,19 @@ import 'package:joy_app/theme.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/auth/bloc/auth_bloc.dart';
 import '../../modules/auth/utils/auth_utils.dart';
 
 class BloodBankFormScreen extends StatefulWidget {
-  BloodBankFormScreen({super.key});
+  final String email;
+  final String password;
+  final String name;
 
+  BloodBankFormScreen(
+      {required this.email,
+      required this.password,
+      required this.name,
+      super.key});
   @override
   State<BloodBankFormScreen> createState() => _BloodBankFormScreenState();
 }
@@ -32,6 +41,8 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
+
+  final authController = Get.find<AuthController>();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -167,26 +178,44 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: RoundedButton(
+                          child: Obx(
+                        () => RoundedButton(
+                            showLoader: authController.registerLoader.value,
                             text: 'Save',
-                            onPressed: () {
+                            onPressed: () async {
                               FocusScope.of(context).unfocus();
 
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      isBloodBankForm: true,
-                                      buttonColor: Color(0xff1C2A3A),
-                                      showButton: true,
-                                      title: 'Congratulations!',
-                                      content:
-                                          'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                    );
-                                  },
-                                );
+                                bool result =
+                                    await authController.bloodBankRegister(
+                                        _nameController.text,
+                                        widget.email,
+                                        widget.password,
+                                        _locationController.text,
+                                        "",
+                                        _contactController.text,
+                                        "EMAIL",
+                                        "BLOODBANK",
+                                        "22",
+                                        "22",
+                                        "ASDA21321",
+                                        context);
+                                if (result) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomDialog(
+                                        isBloodBankForm: true,
+                                        buttonColor: Color(0xff1C2A3A),
+                                        showButton: true,
+                                        title: 'Congratulations!',
+                                        content:
+                                            'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                      );
+                                    },
+                                  );
+                                }
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
@@ -195,7 +224,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                             textColor: ThemeUtil.isDarkMode(context)
                                 ? Color(0xff121212)
                                 : Color(0xffFFFFFF)),
-                      ),
+                      )),
                     ],
                   ),
                   SizedBox(

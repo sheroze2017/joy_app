@@ -7,6 +7,7 @@ import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_blo
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/pharmacy_flow/add_medicine.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/mycart_screen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
@@ -75,7 +76,10 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
       body: SingleChildScrollView(
           child: Obx(
         () => pharmacyController.productDetailLoader.value
-            ? CircularProgressIndicator()
+            ? Center(
+                child: CircularProgressIndicator(
+                color: Colors.grey,
+              ))
             : pharmacyController.productDetail.isEmpty
                 ? Center(
                     child: Text(
@@ -118,7 +122,11 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                       children: [
                                         Text(
                                           pharmacyController
-                                                  .productDetail[0].name ??
+                                                      .productDetail[0].name![0]
+                                                      .toUpperCase() +
+                                                  pharmacyController
+                                                      .productDetail[0].name!
+                                                      .substring(1) ??
                                               'Panadol',
                                           style: CustomTextStyles
                                               .lightSmallTextStyle(
@@ -238,7 +246,14 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                         Expanded(
                                           child: RoundedButtonSmall(
                                               text: "Edit Product",
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Get.to(AddMedicine(
+                                                  isEdit: true,
+                                                  productDetail:
+                                                      pharmacyController
+                                                          .productDetail[0],
+                                                ));
+                                              },
                                               backgroundColor:
                                                   ThemeUtil.isDarkMode(context)
                                                       ? AppColors

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
@@ -12,10 +13,18 @@ import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/appbar.dart';
+import '../../modules/auth/bloc/auth_bloc.dart';
 
 class HospitalFormScreen extends StatefulWidget {
-  const HospitalFormScreen({super.key});
+  final String email;
+  final String password;
+  final String name;
 
+  HospitalFormScreen(
+      {required this.email,
+      required this.password,
+      required this.name,
+      super.key});
   @override
   State<HospitalFormScreen> createState() => _HospitalFormScreenState();
 }
@@ -30,6 +39,8 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
 
   final TextEditingController _feesController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _instituteController = TextEditingController();
+
   final TextEditingController _aboutController = TextEditingController();
 
   final FocusNode _focusNode1 = FocusNode();
@@ -40,6 +51,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
   final FocusNode _focusNode8 = FocusNode();
+  final authController = Get.find<AuthController>();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -197,7 +209,9 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                     hintText: 'Public or Private Institute',
                     items: ['Public', 'Private'],
                     value: '',
-                    onChanged: (String? value) {},
+                    onChanged: (String? value) {
+                      _instituteController.text = value.toString();
+                    },
                     icon: '',
                   ),
                   SizedBox(
@@ -224,33 +238,59 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: RoundedButton(
-                            text: 'Save',
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
+                        child: Obx(
+                          () => RoundedButton(
+                              showLoader: authController.registerLoader.value,
+                              text: 'Save',
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
 
-                              if (!_formKey.currentState!.validate()) {}
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomDialog(
-                                    isHospitalForm: true,
-                                    buttonColor: Color(0xff1C2A3A),
-                                    showButton: true,
-                                    title: 'Congratulations!',
-                                    content:
-                                        'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                  );
-                                },
-                              );
-                            },
-                            backgroundColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0xffC5D3E3)
-                                : Color(0xff1C2A3A),
-                            textColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0xff121212)
-                                : Color(0xffFFFFFF)),
-                      ),
+                                if (!_formKey.currentState!.validate()) {
+                                } else {
+                                  List result =
+                                      await authController.HospitalRegister(
+                                          _nameController.text,
+                                          widget.email,
+                                          widget.password,
+                                          _locationController.text,
+                                          "",
+                                          _contactController.text,
+                                          'EMAIL',
+                                          'HOSPITAL',
+                                          "22",
+                                          "22",
+                                          "AD1234",
+                                          _instituteController.text,
+                                          _aboutController.text,
+                                          _feesController.text,
+                                          context);
+                                  if (result[0] == true) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialog(
+                                          hospitalDetailId:
+                                              result[1].toString(),
+                                          isHospitalForm: true,
+                                          buttonColor: Color(0xff1C2A3A),
+                                          showButton: true,
+                                          title: 'Congratulations!',
+                                          content:
+                                              'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                        );
+                                      },
+                                    );
+                                  }
+                                }
+                              },
+                              backgroundColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : Color(0xff1C2A3A),
+                              textColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xff121212)
+                                  : Color(0xffFFFFFF)),
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(

@@ -22,6 +22,7 @@ class SearchSingleDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown.search(
+      initialItem: value,
       listItemPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       closedHeaderPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       expandedHeaderPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -41,7 +42,7 @@ class SearchSingleDropdown extends StatelessWidget {
       ),
       hintText: hintText,
       items: items,
-      onChanged: (String) {},
+      onChanged: onChanged,
     );
   }
 }

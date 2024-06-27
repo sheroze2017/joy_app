@@ -37,45 +37,12 @@ class PharmacyApi {
     }
   }
 
-   Future<PharmacyProductModel> getPhamracyProductDetails(String productId) async {
+  Future<PharmacyProductModel> getPhamracyProductDetails(
+      String productId) async {
     try {
       final result = await _dioClient
           .get(Endpoints.getPharmacyProductDetails + '?product_id=$productId');
       return PharmacyProductModel.fromJson(result);
-    } catch (e) {
-      print(e.toString());
-      throw e;
-    }
-  }
-
-  Future<LoginModel> register(
-    String firstName,
-    String lastName,
-    String about,
-    String location,
-    String phoneNo,
-    String associatedHospital,
-    String deviceToken,
-    String email,
-    String password,
-    String authType,
-    String userRole,
-  ) async {
-    try {
-      final result = await _dioClient.post(Endpoints.signUpApi, data: {
-        "first_name": firstName,
-        "last_name": lastName,
-        "email": email,
-        "password": password,
-        "user_role": userRole,
-        "auth_type": authType,
-        "phone": phoneNo,
-        "associated_hospital": associatedHospital,
-        "about": about,
-        "location": location,
-        "device_token": deviceToken
-      });
-      return LoginModel.fromJson(result);
     } catch (e) {
       print(e.toString());
       throw e;

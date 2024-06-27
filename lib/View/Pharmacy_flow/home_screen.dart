@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
+import 'package:joy_app/view/pharmacy_flow/order_detail_screen.dart';
 import 'package:joy_app/view/pharmacy_flow/order_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
@@ -12,6 +13,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/pharmacy/bloc/create_prodcut_bloc.dart';
 import '../../styles/colors.dart';
 import 'product_screen.dart';
 
@@ -24,11 +26,13 @@ class PharmacyHomeScreen extends StatefulWidget {
 
 class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
   final pharmacyController = Get.put(AllPharmacyController());
+  final productsController = Get.put(ProductController());
 
   @override
   void initState() {
     super.initState();
     pharmacyController.getPharmacyProduct('3');
+    productsController.allOrders('15', context);
   }
 
   @override
@@ -157,6 +161,7 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                     child: InkWell(
                       onTap: () {
                         Get.to(ProductScreen(
+                          isAdmin: true,
                           userId: '3',
                         ));
                       },
@@ -186,7 +191,7 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      //      Get.to(AllAppointments());
+                      Get.to(MyOrderScreen());
                     },
                     child: Text(
                       'See All',
@@ -198,36 +203,60 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
               SizedBox(
                 height: 1.5.h,
               ),
-              MeetingCallScheduler(
-                isPharmacy: true,
-                pharmacyButtonText: 'Marked as Deliverd',
-                buttonColor: ThemeUtil.isDarkMode(context)
-                    ? AppColors.lightGreenColoreb1
-                    : AppColors.darkGreenColor,
-                bgColor: AppColors.lightGreenColor,
-                nextMeeting: true,
-                imgPath: 'Assets/images/tablet.jpg',
-                name: 'Panadol',
-                time: 'May 22, 2023 - 10.00 AM',
-                location: 'Elite Ortho Clinic USA',
-                category: '10 Tablets',
-              ),
-              SizedBox(
-                height: 0.75.h,
-              ),
-              MeetingCallScheduler(
-                isPharmacy: true,
-                pharmacyButtonText: 'Marked as Deliverd',
-                buttonColor: ThemeUtil.isDarkMode(context)
-                    ? AppColors.lightGreenColoreb1
-                    : AppColors.darkGreenColor,
-                bgColor: AppColors.lightGreenColor,
-                imgPath: 'Assets/images/tablet.jpg',
-                nextMeeting: true,
-                name: 'Panadol',
-                time: 'May 22, 2023 - 10.00 AM',
-                location: 'Elite Ortho Clinic USA',
-                category: '10 Tablets',
+              Obx(
+                () => productsController.onTheWayOrders.length < 1
+                    ? Text('No Orders Yet')
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: productsController.onTheWayOrders.length > 2
+                            ? 2
+                            : productsController.onTheWayOrders.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Get.to(OrderDetailScreen(
+                                orderDetail:
+                                    productsController.onTheWayOrders[index],
+                              ));
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 3.0),
+                              child: MeetingCallScheduler(
+                                onPressed: () {
+                                  productsController.updateOrderStatus(
+                                      productsController
+                                          .onTheWayOrders[index].orderId
+                                          .toString(),
+                                      'Delivered',
+                                      context);
+                                },
+                                pharmacyButtonText: 'Marked as Deliverd',
+                                isPharmacy: true,
+                                buttonColor: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.lightGreenColoreb1
+                                    : AppColors.darkGreenColor,
+                                bgColor: AppColors.lightGreenColor,
+                                nextMeeting: true,
+                                imgPath: 'Assets/images/tablet.jpg',
+                                name: 'Order Id: ' +
+                                    productsController
+                                        .onTheWayOrders[index].orderId
+                                        .toString(),
+                                time: '',
+                                location: productsController
+                                    .onTheWayOrders[index].location
+                                    .toString(),
+                                category: productsController
+                                        .onTheWayOrders[index].quantity
+                                        .toString() +
+                                    ' Tablets',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
               ),
               SizedBox(height: 2.h),
               Padding(

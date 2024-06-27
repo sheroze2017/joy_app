@@ -140,65 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _emailController.text,
                                     _passwordController.text,
                                     context);
-                                if (_emailController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'pharmacy@gmail.com' &&
-                                    _passwordController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'admin123') {
-                                  print(_emailController.text);
-                                  print(_passwordController.text);
-                                  Get.to(NavBarScreen(
-                                    isPharmacy: true,
-                                  ));
-                                } else if (_emailController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'bloodbank@gmail.com' &&
-                                    _passwordController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'admin123') {
-                                  Get.to(NavBarScreen(
-                                    isBloodBank: true,
-                                  ));
-                                } else if (_emailController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'doctor@gmail.com' &&
-                                    _passwordController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'admin123') {
-                                  Get.to(NavBarScreen(
-                                    isDoctor: true,
-                                  ));
-                                } else if (_emailController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'user@gmail.com' &&
-                                    _passwordController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'admin123') {
-                                  Get.to(NavBarScreen(isUser: true));
-                                } else if (_emailController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'hospital@gmail.com' &&
-                                    _passwordController.text
-                                            .toLowerCase()
-                                            .trim() ==
-                                        'admin123') {
-                                  Get.to(NavBarScreen(
-                                    isHospital: true,
-                                  ));
-                                } else {
-                                  showErrorMessage(
-                                      context, 'Invalid Credentials');
-                                }
+     
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
@@ -232,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         imagePath: 'Assets/images/google.png',
                       ),
                       RoundedContainer(
-                        imagePath: 'Assets/images/gmail.png',
+                        imagePath: 'Assets/images/facebook.png',
                       ),
                       RoundedContainer(
                         imagePath: 'Assets/images/apple.png',
@@ -324,6 +266,7 @@ class RoundedContainer extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: Image.asset(
+              height: 2.h,
               imagePath,
               fit: BoxFit.scaleDown,
               color: isApple ? Theme.of(context).primaryColor : null,

@@ -1,12 +1,12 @@
-class LoginModel {
+class UserRegisterModel {
   int? code;
   bool? sucess;
   Data? data;
   String? message;
 
-  LoginModel({this.code, this.sucess, this.data, this.message});
+  UserRegisterModel({this.code, this.sucess, this.data, this.message});
 
-  LoginModel.fromJson(Map<String, dynamic> json) {
+  UserRegisterModel.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     sucess = json['sucess'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
@@ -27,69 +27,65 @@ class LoginModel {
 
 class Data {
   int? userId;
-  String? firstName;
+  String? name;
   String? email;
   String? password;
   String? image;
   String? userRole;
   String? authType;
-  String? address;
   String? phone;
-  String? lastName;
-  Null? associatedHospital;
-  Null? about;
-  Null? location;
   String? deviceToken;
+  int? userDetailId;
+  String? gender;
+  String? dob;
+  String? location;
 
   Data(
       {this.userId,
-      this.firstName,
+      this.name,
       this.email,
       this.password,
       this.image,
       this.userRole,
       this.authType,
-      this.address,
       this.phone,
-      this.lastName,
-      this.associatedHospital,
-      this.about,
-      this.location,
-      this.deviceToken});
+      this.deviceToken,
+      this.userDetailId,
+      this.gender,
+      this.dob,
+      this.location});
 
   Data.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
-    firstName = json['first_name'];
+    name = json['name'];
     email = json['email'];
     password = json['password'];
-    image = json['image'].toString();
+    image = json['image'];
     userRole = json['user_role'];
     authType = json['auth_type'];
-    address = json['address'];
     phone = json['phone'];
-    lastName = json['last_name'];
-    associatedHospital = json['associated_hospital'];
-    about = json['about'];
-    location = json['location'];
     deviceToken = json['device_token'];
+    userDetailId = json['user_detail_id'];
+    gender = json['gender'];
+    dob = json['dob'];
+    location = json['location'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['user_id'] = this.userId;
-    data['first_name'] = this.firstName;
+    data['name'] = this.name;
     data['email'] = this.email;
     data['password'] = this.password;
     data['image'] = this.image;
     data['user_role'] = this.userRole;
     data['auth_type'] = this.authType;
-    data['address'] = this.address;
     data['phone'] = this.phone;
-    data['last_name'] = this.lastName;
-    data['associated_hospital'] = this.associatedHospital;
-    data['about'] = this.about;
-    data['location'] = this.location;
     data['device_token'] = this.deviceToken;
+    data['user_detail_id'] = this.userDetailId;
+    data['gender'] = this.gender;
+    data['dob'] = this.dob;
+    data['location'] = this.location;
     return data;
   }
 }

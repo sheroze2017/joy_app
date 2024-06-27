@@ -14,6 +14,7 @@ class MyCustomWidget extends StatefulWidget {
   String text;
   String imgPath;
   String recentName;
+
   String likeCount;
   bool isLiked;
 
@@ -88,7 +89,7 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                    image: AssetImage('Assets/images/hospital.png'),
+                    image: NetworkImage(widget.imgPath),
                     fit: BoxFit.cover,
                   ),
                 ),

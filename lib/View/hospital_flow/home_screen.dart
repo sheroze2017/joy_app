@@ -23,7 +23,7 @@ class HospitalHomeScreen extends StatefulWidget {
   String? hospitalId;
 
   HospitalHomeScreen(
-      {this.isHospital = false, this.isUser = false, this.hospitalId});
+      {this.isHospital = false, this.isUser = false, this.hospitalId = '1'});
 
   @override
   State<HospitalHomeScreen> createState() => _HospitalHomeScreenState();
@@ -35,12 +35,12 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.hospitalId != null || !widget.hospitalId!.isEmpty) {
-      _hospitalDetailController.getAllDoctorHospital(
-          widget.hospitalId.toString(), context);
-      _hospitalDetailController.getAllDoctorPharmacies(
-          widget.hospitalId.toString(), context);
-    }
+    // if (widget.hospitalId != null || !widget.hospitalId!.isEmpty) {
+    //   _hospitalDetailController.getAllDoctorHospital(
+    //       widget.hospitalId.toString(), context);
+    //   _hospitalDetailController.getAllDoctorPharmacies(
+    //       widget.hospitalId.toString(), context);
+    // }
   }
 
   @override

@@ -5,12 +5,19 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:joy_app/view/home/components/blog_card.dart';
 import 'package:joy_app/view/social_media/chats.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/social_media/media_post/bloc/medai_posts_bloc.dart';
+
 class UserBlogScreen extends StatelessWidget {
-  const UserBlogScreen({super.key});
+  UserBlogScreen({super.key});
+
+  final mediaController = Get.find<MediaPostController>();
+  final TextEditingController imageurl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -103,21 +110,32 @@ class UserBlogScreen extends StatelessWidget {
                               ? Color(0xff121212)
                               : AppColors.whiteColorf9f,
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 8),
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('Assets/icons/camera.svg'),
-                              SizedBox(width: 2.w),
-                              Text(
-                                "Photo",
-                                style: CustomTextStyles.lightTextStyle(
-                                  color: AppColors.borderColor,
-                                  size: 12,
+                        child: InkWell(
+                          onTap: () {
+                            pickSingleFile().then((filePaths) {
+                              if (filePaths.isEmpty) {
+                              } else {
+                                imageurl.setText(filePaths[0].toString());
+                              }
+                            }).then((value) => mediaController.uploadPhoto(
+                                imageurl.text, context));
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset('Assets/icons/camera.svg'),
+                                SizedBox(width: 2.w),
+                                Text(
+                                  "Photo",
+                                  style: CustomTextStyles.lightTextStyle(
+                                    color: AppColors.borderColor,
+                                    size: 12,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       )
@@ -127,23 +145,32 @@ class UserBlogScreen extends StatelessWidget {
                 SizedBox(
                   height: 1.5.h,
                 ),
-                MyCustomWidget(
-                  isLiked: true,
-                  isReply: true,
-                  postName: 'Sheroze',
-                  text:
-                      'Hey pals ! Had my third day of chemo. feeling much better.',
-                ),
-                SizedBox(
-                  height: 3.h,
-                ),
-                MyCustomWidget(
-                  isLiked: false,
-                  showImg: false,
-                  isReply: false,
-                  postName: 'Mille Brown',
-                  text: 'Feeling depressed today.',
-                )
+                Obx(() => ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: mediaController.allPost.length,
+                    itemBuilder: ((context, index) {
+                      final data = mediaController.allPost[index];
+                      return MyCustomWidget(
+                        imgPath: data.image.toString(),
+                        isLiked: true,
+                        isReply: false,
+                        showImg: data.image!.isEmpty ? false : true,
+                        postName: data.title.toString(),
+                        text: data.description.toString(),
+                      );
+                    }))),
+
+                // SizedBox(
+                //   height: 3.h,
+                // ),
+                // MyCustomWidget(
+                //   isLiked: false,
+                //   showImg: false,
+                //   isReply: false,
+                //   postName: 'Mille Brown',
+                //   text: 'Feeling depressed today.',
+                // )
               ],
             ),
           ),

@@ -44,4 +44,20 @@ class MediaPosts {
       throw e;
     } finally {}
   }
+
+  Future<String> uploadPhoto(String baseImage64) async {
+    try {
+      final result = await _dioClient.post(Endpoints.uploadBase64Image,
+          data: {"base64Image": baseImage64});
+      print(result);
+      if (result['sucess'] == true) {
+        return result['data'];
+      } else {
+        return '';
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    } finally {}
+  }
 }

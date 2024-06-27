@@ -6,6 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/auth.model.dart';
+import 'package:joy_app/modules/auth/models/blood_bank_register_model.dart';
+import 'package:joy_app/modules/auth/models/doctor_register_model.dart';
+import 'package:joy_app/modules/auth/models/hospital_resgister_model.dart';
+import 'package:joy_app/modules/auth/models/pharmacy_register_model.dart';
+import 'package:joy_app/modules/auth/models/user_register_model.dart';
 
 class AuthApi {
   final DioClient _dioClient;
@@ -16,16 +21,10 @@ class AuthApi {
   Future<LoginModel> login(
     String email,
     String password,
-    String authType,
-    String roleId,
   ) async {
     try {
-      final result = await _dioClient.post(Endpoints.loginApi, data: {
-        "email": email,
-        "password": password,
-        "auth_type": authType,
-        "role_id": roleId,
-      });
+      final result = await _dioClient.post(Endpoints.loginApi,
+          data: {"email": email, "password": password, "auth_type": "EMAIL"});
       return LoginModel.fromJson(result);
     } catch (e) {
       print(e.toString());
@@ -33,34 +32,190 @@ class AuthApi {
     }
   }
 
-  Future<LoginModel> register(
+  Future<int> isValidEmail(
+    String email,
+  ) async {
+    try {
+      final result =
+          await _dioClient.get(Endpoints.isValidEmail + '?email=${email}');
+      return result['code'];
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<UserRegisterModel> userRegister(
     String firstName,
-    String lastName,
-    String about,
-    String location,
-    String phoneNo,
-    String associatedHospital,
-    String deviceToken,
     String email,
     String password,
+    String location,
+    String deviceToken,
+    String dob,
+    String gender,
+    String phoneNo,
     String authType,
     String userRole,
   ) async {
     try {
-      final result = await _dioClient.post(Endpoints.signUpApi, data: {
-        "first_name": firstName,
-        "last_name": lastName,
+      final result = await _dioClient.post(Endpoints.userSignUpApi, data: {
+        "name": firstName,
         "email": email,
         "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "date_of_birth": dob,
+        "gender": gender,
+        "user_role": userRole,
+        "auth_type": authType,
+        "phone": phoneNo
+      });
+      return UserRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<DoctorRegisterModel> doctorRegister(
+      String firstName,
+      String email,
+      String password,
+      String location,
+      String deviceToken,
+      String gender,
+      String phoneNo,
+      String authType,
+      String userRole,
+      String expertise,
+      String consultationFees,
+      String qualification,
+      String documentUrl) async {
+    try {
+      final result = await _dioClient.post(Endpoints.doctorSignUpApi, data: {
+        "name": firstName,
+        "email": email,
+        "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "gender": gender,
         "user_role": userRole,
         "auth_type": authType,
         "phone": phoneNo,
-        "associated_hospital": associatedHospital,
-        "about": about,
-        "location": location,
-        "device_token": deviceToken
+        "expertise": expertise,
+        "consultation_fee": consultationFees,
+        "qualifications": qualification,
+        "document": documentUrl
       });
-      return LoginModel.fromJson(result);
+      return DoctorRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<BloodBankRegisterModel> bloodBankRegister(
+    String name,
+    String email,
+    String password,
+    String location,
+    String deviceToken,
+    String phoneNo,
+    String authType,
+    String userRole,
+    String lat,
+    String long,
+    String placeId,
+  ) async {
+    try {
+      final result = await _dioClient.post(Endpoints.bloodBankSignUpApi, data: {
+        "name": name,
+        "email": email,
+        "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "user_role": userRole,
+        "auth_type": authType,
+        "phone": phoneNo,
+        "place_id": placeId,
+        "lat": lat,
+        "lng": long
+      });
+      return BloodBankRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<PharmacyRegisterModel> PharmacyRegister(
+    String name,
+    String email,
+    String password,
+    String location,
+    String deviceToken,
+    String phoneNo,
+    String authType,
+    String userRole,
+    String lat,
+    String long,
+    String placeId,
+  ) async {
+    try {
+      final result = await _dioClient.post(Endpoints.pharmacySignUpApi, data: {
+        "name": name,
+        "email": email,
+        "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "user_role": userRole,
+        "auth_type": authType,
+        "phone": phoneNo,
+        "place_id": placeId,
+        "lat": lat,
+        "lng": long
+      });
+      return PharmacyRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<HospitalRegisterModel> hospitalRegister(
+    String name,
+    String email,
+    String password,
+    String location,
+    String deviceToken,
+    String phoneNo,
+    String authType,
+    String userRole,
+    String lat,
+    String long,
+    String placeId,
+    String instituteType,
+    String about,
+    String checkupFee,
+  ) async {
+    try {
+      final result = await _dioClient.post(Endpoints.hospitalSignUpApi, data: {
+        "name": name,
+        "email": email,
+        "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "user_role": userRole,
+        "auth_type": authType,
+        "phone": phoneNo,
+        "place_id": placeId,
+        "lat": lat,
+        "lng": long,
+        "checkup_fee": checkupFee,
+        "about": about,
+        "institute": instituteType
+      });
+      return HospitalRegisterModel.fromJson(result);
     } catch (e) {
       print(e.toString());
       throw e;

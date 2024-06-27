@@ -11,6 +11,16 @@ Future<List<String?>> pickFiles() async {
   }
 }
 
+Future<List<String?>> pickSingleFile() async {
+  FilePickerResult? result = await FilePicker.platform
+      .pickFiles(allowMultiple: false, type: FileType.image);
+  if (result != null) {
+    return result.paths.toList();
+  } else {
+    return [];
+  }
+}
+
 String getFileName(String filePath) {
   return path.basename(filePath);
 }

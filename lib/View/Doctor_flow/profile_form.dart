@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/view/profileform_screen.dart';
@@ -19,8 +22,15 @@ import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 class DoctorFormScreen extends StatefulWidget {
-  DoctorFormScreen({super.key});
+  final String email;
+  final String password;
+  final String name;
 
+  DoctorFormScreen(
+      {required this.email,
+      required this.password,
+      required this.name,
+      super.key});
   @override
   State<DoctorFormScreen> createState() => _DoctorFormScreenState();
 }
@@ -32,12 +42,17 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
   final TextEditingController _expertiseController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _feesController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
   final TextEditingController _lnameController = TextEditingController();
   final TextEditingController _fnameController = TextEditingController();
   final TextEditingController _availabilityController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
 
   final TextEditingController _medicalCertificateController =
       TextEditingController();
+
+  final mediaController = Get.find<MediaPostController>();
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
@@ -52,12 +67,15 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
   final FocusNode _focusNode11 = FocusNode();
 
   TextEditingController controller = TextEditingController();
+  final authController = Get.find<AuthController>();
+
   final _formKey = GlobalKey<FormState>();
 
   var selectedFilePath = [];
 
   @override
   Widget build(BuildContext context) {
+    _fnameController.setText(widget.name);
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Fill Your Profile',
@@ -130,7 +148,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                     hintText: 'Gender',
                     items: ['Male', 'Female'],
                     value: '',
-                    onChanged: (String? value) {},
+                    onChanged: (String? value) {
+                      _genderController.text = value.toString();
+                    },
                     icon: '',
                   ),
                   SizedBox(
@@ -147,7 +167,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                     controller: _expertiseController,
                     focusNode: _focusNode4,
                     nextFocusNode: _focusNode5,
-                    hintText: 'Expertise',
+                    hintText: 'Expertise for e.g: Heart Cardio Gastrologist',
                     icon: '',
                   ),
                   SizedBox(
@@ -198,33 +218,47 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  InkWell(
-                    onTap: () {
-                      pickFiles().then((filePaths) {
-                        selectedFilePath = filePaths;
-                        _medicalCertificateController.setText(
-                            filePaths.length.toString() + ' file selected');
-                        setState(() {});
-                      });
-                    },
-                    child: RoundedBorderTextField(
-                      isenable: false,
-                      controller: _medicalCertificateController,
+                  RoundedBorderTextField(
+                      controller: _phoneController,
                       focusNode: _focusNode8,
                       nextFocusNode: _focusNode9,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please attach documents';
-                        } else if (selectedFilePath.isEmpty) {
-                          return 'Please attach files';
-                        } else {
-                          return null;
-                        }
-                      },
-                      hintText: 'Attach File of Medical Certificate',
-                      icon: 'Assets/icons/attach-icon.svg',
-                    ),
+                      hintText: 'Phone No',
+                      icon: '',
+                      validator: validatePhoneNumber),
+                  SizedBox(
+                    height: 2.h,
                   ),
+                  InkWell(
+                      onTap: () {
+                        pickSingleFile().then((filePaths) {
+                          if (filePaths.isEmpty) {
+                          } else {
+                            _medicalCertificateController
+                                .setText(filePaths[0].toString());
+                          }
+                        }).then((value) => mediaController.uploadPhoto(
+                            _medicalCertificateController.text, context));
+                      },
+                      child: Obx(
+                        () => RoundedBorderTextField(
+                          showLoader: mediaController.imgUploaded.value,
+                          isenable: false,
+                          controller: _medicalCertificateController,
+                          focusNode: _focusNode9,
+                          nextFocusNode: _focusNode10,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please attach documents';
+                            } else if (mediaController.imgUrl.isEmpty) {
+                              return 'Please attach files';
+                            } else {
+                              return null;
+                            }
+                          },
+                          hintText: 'Attach File of Medical Certificate',
+                          icon: 'Assets/icons/attach-icon.svg',
+                        ),
+                      )),
                   Column(
                     children: selectedFilePath.map((path) {
                       return Row(
@@ -289,8 +323,8 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                     },
                     child: RoundedBorderTextField(
                       maxlines: true,
-                      focusNode: _focusNode9,
-                      nextFocusNode: _focusNode10,
+                      focusNode: _focusNode10,
+                      nextFocusNode: _focusNode11,
                       isenable: false,
                       controller: _availabilityController,
                       hintText: 'Availability',
@@ -310,34 +344,55 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: RoundedButton(
-                            text: 'Save',
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                              if (!_formKey.currentState!.validate()) {
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      isDoctorForm: true,
-                                      buttonColor: Color(0xff1C2A3A),
-                                      showButton: true,
-                                      title: 'Congratulations!',
-                                      content:
-                                          'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                        child: Obx(
+                          () => RoundedButton(
+                              showLoader: authController.registerLoader.value,
+                              text: 'Save',
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
+                                if (!_formKey.currentState!.validate()) {
+                                } else {
+                                  bool result =
+                                      await authController.doctorRegister(
+                                          widget.name,
+                                          _locationController.text,
+                                          _phoneController.text,
+                                          '',
+                                          'EMAIL',
+                                          'DOCTOR',
+                                          widget.email,
+                                          widget.password,
+                                          _genderController.text,
+                                          _expertiseController.text,
+                                          _qualificationController.text,
+                                          _medicalCertificateController.text,
+                                          _feesController.text,
+                                          context);
+                                  if (result == true) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CustomDialog(
+                                          isDoctorForm: true,
+                                          buttonColor: Color(0xff1C2A3A),
+                                          showButton: true,
+                                          title: 'Congratulations!',
+                                          content:
+                                              'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                              }
-                            },
-                            backgroundColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0xffC5D3E3)
-                                : Color(0xff1C2A3A),
-                            textColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0xff121212)
-                                : Color(0xffFFFFFF)),
-                      ),
+                                  }
+                                }
+                              },
+                              backgroundColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : Color(0xff1C2A3A),
+                              textColor: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xff121212)
+                                  : Color(0xffFFFFFF)),
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(

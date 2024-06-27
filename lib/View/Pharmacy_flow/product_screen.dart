@@ -14,7 +14,8 @@ import 'add_medicine.dart';
 
 class ProductScreen extends StatefulWidget {
   final String userId;
-  ProductScreen({required this.userId});
+  final bool isAdmin;
+  ProductScreen({required this.userId, required this.isAdmin});
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -89,8 +90,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 3.0,
                     mainAxisSpacing: 3,
-                    childAspectRatio:
-                        0.75, // Set the aspect ratio of the children
+                    childAspectRatio: 0.75,
                   ),
                   itemCount: pharmacyController.pharmacyProducts.length,
                   itemBuilder: (context, index) {
@@ -103,14 +103,22 @@ class _ProductScreenState extends State<ProductScreen> {
                             child: InkWell(
                               onTap: () {
                                 Get.to(MedicineDetailScreen(
-                                  isPharmacyAdmin: false,
+                                  isPharmacyAdmin: widget.isAdmin,
                                   productId: data.productId.toString(),
                                 ));
                               },
                               child: MedicineCard(
                                 isUserProductScreen: true,
-                                onPressed: () {},
-                                btnText: "Add to Cart",
+                                onPressed: () {
+                                  widget.isAdmin
+                                      ? Get.to(MedicineDetailScreen(
+                                          isPharmacyAdmin: widget.isAdmin,
+                                          productId: data.productId.toString(),
+                                        ))
+                                      : print('');
+                                },
+                                btnText:
+                                    widget.isAdmin ? "Edit" : "Add to Cart",
                                 imgUrl:
                                     'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
                                 count: data.quantity.toString(),

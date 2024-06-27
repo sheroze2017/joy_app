@@ -17,6 +17,7 @@ import 'package:sizer/sizer.dart';
 class CustomDialog extends StatelessWidget {
   final String title;
   final String content;
+  String? hospitalDetailId;
   bool? isPharmacyCheckout;
   bool showButton;
   bool isBookAppointment;
@@ -33,6 +34,7 @@ class CustomDialog extends StatelessWidget {
       required this.title,
       required this.content,
       this.buttonColor,
+      this.hospitalDetailId,
       this.isPharmacyCheckout = false,
       this.showButton = false,
       this.isBookAppointment = false,
@@ -119,6 +121,7 @@ class CustomDialog extends StatelessWidget {
                                             isUser: true,
                                           )))
                                         : Get.offAll(NavBarScreen(
+                                            hospitalDetailId: hospitalDetailId,
                                             isBloodBank: isBloodBankForm,
                                             isPharmacy: isPharmacyForm,
                                             isDoctor: isDoctorForm,

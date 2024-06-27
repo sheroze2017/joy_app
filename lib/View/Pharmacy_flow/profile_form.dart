@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/auth/bloc/auth_bloc.dart';
 import '../../modules/auth/utils/auth_utils.dart';
 
 class PharmacyFormScreen extends StatefulWidget {
-  PharmacyFormScreen({super.key});
+  final String email;
+  final String password;
+  final String name;
 
+  PharmacyFormScreen(
+      {required this.email,
+      required this.password,
+      required this.name,
+      super.key});
   @override
   State<PharmacyFormScreen> createState() => _PharmacyFormScreenState();
 }
@@ -36,6 +47,9 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
   final FocusNode _focusNode8 = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
+
+  final authController = Get.find<AuthController>();
+  final mediaController = Get.find<MediaPostController>();
 
   @override
   Widget build(BuildContext context) {
@@ -163,46 +177,79 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    controller: _prescriptionController,
-                    focusNode: _focusNode5,
-                    nextFocusNode: _focusNode6,
-                    hintText: 'Attach File of Prescription',
-                    icon: 'Assets/icons/attach-icon.svg',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please attach file prescription';
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
+                  InkWell(
+                      onTap: () {
+                        pickSingleFile().then((filePaths) {
+                          if (filePaths.isEmpty) {
+                          } else {
+                            _prescriptionController
+                                .setText(filePaths[0].toString());
+                          }
+                        }).then((value) => mediaController.uploadPhoto(
+                            _prescriptionController.text, context));
+                      },
+                      child: Obx(
+                        () => RoundedBorderTextField(
+                          isenable: false,
+                          showLoader: mediaController.imgUploaded.value,
+                          controller: _prescriptionController,
+                          focusNode: _focusNode5,
+                          nextFocusNode: _focusNode6,
+                          hintText: 'Attach File of Prescription',
+                          icon: 'Assets/icons/attach-icon.svg',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please attach file prescription';
+                            } else {
+                              return null;
+                            }
+                          },
+                        ),
+                      )),
                   SizedBox(
                     height: 2.h,
                   ),
                   Row(
                     children: [
                       Expanded(
-                        child: RoundedButton(
+                          child: Obx(
+                        () => RoundedButton(
+                            showLoader: authController.registerLoader.value,
                             text: 'Save',
-                            onPressed: () {
+                            onPressed: () async {
                               FocusScope.of(context).unfocus();
 
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomDialog(
-                                      isPharmacyForm: true,
-                                      buttonColor: Color(0xff1C2A3A),
-                                      showButton: true,
-                                      title: 'Congratulations!',
-                                      content:
-                                          'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                    );
-                                  },
-                                );
+                                bool result =
+                                    await authController.PharmacyRegister(
+                                        _nameController.text,
+                                        widget.email,
+                                        widget.password,
+                                        _locationController.text,
+                                        "",
+                                        _contactController.text,
+                                        "EMAIL",
+                                        "PHARMACY",
+                                        "22",
+                                        "22",
+                                        "ASDA21321312312",
+                                        context);
+                                if (result) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomDialog(
+                                        isPharmacyForm: true,
+                                        buttonColor: Color(0xff1C2A3A),
+                                        showButton: true,
+                                        title: 'Congratulations!',
+                                        content:
+                                            'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                      );
+                                    },
+                                  );
+                                }
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
@@ -211,7 +258,7 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                             textColor: ThemeUtil.isDarkMode(context)
                                 ? Color(0xff121212)
                                 : Color(0xffFFFFFF)),
-                      ),
+                      )),
                     ],
                   ),
                   SizedBox(

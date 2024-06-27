@@ -7,27 +7,33 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
+import 'package:joy_app/modules/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
+import 'package:joy_app/widgets/single_select_dropdown.dart';
+import 'package:pinput/pinput.dart';
 
 import 'package:sizer/sizer.dart';
 
 class AddMedicine extends StatefulWidget {
-  AddMedicine({super.key});
-
+  bool isEdit;
+  PharmacyProductData? productDetail;
+  AddMedicine({this.productDetail, this.isEdit = false});
   @override
   State<AddMedicine> createState() => _AddMedicineState();
 }
 
 class _AddMedicineState extends State<AddMedicine> {
   String? selectedValue;
-  final TextEditingController _dobController = TextEditingController();
   final TextEditingController _dosageController = TextEditingController();
   final TextEditingController _stockController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
+
   final TextEditingController _descController = TextEditingController();
+  List<String> category = [];
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
@@ -36,17 +42,28 @@ class _AddMedicineState extends State<AddMedicine> {
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
-  final FocusNode _focusNode8 = FocusNode();
 
   final _formKey = GlobalKey<FormState>();
-  final productsController = Get.put(ProductController());
+  final productsController = Get.find<ProductController>();
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
+    productsController.categoriesList.forEach((element) {
+      category!.add(element.name!);
+    });
+    if (widget.isEdit == true) {
+      final data = widget.productDetail!;
+      _nameController.setText(data.name!);
+      _descController.setText(data.shortDescription!);
+      _dosageController.setText(data.dosage.toString());
+      _stockController.setText(data.quantity.toString());
+      _priceController.setText(data.price!);
+      _categoryController.setText(
+          category[data.productId!.toInt() > 3 ? 1 : data.productId!.toInt()]);
+    }
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Add Product',
+        title: widget.isEdit ? 'Edit Product' : 'Add Product',
         icon: Icons.arrow_back_sharp,
         onPressed: () {},
       ),
@@ -124,11 +141,13 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  SearchDropdown(
+                  SearchSingleDropdown(
                     hintText: 'Select Category',
-                    items: [''],
-                    value: '',
-                    onChanged: (String? value) {},
+                    items: category,
+                    value: widget.isEdit ? _categoryController.text : null,
+                    onChanged: (String? value) {
+                      _categoryController.setText(value.toString());
+                    },
                     icon: '',
                   ),
                   SizedBox(
@@ -191,16 +210,33 @@ class _AddMedicineState extends State<AddMedicine> {
 
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                productsController.createProduct(
-                                    _nameController.text,
-                                    _descController.text,
-                                    '1',
-                                    '2',
-                                    _priceController.text,
-                                    '0',
-                                    '3',
-                                    _stockController.text,
-                                    context);
+                                if (widget.isEdit) {
+                                  productsController.editProduct(
+                                      _nameController.text,
+                                      _descController.text,
+                                      category.indexOf(
+                                              _categoryController.text) ??
+                                          '0',
+                                      _priceController.text,
+                                      '0',
+                                      '3',
+                                      _stockController.text,
+                                      _dosageController.text,
+                                      widget.productDetail!.productId!
+                                          .toString(),
+                                      context);
+                                } else {
+                                  productsController.createProduct(
+                                      _nameController.text,
+                                      _descController.text,
+                                      '1',
+                                      _priceController.text,
+                                      '0',
+                                      '3',
+                                      _stockController.text,
+                                      _dosageController.text,
+                                      context);
+                                }
                               }
                               // showDialog(
                               //   context: context,
@@ -215,11 +251,11 @@ class _AddMedicineState extends State<AddMedicine> {
                               // );
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0xffC5D3E3)
-                                : Color(0xff1C2A3A),
+                                ? AppColors.lightGreenColoreb1
+                                : AppColors.darkGreenColor,
                             textColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0xff121212)
-                                : Color(0xffFFFFFF)),
+                                ? AppColors.blackColor
+                                : AppColors.whiteColor),
                       ))
                     ],
                   )

@@ -29,13 +29,15 @@ class NavBarScreen extends StatefulWidget {
   final bool? isBloodBank;
   final bool? isHospital;
   final bool? isUser;
-  const NavBarScreen(
+  String? hospitalDetailId;
+  NavBarScreen(
       {super.key,
       this.isDoctor = false,
       this.isPharmacy = false,
       this.isBloodBank = false,
       this.isHospital = false,
-      this.isUser = false});
+      this.isUser = false,
+      this.hospitalDetailId});
   @override
   State<NavBarScreen> createState() => _NavBarState();
 }
@@ -64,6 +66,7 @@ class _NavBarState extends State<NavBarScreen> {
                     children: [
                       PharmacyHomeScreen(),
                       ProductScreen(
+                        isAdmin: true,
                         userId: '3',
                       ),
                       NotificationScreen(),
@@ -89,6 +92,7 @@ class _NavBarState extends State<NavBarScreen> {
                               HospitalDashBoard(),
                               HospitalHomeScreen(
                                 isHospital: true,
+                                hospitalId: widget.hospitalDetailId,
                               ),
                               NotificationScreen(),
                               ProfileScreen()

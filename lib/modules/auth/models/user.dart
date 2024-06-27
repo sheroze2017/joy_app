@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 part 'user.g.dart';
+
 @HiveType(typeId: 0)
 class User extends HiveObject {
   @HiveField(0)
@@ -18,10 +19,10 @@ class User extends HiveObject {
   String? image;
 
   @HiveField(5)
-  int userRole;
+  String userRole;
 
   @HiveField(6)
-  int authType;
+  String authType;
 
   @HiveField(7)
   String phone;

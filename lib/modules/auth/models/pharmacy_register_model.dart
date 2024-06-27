@@ -1,12 +1,12 @@
-class LoginModel {
+class PharmacyRegisterModel {
   int? code;
   bool? sucess;
   Data? data;
   String? message;
 
-  LoginModel({this.code, this.sucess, this.data, this.message});
+  PharmacyRegisterModel({this.code, this.sucess, this.data, this.message});
 
-  LoginModel.fromJson(Map<String, dynamic> json) {
+  PharmacyRegisterModel.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     sucess = json['sucess'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
@@ -27,69 +27,69 @@ class LoginModel {
 
 class Data {
   int? userId;
-  String? firstName;
+  String? name;
   String? email;
   String? password;
   String? image;
   String? userRole;
   String? authType;
-  String? address;
   String? phone;
-  String? lastName;
-  Null? associatedHospital;
-  Null? about;
-  Null? location;
   String? deviceToken;
+  int? pharmacyDetailId;
+  String? placeId;
+  String? lat;
+  String? lng;
+  String? location;
 
   Data(
       {this.userId,
-      this.firstName,
+      this.name,
       this.email,
       this.password,
       this.image,
       this.userRole,
       this.authType,
-      this.address,
       this.phone,
-      this.lastName,
-      this.associatedHospital,
-      this.about,
-      this.location,
-      this.deviceToken});
+      this.deviceToken,
+      this.pharmacyDetailId,
+      this.placeId,
+      this.lat,
+      this.lng,
+      this.location});
 
   Data.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
-    firstName = json['first_name'];
+    name = json['name'];
     email = json['email'];
     password = json['password'];
-    image = json['image'].toString();
+    image = json['image'] ?? '';
     userRole = json['user_role'];
     authType = json['auth_type'];
-    address = json['address'];
     phone = json['phone'];
-    lastName = json['last_name'];
-    associatedHospital = json['associated_hospital'];
-    about = json['about'];
-    location = json['location'];
     deviceToken = json['device_token'];
+    pharmacyDetailId = json['pharmacy_detail_id'];
+    placeId = json['place_id'];
+    lat = json['lat'];
+    lng = json['lng'];
+    location = json['location'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['user_id'] = this.userId;
-    data['first_name'] = this.firstName;
+    data['name'] = this.name;
     data['email'] = this.email;
     data['password'] = this.password;
     data['image'] = this.image;
     data['user_role'] = this.userRole;
     data['auth_type'] = this.authType;
-    data['address'] = this.address;
     data['phone'] = this.phone;
-    data['last_name'] = this.lastName;
-    data['associated_hospital'] = this.associatedHospital;
-    data['about'] = this.about;
-    data['location'] = this.location;
     data['device_token'] = this.deviceToken;
+    data['pharmacy_detail_id'] = this.pharmacyDetailId;
+    data['place_id'] = this.placeId;
+    data['lat'] = this.lat;
+    data['lng'] = this.lng;
+    data['location'] = this.location;
     return data;
   }
 }

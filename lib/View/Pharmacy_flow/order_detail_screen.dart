@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
+import 'package:joy_app/modules/pharmacy/models/all_orders.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 class OrderDetailScreen extends StatefulWidget {
-  OrderDetailScreen({super.key});
-
+  final PharmacyOrders orderDetail;
+  OrderDetailScreen({required this.orderDetail});
   @override
   State<OrderDetailScreen> createState() => _FormScreenState();
 }
@@ -37,8 +39,10 @@ class _FormScreenState extends State<OrderDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
-
+    _fnameController.setText(widget.orderDetail.orderId.toString());
+    _locationController.setText(widget.orderDetail.location.toString());
+    _feeController.setText(widget.orderDetail.totalPrice.toString());
+    _productsController.setText(widget.orderDetail.quantity.toString());
     return Scaffold(
       appBar: HomeAppBar(
         title: "Order's Details",

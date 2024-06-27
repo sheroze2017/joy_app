@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/pharmacy_flow/order_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -19,11 +20,13 @@ class MyOrderScreen extends StatefulWidget {
 class _MyOrderScreenState extends State<MyOrderScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  final ordersController = Get.find<ProductController>();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    ordersController.allOrders('15', context);
   }
 
   @override
@@ -35,185 +38,197 @@ class _MyOrderScreenState extends State<MyOrderScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'My Orders',
-          style: CustomTextStyles.darkTextStyle(
-              color: ThemeUtil.isDarkMode(context)
-                  ? AppColors.whiteColor
-                  : Color(0xff374151)),
+        appBar: AppBar(
+          title: Text(
+            'My Orders',
+            style: CustomTextStyles.darkTextStyle(
+                color: ThemeUtil.isDarkMode(context)
+                    ? AppColors.whiteColor
+                    : Color(0xff374151)),
+          ),
+          centerTitle: true,
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: ThemeUtil.isDarkMode(context)
+                ? AppColors.lightGreenColoreb1
+                : AppColors.darkGreenColor,
+            labelColor: ThemeUtil.isDarkMode(context)
+                ? AppColors.lightGreenColoreb1
+                : AppColors.darkGreenColor,
+            unselectedLabelColor: Colors.grey,
+            labelStyle: CustomTextStyles.w600TextStyle(size: 14),
+            tabs: [
+              Tab(
+                text: 'Pending',
+              ),
+              Tab(text: 'On the way'),
+              Tab(text: 'Delivered'),
+            ],
+          ),
         ),
-        centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: ThemeUtil.isDarkMode(context)
-              ? AppColors.lightGreenColoreb1
-              : AppColors.darkGreenColor,
-          labelColor: ThemeUtil.isDarkMode(context)
-              ? AppColors.lightGreenColoreb1
-              : AppColors.darkGreenColor,
-          unselectedLabelColor: Colors.grey,
-          labelStyle: CustomTextStyles.w600TextStyle(size: 14),
-          tabs: [
-            Tab(
-              text: 'Pending',
-            ),
-            Tab(text: 'On the way'),
-            Tab(text: 'Delivered'),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Get.to(OrderDetailScreen());
+        body: Obx(
+          () => TabBarView(
+            controller: _tabController,
+            children: [
+              ordersController.changeStatusLoader.value
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      color: AppColors.darkGreenColor,
+                    ))
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 10),
+                      child: ListView.builder(
+                        itemCount: ordersController.pendingOrders.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Get.to(OrderDetailScreen(
+                                orderDetail:
+                                    ordersController.pendingOrders[index],
+                              ));
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 3.0),
+                              child: MeetingCallScheduler(
+                                onPressed: () {
+                                  ordersController.updateOrderStatus(
+                                      ordersController
+                                          .pendingOrders[index].orderId
+                                          .toString(),
+                                      'On the way',
+                                      context);
+                                },
+                                pharmacyButtonText: 'Marked as Shipped',
+                                isPharmacy: true,
+                                buttonColor: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.lightGreenColoreb1
+                                    : AppColors.darkGreenColor,
+                                bgColor: AppColors.lightGreenColor,
+                                nextMeeting: true,
+                                imgPath: 'Assets/images/tablet.jpg',
+                                name: 'Order Id: ' +
+                                    ordersController
+                                        .pendingOrders[index].orderId
+                                        .toString(),
+                                time: '',
+                                location: ordersController
+                                    .pendingOrders[index].location
+                                    .toString(),
+                                category: ordersController
+                                        .pendingOrders[index].quantity
+                                        .toString() +
+                                    ' Tablets',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+              // On the way Tab
+              ordersController.changeStatusLoader.value
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      color: AppColors.darkGreenColor,
+                    ))
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 10),
+                      child: ListView.builder(
+                        itemCount: ordersController.onTheWayOrders.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Get.to(OrderDetailScreen(
+                                orderDetail:
+                                    ordersController.onTheWayOrders[index],
+                              ));
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 3.0),
+                              child: MeetingCallScheduler(
+                                pharmacyButtonText: 'Marked as Deliverd',
+                                onPressed: () {
+                                  ordersController.updateOrderStatus(
+                                      ordersController
+                                          .onTheWayOrders[index].orderId
+                                          .toString(),
+                                      'Delivered',
+                                      context);
+                                },
+                                isPharmacy: true,
+                                buttonColor: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.lightGreenColoreb1
+                                    : AppColors.darkGreenColor,
+                                bgColor: AppColors.lightGreenColor,
+                                nextMeeting: true,
+                                imgPath: 'Assets/images/tablet.jpg',
+                                name: 'Order Id: ' +
+                                    ordersController
+                                        .onTheWayOrders[index].orderId
+                                        .toString(),
+                                time: '',
+                                location: ordersController
+                                    .onTheWayOrders[index].location
+                                    .toString(),
+                                category: ordersController
+                                        .onTheWayOrders[index].quantity
+                                        .toString() +
+                                    ' Tablets',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+              // Delivered Tab
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                child: ListView.builder(
+                  itemCount: ordersController.deliveredOrders.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Get.to(OrderDetailScreen(
+                            orderDetail:
+                                ordersController.deliveredOrders[index]));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3.0),
+                        child: MeetingCallScheduler(
+                          isDeliverd: true,
+                          isPharmacy: true,
+                          isActive: false,
+                          buttonColor: ThemeUtil.isDarkMode(context)
+                              ? AppColors.lightGreenColoreb1
+                              : AppColors.darkGreenColor,
+                          bgColor: AppColors.lightGreenColor,
+                          nextMeeting: true,
+                          imgPath: 'Assets/images/tablet.jpg',
+                          name: 'Order Id: ' +
+                              ordersController.deliveredOrders[index].orderId
+                                  .toString(),
+                          time: '',
+                          location: ordersController
+                              .deliveredOrders[index].location
+                              .toString(),
+                          category: ordersController
+                                  .deliveredOrders[index].quantity
+                                  .toString() +
+                              ' Tablets',
+                        ),
+                      ),
+                    );
                   },
-                  child: MeetingCallScheduler(
-                    pharmacyButtonText: 'Marked as Shipped',
-                    isPharmacy: true,
-                    buttonColor: ThemeUtil.isDarkMode(context)
-                        ? AppColors.lightGreenColoreb1
-                        : AppColors.darkGreenColor,
-                    bgColor: AppColors.lightGreenColor,
-                    nextMeeting: true,
-                    imgPath: 'Assets/images/tablet.jpg',
-                    name: 'Panadol',
-                    time: 'May 22, 2023 - 10.00 AM',
-                    location: 'Elite Ortho Clinic USA',
-                    category: '10 Tablets',
-                  ),
                 ),
-                SizedBox(
-                  height: 0.75.h,
-                ),
-                InkWell(
-                  onTap: () {
-                    Get.to(OrderDetailScreen());
-                  },
-                  child: MeetingCallScheduler(
-                    isPharmacy: true,
-                    pharmacyButtonText: 'Marked as Shipped',
-                    buttonColor: ThemeUtil.isDarkMode(context)
-                        ? AppColors.lightGreenColoreb1
-                        : AppColors.darkGreenColor,
-                    bgColor: AppColors.lightGreenColor,
-                    imgPath: 'Assets/images/tablet.jpg',
-                    nextMeeting: true,
-                    name: 'Panadol',
-                    time: 'May 22, 2023 - 10.00 AM',
-                    location: 'Elite Ortho Clinic USA',
-                    category: '10 Tablets',
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Get.to(OrderDetailScreen());
-                  },
-                  child: MeetingCallScheduler(
-                    pharmacyButtonText: 'Marked as Deliverd',
-                    isPharmacy: true,
-                    buttonColor: ThemeUtil.isDarkMode(context)
-                        ? AppColors.lightGreenColoreb1
-                        : AppColors.darkGreenColor,
-                    bgColor: AppColors.lightGreenColor,
-                    nextMeeting: true,
-                    imgPath: 'Assets/images/tablet.jpg',
-                    name: 'Panadol',
-                    time: 'May 22, 2023 - 10.00 AM',
-                    location: 'Elite Ortho Clinic USA',
-                    category: '10 Tablets',
-                  ),
-                ),
-                SizedBox(
-                  height: 0.75.h,
-                ),
-                InkWell(
-                  onTap: () {
-                    Get.to(OrderDetailScreen());
-                  },
-                  child: MeetingCallScheduler(
-                    isPharmacy: true,
-                    pharmacyButtonText: 'Marked as Deliverd',
-                    buttonColor: ThemeUtil.isDarkMode(context)
-                        ? AppColors.lightGreenColoreb1
-                        : AppColors.darkGreenColor,
-                    bgColor: AppColors.lightGreenColor,
-                    imgPath: 'Assets/images/tablet.jpg',
-                    nextMeeting: true,
-                    name: 'Panadol',
-                    time: 'May 22, 2023 - 10.00 AM',
-                    location: 'Elite Ortho Clinic USA',
-                    category: '10 Tablets',
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Get.to(OrderDetailScreen());
-                  },
-                  child: MeetingCallScheduler(
-                    isDeliverd: true,
-                    isPharmacy: true,
-                    isActive: false,
-                    buttonColor: ThemeUtil.isDarkMode(context)
-                        ? AppColors.lightGreenColoreb1
-                        : AppColors.darkGreenColor,
-                    bgColor: AppColors.lightGreenColor,
-                    nextMeeting: true,
-                    imgPath: 'Assets/images/tablet.jpg',
-                    name: 'Panadol',
-                    time: 'May 22, 2023 - 10.00 AM',
-                    location: 'Elite Ortho Clinic USA',
-                    category: '10 Tablets',
-                  ),
-                ),
-                SizedBox(
-                  height: 0.75.h,
-                ),
-                InkWell(
-                  onTap: () {
-                    Get.to(OrderDetailScreen());
-                  },
-                  child: MeetingCallScheduler(
-                    isActive: false,
-                    isDeliverd: true,
-                    isPharmacy: true,
-                    buttonColor: ThemeUtil.isDarkMode(context)
-                        ? AppColors.lightGreenColoreb1
-                        : AppColors.darkGreenColor,
-                    bgColor: AppColors.lightGreenColor,
-                    imgPath: 'Assets/images/tablet.jpg',
-                    nextMeeting: true,
-                    name: 'Panadol',
-                    time: 'May 22, 2023 - 10.00 AM',
-                    location: 'Elite Ortho Clinic USA',
-                    category: '10 Tablets',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }

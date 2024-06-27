@@ -247,6 +247,7 @@ class MeetingCallScheduler extends StatelessWidget {
   final Color bgColor;
   final String? pharmacyButtonText;
   bool nextMeeting;
+  VoidCallback? onPressed;
   bool isActive;
   bool isPharmacy;
   bool? isDeliverd;
@@ -259,6 +260,7 @@ class MeetingCallScheduler extends StatelessWidget {
       required this.category,
       required this.location,
       required this.time,
+      this.onPressed,
       this.nextMeeting = false,
       this.isActive = true,
       this.isHospital = false,
@@ -274,7 +276,7 @@ class MeetingCallScheduler extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12), color: bgColor),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -365,8 +367,8 @@ class MeetingCallScheduler extends StatelessWidget {
             ),
             isActive
                 ? Divider(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    thickness: 0.3,
+                    color: Theme.of(context).dividerColor,
+                    thickness: 0.2,
                   )
                 : Container(),
             isActive
@@ -380,9 +382,10 @@ class MeetingCallScheduler extends StatelessWidget {
                                 : nextMeeting
                                     ? "Start"
                                     : "Starts In 15 Mins",
-                            onPressed: () {
-                              //      showPaymentBottomSheet(context, true);
-                            },
+                            // onPressed: () {
+                            //   //      showPaymentBottomSheet(context, true);
+                            // },
+                            onPressed: onPressed ?? () {},
                             backgroundColor: isPharmacy
                                 ? buttonColor
                                 : nextMeeting

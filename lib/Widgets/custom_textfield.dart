@@ -7,6 +7,8 @@ import 'package:sizer/sizer.dart';
 class RoundedBorderTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
+  bool showLoader;
+
   final String icon;
   final bool maxlines;
   bool isenable;
@@ -16,6 +18,7 @@ class RoundedBorderTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
 
   RoundedBorderTextField({
+    this.showLoader = false,
     required this.controller,
     required this.hintText,
     required this.icon,
@@ -40,7 +43,16 @@ class RoundedBorderTextField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-
+        suffix: showLoader
+            ? Container(
+                height: 2.h,
+                width: 2.h,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.green,
+                ),
+              )
+            : null,
         hintText: hintText,
         hintStyle: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
         prefixIcon: icon.isEmpty

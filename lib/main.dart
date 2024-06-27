@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:joy_app/common/controller/theme_controller.dart';
 import 'package:joy_app/controller/theme_controller.dart';
+import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:joy_app/styles/theme.dart';
 import 'package:joy_app/view/splash_screen.dart';
@@ -54,5 +56,7 @@ class YourBinding extends Bindings {
   @override
   void dependencies() {
     Get.put(HospitalDetailController());
+    Get.put(MediaPostController());
+    Get.put(AuthController());
   }
 }
