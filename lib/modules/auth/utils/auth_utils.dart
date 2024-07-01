@@ -30,6 +30,26 @@ String? validatePasswordMatch(String? newPassword, String? confirmPassword) {
   return null;
 }
 
+String? validatePasswordStrength(String? password) {
+  if (password == null || password.isEmpty) {
+    return 'Password is required';
+  }
+
+  if (password.length < 6) {
+    return 'Password must be at least 6 characters';
+  }
+
+  if (!password.contains(RegExp(r'[0-9]'))) {
+    return 'Password must contain at least one number';
+  }
+
+  if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+    return 'Password must contain one special character';
+  }
+
+  return null; // Password is strong
+}
+
 String? validatePhoneNumber(String? value) {
   if (value == null || value.isEmpty) {
     return 'Please enter your phone number';
@@ -58,4 +78,3 @@ String? validateCurrencyAmount(String? value) {
   }
   return null;
 }
-

@@ -57,15 +57,20 @@ class _SplashScreenState extends State<SplashScreen> {
               Expanded(
                 child: Container(
                     height: 30.h,
-                    // width: 46.93.w,
+                    width: 46.93.w,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
                             bottomRight: Radius.circular(24),
                             bottomLeft: Radius.circular(24))),
-                    child: Image.asset(
-                        fit: BoxFit.cover,
-                        // width: 46.93.w,
-                        'Assets/images/splash/sp1.png')),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(24),
+                          bottomLeft: Radius.circular(24),
+                        ),
+                        child: Image.asset(
+                          'Assets/images/splash/sp1.png',
+                          fit: BoxFit.fill,
+                        ))),
               ),
               SizedBox(
                 width: 2.w,
@@ -81,7 +86,6 @@ class _SplashScreenState extends State<SplashScreen> {
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 height: 37.7.h,
@@ -152,7 +156,6 @@ class _SplashScreenState extends State<SplashScreen> {
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 height: 30.h,
@@ -168,16 +171,20 @@ class _SplashScreenState extends State<SplashScreen> {
               Expanded(
                 child: Container(
                     height: 30.h,
+                    width: 46.93.w,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(24),
-                            topRight: Radius.circular(24))),
+                            topRight: Radius.circular(24),
+                            topLeft: Radius.circular(24))),
                     child: ClipRRect(
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(24),
                           topLeft: Radius.circular(24),
                         ),
-                        child: Image.asset('Assets/images/splash/sp4.png'))),
+                        child: Image.asset(
+                          'Assets/images/splash/sp4.png',
+                          fit: BoxFit.fill,
+                        ))),
               ),
               SizedBox(
                 width: 2.w,

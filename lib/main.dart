@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:joy_app/common/controller/theme_controller.dart';
-import 'package:joy_app/controller/theme_controller.dart';
+import 'package:joy_app/common/theme/controller/theme_controller.dart';
+import 'package:joy_app/common/theme/theme_controller.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
+import 'package:joy_app/modules/doctor/models/doctor_detail_hive_model.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -17,7 +18,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(UserAdapter());
-
+  Hive.registerAdapter(DoctorDetailModelAdapter());
+  Hive.registerAdapter(DataModelAdapter());
+  Hive.registerAdapter(ReviewModelAdapter());
+  Hive.registerAdapter(GiveByModelAdapter());
   runApp(MyApp());
 }
 

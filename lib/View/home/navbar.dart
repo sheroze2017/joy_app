@@ -5,6 +5,7 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/home_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
+import 'package:joy_app/view/doctor_flow/all_appointment.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
 import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
 import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
@@ -17,7 +18,7 @@ import 'package:joy_app/view/hospital_flow/dashboard.dart';
 import 'package:joy_app/view/hospital_flow/home_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/view/social_media/add_friend.dart';
-import 'package:joy_app/controller/navbar_controller.dart';
+import 'package:joy_app/common/navbar/controller/navbar_controller.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:sizer/sizer.dart';
 
@@ -53,7 +54,7 @@ class _NavBarState extends State<NavBarScreen> {
                 index: navbarController.tabIndex,
                 children: [
                   DoctorHomeScreen(),
-                  ManageAppointment(),
+                  AllAppointments(),
                   NotificationScreen(),
                   ProfileScreen(
                     isDoctor: true,
@@ -70,7 +71,7 @@ class _NavBarState extends State<NavBarScreen> {
                         userId: '3',
                       ),
                       NotificationScreen(),
-                      ProfileScreen()
+                      ProfileScreen(isPharmacy: true)
                     ],
                   )
                 : widget.isBloodBank == true
@@ -89,7 +90,7 @@ class _NavBarState extends State<NavBarScreen> {
                         ? IndexedStack(
                             index: navbarController.tabIndex,
                             children: [
-                              HospitalDashBoard(),
+                              UserBlogScreen(),
                               HospitalHomeScreen(
                                 isHospital: true,
                                 hospitalId: widget.hospitalDetailId,

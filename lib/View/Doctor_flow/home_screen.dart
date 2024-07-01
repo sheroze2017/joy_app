@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_flow/all_appointment.dart';
 import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
@@ -15,7 +18,10 @@ import 'package:sizer/sizer.dart';
 import '../home/my_profile.dart';
 
 class DoctorHomeScreen extends StatelessWidget {
-  const DoctorHomeScreen({super.key});
+  DoctorHomeScreen({super.key});
+
+  DoctorController _doctorController = Get.put(DoctorController());
+  ProfileController _profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -69,20 +75,31 @@ class DoctorHomeScreen extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      cursorColor: AppColors.borderColor,
-                      style: CustomTextStyles.lightTextStyle(
-                          color: AppColors.borderColor),
-                      decoration: InputDecoration(
-                        enabledBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
-                        focusedBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                        fillColor: Colors.transparent,
-                        hintText: "What's on your mind, Hashem?",
-                        hintStyle: CustomTextStyles.lightTextStyle(
+                    child: InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => CreatePostModal(),
+                        );
+                      },
+                      child: TextField(
+                        enabled: false,
+                        maxLines: null,
+                        cursorColor: AppColors.borderColor,
+                        style: CustomTextStyles.lightTextStyle(
                             color: AppColors.borderColor),
+                        decoration: InputDecoration(
+                          enabledBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          focusedBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          border:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          fillColor: Colors.transparent,
+                          hintText: "What's on your mind?",
+                          hintStyle: CustomTextStyles.lightTextStyle(
+                              color: AppColors.borderColor),
+                        ),
                       ),
                     ),
                   ),
@@ -189,19 +206,51 @@ class DoctorHomeScreen extends StatelessWidget {
               SizedBox(
                 height: 1.5.h,
               ),
-              MeetingCallScheduler(
-                bgColor: ThemeUtil.isDarkMode(context)
-                    ? AppColors.purpleBlueColor
-                    : AppColors.lightishBlueColor5ff,
-                isHospital: true,
-                nextMeeting: true,
-                imgPath: 'Assets/images/onboard3.png',
-                name: 'Julie',
-                time: 'May 22, 2023 - 10.00 AM',
-                location: 'Imam Hospital',
-                category: 'Dental',
-                buttonColor: Color(0xff0443A9),
-              ),
+              Obx(() => _doctorController.doctorAppointment.isEmpty ||
+                      _doctorController.doctorAppointment
+                          .where((element) => element.status == 'Pending')
+                          .isEmpty
+                  ? Center(
+                      child: SubHeading(
+                        title: 'No pending appointments',
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: _doctorController.doctorAppointment.length,
+                      itemBuilder: (context, index) {
+                        if (_doctorController.doctorAppointment[index].status ==
+                            'Pending') {
+                          final data =
+                              _doctorController.doctorAppointment[index];
+                          return Column(
+                            children: [
+                              MeetingCallScheduler(
+                                bgColor: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.purpleBlueColor
+                                    : AppColors.lightishBlueColor5ff,
+                                isHospital: true,
+                                nextMeeting: true,
+                                imgPath: 'Assets/images/onboard3.png',
+                                name: data.userDetails!.name.toString(),
+                                time: '${data.date}  ${data.time}',
+                                location: data.location.toString(),
+                                category: 'Dental',
+                                buttonColor: Color(0xff0443A9),
+                                onPressed: () {
+                                  Get.to(ManageAppointment(
+                                      phoneNo: data.userDetails!.phone,
+                                      appointmentId:
+                                          data.appointmentId.toString(),
+                                      doctorId: data.doctorUserId.toString()));
+                                },
+                              ),
+                            ],
+                          );
+                        } else
+                          return Container();
+                      })),
               SizedBox(
                 height: 0.75.h,
               ),
@@ -215,17 +264,35 @@ class DoctorHomeScreen extends StatelessWidget {
                       title: 'Reviews',
                     ),
                     SizedBox(height: 2.h),
-                    UserRatingWidget(
-                      docName: 'Emily Anderson',
-                      reviewText: '',
-                      rating: '5',
-                    ),
-                    SizedBox(height: 1.h),
-                    UserRatingWidget(
-                      docName: 'Emily Anderson',
-                      reviewText: '',
-                      rating: '5',
-                    ),
+                    Obx(() => _doctorController.doctorDetail == null ||
+                            _doctorController
+                                    .doctorDetail?.data?.reviews?.length ==
+                                0
+                        ? Center(
+                            child: SubHeading(
+                              title: 'No reviews yet',
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: _doctorController.doctorDetail == null
+                                ? 0
+                                : _doctorController
+                                    .doctorDetail!.data?.reviews!.length,
+                            itemBuilder: ((context, index) {
+                              final data = _doctorController
+                                  .doctorDetail!.data?.reviews![index];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                child: UserRatingWidget(
+                                  image: data!.giveBy!.image!,
+                                  docName: data!.giveBy!.name!,
+                                  reviewText: data!.review!,
+                                  rating: data.rating!,
+                                ),
+                              );
+                            })))
                   ],
                 ),
               )

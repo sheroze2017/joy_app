@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
@@ -9,12 +13,21 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/doctor/bloc/doctor_bloc.dart';
+import 'all_appointment.dart';
 import 'patient_profile.dart';
 
 class ManageAppointment extends StatefulWidget {
   bool? showPatientHistoryFromScreen;
-
-  ManageAppointment({super.key, this.showPatientHistoryFromScreen = false});
+  String? appointmentId;
+  String? doctorId;
+  String? phoneNo;
+  ManageAppointment(
+      {super.key,
+      this.showPatientHistoryFromScreen = false,
+      this.doctorId,
+      this.phoneNo,
+      this.appointmentId});
 
   @override
   State<ManageAppointment> createState() => _ManageAppointmentState();
@@ -23,17 +36,16 @@ class ManageAppointment extends StatefulWidget {
 class _ManageAppointmentState extends State<ManageAppointment> {
   bool showPatientHistory = false;
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _daignosisController = TextEditingController(
-      text:
-          'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur');
-  final TextEditingController _prescriptionController = TextEditingController(
-      text:
-          'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur');
+  final TextEditingController _daignosisController = TextEditingController();
+  final TextEditingController _prescriptionController = TextEditingController();
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
   final FocusNode _focusNode4 = FocusNode();
+  final _formKey = GlobalKey<FormState>();
+
+  final _doctorController = Get.find<DoctorController>();
 
   @override
   Widget build(BuildContext context) {
@@ -52,182 +64,284 @@ class _ManageAppointmentState extends State<ManageAppointment> {
               leading: Container(),
               actions: [],
               showIcon: false),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: showPatientHistory == true ||
-                      widget.showPatientHistoryFromScreen == true
-                  ? Column(
-                      children: [
-                        Divider(
-                          color: Color(0xffE5E7EB),
-                          thickness: 0.3,
-                        ),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Get.to(PatientProfileScreen());
-                          },
-                          child: MeetingCallScheduler(
-                            buttonColor: AppColors.darkBlueColor,
-                            bgColor: ThemeUtil.isDarkMode(context)
-                                ? AppColors.purpleBlueColor
-                                : AppColors.lightishBlueColor5ff,
-                            isActive: false,
-                            imgPath: 'Assets/images/oldPerson.png',
-                            name: 'James',
-                            time: '22:30 Am - 23:00 Am',
-                            location: 'Imam Hospital',
-                            category: 'Cardiology',
+          body: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: showPatientHistory == true ||
+                        widget.showPatientHistoryFromScreen == true
+                    ? Column(
+                        children: [
+                          Divider(
+                            color: Color(0xffE5E7EB),
+                            thickness: 0.3,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(PatientProfileScreen());
-                            },
-                            child: MeetingCallScheduler(
-                              buttonColor: AppColors.darkBlueColor,
-                              bgColor: ThemeUtil.isDarkMode(context)
-                                  ? AppColors.purpleBlueColor
-                                  : AppColors.lightishBlueColor5ff,
-                              isActive: false,
-                              imgPath: 'Assets/images/oldPerson.png',
-                              name: 'James',
-                              time: '22:30 Am - 23:00 Am',
-                              location: 'Imam Hospital',
-                              category: 'Cardiology',
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          Obx(() => ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount:
+                                  _doctorController.doctorAppointment.length,
+                              itemBuilder: (context, index) {
+                                if (_doctorController
+                                        .doctorAppointment[index].status ==
+                                    'COMPLETED') {
+                                  final data = _doctorController
+                                      .doctorAppointment[index];
+                                  return Column(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          Get.to(PatientProfileScreen(
+                                            details: data,
+                                          ));
+                                        },
+                                        child: MeetingCallScheduler(
+                                          buttonColor: AppColors.darkBlueColor,
+                                          bgColor: ThemeUtil.isDarkMode(context)
+                                              ? AppColors.purpleBlueColor
+                                              : AppColors.lightishBlueColor5ff,
+                                          isActive: false,
+                                          imgPath:
+                                              'Assets/images/oldPerson.png',
+                                          name:
+                                              data.userDetails!.name.toString(),
+                                          time: '${data.date}  ${data.time}',
+                                          location: data.location.toString(),
+                                          category: 'Cardiology',
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 1.h,
+                                      ),
+                                    ],
+                                  );
+                                } else
+                                  return Container();
+                              }))
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 1.h,
+                          ),
+                          TimerWidget(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: RoundedButtonSmall(
+                                      text: 'Finish',
+                                      onPressed: () {},
+                                      backgroundColor: AppColors.darkBlueColor,
+                                      textColor: AppColors.whiteColor),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Get.to(PatientProfileScreen());
-                          },
-                          child: MeetingCallScheduler(
-                            buttonColor: AppColors.darkBlueColor,
-                            bgColor: ThemeUtil.isDarkMode(context)
-                                ? AppColors.purpleBlueColor
-                                : AppColors.lightishBlueColor5ff,
-                            isActive: false,
-                            imgPath: 'Assets/images/oldPerson.png',
-                            name: 'James',
-                            time: '22:30 Am - 23:00 Am',
-                            location: 'Imam Hospital',
-                            category: 'Cardiology',
-                          ),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        TimerWidget(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 12),
-                          child: Row(
+                          Text('Make Phone Call to User',
+                              style: CustomTextStyles.w600TextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? AppColors.whiteColor
+                                      : AppColors.blackColor151,
+                                  size: 16)),
+                          Row(
                             children: [
-                              Expanded(
-                                child: RoundedButtonSmall(
-                                    text: 'Finish',
-                                    onPressed: () {},
-                                    backgroundColor: AppColors.darkBlueColor,
-                                    textColor: AppColors.whiteColor),
+                              InkWell(
+                                  onTap: () {
+                                    _makingPhoneCall(widget.phoneNo!);
+                                  },
+                                  child: Container(
+                                      height: 7.h,
+                                      width: 7.h,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          border: Border.all(
+                                            width: 5,
+                                            color: AppColors.darkBlueColor,
+                                          )),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.phone,
+                                          color: AppColors.darkBlueColor,
+                                        ),
+                                      ))),
+                              SizedBox(
+                                width: 4.w,
                               ),
+                              InkWell(
+                                onTap: () {
+                                  openwhatsapp(widget.phoneNo);
+                                },
+                                child: Container(
+                                  height: 7.h,
+                                  width: 7.h,
+                                  child: SvgPicture.asset(
+                                      'Assets/icons/whatsapp-circle.svg'),
+                                ),
+                              )
                             ],
                           ),
-                        ),
-                        Text('Review to Patient ',
-                            style: CustomTextStyles.w600TextStyle(
+                          SizedBox(
+                            height: 4.w,
+                          ),
+                          Text('Review to Patient ',
+                              style: CustomTextStyles.w600TextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? AppColors.whiteColor
+                                      : AppColors.blackColor151,
+                                  size: 20)),
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          Text(
+                            "Patient's Name",
+                            style: CustomTextStyles.lightTextStyle(
                                 color: ThemeUtil.isDarkMode(context)
-                                    ? AppColors.whiteColor
-                                    : AppColors.blackColor151,
-                                size: 20)),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        Text(
-                          "Patient's Name",
-                          style: CustomTextStyles.lightTextStyle(
-                              color: ThemeUtil.isDarkMode(context)
-                                  ? Color(0xffDBDBDB)
-                                  : Color(0xff3D4859)),
-                        ),
-                        RoundedBorderTextField(
-                            controller: _nameController,
-                            focusNode: _focusNode1,
-                            nextFocusNode: _focusNode2,
-                            hintText: 'James Robinson',
-                            icon: ''),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        Text(
-                          "Your Daignosis",
-                          style: CustomTextStyles.lightTextStyle(
-                              color: ThemeUtil.isDarkMode(context)
-                                  ? Color(0xffDBDBDB)
-                                  : Color(0xff3D4859)),
-                        ),
-                        RoundedBorderTextField(
-                            focusNode: _focusNode2,
-                            nextFocusNode: _focusNode3,
-                            maxlines: true,
-                            controller: _daignosisController,
-                            hintText:
-                                'e veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur',
-                            icon: ''),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                        Text(
-                          "Medications Prescribed",
-                          style: CustomTextStyles.lightTextStyle(
-                              color: ThemeUtil.isDarkMode(context)
-                                  ? Color(0xffDBDBDB)
-                                  : Color(0xff3D4859)),
-                        ),
-                        RoundedBorderTextField(
-                          focusNode: _focusNode3,
-                          nextFocusNode: _focusNode4,
-                          maxlines: true,
-                          hintText: 'Medication Prescription',
-                          controller: _prescriptionController,
-                          icon: '',
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 12),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: RoundedButtonSmall(
-                                    text: 'Submit',
-                                    onPressed: () {
-                                      // showPatientHistory = !showPatientHistory;
-                                      // setState(() {});
-                                    },
-                                    backgroundColor: AppColors.darkBlueColor,
-                                    textColor: AppColors.whiteColor),
-                              ),
-                            ],
+                                    ? Color(0xffDBDBDB)
+                                    : Color(0xff3D4859)),
                           ),
-                        ),
-                        SizedBox(
-                          height: 5.h,
-                        )
-                      ],
-                    ),
+                          RoundedBorderTextField(
+                              controller: _nameController,
+                              focusNode: _focusNode1,
+                              nextFocusNode: _focusNode2,
+                              hintText: 'James Robinson',
+                              icon: ''),
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          Text(
+                            "Your Daignosis",
+                            style: CustomTextStyles.lightTextStyle(
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xffDBDBDB)
+                                    : Color(0xff3D4859)),
+                          ),
+                          RoundedBorderTextField(
+                              focusNode: _focusNode2,
+                              nextFocusNode: _focusNode3,
+                              maxlines: true,
+                              controller: _daignosisController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter daignosis';
+                                } else {
+                                  return null;
+                                }
+                              },
+                              hintText: 'Daignoses ',
+                              icon: ''),
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          Text(
+                            "Medications Prescribed",
+                            style: CustomTextStyles.lightTextStyle(
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xffDBDBDB)
+                                    : Color(0xff3D4859)),
+                          ),
+                          RoundedBorderTextField(
+                            focusNode: _focusNode3,
+                            nextFocusNode: _focusNode4,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter Prescription';
+                              } else {
+                                return null;
+                              }
+                            },
+                            maxlines: true,
+                            hintText: 'Medication Prescription',
+                            controller: _prescriptionController,
+                            icon: '',
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Obx(
+                                  () => _doctorController
+                                          .appointmentLoader.value
+                                      ? Center(
+                                          child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 16.0),
+                                          child: CircularProgressIndicator(),
+                                        ))
+                                      : Expanded(
+                                          child: RoundedButtonSmall(
+                                              text: 'Submit',
+                                              onPressed: () {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                                if (!_formKey.currentState!
+                                                    .validate()) {
+                                                } else {
+                                                  _doctorController
+                                                      .updateAppointment(
+                                                          widget.appointmentId
+                                                              .toString(),
+                                                          'COMPLETED',
+                                                          '${_daignosisController.text.toString()} ${_prescriptionController.text.toString()}',
+                                                          context,
+                                                          widget.doctorId
+                                                              .toString());
+                                                }
+                                              },
+                                              backgroundColor:
+                                                  AppColors.darkBlueColor,
+                                              textColor: AppColors.whiteColor),
+                                        ),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5.h,
+                          )
+                        ],
+                      ),
+              ),
             ),
           ),
         ));
+  }
+
+  _makingPhoneCall(String phoneNo) async {
+    var url = Uri.parse("tel:${phoneNo}");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  openwhatsapp(whatsapp) async {
+    var androidUrl =
+        "whatsapp://send?phone=$whatsapp&text='Hi, hope you are doing well \nLet we start the meeting to discuss your health issues.'";
+    var iosUrl =
+        "https://wa.me/$whatsapp?text=${Uri.parse('Hi, hope you are doing well \nLet we start the meeting to discuss your health issues.')}";
+
+    // android , web
+    try {
+      if (Platform.isIOS) {
+        await launchUrl(Uri.parse(iosUrl));
+      } else {
+        await launchUrl(Uri.parse(androidUrl));
+      }
+    } on Exception {}
+    // }
   }
 }
 
@@ -237,10 +351,10 @@ class TimerWidget extends StatefulWidget {
 }
 
 class _TimerWidgetState extends State<TimerWidget>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  Duration _remainingTime = Duration(minutes: 1, seconds: 0);
+  Duration _remainingTime = Duration(minutes: 30, seconds: 0);
 
   @override
   void initState() {
@@ -254,6 +368,15 @@ class _TimerWidgetState extends State<TimerWidget>
         setState(() {});
       });
     _controller.forward();
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_remainingTime.inSeconds > 0) {
+        setState(() {
+          _remainingTime -= Duration(seconds: 1);
+        });
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   @override
@@ -262,13 +385,11 @@ class _TimerWidgetState extends State<TimerWidget>
     super.dispose();
   }
 
-  void _updateTimer() {
-    setState(() {
-      _remainingTime -= Duration(seconds: 1);
-      if (_remainingTime.inSeconds <= 0) {
-        _controller.stop();
-      }
-    });
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$minutes:$seconds";
   }
 
   @override
@@ -312,12 +433,5 @@ class _TimerWidgetState extends State<TimerWidget>
         ),
       ),
     );
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$twoDigitMinutes:$twoDigitSeconds";
   }
 }

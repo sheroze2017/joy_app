@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
+import 'package:joy_app/modules/doctor/models/doctor_appointment_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 class PatientProfileScreen extends StatefulWidget {
-  PatientProfileScreen({super.key});
-
+  Appointment? details;
+  PatientProfileScreen({this.details});
   @override
   State<PatientProfileScreen> createState() => _FormScreenState();
 }
@@ -47,6 +49,19 @@ class _FormScreenState extends State<PatientProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _fnameController.setText(widget.details == null
+        ? ''
+        : widget.details!.userDetails!.name.toString());
+    _symptomsController.setText(
+        widget.details == null ? '' : widget.details!.symptoms.toString());
+    _complainController.setText(
+        widget.details == null ? '' : widget.details!.complain.toString());
+    _locationController.setText(
+        widget.details == null ? '' : widget.details!.location.toString());
+    _timeController.setText(widget.details == null
+        ? ''
+        : widget.details!.date.toString() + widget.details!.time.toString());
+        
     return Scaffold(
       appBar: HomeAppBar(
         title: "Patient's Profile",
@@ -87,7 +102,7 @@ class _FormScreenState extends State<PatientProfileScreen> {
                   focusNode: _focusNode2,
                   nextFocusNode: _focusNode3,
                   controller: _lnameController,
-                  hintText: 'Robinson',
+                  hintText: '',
                   icon: '',
                 ),
                 SizedBox(

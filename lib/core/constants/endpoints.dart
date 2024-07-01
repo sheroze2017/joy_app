@@ -31,6 +31,13 @@ class Endpoints {
   static String getAllPosts = '/auth/getAllPosts';
   static String getAllPostById = '/auth/getPosts';
   static String uploadBase64Image = '/auth/uploadBase64';
+  static String createPost = '/auth/createPost';
 
-  //Pharmacy
+  //Doctor
+
+  static String getAllAppointment = '/doctor/getDoctorAppoinntments';
+  static String getAllDoctors = '/getAllDoctors';
+  static String getDoctorDetail = '/doctor/getDoctorDetails';
+  static String updateDoctor = '/doctor/updateDoctor';
+  static String updateAppointmentStatus = '/auth/updateAppointmentStatus';
 }

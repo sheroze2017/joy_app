@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -11,6 +12,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../Widgets/custom_textfield.dart';
 import '../../Widgets/success_dailog.dart';
+import '../../common/profile/bloc/profile_bloc.dart';
 
 class EditProfile extends StatefulWidget {
   EditProfile({super.key});
@@ -35,6 +37,8 @@ class _EditProfileState extends State<EditProfile> {
   final FocusNode _focusNode4 = FocusNode();
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
+
+  ProfileController _profileController = Get.find<ProfileController>();
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +71,8 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
                 Text(
-                  'Sheroze Rehman',
+                  _profileController.firstName.toString() +
+                      _profileController.lastName.toString(),
                   style: CustomTextStyles.darkHeadingTextStyle(
                       color: ThemeUtil.isDarkMode(context)
                           ? AppColors.whiteColor
@@ -76,7 +81,7 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(
                   height: 1.h,
                 ),
-                Text('+123 856479683',
+                Text(_profileController.phone.toString(),
                     style: CustomTextStyles.lightTextStyle()),
                 SizedBox(
                   height: 1.h,

@@ -9,14 +9,17 @@ import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/media_posts_api.dart';
 import 'package:joy_app/view/hospital_flow/dashboard.dart';
 
+import '../model/create_post_model.dart';
 import '../model/media_post.dart';
 
 class MediaPostController extends GetxController {
   RxList<MediaPost> allPost = <MediaPost>[].obs;
   RxList<MediaPost> postsByUserId = <MediaPost>[].obs;
   late DioClient dioClient;
+  late File profileImg;
   var imgUrl = ''.obs;
   var imgUploaded = false.obs;
+  var postUpload = false.obs;
   late MediaPosts mediaPosts;
 
   @override
@@ -83,6 +86,22 @@ class MediaPostController extends GetxController {
     }
   }
 
+  Future<String> uploadProfilePhoto(imagePath, BuildContext context) async {
+    try {
+      String base64Image = await imageToBase64(imagePath);
+      final response = await mediaPosts.uploadPhoto(base64Image);
+      if (response.isNotEmpty) {
+        return response;
+      } else {
+        showErrorMessage(context, 'Error adding image');
+        return '';
+      }
+    } catch (e) {
+      showErrorMessage(context, 'Error adding image');
+      return '';
+    } finally {}
+  }
+
   Future<String> imageToBase64(String imagePath) async {
     File imageFile = File(imagePath);
     if (!imageFile.existsSync()) {
@@ -91,5 +110,27 @@ class MediaPostController extends GetxController {
     Uint8List imageBytes = await imageFile.readAsBytes();
     String base64Image = base64Encode(imageBytes);
     return base64Image;
+  }
+
+  createPostByUser(desc, userIdPost, imgPath, BuildContext context) async {
+    postUpload.value = true;
+    try {
+      CreatePostModel response =
+          await mediaPosts.createPost('', desc, userIdPost, imgPath);
+      if (response.sucess == true) {
+        showSuccessMessage(context, 'Post posted successfully');
+        Get.back();
+        postUpload.value = false;
+      } else {
+        showErrorMessage(context, 'Error adding post');
+        postUpload.value = false;
+      }
+    } catch (error) {
+      postUpload.value = false;
+
+      throw (error);
+    } finally {
+      postUpload.value = false;
+    }
   }
 }

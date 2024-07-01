@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
@@ -27,6 +29,8 @@ class PharmacyHomeScreen extends StatefulWidget {
 class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
   final pharmacyController = Get.put(AllPharmacyController());
   final productsController = Get.put(ProductController());
+  final profileController = Get.put(ProfileController());
+  ProfileController _profileController = Get.put(ProfileController());
 
   @override
   void initState() {
@@ -87,20 +91,31 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      cursorColor: AppColors.borderColor,
-                      style: CustomTextStyles.lightTextStyle(
-                          color: AppColors.borderColor),
-                      decoration: InputDecoration(
-                        fillColor: Colors.transparent,
-                        enabledBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
-                        focusedBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                        hintText: "What's on your mind, Hashem?",
-                        hintStyle: CustomTextStyles.lightTextStyle(
+                    child: InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => CreatePostModal(),
+                        );
+                      },
+                      child: TextField(
+                        enabled: false,
+                        maxLines: null,
+                        cursorColor: AppColors.borderColor,
+                        style: CustomTextStyles.lightTextStyle(
                             color: AppColors.borderColor),
+                        decoration: InputDecoration(
+                          enabledBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          focusedBorder:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          border:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          fillColor: Colors.transparent,
+                          hintText: "What's on your mind?",
+                          hintStyle: CustomTextStyles.lightTextStyle(
+                              color: AppColors.borderColor),
+                        ),
                       ),
                     ),
                   ),
@@ -269,12 +284,14 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                     ),
                     SizedBox(height: 2.h),
                     UserRatingWidget(
+                      image: '',
                       docName: 'Emily Anderson',
                       reviewText: '',
                       rating: '5',
                     ),
                     SizedBox(height: 1.h),
                     UserRatingWidget(
+                      image: '',
                       docName: 'Emily Anderson',
                       reviewText: '',
                       rating: '5',

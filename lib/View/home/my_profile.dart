@@ -466,6 +466,24 @@ class Heading extends StatelessWidget {
   }
 }
 
+class SubHeading extends StatelessWidget {
+  final String title;
+
+  const SubHeading({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: CustomTextStyles.lightSmallTextStyle(
+          size: 14,
+          color: ThemeUtil.isDarkMode(context)
+              ? Color(0xffC8D3E0)
+              : Color(0xff1F2A37)),
+    );
+  }
+}
+
 class NotificationWidget extends StatelessWidget {
   const NotificationWidget({
     super.key,

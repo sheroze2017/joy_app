@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,9 +10,11 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/modules/auth/components/calendar_dob.dart';
+import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
+import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
@@ -39,6 +43,7 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _profileImgController = TextEditingController();
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
@@ -50,7 +55,21 @@ class _FormScreenState extends State<FormScreen> {
   TextEditingController controller = TextEditingController();
   final authController = Get.put(AuthController());
 
+  final mediaController = Get.find<MediaPostController>();
+
   final _formKey = GlobalKey<FormState>();
+  File? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final List<String?> paths = await pickSingleFile();
+    if (paths.isNotEmpty) {
+      final String path = paths.first!;
+      final File imageFile = File(path);
+      setState(() {
+        _selectedImage = imageFile;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +92,38 @@ class _FormScreenState extends State<FormScreen> {
                 children: [
                   Stack(
                     children: <Widget>[
-                      Center(
-                        child: SvgPicture.asset(
-                            'Assets/images/profile-circle.svg'),
-                      ),
+                      InkWell(
+                          onTap: () {
+                            _pickImage();
+                          },
+                          child: _selectedImage == null
+                              ? Center(
+                                  child: SvgPicture.asset(
+                                      'Assets/images/profile-circle.svg'),
+                                )
+                              : Center(
+                                  child: Container(
+                                    width: 43.w,
+                                    height: 43.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle, // Add this line
+                                      border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1), // Optional
+                                    ),
+                                    child: Center(
+                                      child: ClipOval(
+                                        // Add this widget
+                                        child: Image.file(
+                                          fit: BoxFit.cover,
+                                          _selectedImage!,
+                                          width: 41.w,
+                                          height: 41.w,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )),
                       Positioned(
                         bottom: 20,
                         right: 100,
@@ -98,8 +145,11 @@ class _FormScreenState extends State<FormScreen> {
                                     Theme.of(context).scaffoldBackgroundColor,
                               ),
                             )),
-                      ),
+                      )
                     ],
+                  ),
+                  SizedBox(
+                    height: 2.h,
                   ),
                   RoundedBorderTextField(
                     validator: validateName,

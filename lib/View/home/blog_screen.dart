@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -18,6 +20,7 @@ class UserBlogScreen extends StatelessWidget {
 
   final mediaController = Get.find<MediaPostController>();
   final TextEditingController imageurl = TextEditingController();
+  ProfileController _profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -85,21 +88,31 @@ class UserBlogScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: TextField(
-                          cursorColor: AppColors.borderColor,
-                          style: CustomTextStyles.lightTextStyle(
-                              color: AppColors.borderColor),
-                          decoration: InputDecoration(
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            focusedBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            border:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            fillColor: Colors.transparent,
-                            hintText: "What's on your mind, Hashem?",
-                            hintStyle: CustomTextStyles.lightTextStyle(
+                        child: InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => CreatePostModal(),
+                            );
+                          },
+                          child: TextField(
+                            enabled: false,
+                            maxLines: null,
+                            cursorColor: AppColors.borderColor,
+                            style: CustomTextStyles.lightTextStyle(
                                 color: AppColors.borderColor),
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              fillColor: Colors.transparent,
+                              hintText: "What's on your mind?",
+                              hintStyle: CustomTextStyles.lightTextStyle(
+                                  color: AppColors.borderColor),
+                            ),
                           ),
                         ),
                       ),
@@ -110,32 +123,21 @@ class UserBlogScreen extends StatelessWidget {
                               ? Color(0xff121212)
                               : AppColors.whiteColorf9f,
                         ),
-                        child: InkWell(
-                          onTap: () {
-                            pickSingleFile().then((filePaths) {
-                              if (filePaths.isEmpty) {
-                              } else {
-                                imageurl.setText(filePaths[0].toString());
-                              }
-                            }).then((value) => mediaController.uploadPhoto(
-                                imageurl.text, context));
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 8),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset('Assets/icons/camera.svg'),
-                                SizedBox(width: 2.w),
-                                Text(
-                                  "Photo",
-                                  style: CustomTextStyles.lightTextStyle(
-                                    color: AppColors.borderColor,
-                                    size: 12,
-                                  ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 8),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset('Assets/icons/camera.svg'),
+                              SizedBox(width: 2.w),
+                              Text(
+                                "Photo",
+                                style: CustomTextStyles.lightTextStyle(
+                                  color: AppColors.borderColor,
+                                  size: 12,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       )

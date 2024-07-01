@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,7 @@ import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:pinput/pinput.dart';
@@ -50,6 +53,19 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
 
   final authController = Get.find<AuthController>();
   final mediaController = Get.find<MediaPostController>();
+  String? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final List<String?> paths = await pickSingleFile();
+    if (paths.isNotEmpty) {
+      final String path = await paths.first!;
+      String profileImg =
+          await mediaController.uploadProfilePhoto(path, context);
+      setState(() {
+        _selectedImage = profileImg;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,17 +89,64 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                 children: [
                   Stack(
                     children: <Widget>[
-                      Center(
-                        child: SvgPicture.asset(
-                            'Assets/images/profile-circle.svg'),
-                      ),
+                      InkWell(
+                          onTap: () {
+                            _pickImage();
+                          },
+                          child: _selectedImage == null
+                              ? Center(
+                                  child: SvgPicture.asset(
+                                      'Assets/images/profile-circle.svg'),
+                                )
+                              : Center(
+                                  child: Container(
+                                    width: 43.w,
+                                    height: 43.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle, // Add this line
+                                      border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1), // Optional
+                                    ),
+                                    child: Center(
+                                      child: ClipOval(
+                                        // Add this widget
+                                        child: Image.network(
+                                          fit: BoxFit.cover,
+                                          _selectedImage!,
+                                          width: 41.w,
+                                          height: 41.w,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )),
                       Positioned(
                         bottom: 20,
-                        right: 90,
-                        child:
-                            SvgPicture.asset('Assets/images/message-edit.svg'),
-                      ),
+                        right: 100,
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.lightBlueColor3e3
+                                    : Color(0xff1C2A3A),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10.0),
+                                  topRight: Radius.circular(10.0),
+                                  bottomRight: Radius.circular(10.0),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: SvgPicture.asset(
+                                'Assets/icons/pen.svg',
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                              ),
+                            )),
+                      )
                     ],
+                  ),
+                  SizedBox(
+                    height: 2.h,
                   ),
                   RoundedBorderTextField(
                     controller: _nameController,

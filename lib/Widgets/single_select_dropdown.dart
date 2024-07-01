@@ -22,7 +22,7 @@ class SearchSingleDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown.search(
-      initialItem: value,
+      // initialItem: value,
       listItemPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       closedHeaderPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       expandedHeaderPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),

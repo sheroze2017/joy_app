@@ -105,13 +105,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   SizedBox(height: 2.h),
                   RoundedBorderTextField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      } else {
-                        return null;
-                      }
-                    },
+                    validator: validatePasswordStrength,
                     focusNode: _focusNode3,
                     controller: _passwordController,
                     hintText: 'Your Password',
@@ -268,7 +262,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         imagePath: 'Assets/images/google.png',
                       ),
                       RoundedContainer(
-                        imagePath: 'Assets/images/gmail.png',
+                        imagePath: 'Assets/images/facebook.png',
                       ),
                       RoundedContainer(
                         imagePath: 'Assets/images/apple.png',

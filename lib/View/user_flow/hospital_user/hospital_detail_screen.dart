@@ -332,23 +332,28 @@ class UserRatingWidget extends StatelessWidget {
   final String docName;
   final String reviewText;
   final String rating;
+  final String image;
 
   const UserRatingWidget(
       {super.key,
       required this.docName,
       required this.reviewText,
-      required this.rating});
+      required this.rating,
+      required this.image});
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(50.0),
               child: Image.network(
-                'https://www.nebosh.org.uk/public/case-studies/shyam-susivrithan.jpg',
+                image.contains('http')
+                    ? image
+                    : 'https://www.nebosh.org.uk/public/case-studies/shyam-susivrithan.jpg',
                 width: 14.5.w,
                 height: 14.5.w,
                 fit: BoxFit.cover,
@@ -362,7 +367,7 @@ class UserRatingWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Joe Doe',
+                    docName,
                     style: CustomTextStyles.darkHeadingTextStyle(
                         color: ThemeUtil.isDarkMode(context)
                             ? AppColors.whiteColor
@@ -370,7 +375,7 @@ class UserRatingWidget extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Text('5.0',
+                      Text(rating,
                           style: CustomTextStyles.lightTextStyle(
                               color: ThemeUtil.isDarkMode(context)
                                   ? null
@@ -380,8 +385,9 @@ class UserRatingWidget extends StatelessWidget {
                         width: 0.5.w,
                       ),
                       RatingBar.builder(
+                        tapOnlyMode: true,
                         itemSize: 15,
-                        initialRating: 6,
+                        initialRating: double.parse(rating) ?? 0,
                         minRating: 1,
                         direction: Axis.horizontal,
                         allowHalfRating: true,
@@ -391,9 +397,7 @@ class UserRatingWidget extends StatelessWidget {
                           Icons.star,
                           color: Colors.amber,
                         ),
-                        onRatingUpdate: (rating) {
-                          print(rating);
-                        },
+                        onRatingUpdate: (double value) {},
                       ),
                     ],
                   ),
@@ -405,8 +409,7 @@ class UserRatingWidget extends StatelessWidget {
         SizedBox(
           height: 0.5.h,
         ),
-        Text(
-            'Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.',
+        Text(reviewText,
             style: CustomTextStyles.lightTextStyle(
                 color: ThemeUtil.isDarkMode(context) ? null : Color(0xff4B5563),
                 size: 14)),

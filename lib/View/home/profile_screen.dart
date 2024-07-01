@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/common/controller/theme_controller.dart';
+import 'package:joy_app/common/theme/controller/theme_controller.dart';
+import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
 import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/view/doctor_booking/manage_booking.dart';
+import 'package:joy_app/view/doctor_flow/all_appointment.dart';
 import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
 import 'package:joy_app/view/home/editprofile_screen.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
@@ -16,9 +18,12 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../common/profile/bloc/profile_bloc.dart';
+
 class ProfileScreen extends StatefulWidget {
   bool isDoctor;
-  ProfileScreen({this.isDoctor = false});
+  bool isPharmacy;
+  ProfileScreen({this.isDoctor = false, this.isPharmacy = false});
   @override
   State<ProfileScreen> createState() => _FormScreenState();
 }
@@ -28,7 +33,7 @@ class _FormScreenState extends State<ProfileScreen> {
 
   TextEditingController controller = TextEditingController();
   final ThemeController _themeController = Get.find<ThemeController>();
-
+  ProfileController _profileController = Get.find<ProfileController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +69,7 @@ class _FormScreenState extends State<ProfileScreen> {
                 height: 2.h,
               ),
               Text(
-                'Sheroze Rehman',
+                '${_profileController.firstName.value} ${_profileController.lastName.value}',
                 style: CustomTextStyles.darkHeadingTextStyle(
                     color: ThemeUtil.isDarkMode(context)
                         ? AppColors.whiteColor
@@ -73,47 +78,50 @@ class _FormScreenState extends State<ProfileScreen> {
               SizedBox(
                 height: 1.h,
               ),
-              Text('+123 856479683', style: CustomTextStyles.lightTextStyle()),
+              Text(_profileController.phone.value,
+                  style: CustomTextStyles.lightTextStyle()),
               SizedBox(
                 height: 2.h,
               ),
-              InkWell(
-                onTap: () {
-                  widget.isDoctor == true
-                      ? Get.to(DoctorDetailScreen(
-                          docName: 'Dr David Patel',
-                          location: 'USA Cantucky',
-                          Category: 'Cardiologist',
-                          isDoctor: widget.isDoctor,
-                        ))
-                      : Get.to(EditProfile());
-                },
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'Assets/images/user-edit.svg',
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    SizedBox(
-                      width: 3.w,
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Edit Profile',
-                        style: CustomTextStyles.lightTextStyle(
-                            color: ThemeUtil.isDarkMode(context)
-                                ? AppColors.whiteColor
-                                : Color(0xff6B7280),
-                            size: 18),
+              widget.isPharmacy
+                  ? Container()
+                  : InkWell(
+                      onTap: () {
+                        widget.isDoctor == true
+                            ? Get.to(DoctorDetailScreen(
+                                docName: 'Dr David Patel',
+                                location: 'USA Cantucky',
+                                Category: 'Cardiologist',
+                                isDoctor: widget.isDoctor,
+                              ))
+                            : Get.to(EditProfile());
+                      },
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'Assets/images/user-edit.svg',
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Edit Profile',
+                              style: CustomTextStyles.lightTextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? AppColors.whiteColor
+                                      : Color(0xff6B7280),
+                                  size: 18),
+                            ),
+                          ),
+                          SvgPicture.asset(
+                            'Assets/images/arrow-right.svg',
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ],
                       ),
                     ),
-                    SvgPicture.asset(
-                      'Assets/images/arrow-right.svg',
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ],
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Divider(
@@ -158,7 +166,9 @@ class _FormScreenState extends State<ProfileScreen> {
               ),
               InkWell(
                 onTap: () {
-                  Get.to(ManageAllAppointmentUser());
+                  widget.isDoctor
+                      ? Get.to(AllAppointments())
+                      : Get.to(ManageAllAppointmentUser());
                 },
                 child: Row(
                   children: [

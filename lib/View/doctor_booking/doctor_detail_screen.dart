@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_booking/your_profileform_screen.dart';
+import 'package:joy_app/view/doctor_flow/profile_form.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -10,6 +13,8 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../modules/doctor/bloc/doctor_bloc.dart';
 
 class DoctorDetailScreen extends StatelessWidget {
   final String docName;
@@ -23,8 +28,12 @@ class DoctorDetailScreen extends StatelessWidget {
       required this.location,
       required this.Category,
       this.isDoctor = false});
+
+  DoctorController _doctorController = Get.find<DoctorController>();
   @override
   Widget build(BuildContext context) {
+    final data = _doctorController.doctorDetail!.data;
+
     return Scaffold(
       appBar: HomeAppBar(
           bgColor: ThemeUtil.isDarkMode(context)
@@ -81,8 +90,10 @@ class DoctorDetailScreen extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(12.0),
-                                child: Image.asset(
-                                  'Assets/images/doctor.png',
+                                child: Image.network(
+                                  data!.image!.contains('http')
+                                      ? data!.image!
+                                      : 'https://s3-alpha-sig.figma.com/img/ab8e/d8d0/b0db1e98ab7f1a31afba13769f282033?Expires=1720396800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=A2kgxmFS3NyrGIED4w0Uw6nnjCe8fvcEyHsH~rNg~mavb2NytmeodcQ1rVRKC1Frw5ij6OZipykcHyGt9pvScezcs1HBrXoFMZ9GytVPKpeCYI9X8wz3mFXQ64t4y1GXDtGNcHh-73AF0PBVX4dkgGEk4BY2X~YnEoFvuDc~5ncYe20Qoz6~VqSO7wgJpRNKjqjgmjiKaRX8mViOAzxu-wRG3O7pOLkRr2z3rESjfFoHCC~GdxFlVyNoI-0nt1TkERX45RmHGsghecsEiu9pxnof-WiyHLbxMnWc~4QQENIHTtf36R0EpYDzUy5nhtnUO6xVLgoMhqjtdOCFfhgpUg__',
                                   width: 27.9.w,
                                   height: 27.9.w,
                                   fit: BoxFit.cover,
@@ -103,7 +114,7 @@ class DoctorDetailScreen extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          docName,
+                                          data.name.toString(),
                                           style: CustomTextStyles
                                               .darkHeadingTextStyle(
                                                   color: ThemeUtil.isDarkMode(
@@ -117,7 +128,7 @@ class DoctorDetailScreen extends StatelessWidget {
                                               : Color(0XFFE5E7EB),
                                         ),
                                         Text(
-                                          Category,
+                                          data.qualifications.toString(),
                                           style: CustomTextStyles.w600TextStyle(
                                               size: 14,
                                               color: Color(0xff4B5563)),
@@ -130,7 +141,8 @@ class DoctorDetailScreen extends StatelessWidget {
                                               width: 0.5.w,
                                             ),
                                             Expanded(
-                                              child: Text(location,
+                                              child: Text(
+                                                  data.location.toString(),
                                                   style: CustomTextStyles
                                                       .lightTextStyle(
                                                           color:
@@ -159,7 +171,7 @@ class DoctorDetailScreen extends StatelessWidget {
                                   bgColor: AppColors.lightishBlueColorebf,
                                   iconColor: Color(0xff023477),
                                   svgAsset: 'Assets/icons/profile-2user.svg',
-                                  numberText: '50+',
+                                  numberText: data.reviews!.length.toString(),
                                   isDoctor: true,
                                   descriptionText: 'Patients',
                                 ),
@@ -175,7 +187,8 @@ class DoctorDetailScreen extends StatelessWidget {
                                   bgColor: AppColors.lightishBlueColorebf,
                                   iconColor: Color(0xff023477),
                                   svgAsset: 'Assets/icons/star.svg',
-                                  numberText: '5',
+                                  numberText:
+                                      _doctorController.val.value.toString(),
                                   descriptionText: 'rating',
                                   isDoctor: true,
                                 ),
@@ -184,7 +197,7 @@ class DoctorDetailScreen extends StatelessWidget {
                                   bgColor: AppColors.lightishBlueColorebf,
                                   iconColor: Color(0xff023477),
                                   svgAsset: 'Assets/icons/messages.svg',
-                                  numberText: '1872',
+                                  numberText: data!.reviews!.length.toString(),
                                   descriptionText: 'reviews',
                                 ),
                               ],
@@ -209,8 +222,7 @@ class DoctorDetailScreen extends StatelessWidget {
                             title: 'About me',
                           ),
                           SizedBox(height: 1.h),
-                          Text(
-                              'Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA. ',
+                          Text('',
                               style: CustomTextStyles.lightTextStyle(size: 14)),
                           SizedBox(height: 1.5.h),
                           Heading(
@@ -224,17 +236,39 @@ class DoctorDetailScreen extends StatelessWidget {
                             title: 'Appointment Cost',
                           ),
                           SizedBox(height: 1.h),
-                          Text('150\$ for 1 Hour Consultation',
-                              style: CustomTextStyles.lightTextStyle(size: 14)),
+                          Obx(() => Text(
+                              '${_doctorController.doctorDetail!.data!.consultationFee!.toString()} for 1 Hour Consultation',
+                              style:
+                                  CustomTextStyles.lightTextStyle(size: 14))),
                           SizedBox(height: 1.5.h),
                           Heading(
                             title: 'Reviews',
                           ),
-                          SizedBox(height: 1.h),
-                          UserRatingWidget(
-                            docName: 'Emily Anderson',
-                            reviewText: '',
-                            rating: '5',
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 2.h),
+                              Obx(() => ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: _doctorController.doctorDetail!
+                                          .data?.reviews?.length ??
+                                      0,
+                                  itemBuilder: ((context, index) {
+                                    final data = _doctorController
+                                        .doctorDetail!.data?.reviews![index];
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10.0),
+                                      child: UserRatingWidget(
+                                        image: data!.giveBy!.image!,
+                                        docName: data!.giveBy!.name!,
+                                        reviewText: data!.review!,
+                                        rating: data.rating!,
+                                      ),
+                                    );
+                                  })))
+                            ],
                           ),
                           SizedBox(height: 5.h),
                         ],
@@ -260,7 +294,12 @@ class DoctorDetailScreen extends StatelessWidget {
                       text: isDoctor ? 'Edit Profile' : "Book Appointment",
                       onPressed: () {
                         isDoctor
-                            ? print('yet to find')
+                            ? Get.to(DoctorFormScreen(
+                                email: data.email.toString(),
+                                password: data.password.toString(),
+                                name: data.name.toString(),
+                                details: data,
+                              ))
                             : Get.to(ProfileFormScreen());
                       },
                       backgroundColor: AppColors.darkBlueColor,

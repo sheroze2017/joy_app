@@ -21,7 +21,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../controller/theme_controller.dart';
+import '../../../common/theme/theme_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});

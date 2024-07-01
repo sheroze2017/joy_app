@@ -65,14 +65,14 @@ class AuthController extends GetxController {
         showSuccessMessage(context, 'Login Successfully');
         saveUserDetailInLocal(
             response.data!.userId!,
-            response.data!.firstName.toString(),
+            response.data!.name.toString(),
             email,
             password,
             response.data!.image.toString(),
             response.data!.userRole.toString(),
             response.data!.authType.toString(),
             response.data!.phone.toString(),
-            response.data!.lastName.toString(),
+            '',
             response.data!.deviceToken.toString());
 
         handleUserRoleNavigation(response.data!.userRole!);

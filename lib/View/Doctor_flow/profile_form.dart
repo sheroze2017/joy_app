@@ -10,6 +10,9 @@ import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
+import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
+import 'package:joy_app/modules/doctor/bloc/doctor_update_bloc.dart';
+import 'package:joy_app/modules/doctor/models/doctor_detail_model.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -25,11 +28,13 @@ class DoctorFormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
+  DoctorDetailsMap? details;
 
   DoctorFormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.details,
       super.key});
   @override
   State<DoctorFormScreen> createState() => _DoctorFormScreenState();
@@ -70,15 +75,55 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
   final authController = Get.find<AuthController>();
 
   final _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    _fnameController
+        .setText(widget.details == null ? '' : widget.details!.name.toString());
+
+    _genderController.setText(
+        widget.details == null ? '' : widget.details!.gender.toString());
+    _locationController.setText(
+        widget.details == null ? '' : widget.details!.location.toString());
+    _expertiseController.setText(
+        widget.details == null ? '' : widget.details!.expertise.toString());
+    _feesController.setText(widget.details == null
+        ? ''
+        : widget.details!.consultationFee.toString());
+    _qualificationController
+      ..setText(widget.details == null
+          ? ''
+          : widget.details!.qualifications.toString());
+    _phoneController
+      ..setText(widget.details == null ? '' : widget.details!.phone.toString());
+    _selectedImage =
+        widget.details == null ? '' : widget.details!.image.toString();
+    super.initState();
+  }
 
   var selectedFilePath = [];
+  String? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final List<String?> paths = await pickSingleFile();
+    if (paths.isNotEmpty) {
+      final String path = await paths.first!;
+      String profileImg =
+          await mediaController.uploadProfilePhoto(path, context);
+      setState(() {
+        _selectedImage = profileImg;
+      });
+    }
+  }
+
+  updateDotorController _doctorUpdateController =
+      Get.put(updateDotorController());
 
   @override
   Widget build(BuildContext context) {
-    _fnameController.setText(widget.name);
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Fill Your Profile',
+        title: widget.details == null ? 'Fill Your Profile' : 'Edit Profile',
         icon: Icons.arrow_back_sharp,
         onPressed: () {},
       ),
@@ -94,10 +139,37 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                 children: [
                   Stack(
                     children: <Widget>[
-                      Center(
-                        child: SvgPicture.asset(
-                            'Assets/images/profile-circle.svg'),
-                      ),
+                      InkWell(
+                          onTap: () {
+                            _pickImage();
+                          },
+                          child: (_selectedImage == null ||
+                                  _selectedImage!.isEmpty)
+                              ? Center(
+                                  child: SvgPicture.asset(
+                                      'Assets/images/profile-circle.svg'),
+                                )
+                              : Center(
+                                  child: Container(
+                                    width: 43.w,
+                                    height: 43.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.grey, width: 1),
+                                    ),
+                                    child: Center(
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          fit: BoxFit.cover,
+                                          _selectedImage!,
+                                          width: 41.w,
+                                          height: 41.w,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )),
                       Positioned(
                         bottom: 20,
                         right: 100,
@@ -119,8 +191,11 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                     Theme.of(context).scaffoldBackgroundColor,
                               ),
                             )),
-                      ),
+                      )
                     ],
+                  ),
+                  SizedBox(
+                    height: 2.h,
                   ),
                   RoundedBorderTextField(
                     validator: validateName,
@@ -346,42 +421,63 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                       Expanded(
                         child: Obx(
                           () => RoundedButton(
-                              showLoader: authController.registerLoader.value,
+                              showLoader: widget.details == null
+                                  ? authController.registerLoader.value
+                                  : _doctorUpdateController.editLoader.value,
                               text: 'Save',
                               onPressed: () async {
                                 FocusScope.of(context).unfocus();
                                 if (!_formKey.currentState!.validate()) {
                                 } else {
-                                  bool result =
-                                      await authController.doctorRegister(
-                                          widget.name,
-                                          _locationController.text,
-                                          _phoneController.text,
-                                          '',
-                                          'EMAIL',
-                                          'DOCTOR',
-                                          widget.email,
-                                          widget.password,
-                                          _genderController.text,
-                                          _expertiseController.text,
-                                          _qualificationController.text,
-                                          _medicalCertificateController.text,
-                                          _feesController.text,
-                                          context);
-                                  if (result == true) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomDialog(
-                                          isDoctorForm: true,
-                                          buttonColor: Color(0xff1C2A3A),
-                                          showButton: true,
-                                          title: 'Congratulations!',
-                                          content:
-                                              'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                        );
-                                      },
-                                    );
+                                  if (widget.details == null) {
+                                    bool result =
+                                        await authController.doctorRegister(
+                                            widget.name,
+                                            _locationController.text,
+                                            _phoneController.text,
+                                            '',
+                                            'EMAIL',
+                                            'DOCTOR',
+                                            widget.email,
+                                            widget.password,
+                                            _genderController.text,
+                                            _expertiseController.text,
+                                            _qualificationController.text,
+                                            _medicalCertificateController.text,
+                                            _feesController.text,
+                                            context);
+                                    if (result == true) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomDialog(
+                                            isDoctorForm: true,
+                                            buttonColor: Color(0xff1C2A3A),
+                                            showButton: true,
+                                            title: 'Congratulations!',
+                                            content:
+                                                'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                          );
+                                        },
+                                      );
+                                    }
+                                  } else {
+                                    await _doctorUpdateController.updateDoctor(
+                                        widget.details!.userId.toString(),
+                                        _fnameController.text,
+                                        _locationController.text,
+                                        _phoneController.text,
+                                        '',
+                                        'EMAIL',
+                                        'DOCTOR',
+                                        widget.email,
+                                        widget.password,
+                                        _genderController.text,
+                                        _expertiseController.text,
+                                        _qualificationController.text,
+                                        _medicalCertificateController.text,
+                                        _feesController.text,
+                                        context);
                                   }
                                 }
                               },

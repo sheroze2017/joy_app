@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -152,23 +153,33 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                             ? Row(
                                 children: [
                                   Expanded(
-                                    child: TextField(
-                                      cursorColor: AppColors.borderColor,
-                                      style: CustomTextStyles.lightTextStyle(
-                                          color: AppColors.borderColor),
-                                      decoration: InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide.none),
-                                        fillColor: Colors.transparent,
-                                        hintText:
-                                            "What's on your mind, Hashem?",
-                                        hintStyle:
-                                            CustomTextStyles.lightTextStyle(
-                                                color: AppColors.borderColor),
+                                    child: InkWell(
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) =>
+                                              CreatePostModal(),
+                                        );
+                                      },
+                                      child: TextField(
+                                        enabled: false,
+                                        maxLines: null,
+                                        cursorColor: AppColors.borderColor,
+                                        style: CustomTextStyles.lightTextStyle(
+                                            color: AppColors.borderColor),
+                                        decoration: InputDecoration(
+                                          enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide.none),
+                                          focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide.none),
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide.none),
+                                          fillColor: Colors.transparent,
+                                          hintText: "What's on your mind?",
+                                          hintStyle:
+                                              CustomTextStyles.lightTextStyle(
+                                                  color: AppColors.borderColor),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -532,6 +543,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                         ),
                         SizedBox(height: 1.h),
                         UserRatingWidget(
+                          image: '',
                           docName: 'Emily Anderson',
                           reviewText: '',
                           rating: '5',

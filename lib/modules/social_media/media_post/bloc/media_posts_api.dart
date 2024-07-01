@@ -1,6 +1,9 @@
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
+import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
+
+import '../model/create_post_model.dart';
 
 class MediaPosts {
   final DioClient _dioClient;
@@ -28,17 +31,15 @@ class MediaPosts {
     }
   }
 
-  Future<bool> createPost(title, description, userId, imgUrl) async {
+  Future<CreatePostModel> createPost(title, description, userId, imgUrl) async {
     try {
-      final result = await _dioClient.post(Endpoints.getAllPostById, data: {
-        {
-          "title": title,
-          "description": description,
-          "created_by": userId,
-          "image_url": imgUrl
-        }
+      final result = await _dioClient.post(Endpoints.createPost, data: {
+        "title": title,
+        "description": description,
+        "created_by": userId,
+        "image_url": imgUrl
       });
-      return result['sucess'];
+      return CreatePostModel.fromJson(result);
     } catch (e) {
       print(e.toString());
       throw e;

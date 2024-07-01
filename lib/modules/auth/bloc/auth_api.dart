@@ -114,6 +114,8 @@ class AuthApi {
     }
   }
 
+
+
   Future<BloodBankRegisterModel> bloodBankRegister(
     String name,
     String email,

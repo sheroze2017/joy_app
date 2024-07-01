@@ -57,6 +57,10 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   flutter_datetime_picker: ^1.5.1
+  lottie: ^3.1.2
+  permission_handler: ^11.3.1
+  url_launcher: ^6.3.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +87,7 @@ flutter:
     - Assets/images/
     - Assets/icons/
     - Assets/images/splash/
+    - Assets/animations/
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
