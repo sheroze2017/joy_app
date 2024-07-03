@@ -1,18 +1,18 @@
-class PharmacyModel {
+class AllDoctor {
   int? code;
   bool? sucess;
-  List<PharmacyModelData>? data;
+  List<Doctor>? data;
   String? message;
 
-  PharmacyModel({this.code, this.sucess, this.data, this.message});
+  AllDoctor({this.code, this.sucess, this.data, this.message});
 
-  PharmacyModel.fromJson(Map<String, dynamic> json) {
+  AllDoctor.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     sucess = json['sucess'];
     if (json['data'] != null) {
-      data = <PharmacyModelData>[];
+      data = <Doctor>[];
       json['data'].forEach((v) {
-        data!.add(new PharmacyModelData.fromJson(v));
+        data!.add(new Doctor.fromJson(v));
       });
     }
     message = json['message'];
@@ -30,71 +30,79 @@ class PharmacyModel {
   }
 }
 
-class PharmacyModelData {
+class Doctor {
   int? userId;
-  String? firstName;
+  String? name;
   String? email;
   String? password;
-  Null? image;
-  int? userRole;
-  int? authType;
-  String? address;
+  String? image;
+  String? userRole;
+  String? authType;
   String? phone;
-  String? lastName;
-  String? assosiatedHospital;
-  String? about;
-  String? location;
   String? deviceToken;
+  int? doctorDetailId;
+  String? gender;
+  String? expertise;
+  String? location;
+  String? consultationFee;
+  String? document;
+  String? qualifications;
 
-  PharmacyModelData(
+  Doctor(
       {this.userId,
-      this.firstName,
+      this.name,
       this.email,
       this.password,
       this.image,
       this.userRole,
       this.authType,
-      this.address,
       this.phone,
-      this.lastName,
-      this.assosiatedHospital,
-      this.about,
+      this.deviceToken,
+      this.doctorDetailId,
+      this.gender,
+      this.expertise,
       this.location,
-      this.deviceToken});
+      this.consultationFee,
+      this.document,
+      this.qualifications});
 
-  PharmacyModelData.fromJson(Map<String, dynamic> json) {
+  Doctor.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
-    firstName = json['first_name'];
+    name = json['name'];
     email = json['email'];
     password = json['password'];
     image = json['image'];
     userRole = json['user_role'];
     authType = json['auth_type'];
-    address = json['address'];
     phone = json['phone'];
-    lastName = json['last_name'];
-    assosiatedHospital = json['assosiated_hospital'];
-    about = json['about'];
-    location = json['location'];
     deviceToken = json['device_token'];
+    doctorDetailId = json['doctor_detail_id'];
+    gender = json['gender'];
+    expertise = json['expertise'];
+    location = json['location'];
+    consultationFee = json['consultation_fee'];
+    document = json['document'];
+    qualifications = json['qualifications'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['user_id'] = this.userId;
-    data['first_name'] = this.firstName;
+    data['name'] = this.name;
     data['email'] = this.email;
     data['password'] = this.password;
     data['image'] = this.image;
     data['user_role'] = this.userRole;
     data['auth_type'] = this.authType;
-    data['address'] = this.address;
     data['phone'] = this.phone;
-    data['last_name'] = this.lastName;
-    data['assosiated_hospital'] = this.assosiatedHospital;
-    data['about'] = this.about;
-    data['location'] = this.location;
     data['device_token'] = this.deviceToken;
+    data['doctor_detail_id'] = this.doctorDetailId;
+    data['gender'] = this.gender;
+    data['expertise'] = this.expertise;
+    data['location'] = this.location;
+    data['consultation_fee'] = this.consultationFee;
+    data['document'] = this.document;
+    data['qualifications'] = this.qualifications;
     return data;
   }
 }

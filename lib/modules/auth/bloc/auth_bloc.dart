@@ -45,6 +45,7 @@ class AuthController extends GetxController {
         userId: userId,
         firstName: firstName,
         email: email,
+        image: image,
         password: password,
         userRole: userRole,
         authType: authType,
@@ -121,7 +122,8 @@ class AuthController extends GetxController {
       String password,
       dob,
       gender,
-      BuildContext context) async {
+      BuildContext context,
+      image) async {
     try {
       registerLoader.value = true;
       UserRegisterModel response = await authApi.userRegister(
@@ -134,19 +136,21 @@ class AuthController extends GetxController {
           gender,
           phoneNo,
           authType,
-          userRole);
+          userRole,
+          image);
       if (response.data != null) {
         saveUserDetailInLocal(
-            response.data!.userId!,
-            response.data!.name!.toString(),
-            email,
-            password,
-            response.data!.image.toString(),
-            response.data!.userRole.toString(),
-            response.data!.authType.toString(),
-            response.data!.phone.toString(),
-            '',
-            response.data!.deviceToken.toString());
+          response.data!.userId!,
+          response.data!.name!.toString(),
+          email,
+          password,
+          response.data!.image.toString(),
+          response.data!.userRole.toString(),
+          response.data!.authType.toString(),
+          response.data!.phone.toString(),
+          '',
+          response.data!.deviceToken.toString(),
+        );
         showSuccessMessage(context, 'Register Successfully');
         return true;
       } else {
@@ -175,7 +179,8 @@ class AuthController extends GetxController {
       qualification,
       documentUrl,
       consultationFees,
-      BuildContext context) async {
+      BuildContext context,
+      image) async {
     try {
       registerLoader.value = true;
       DoctorRegisterModel response = await authApi.doctorRegister(
@@ -191,7 +196,8 @@ class AuthController extends GetxController {
           expertise,
           consultationFees,
           qualification,
-          documentUrl);
+          documentUrl,
+          image);
       if (response.data != null) {
         saveUserDetailInLocal(
             response.data!.userId!,
@@ -233,7 +239,8 @@ class AuthController extends GetxController {
       lat,
       long,
       placeId,
-      BuildContext context) async {
+      BuildContext context,
+      image) async {
     try {
       registerLoader.value = true;
 
@@ -248,7 +255,8 @@ class AuthController extends GetxController {
           userRole,
           lat,
           long,
-          placeId);
+          placeId,
+          image);
       if (response.data != null) {
         saveUserDetailInLocal(
             response.data!.userId!,
@@ -288,7 +296,8 @@ class AuthController extends GetxController {
       lat,
       long,
       placeId,
-      BuildContext context) async {
+      BuildContext context,
+      image) async {
     try {
       registerLoader.value = true;
 
@@ -303,7 +312,8 @@ class AuthController extends GetxController {
           userRole,
           lat,
           long,
-          placeId);
+          placeId,
+          image);
       if (response.data != null) {
         saveUserDetailInLocal(
             response.data!.userId!,
@@ -348,7 +358,8 @@ class AuthController extends GetxController {
       instituteType,
       about,
       checkupFee,
-      BuildContext context) async {
+      BuildContext context,
+      image) async {
     try {
       registerLoader.value = true;
 
@@ -366,7 +377,8 @@ class AuthController extends GetxController {
           placeId,
           instituteType,
           about,
-          checkupFee);
+          checkupFee,
+          image);
       if (response.data != null) {
         saveUserDetailInLocal(
             response.data!.userId!,

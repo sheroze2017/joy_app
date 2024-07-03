@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/checkout/checkout_detail.dart';
+import 'package:intl/intl.dart';
 
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -10,8 +12,24 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class SelectTimingScreen extends StatelessWidget {
-  const SelectTimingScreen({super.key});
+class SelectTimingScreen extends StatefulWidget {
+  SelectTimingScreen({super.key});
+
+  @override
+  State<SelectTimingScreen> createState() => _SelectTimingScreenState();
+}
+
+class _SelectTimingScreenState extends State<SelectTimingScreen> {
+  String _date = DateFormat('dd, MMMM yyyy').format(DateTime.now()).toString();
+  String? timeSelection;
+
+  void selectionChanged(DateRangePickerSelectionChangedArgs args) {
+    SchedulerBinding.instance!.addPostFrameCallback((duration) {
+      setState(() {
+        _date = DateFormat('dd, MMMM yyyy').format(args.value).toString();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +53,7 @@ class SelectTimingScreen extends StatelessWidget {
                 height: 2.h,
               ),
               SfDateRangePicker(
+                onSelectionChanged: selectionChanged,
                 showNavigationArrow: true,
                 backgroundColor: ThemeUtil.isDarkMode(context)
                     ? Color(0xff161616)
@@ -46,12 +65,11 @@ class SelectTimingScreen extends StatelessWidget {
                       letterSpacing: 0,
                       fontWeight: FontWeight.w600,
                       color: Color(0xff4B5563)),
-
                   textStyle: TextStyle(
                       fontSize: 12,
                       letterSpacing: 0,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xff4B5563)), // Style for the day numbers
+                      color: Color(0xff4B5563)),
                 ),
                 monthViewSettings: DateRangePickerMonthViewSettings(
                   dayFormat: 'EEE',
@@ -97,8 +115,16 @@ class SelectTimingScreen extends StatelessWidget {
                   '02:00 PM',
                   '03:00 PM',
                   '04:00 PM',
+                  '05:00 PM',
+                  '06:00 PM',
+                  '07:00 PM',
+                  '08:00 PM',
                 ],
-                onTimeSelected: (String) {},
+                onTimeSelected: (value) {
+                  setState(() {
+                    timeSelection = value;
+                  });
+                },
               ),
             ],
           ),
@@ -116,19 +142,12 @@ class SelectTimingScreen extends StatelessWidget {
                   child: RoundedButton(
                       text: "Confirm",
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomDialog(
-                              isBloodRequest: true,
-                              title: 'Congratulations!',
-                              content:
-                                  'Your Appeal for B+ Blood has been submitted',
-                              showButton: true,
-                              isBookAppointment: false,
-                            );
-                          },
+                        DateTimeSelection selection = DateTimeSelection(
+                          _date,
+                          timeSelection!,
                         );
+
+                        Navigator.pop(context, selection);
                       },
                       backgroundColor: AppColors.redColor,
                       textColor: AppColors.whiteColor),
@@ -205,27 +224,9 @@ class _TimeSelectorState extends State<TimeSelector> {
   }
 }
 
-// void main() {
-//   runApp(MaterialApp(
-//     home: Scaffold(
-//       appBar: AppBar(
-//         title: Text('Time Selector Example'),
-//       ),
-//       body: Center(
-//         child: TimeSelector(
-//           times: [
-//             '8:00 AM',
-//             '9:00 AM',
-//             '10:00 AM',
-//             '11:00 AM',
-//             '12:00 PM',
-//             '1:00 PM',
-//             '2:00 PM',
-//             '3:00 PM',
-//             '4:00 PM',
-//           ],
-//         ),
-//       ),
-//     ),
-//   ));
-// }
+class DateTimeSelection {
+  final String date;
+  final String time;
+
+  DateTimeSelection(this.date, this.time);
+}

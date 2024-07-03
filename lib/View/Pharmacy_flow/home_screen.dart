@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
-import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_flow/home_screen.dart';
 import 'package:joy_app/view/pharmacy_flow/order_detail_screen.dart';

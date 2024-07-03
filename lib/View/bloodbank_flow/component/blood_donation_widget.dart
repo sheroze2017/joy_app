@@ -4,11 +4,13 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/bloodbank_flow/component/donors_card.dart';
 import 'package:sizer/sizer.dart';
 
 class DonationApproval extends StatelessWidget {
   bool isBloodDonate;
   bool isPlasmaDonate;
+
   String date;
   String patName;
   String count;
@@ -16,6 +18,8 @@ class DonationApproval extends StatelessWidget {
   String location;
   String bloodType;
   bool isUser;
+  String time;
+  String phoneNo;
 
   DonationApproval(
       {this.isBloodDonate = false,
@@ -26,7 +30,9 @@ class DonationApproval extends StatelessWidget {
       this.priority = '',
       this.location = 'Cardiology Center, USA',
       this.bloodType = 'B+',
-      this.isUser = false});
+      this.isUser = false,
+      this.time = '',
+      this.phoneNo = ''});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,7 +47,7 @@ class DonationApproval extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'May 22, 2023 - 10.00 AM',
+              date + ' ' + time,
               style: CustomTextStyles.darkHeadingTextStyle(size: 14),
             ),
             Divider(
@@ -63,7 +69,7 @@ class DonationApproval extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Patient: ' 'James Robinson',
+                          'Patient: ' + patName,
                           style: CustomTextStyles.darkHeadingTextStyle(),
                         ),
                         SizedBox(
@@ -138,7 +144,8 @@ class DonationApproval extends StatelessWidget {
                   child: RoundedButtonSmall(
                       text: isUser ? 'Share' : 'Contact',
                       onPressed: () {
-                        //      showPaymentBottomSheet(context, true);
+                        makingPhoneCall(
+                            phoneNo); //      showPaymentBottomSheet(context, true);
                       },
                       backgroundColor: ThemeUtil.isDarkMode(context)
                           ? AppColors.blackColor

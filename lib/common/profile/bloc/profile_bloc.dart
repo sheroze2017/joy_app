@@ -26,7 +26,7 @@ class ProfileController extends GetxController {
       firstName.value = currentUser.firstName;
       lastName.value = currentUser.lastName;
       phone.value = currentUser.phone;
-      image.value = currentUser!.image.toString()!;
+      image.value = currentUser.image.toString()!;
       userId.value = currentUser.userId.toString();
     }
   }

@@ -26,6 +26,7 @@ class Endpoints {
 
   static String getAllHospitalPharmacies = '/hospital/getHospitalPharmacies';
   static String getAllHospitalDoctors = '/hospital/getHospitalDoctors';
+  static String getAllHospital = '/hospital/getAllHospitals';
 
   //Social Media
   static String getAllPosts = '/auth/getAllPosts';
@@ -36,8 +37,22 @@ class Endpoints {
   //Doctor
 
   static String getAllAppointment = '/doctor/getDoctorAppoinntments';
-  static String getAllDoctors = '/getAllDoctors';
+  static String getAllDoctors = '/doctor/getAllDoctors';
   static String getDoctorDetail = '/doctor/getDoctorDetails';
   static String updateDoctor = '/doctor/updateDoctor';
   static String updateAppointmentStatus = '/auth/updateAppointmentStatus';
+  static String createAppointment = '/doctor/appointment';
+  static String giveReview = '/doctor/giveReview';
+  static String giveAppointmentMedication = '/doctor/appointmentMedications';
+  static String getAllUserAppointment = '/auth/getUserAppointments';
+
+  // BLOOD BANK
+
+  static String getBloodBankDetails = '/bloodbank/getBloodBankDetails';
+  static String getAllDonors = '/bloodbank/getAllDonors';
+  static String getAllBloodRequest = '/bloodbank/getAllBloodRequests';
+  static String createBloodDonor = '/bloodbank/createDonor';
+  static String createBloodAppeal = '/bloodbank/createBloodRequest';
+
+  static String getAllBloodBanks = '/bloodbank/getAllBloodBanks';
 }

@@ -5,7 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
-import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
+import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
@@ -18,6 +19,7 @@ import 'package:joy_app/view/user_flow/bloodbank_user/blood_donation_appeal.dart
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../modules/user/user_hospital/bloc/user_hospital_bloc.dart';
 import '../../bloodbank_flow/blood_appeal_screen.dart';
 import '../bloodbank_user/request_blood.dart';
 import '../pharmacy_user/pharmacy_product_screen.dart';
@@ -41,12 +43,15 @@ class AllHospitalScreen extends StatefulWidget {
 
 class _AllHospitalScreenState extends State<AllHospitalScreen> {
   final pharmacyController = Get.put(AllPharmacyController());
-
+  final bloodBankController = Get.put(UserBloodBankController());
+  final _userHospitalController = Get.put(UserHospitalController());
   @override
   void initState() {
     super.initState();
     pharmacyController.getAllPharmacy();
+    bloodBankController.getAllBloodBank();
     pharmacyController.getPharmacyProduct('3');
+    _userHospitalController.getAllHospitals();
   }
 
   @override
@@ -165,7 +170,10 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                     ),
               Obx(
                 () => Text(
-                  pharmacyController.pharmacies.length.toString() + ' found',
+                  widget.isBloodBank
+                      ? bloodBankController.bloodbank.length.toString()
+                      : pharmacyController.pharmacies.length.toString() +
+                          ' found',
                   style: CustomTextStyles.darkHeadingTextStyle(
                       color: ThemeUtil.isDarkMode(context)
                           ? Color(0xffC8D3E0)
@@ -178,7 +186,9 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
               Expanded(
                 child: Obx(
                   () => ListView.separated(
-                      itemCount: pharmacyController.pharmacies.length,
+                      itemCount: widget.isBloodBank
+                          ? bloodBankController.bloodbank.length
+                          : pharmacyController.pharmacies.length,
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 2.w),
                       itemBuilder: (context, index) {
@@ -214,8 +224,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12.0),
                                     child: Image.network(
-                                      data.image ??
-                                          'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg',
+                                      'http://194.233.69.219/joy-Images//f56fd7ce-0522-41b4-9c4d-9bdbd250e304.png',
                                       width: 28.w,
                                       height: 28.w,
                                       fit: BoxFit.cover,
@@ -232,13 +241,9 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         HospitalName(
-                                          hospitalName: data.firstName,
+                                          hospitalName: data.name,
                                         ),
-                                        LocationWidget(
-                                          location: data.address.toString() +
-                                              ' ' +
-                                              data.location.toString(),
-                                        ),
+                                        LocationWidget(location: ''),
                                         ReviewBar(),
                                         Divider(
                                           color: Color(0xff6B7280),

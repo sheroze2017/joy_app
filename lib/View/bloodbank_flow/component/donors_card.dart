@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DonorsCardWidget extends StatelessWidget {
   final String imgUrl;
@@ -12,15 +13,16 @@ class DonorsCardWidget extends StatelessWidget {
   final String docName;
   final String loction;
   final Color color;
+  final String phoneNo;
 
-  const DonorsCardWidget({
-    super.key,
-    required this.imgUrl,
-    required this.Category,
-    required this.docName,
-    required this.loction,
-    required this.color,
-  });
+  const DonorsCardWidget(
+      {super.key,
+      required this.imgUrl,
+      required this.Category,
+      required this.docName,
+      required this.loction,
+      required this.color,
+      required this.phoneNo});
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +38,19 @@ class DonorsCardWidget extends StatelessWidget {
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: Image.asset(
-                  'Assets/images/user_donor.jpg',
-                  height: 26.w,
-                  width: 35.71.w,
-                  fit: BoxFit.cover,
-                ),
+                child: imgUrl.contains('http')
+                    ? Image.network(
+                        imgUrl,
+                        height: 26.w,
+                        width: 35.71.w,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'Assets/images/user_donor.jpg',
+                        height: 26.w,
+                        width: 35.71.w,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             SizedBox(
@@ -66,7 +75,9 @@ class DonorsCardWidget extends StatelessWidget {
                   width: 2.w,
                 ),
                 InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      makingPhoneCall(phoneNo);
+                    },
                     child: SvgPicture.asset(
                       'Assets/images/call-add.svg',
                     ))
@@ -100,6 +111,15 @@ class DonorsCardWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+makingPhoneCall(String phoneNo) async {
+  var url = Uri.parse("tel:${phoneNo}");
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url);
+  } else {
+    throw 'Could not launch $url';
   }
 }
 

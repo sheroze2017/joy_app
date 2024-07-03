@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/modules/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
+import 'package:joy_app/modules/user/user_blood_bank/model/all_bloodbank_model.dart';
+import 'package:joy_app/modules/user/user_hospital/model/all_hospital_model.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_api.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 
@@ -15,7 +18,9 @@ class HosipitalCardWidget extends StatelessWidget {
   bool isDoctor;
   bool isBloodBank;
   bool isUser;
-  PharmacyModelData? data;
+  PharmacyModelData? pharmacyData;
+  BloodBank? bloodBankData;
+  Hospital? hospitalData;
   HosipitalCardWidget(
       {this.name,
       this.location,
@@ -23,7 +28,9 @@ class HosipitalCardWidget extends StatelessWidget {
       this.isHospital = false,
       this.isDoctor = false,
       this.isPharmacy = false,
-      this.data,
+      this.pharmacyData,
+      this.bloodBankData,
+      this.hospitalData,
       this.isUser = false});
 
   @override
@@ -55,7 +62,11 @@ class HosipitalCardWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: HospitalName(
-              hospitalName: isPharmacy ? data!.firstName.toString() : "",
+              hospitalName: isPharmacy
+                  ? pharmacyData!.name.toString()
+                  : isBloodBank
+                      ? bloodBankData!.name.toString()
+                      : hospitalData!.name.toString(),
             ),
           ),
           SizedBox(
@@ -64,9 +75,7 @@ class HosipitalCardWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: LocationWidget(
-              location: isPharmacy
-                  ? data!.address.toString() + ' ' + data!.location.toString()
-                  : '',
+              location: '',
             ),
           ),
           SizedBox(

@@ -8,7 +8,7 @@ import 'package:joy_app/modules/pharmacy/bloc/create_product_api.dart';
 import 'package:joy_app/modules/pharmacy/models/all_category.dart';
 import 'package:joy_app/modules/pharmacy/models/all_orders.dart';
 import 'package:joy_app/modules/pharmacy/models/create_product_model.dart';
-import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/view/home/navbar.dart';
 
 import '../../../core/network/request.dart';

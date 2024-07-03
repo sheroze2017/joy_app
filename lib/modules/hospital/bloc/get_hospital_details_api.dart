@@ -6,15 +6,15 @@ import 'package:intl/intl.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/auth.model.dart';
-import 'package:joy_app/modules/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
-import 'package:joy_app/modules/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 
 class HospitalDetailsApi {
   final DioClient _dioClient;
   //final LocationService _locationService = LocationService.getInstance();
 
   HospitalDetailsApi(this._dioClient);
-
+  
   Future<PharmacyModel> getAllHospitalPharmacy(String hospitalId) async {
     try {
       final result = await _dioClient.get(

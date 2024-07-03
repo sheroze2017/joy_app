@@ -222,7 +222,11 @@ class AppointmentSelector extends StatelessWidget {
 }
 
 String formatDateTime(String dateTimeString) {
-  final dateTime = DateTime.parse(dateTimeString);
-  final formatter = DateFormat.yMMMMd('en_US').add_Hm();
-  return formatter.format(dateTime);
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+    final formatter = DateFormat.yMMMMd('en_US').add_Hm();
+    return formatter.format(dateTime);
+  } catch (e) {
+    return dateTimeString;
+  }
 }

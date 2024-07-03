@@ -55,9 +55,33 @@ class _FormScreenState extends State<ProfileScreen> {
               // ),
               Stack(
                 children: <Widget>[
-                  Center(
-                    child: SvgPicture.asset('Assets/images/profile-circle.svg'),
-                  ),
+                  _profileController.image.contains('http')
+                      ? Center(
+                          child: Container(
+                            width: 43.w,
+                            height: 43.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle, // Add this line
+                              border: Border.all(
+                                  color: Colors.grey, width: 1), // Optional
+                            ),
+                            child: Center(
+                              child: ClipOval(
+                                // Add this widget
+                                child: Image.network(
+                                  fit: BoxFit.cover,
+                                  _profileController.image.toString(),
+                                  width: 41.w,
+                                  height: 41.w,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: SvgPicture.asset(
+                              'Assets/images/profile-circle.svg'),
+                        ),
                   Positioned(
                     bottom: 25,
                     right: 90,

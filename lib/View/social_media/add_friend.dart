@@ -40,11 +40,7 @@ class AddFriend extends StatelessWidget {
                   profileImage:
                       'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
                   userName: 'Jim Hopper',
-                  mutualFriends: [
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  ],
+                  mutualFriends: [],
                   mutualFriendsCount: 34,
                 ),
                 SizedBox(
@@ -54,11 +50,7 @@ class AddFriend extends StatelessWidget {
                   profileImage:
                       'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
                   userName: 'Jim Hopper',
-                  mutualFriends: [
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  ],
+                  mutualFriends: [],
                   mutualFriendsCount: 34,
                 ),
                 SizedBox(
@@ -68,11 +60,7 @@ class AddFriend extends StatelessWidget {
                   profileImage:
                       'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
                   userName: 'Jim Hopper',
-                  mutualFriends: [
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  ],
+                  mutualFriends: [],
                   mutualFriendsCount: 34,
                 ),
                 SizedBox(
@@ -96,11 +84,7 @@ class AddFriend extends StatelessWidget {
                           profileImage:
                               'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
                           userName: 'Sheroze Rehman',
-                          mutualFriends: [
-                            'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                            'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                            'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                          ],
+                          mutualFriends: [],
                           mutualFriendsCount: 5,
                           onRemove: () {},
                           onAddFriend: () {});

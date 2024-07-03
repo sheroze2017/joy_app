@@ -80,6 +80,8 @@ class DoctorController extends GetxController {
     }
   }
 
+  
+  
   updateDoctor(
       String userId,
       String name,

@@ -111,12 +111,13 @@ class CustomDialog extends StatelessWidget {
                               onPressed: () {
                                 isPharmacyCheckout == true
                                     ? Get.to(ReviewScreen(
+                                    
                                         buttonBgColor:
                                             ThemeUtil.isDarkMode(context)
                                                 ? AppColors.lightGreenColoreb1
                                                 : AppColors.darkGreenColor,
                                       ))
-                                    : isBloodRequest
+                                    : isBloodRequest || isBookAppointment
                                         ? Get.to(Get.offAll(NavBarScreen(
                                             isUser: true,
                                           )))

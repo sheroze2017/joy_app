@@ -1,14 +1,22 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/blood_bank/bloc/blood_bank_bloc.dart';
 import 'component/donors_card.dart';
 
 class AllDonorScreen extends StatelessWidget {
-  const AllDonorScreen({super.key});
+  AllDonorScreen({super.key});
+
+  BloodBankController _bloodBankController = Get.find<BloodBankController>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +32,13 @@ class AllDonorScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RoundedSearchTextField(
-                hintText: 'Search blood bank',
+                hintText: 'Search donors available',
                 controller: TextEditingController()),
             SizedBox(
               height: 2.h,
             ),
             Text(
-              '532 found',
+              '',
               style: CustomTextStyles.darkHeadingTextStyle(
                   color:
                       ThemeUtil.isDarkMode(context) ? Color(0xffC8D3E0) : null),
@@ -39,7 +47,9 @@ class AllDonorScreen extends StatelessWidget {
               height: 2.h,
             ),
             Expanded(
-              child: VerticalDonorsList(),
+              child: _VerticalDonorsList(
+                donors: _bloodBankController.allDonors.value,
+              ),
             ),
           ],
         ),
@@ -48,7 +58,9 @@ class AllDonorScreen extends StatelessWidget {
   }
 }
 
-class VerticalDonorsList extends StatelessWidget {
+class _VerticalDonorsList extends StatelessWidget {
+  final List<BloodDonor> donors;
+  _VerticalDonorsList({required this.donors});
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -58,14 +70,15 @@ class VerticalDonorsList extends StatelessWidget {
         mainAxisSpacing: 10,
         childAspectRatio: 0.75, // Set the aspect ratio of the children
       ),
-      itemCount: 10,
+      itemCount: donors.length,
       itemBuilder: (context, index) {
         return DonorsCardWidget(
-          color: bgColors[index % 3 == 0 ? 0 : 1],
-          imgUrl: '',
-          docName: 'David Patel',
-          Category: 'Blood Group B+',
-          loction: 'Kohinoor City',
+          color: donors[index].type == 'Plasma' ? bgColors[1] : bgColors[0],
+          imgUrl: donors[index].image.toString(),
+          docName: donors[index].name.toString(),
+          Category: 'Blood ' + donors[index].bloodGroup.toString(),
+          loction: donors[index].location.toString(),
+          phoneNo: donors[index].phone.toString(),
         );
       },
     );

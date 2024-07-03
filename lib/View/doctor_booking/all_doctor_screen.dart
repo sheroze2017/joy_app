@@ -3,6 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/modules/user/user_doctor/model/all_doctor_model.dart';
+import 'package:joy_app/modules/user/user_doctor/view/doctor_detail_screen2.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/bloodbank_flow/all_donor_screen.dart';
 import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
@@ -15,6 +17,8 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/user/user_doctor/bloc/user_doctor_bloc.dart';
+
 class AllDoctorsScreen extends StatelessWidget {
   final bool isPharmacy;
   final bool isBloodBank;
@@ -26,6 +30,9 @@ class AllDoctorsScreen extends StatelessWidget {
       this.isBloodBank = false,
       this.isHospital = false,
       required this.appBarText});
+
+  final _userdoctorController = Get.find<UserDoctorController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,19 +59,10 @@ class AllDoctorsScreen extends StatelessWidget {
                 height: 2.h,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Container(
-                  height: 45.w,
-                  child: HorizontalDoctorCategories(),
-                ),
-              ),
-              SizedBox(
-                height: 1.h,
-              ),
-              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
-                  '532 found',
+                  _userdoctorController.doctorsList.length.toString() +
+                      ' found',
                   style: CustomTextStyles.darkHeadingTextStyle(
                       color: ThemeUtil.isDarkMode(context)
                           ? Color(0xffC8D3E0)
@@ -74,7 +72,9 @@ class AllDoctorsScreen extends StatelessWidget {
               SizedBox(
                 height: 1.h,
               ),
-              VerticalDoctorsList(),
+              VerticalDoctorsList(
+                doctorList: _userdoctorController.doctorsList,
+              ),
             ],
           ),
         ),
@@ -118,12 +118,19 @@ class DoctorsCardWidget extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: Image.asset(
-                  'Assets/images/doctor.png',
-                  width: 27.9.w,
-                  height: 27.9.w,
-                  fit: BoxFit.cover,
-                ),
+                child: imgUrl.contains('http')
+                    ? Image.network(
+                        imgUrl,
+                        width: 27.9.w,
+                        height: 27.9.w,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.network(
+                        'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
+                        width: 27.9.w,
+                        height: 27.9.w,
+                        fit: BoxFit.cover,
+                      ),
               ),
               SizedBox(
                 width: 2.w,
@@ -229,6 +236,8 @@ class DoctorCategory extends StatelessWidget {
   final String imagePath;
   bool isBloodBank;
   bool? isUser;
+  bool isAppeal;
+  List<String>? images;
 
   DoctorCategory(
       {super.key,
@@ -236,8 +245,10 @@ class DoctorCategory extends StatelessWidget {
       required this.DoctorCount,
       required this.bgColor,
       required this.fgColor,
+      this.isAppeal = false,
       required this.imagePath,
       this.isBloodBank = false,
+      this.images,
       this.isUser = true});
   @override
   Widget build(BuildContext context) {
@@ -275,7 +286,7 @@ class DoctorCategory extends StatelessWidget {
                   ),
                   Text(
                     isBloodBank
-                        ? '${DoctorCount}+ Patients waiting'
+                        ? '${DoctorCount}+ ${isAppeal ? 'Donors Available' : 'Patients waiting'}'
                         : '${DoctorCount} Doctors',
                     style: CustomTextStyles.lightTextStyle(
                         color: AppColors.blackColor393,
@@ -286,7 +297,12 @@ class DoctorCategory extends StatelessWidget {
               isUser == true
                   ? Row(
                       children: [
-                        for (var i = 0; i < 3; i++)
+                        for (var i = 0;
+                            i <
+                                (int.parse(DoctorCount) >= 3
+                                    ? 3
+                                    : int.parse(DoctorCount));
+                            i++)
                           Container(
                             width: 3.h,
                             height: 3.h,
@@ -298,8 +314,10 @@ class DoctorCategory extends StatelessWidget {
                               ),
                             ),
                             child: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  'https://s3-alpha-sig.figma.com/img/03f8/d194/48dd31b8127b7f6577d5ff98da01cf59?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lgLceP1ZBkEXbOBgkLxwPEqC~XNBIv8ttTKC8oLRSutfDk3qzEwbwicLgmk6ck-utlWYJsPIw-N4~zYhSpW9xy8F3RVnsS6c-JH7gXOAszbQREfqlywHKb~qxnVTLZEdGtniH7XzTgyNNaI6f67HuUYN~YSh0brcpTS2lolLBxHo0Aj77cTy~7My4KdTR52XEUTm-0ojlJL6H-KvF6hzPFZa4LjyV6x5XO8kCpIPfBSo~9OccwFKXGgGlxfLqR5yAgt3VChGyZlDYIkgdWc9hmceD2~WmVaQvS6HtzF0W4Mc0T26ON-R8JTQc~iOvfm7gHB-dJwxN0GOVe8q8B-wIA__'),
+                              backgroundImage: NetworkImage(images == null ||
+                                      !images![i].contains('http')
+                                  ? 'https://s3-alpha-sig.figma.com/img/03f8/d194/48dd31b8127b7f6577d5ff98da01cf59?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lgLceP1ZBkEXbOBgkLxwPEqC~XNBIv8ttTKC8oLRSutfDk3qzEwbwicLgmk6ck-utlWYJsPIw-N4~zYhSpW9xy8F3RVnsS6c-JH7gXOAszbQREfqlywHKb~qxnVTLZEdGtniH7XzTgyNNaI6f67HuUYN~YSh0brcpTS2lolLBxHo0Aj77cTy~7My4KdTR52XEUTm-0ojlJL6H-KvF6hzPFZa4LjyV6x5XO8kCpIPfBSo~9OccwFKXGgGlxfLqR5yAgt3VChGyZlDYIkgdWc9hmceD2~WmVaQvS6HtzF0W4Mc0T26ON-R8JTQc~iOvfm7gHB-dJwxN0GOVe8q8B-wIA__'
+                                  : images![i].toString()),
                             ),
                           ),
                         Container(
@@ -315,7 +333,10 @@ class DoctorCategory extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              '+6',
+                              int.parse(DoctorCount) >= 3
+                                  ? '+' +
+                                      (int.parse(DoctorCount) - 3).toString()
+                                  : '',
                               style: CustomTextStyles.lightTextStyle(
                                   size: 9.6, color: AppColors.blackColor393),
                             ),
@@ -349,6 +370,7 @@ class HospitalName extends StatelessWidget {
 
 class HorizontalDoctorCategories extends StatelessWidget {
   bool isBloodBank;
+
   HorizontalDoctorCategories({this.isBloodBank = false});
   @override
   Widget build(BuildContext context) {
@@ -393,6 +415,8 @@ class HorizontalDoctorCategories extends StatelessWidget {
 }
 
 class VerticalDoctorsList extends StatelessWidget {
+  List<Doctor> doctorList;
+  VerticalDoctorsList({required this.doctorList});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -400,22 +424,24 @@ class VerticalDoctorsList extends StatelessWidget {
       child: ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: 10,
+        itemCount: doctorList.length,
         itemBuilder: (context, index) {
+          final doctorData = doctorList[index];
           return InkWell(
             onTap: () {
-              Get.to(DoctorDetailScreen(
+              Get.to(DoctorDetailScreen2(
+                doctorId: doctorData.userId.toString(),
                 docName: 'Dr. David Patel',
                 location: 'Golden Cardiology Center',
                 Category: 'Cardiologist',
               ));
             },
             child: DoctorsCardWidget(
-              imgUrl: '',
-              reviewCount: '1,872',
-              docName: 'Dr. David Patel',
-              Category: 'Cardiologist',
-              loction: 'Cardiology Center, USA',
+              imgUrl: doctorData.image.toString(),
+              reviewCount: '',
+              docName: doctorData.name.toString(),
+              Category: '',
+              loction: '',
               rating: '5',
             ),
           );

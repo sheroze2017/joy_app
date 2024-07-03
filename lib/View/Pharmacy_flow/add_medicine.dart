@@ -7,7 +7,7 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
-import 'package:joy_app/modules/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';

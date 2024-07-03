@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/view/user_flow/bloodbank_user/select_timing_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/widgets/single_select_dropdown.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../widgets/dropdown_button.dart';
@@ -27,6 +30,8 @@ class _RequestBloodState extends State<RequestBlood> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _bloodTypeController = TextEditingController();
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
@@ -38,6 +43,9 @@ class _RequestBloodState extends State<RequestBlood> {
   final FocusNode _focusNode8 = FocusNode();
   final FocusNode _focusNode9 = FocusNode();
   final _formKey = GlobalKey<FormState>();
+
+  UserBloodBankController _userBloodBankController =
+      Get.find<UserBloodBankController>();
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +119,21 @@ class _RequestBloodState extends State<RequestBlood> {
                         hintText: 'Gender',
                         items: ['Male', 'Female'],
                         value: '',
-                        onChanged: (String? value) {},
+                        onChanged: (String? value) {
+                          _genderController.setText(value.toString());
+                        },
+                        icon: '',
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      SearchSingleDropdown(
+                        hintText: 'Blood type',
+                        items: ['Blood', 'Plasma'],
+                        value: '',
+                        onChanged: (String? value) {
+                          _bloodTypeController.setText(value.toString());
+                        },
                         icon: '',
                       ),
                       SizedBox(
@@ -136,31 +158,42 @@ class _RequestBloodState extends State<RequestBlood> {
                       ),
                       Row(
                         children: [
-                          Expanded(
-                            child: RoundedButtonSmall(
+                          Obx(
+                            () => Expanded(
+                              child: RoundedButtonSmall(
+                                showLoader:
+                                    _userBloodBankController.showLoader.value,
                                 text: widget.isRegister
                                     ? 'Register'
                                     : 'Request Blood',
                                 onPressed: () {
                                   if (!_formKey.currentState!.validate()) {
-                                  } else {}
-                                  // showDialog(
-                                  //   context: context,
-                                  //   builder: (BuildContext context) {
-                                  //     return CustomDialog(
-                                  //       isDoctorForm: true,
-                                  //       buttonColor: Color(0xff1C2A3A),
-                                  //       showButton: true,
-                                  //       title: 'Congratulations!',
-                                  //       content:
-                                  //           'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                  //     );
-                                  //   },
-                                  // );
+                                  } else {
+                                    if (_genderController.text.isEmpty) {
+                                      showErrorMessage(
+                                          context, 'Please select gender');
+                                    } else if (_bloodTypeController
+                                        .text.isEmpty) {
+                                      showErrorMessage(
+                                          context, 'Please select blood type');
+                                    } else {
+                                      _userBloodBankController.createDonorUser(
+                                          _nameController.text,
+                                          _bloodGroupController.text,
+                                          _locationController.text,
+                                          _genderController.text,
+                                          _cityController.text,
+                                          '',
+                                          context,
+                                          _bloodTypeController.text);
+                                    }
+                                  }
                                 },
                                 backgroundColor: AppColors.redColor,
-                                textColor: Color(0xffFFFFFF)),
-                          ),
+                                textColor: Color(0xffFFFFFF),
+                              ),
+                            ),
+                          )
                         ],
                       ),
                       SizedBox(
@@ -189,7 +222,19 @@ class _RequestBloodState extends State<RequestBlood> {
                       ),
                       InkWell(
                         onTap: () {
-                          Get.to(SelectTimingScreen());
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SelectTimingScreen()),
+                          ).then((selection) {
+                            if (selection != null &&
+                                selection is DateTimeSelection) {
+                              String selectedDate = selection.date;
+                              String selectedTime = selection.time;
+                              _timeController
+                                  .setText(selectedDate + '-' + selectedTime);
+                            }
+                          });
                         },
                         child: RoundedBorderTextField(
                           isenable: false,
@@ -248,7 +293,21 @@ class _RequestBloodState extends State<RequestBlood> {
                         hintText: 'Gender',
                         items: ['Male', 'Female'],
                         value: '',
-                        onChanged: (String? value) {},
+                        onChanged: (String? value) {
+                          _genderController.setText(value.toString());
+                        },
+                        icon: '',
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      SearchSingleDropdown(
+                        hintText: 'Blood type',
+                        items: ['Blood', 'Plasma'],
+                        value: '',
+                        onChanged: (String? value) {
+                          _bloodTypeController.setText(value.toString());
+                        },
                         icon: '',
                       ),
                       SizedBox(
@@ -290,29 +349,47 @@ class _RequestBloodState extends State<RequestBlood> {
                       ),
                       Row(
                         children: [
-                          Expanded(
-                            child: RoundedButtonSmall(
-                                text: 'Request Blood',
-                                onPressed: () {
-                                  if (!_formKey.currentState!.validate()) {
-                                  } else {}
-                                  // showDialog(
-                                  //   context: context,
-                                  //   builder: (BuildContext context) {
-                                  //     return CustomDialog(
-                                  //       isDoctorForm: true,
-                                  //       buttonColor: Color(0xff1C2A3A),
-                                  //       showButton: true,
-                                  //       title: 'Congratulations!',
-                                  //       content:
-                                  //           'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                  //     );
-                                  //   },
-                                  // );
-                                },
-                                backgroundColor: AppColors.redColor,
-                                textColor: Color(0xffFFFFFF)),
-                          ),
+                          Obx(
+                            () => Expanded(
+                              child: RoundedButtonSmall(
+                                  showLoader:
+                                      _userBloodBankController.showLoader.value,
+                                  text: 'Request Blood',
+                                  onPressed: () async {
+                                    if (!_formKey.currentState!.validate()) {
+                                    } else {
+                                      if (_genderController.text.isEmpty) {
+                                        showErrorMessage(
+                                            context, 'Please select gender');
+                                      } else if (_timeController.text.isEmpty) {
+                                        showErrorMessage(
+                                            context, 'Please select time');
+                                      } else {
+                                        String date = await _timeController.text
+                                            .split('-')[0];
+                                        String time = await _timeController.text
+                                            .split('-')[1];
+
+                                        _userBloodBankController
+                                            .createBloodAppeal(
+                                                _nameController.text,
+                                                date,
+                                                time,
+                                                _bloodGroupUnitsController.text,
+                                                _bloodGroupController.text,
+                                                _genderController.text,
+                                                _cityController.text,
+                                                _locationController.text,
+                                                '',
+                                                _bloodTypeController.text,
+                                                context);
+                                      }
+                                    }
+                                  },
+                                  backgroundColor: AppColors.redColor,
+                                  textColor: Color(0xffFFFFFF)),
+                            ),
+                          )
                         ],
                       ),
                       SizedBox(

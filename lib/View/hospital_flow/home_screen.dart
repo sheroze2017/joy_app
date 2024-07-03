@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -398,7 +397,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                                           .start,
                                                                   children: [
                                                                     Text(
-                                                                      data.firstName
+                                                                      data.name
                                                                           .toString(),
                                                                       style: CustomTextStyles
                                                                           .darkHeadingTextStyle(),

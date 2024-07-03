@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
+import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
+import 'package:joy_app/modules/user/user_hospital/bloc/user_hospital_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -14,6 +16,7 @@ import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../modules/social_media/media_post/bloc/medai_posts_bloc.dart';
+import '../../modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 
 class UserBlogScreen extends StatelessWidget {
   UserBlogScreen({super.key});
@@ -21,6 +24,11 @@ class UserBlogScreen extends StatelessWidget {
   final mediaController = Get.find<MediaPostController>();
   final TextEditingController imageurl = TextEditingController();
   ProfileController _profileController = Get.put(ProfileController());
+  UserBloodBankController _userBloodBankController =
+      Get.put(UserBloodBankController());
+  UserHospitalController _userHospitalController =
+      Get.put(UserHospitalController());
+  UserDoctorController _userDoctorController = Get.put(UserDoctorController());
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +165,9 @@ class UserBlogScreen extends StatelessWidget {
                         imgPath: data.image.toString(),
                         isLiked: true,
                         isReply: false,
-                        showImg: data.image!.isEmpty ? false : true,
+                        showImg: (data.image == null || data.image!.isEmpty)
+                            ? false
+                            : true,
                         postName: data.title.toString(),
                         text: data.description.toString(),
                       );

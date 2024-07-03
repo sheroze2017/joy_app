@@ -300,7 +300,7 @@ class DoctorDetailScreen extends StatelessWidget {
                                 name: data.name.toString(),
                                 details: data,
                               ))
-                            : Get.to(ProfileFormScreen());
+                            : null;
                       },
                       backgroundColor: AppColors.darkBlueColor,
                       textColor: AppColors.whiteColor),

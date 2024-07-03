@@ -103,6 +103,8 @@ class DoctorApi {
     }
   }
 
+ 
+ 
   Future<DoctorRegisterModel> EditDoctor(
       String firstName,
       String email,

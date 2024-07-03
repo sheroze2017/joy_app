@@ -56,6 +56,7 @@ class RoundedButtonSmall extends StatelessWidget {
   final VoidCallback onPressed;
   bool? isSmall = false;
   bool isBold;
+  bool showLoader;
 
   RoundedButtonSmall(
       {required this.text,
@@ -63,6 +64,7 @@ class RoundedButtonSmall extends StatelessWidget {
       required this.backgroundColor,
       required this.textColor,
       this.isSmall,
+      this.showLoader = false,
       this.isBold = false,
       this.isBorder = false});
 
@@ -79,13 +81,21 @@ class RoundedButtonSmall extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Text(
-            text,
-            style: TextStyle(
-                color: textColor,
-                fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-                fontSize: isBold ? (14 / 3.9).w : (12.18 / 3.9).w),
-          ),
+          child: showLoader
+              ? Container(
+                  height: 2.h,
+                  width: 2.h,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                )
+              : Text(
+                  text,
+                  style: TextStyle(
+                      color: textColor,
+                      fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+                      fontSize: isBold ? (14 / 3.9).w : (12.18 / 3.9).w),
+                ),
         ),
       ),
     );

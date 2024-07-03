@@ -5,17 +5,26 @@ import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
+import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:joy_app/view/doctor_booking/book_appointment_screen.dart';
+import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/doctor/models/doctor_detail_model.dart';
+import '../../widgets/single_select_dropdown.dart';
+
 class ProfileFormScreen extends StatefulWidget {
-  ProfileFormScreen({super.key});
+  DoctorDetail doctorDetail;
+
+  ProfileFormScreen({super.key, required this.doctorDetail});
 
   @override
   State<ProfileFormScreen> createState() => _FormScreenState();
@@ -46,6 +55,9 @@ class _FormScreenState extends State<ProfileFormScreen> {
 
   final _formKey = GlobalKey<FormState>();
   var selectedFilePath = [];
+  ProfileController _pfc = Get.find<ProfileController>();
+  final mediaController = Get.find<MediaPostController>();
+  UserDoctorController _doctorController = Get.find<UserDoctorController>();
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +77,33 @@ class _FormScreenState extends State<ProfileFormScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
-                    children: <Widget>[
-                      Center(
-                        child: Image.asset('Assets/images/profile.png'),
+                  Obx(
+                    () => Center(
+                      child: Container(
+                        width: 43.w,
+                        height: 43.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle, // Add this line
+                          border: Border.all(
+                              color: Colors.grey, width: 1), // Optional
+                        ),
+                        child: Center(
+                          child: Container(
+                            child: ClipOval(
+                              // Add this widget
+                              child: Image.network(
+                                fit: BoxFit.cover,
+                                _pfc.image.contains('http')
+                                    ? _pfc.image.toString()
+                                    : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                width: 41.w,
+                                height: 41.w,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                   SizedBox(
                     height: 4.h,
@@ -104,11 +137,13 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    focusNode: _focusNode3,
-                    nextFocusNode: _focusNode4,
-                    controller: _genderController,
+                  SearchSingleDropdown(
                     hintText: 'Gender',
+                    items: ['Male', 'Female'],
+                    value: '',
+                    onChanged: (String? value) {
+                      _genderController.text = value.toString();
+                    },
                     icon: '',
                   ),
                   SizedBox(
@@ -182,80 +217,52 @@ class _FormScreenState extends State<ProfileFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    focusNode: _focusNode7,
-                    nextFocusNode: _focusNode8,
-                    controller: _timeController,
-                    hintText: 'May 22,2024 - 10:00 AM to 10:30 AM',
-                    icon: '',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select your schedule';
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  // RoundedBorderTextField(
+                  //   focusNode: _focusNode7,
+                  //   nextFocusNode: _focusNode8,
+                  //   controller: _timeController,
+                  //   hintText: 'May 22,2024 - 10:00 AM to 10:30 AM',
+                  //   icon: '',
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Please select your schedule';
+                  //     } else {
+                  //       return null;
+                  //     }
+                  //   },
+                  // ),
+                  // SizedBox(
+                  //   height: 2.h,
+                  // ),
                   InkWell(
-                    onTap: () {
-                      pickFiles().then((filePaths) {
-                        selectedFilePath = filePaths;
-                        _medicalCertificateController.setText(
-                            filePaths.length.toString() + ' file selected');
-                        setState(() {});
-                      });
-                    },
-                    child: RoundedBorderTextField(
-                      isenable: false,
-                      controller: _medicalCertificateController,
-                      focusNode: _focusNode8,
-                      nextFocusNode: _focusNode9,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please attach documents';
-                        } else if (selectedFilePath.isEmpty) {
-                          return 'Please attach files';
-                        } else {
-                          return null;
-                        }
+                      onTap: () {
+                        pickSingleFile().then((filePaths) {
+                          if (filePaths.isEmpty) {
+                          } else {
+                            _medicalCertificateController
+                                .setText(filePaths[0].toString());
+                          }
+                        }).then((value) => mediaController.uploadPhoto(
+                            _medicalCertificateController.text, context));
                       },
-                      hintText: 'Attach File of Medical Certificate',
-                      icon: 'Assets/icons/attach-icon.svg',
-                    ),
-                  ),
-                  Column(
-                    children: selectedFilePath.map((path) {
-                      return Row(
-                        children: [
-                          Image.file(
-                            File(path),
-                            width: 4.h,
-                            height: 4.h,
-                            fit: BoxFit.cover,
-                          ),
-                          Expanded(
-                              child: Text(
-                            getFileName(path),
-                            maxLines: 1,
-                          )),
-                          IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () {
-                              setState(() {
-                                selectedFilePath.remove(path);
-                                _medicalCertificateController.setText(
-                                    selectedFilePath.length.toString() +
-                                        ' file selected');
-                              });
-                            },
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                      child: Obx(
+                        () => RoundedBorderTextField(
+                          showLoader: mediaController.imgUploaded.value,
+                          isenable: false,
+                          controller: _medicalCertificateController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please attach documents';
+                            } else if (mediaController.imgUrl.isEmpty) {
+                              return 'Please attach files';
+                            } else {
+                              return null;
+                            }
+                          },
+                          hintText: 'Attach File of Medical Certificate',
+                          icon: 'Assets/icons/attach-icon.svg',
+                        ),
+                      )),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -280,7 +287,21 @@ class _FormScreenState extends State<ProfileFormScreen> {
                         FocusScope.of(context).unfocus();
                         if (!_formKey.currentState!.validate()) {
                         } else {
-                          Get.to(BookAppointmentScreen());
+                          if (_genderController.text.isEmpty) {
+                            showErrorMessage(context, 'please select gender');
+                          } else if (mediaController.imgUrl.value.isEmpty) {
+                            showErrorMessage(context, 'Please upload image');
+                          } else {}
+                          Get.to(BookAppointmentScreen(
+                            age: _ageController.text,
+                            doctorDetail: widget.doctorDetail,
+                            complain: _complainController.text,
+                            certificateUrl: mediaController.imgUrl.value,
+                            gender: _genderController.text,
+                            location: _locationController.text,
+                            patientName: _nameController.text,
+                            symptoms: _symptomsController.text,
+                          ));
                         }
                       },
                       backgroundColor: AppColors.darkBlueColor,

@@ -47,6 +47,7 @@ class MediaPosts {
   }
 
   Future<String> uploadPhoto(String baseImage64) async {
+    print(baseImage64);
     try {
       final result = await _dioClient.post(Endpoints.uploadBase64Image,
           data: {"base64Image": baseImage64});
@@ -57,8 +58,7 @@ class MediaPosts {
         return '';
       }
     } catch (e) {
-      print(e.toString());
-      throw e;
+      return '';
     } finally {}
   }
 }

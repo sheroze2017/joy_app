@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/modules/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
+import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
+import 'package:joy_app/modules/user/user_hospital/bloc/user_hospital_bloc.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -16,6 +18,8 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/pharmacy_product_screen.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -36,10 +40,17 @@ class _HomeScreenState extends State<HomeScreen> {
   final _pageController = PageController(viewportFraction: 1, keepPage: true);
   int _currentIndex = 0;
   final pharmacyController = Get.put(AllPharmacyController());
+  final _userdoctorController = Get.find<UserDoctorController>();
+  final _bloodBankController = Get.put(UserBloodBankController());
+  final _userHospitalController = Get.put(UserHospitalController());
   @override
   void initState() {
     super.initState();
     pharmacyController.getAllPharmacy();
+    _userdoctorController.getAllDoctors();
+    _userdoctorController.getAllUserAppointment();
+    _bloodBankController.getAllBloodBank();
+    _userHospitalController.getAllHospitals();
   }
 
   @override
@@ -245,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         child: HosipitalCardWidget(
-                          data: data,
+                          pharmacyData: data,
                           isPharmacy: true,
                         ),
                       ),
@@ -291,8 +302,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 70.w,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 3,
+                  itemCount: _userHospitalController.hospitalList.length < 5
+                      ? _userHospitalController.hospitalList.length
+                      : 4,
                   itemBuilder: (context, index) {
+                    final hospitaldata =
+                        _userHospitalController.hospitalList[index];
                     return Padding(
                       padding: const EdgeInsets.only(right: 8, left: 0),
                       child: InkWell(
@@ -305,7 +320,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       )),
                             );
                           },
-                          child: HosipitalCardWidget()),
+                          child: HosipitalCardWidget(
+                            isHospital: true,
+                            hospitalData: hospitaldata,
+                          )),
                     );
                   },
                 ),
@@ -348,11 +366,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 70.w, // Set a fixed height
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 3,
+                  itemCount: _bloodBankController.bloodbank.length < 5
+                      ? _bloodBankController.bloodbank.length
+                      : 4,
                   itemBuilder: (context, index) {
+                    final data = _bloodBankController.bloodbank[index];
                     return Padding(
                       padding: const EdgeInsets.only(right: 8, left: 0),
-                      child: HosipitalCardWidget(),
+                      child: HosipitalCardWidget(
+                        bloodBankData: data,
+                        isBloodBank: true,
+                      ),
                     );
                   },
                 ),

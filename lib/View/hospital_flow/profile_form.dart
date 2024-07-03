@@ -8,10 +8,12 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
@@ -57,15 +59,17 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   final authController = Get.find<AuthController>();
 
   final _formKey = GlobalKey<FormState>();
-  File? _selectedImage;
+  String? _selectedImage;
+  final mediaController = Get.find<MediaPostController>();
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
     if (paths.isNotEmpty) {
-      final String path = paths.first!;
-      final File imageFile = File(path);
+      final String path = await paths.first!;
+      String profileImg =
+          await mediaController.uploadProfilePhoto(path, context);
       setState(() {
-        _selectedImage = imageFile;
+        _selectedImage = profileImg;
       });
     }
   }
@@ -88,63 +92,76 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Stack(
-                    children: <Widget>[
-                      InkWell(
-                          onTap: () {
-                            _pickImage();
-                          },
-                          child: _selectedImage == null
-                              ? Center(
-                                  child: SvgPicture.asset(
-                                      'Assets/images/profile-circle.svg'),
-                                )
-                              : Center(
-                                  child: Container(
-                                    width: 43.w,
-                                    height: 43.w,
+                  Obx(
+                    () => mediaController.profileUpload.value
+                        ? Container(
+                            height: 43.w,
+                            width: 43.w,
+                            child: Lottie.asset(
+                                'Assets/animations/image_upload.json'),
+                          )
+                        : Stack(
+                            children: <Widget>[
+                              InkWell(
+                                  onTap: () {
+                                    _pickImage();
+                                  },
+                                  child: _selectedImage == null ||
+                                          !_selectedImage!.contains('http')
+                                      ? Center(
+                                          child: SvgPicture.asset(
+                                              'Assets/images/profile-circle.svg'),
+                                        )
+                                      : Center(
+                                          child: Container(
+                                            width: 43.w,
+                                            height: 43.w,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape
+                                                  .circle, // Add this line
+                                              border: Border.all(
+                                                  color: Colors.grey,
+                                                  width: 1), // Optional
+                                            ),
+                                            child: Center(
+                                              child: Container(
+                                                child: ClipOval(
+                                                  // Add this widget
+                                                  child: Image.network(
+                                                    fit: BoxFit.cover,
+                                                    _selectedImage!,
+                                                    width: 41.w,
+                                                    height: 41.w,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )),
+                              Positioned(
+                                bottom: 20,
+                                right: 100,
+                                child: Container(
                                     decoration: BoxDecoration(
-                                      shape: BoxShape.circle, // Add this line
-                                      border: Border.all(
-                                          color: Colors.grey,
-                                          width: 1), // Optional
-                                    ),
-                                    child: Center(
-                                      child: ClipOval(
-                                        // Add this widget
-                                        child: Image.file(
-                                          fit: BoxFit.cover,
-                                          _selectedImage!,
-                                          width: 41.w,
-                                          height: 41.w,
-                                        ),
+                                        color: ThemeUtil.isDarkMode(context)
+                                            ? AppColors.lightBlueColor3e3
+                                            : Color(0xff1C2A3A),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10.0),
+                                          topRight: Radius.circular(10.0),
+                                          bottomRight: Radius.circular(10.0),
+                                        )),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: SvgPicture.asset(
+                                        'Assets/icons/pen.svg',
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
                                       ),
-                                    ),
-                                  ),
-                                )),
-                      Positioned(
-                        bottom: 20,
-                        right: 100,
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: ThemeUtil.isDarkMode(context)
-                                    ? AppColors.lightBlueColor3e3
-                                    : Color(0xff1C2A3A),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.0),
-                                  topRight: Radius.circular(10.0),
-                                  bottomRight: Radius.circular(10.0),
-                                )),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: SvgPicture.asset(
-                                'Assets/icons/pen.svg',
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                              ),
-                            )),
-                      )
-                    ],
+                                    )),
+                              )
+                            ],
+                          ),
                   ),
                   SizedBox(
                     height: 2.h,
@@ -309,7 +326,8 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                           _instituteController.text,
                                           _aboutController.text,
                                           _feesController.text,
-                                          context);
+                                          context,
+                                          _selectedImage.toString());
                                   if (result[0] == true) {
                                     showDialog(
                                       context: context,

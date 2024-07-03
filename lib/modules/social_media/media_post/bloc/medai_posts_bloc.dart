@@ -21,6 +21,7 @@ class MediaPostController extends GetxController {
   var imgUploaded = false.obs;
   var postUpload = false.obs;
   late MediaPosts mediaPosts;
+  var profileUpload = false.obs;
 
   @override
   void onInit() {
@@ -87,19 +88,28 @@ class MediaPostController extends GetxController {
   }
 
   Future<String> uploadProfilePhoto(imagePath, BuildContext context) async {
+    profileUpload.value = true;
     try {
       String base64Image = await imageToBase64(imagePath);
       final response = await mediaPosts.uploadPhoto(base64Image);
       if (response.isNotEmpty) {
+        profileUpload.value = false;
+
         return response;
       } else {
+        profileUpload.value = false;
+
         showErrorMessage(context, 'Error adding image');
         return '';
       }
     } catch (e) {
+      profileUpload.value = false;
+
       showErrorMessage(context, 'Error adding image');
       return '';
-    } finally {}
+    } finally {
+      profileUpload.value = false;
+    }
   }
 
   Future<String> imageToBase64(String imagePath) async {

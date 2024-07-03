@@ -4,11 +4,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/modules/user/user_doctor/view/doctor_detail_screen2.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/review_screen.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../modules/user/user_doctor/bloc/user_doctor_bloc.dart';
+import '../../modules/user/user_doctor/model/all_user_appointment.dart';
+import '../home/my_profile.dart';
 
 class ManageAllAppointmentUser extends StatefulWidget {
   const ManageAllAppointmentUser({super.key});
@@ -33,6 +38,8 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
     _tabController.dispose();
     super.dispose();
   }
+
+  final _userdoctorController = Get.find<UserDoctorController>();
 
   @override
   Widget build(BuildContext context) {
@@ -68,18 +75,41 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  AppointmentCardUser(),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  AppointmentCardUser(),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  AppointmentCardUser()
+                  Obx(() => _userdoctorController.userAppointment.isEmpty ||
+                          _userdoctorController.userAppointment
+                              .where((element) => element.status == 'Pending')
+                              .isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 40.0),
+                          child: Center(
+                            child: SubHeading(
+                              title: 'No upcoming appointments',
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount:
+                              _userdoctorController.userAppointment.length,
+                          itemBuilder: (context, index) {
+                            if (_userdoctorController
+                                    .userAppointment[index].status ==
+                                'Pending') {
+                              return Column(
+                                children: [
+                                  SizedBox(
+                                    height: 1.h,
+                                  ),
+                                  AppointmentCardUser(
+                                    bookingDetail: _userdoctorController
+                                        .userAppointment[index],
+                                  ),
+                                ],
+                              );
+                            } else
+                              return Container();
+                          })),
                 ],
               ),
             ),
@@ -89,24 +119,44 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  AppointmentCardUser(
-                    isCompleted: true,
-                  ),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  AppointmentCardUser(
-                    isCompleted: true,
-                  ),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  AppointmentCardUser(
-                    isCompleted: true,
-                  ),
+                  Obx(() => _userdoctorController.userAppointment.isEmpty ||
+                          _userdoctorController.userAppointment
+                              .where((element) =>
+                                  element.status!.toLowerCase() == 'completed')
+                              .isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 40.0),
+                          child: Center(
+                            child: SubHeading(
+                              title: 'No appointments yet completed',
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount:
+                              _userdoctorController.userAppointment.length,
+                          itemBuilder: (context, index) {
+                            if (_userdoctorController
+                                    .userAppointment[index].status!
+                                    .toLowerCase() ==
+                                'completed') {
+                              return Column(
+                                children: [
+                                  SizedBox(
+                                    height: 1.h,
+                                  ),
+                                  AppointmentCardUser(
+                                    bookingDetail: _userdoctorController
+                                        .userAppointment[index],
+                                    isCompleted: true,
+                                  ),
+                                ],
+                              );
+                            } else
+                              return Container();
+                          })),
                 ],
               ),
             ),
@@ -119,7 +169,9 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
 
 class AppointmentCardUser extends StatelessWidget {
   bool isCompleted;
-  AppointmentCardUser({this.isCompleted = false});
+  UserAppointment bookingDetail;
+  AppointmentCardUser({required this.bookingDetail, this.isCompleted = false});
+  final _userdoctorController = Get.find<UserDoctorController>();
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +187,9 @@ class AppointmentCardUser extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'May 22, 2023 - 10.00 AM',
+              bookingDetail.date.toString() +
+                  ' ' +
+                  bookingDetail.time.toString(),
               style: CustomTextStyles.darkHeadingTextStyle(size: 14),
             ),
             Divider(
@@ -210,19 +264,37 @@ class AppointmentCardUser extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: RoundedButtonSmall(
-                      isSmall: true,
-                      isBold: true,
-                      text: isCompleted ? 'Re-Book' : 'Cancel',
-                      onPressed: () {
-                        //      showPaymentBottomSheet(context, true);
-                      },
-                      backgroundColor: ThemeUtil.isDarkMode(context)
-                          ? Color(0xff00143D)
-                          : AppColors.lightGreyColor,
-                      textColor: ThemeUtil.isDarkMode(context)
-                          ? AppColors.whiteColor
-                          : Color(0xff033890)),
+                  child: Obx(
+                    () => RoundedButtonSmall(
+                        showLoader:
+                            _userdoctorController.appointmentLoader.value,
+                        isSmall: true,
+                        isBold: true,
+                        text: isCompleted ? 'Re-Book' : 'Cancel',
+                        onPressed: () {
+                          isCompleted
+                              ? Get.to(DoctorDetailScreen2(
+                                  doctorId:
+                                      bookingDetail.doctorUserId.toString(),
+                                  docName: '',
+                                  location: '',
+                                  Category: '',
+                                ))
+                              : _userdoctorController.updateAppointment(
+                                  bookingDetail.appointmentId.toString(),
+                                  'CANCELLED',
+                                  '',
+                                  context,
+                                  bookingDetail.doctorUserId.toString());
+                          //      showPaymentBottomSheet(context, true);
+                        },
+                        backgroundColor: ThemeUtil.isDarkMode(context)
+                            ? Color(0xff00143D)
+                            : AppColors.lightGreyColor,
+                        textColor: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : Color(0xff033890)),
+                  ),
                 ),
                 SizedBox(
                   width: 2.w,
@@ -233,6 +305,7 @@ class AppointmentCardUser extends StatelessWidget {
                       onPressed: () {
                         isCompleted
                             ? Get.to(ReviewScreen(
+                                details: bookingDetail,
                                 buttonBgColor: Color(0xff033890),
                               ))
                             : print('');
