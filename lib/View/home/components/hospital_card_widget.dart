@@ -50,7 +50,7 @@ class HosipitalCardWidget extends StatelessWidget {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12), topRight: Radius.circular(12)),
             child: Image.network(
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg',
+              getImageUrl(),
               width: 59.4.w,
               height: 31.w,
               fit: BoxFit.cover,
@@ -75,7 +75,11 @@ class HosipitalCardWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: LocationWidget(
-              location: '',
+              location: isPharmacy
+                  ? pharmacyData!.location.toString()
+                  : isBloodBank
+                      ? bloodBankData!.location.toString()
+                      : hospitalData!.location.toString(),
             ),
           ),
           SizedBox(
@@ -83,7 +87,13 @@ class HosipitalCardWidget extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
-            child: ReviewBar(),
+            child: ReviewBar(
+                rating: '0.0',
+                count: isPharmacy
+                    ? pharmacyData!.reviews!.length
+                    : isBloodBank
+                        ? bloodBankData!.reviews!.length
+                        : hospitalData!.reviews!.length),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
@@ -102,7 +112,7 @@ class HosipitalCardWidget extends StatelessWidget {
                     SizedBox(
                       width: 0.5.w,
                     ),
-                    Text('2.5 km/40min',
+                    Text('0.0 km/0min',
                         style: CustomTextStyles.lightTextStyle(
                             color: Color(0xff6B7280), size: 10.8))
                   ],
@@ -127,5 +137,23 @@ class HosipitalCardWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String getImageUrl() {
+    if (isPharmacy) {
+      return pharmacyData?.image?.contains('http') == true
+          ? pharmacyData!.image.toString()
+          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg';
+    } else if (isHospital) {
+      return hospitalData?.image?.contains('http') == true
+          ? hospitalData!.image.toString()
+          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg';
+    } else if (isBloodBank) {
+      return bloodBankData?.image?.contains('http') == true
+          ? bloodBankData!.image.toString()
+          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg';
+    } else {
+      return 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg';
+    }
   }
 }

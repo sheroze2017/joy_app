@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,6 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
-import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../modules/blood_bank/bloc/blood_bank_bloc.dart';
@@ -57,6 +55,9 @@ class AllDonorScreen extends StatelessWidget {
     );
   }
 }
+
+
+
 
 class _VerticalDonorsList extends StatelessWidget {
   final List<BloodDonor> donors;

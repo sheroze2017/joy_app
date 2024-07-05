@@ -1,16 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/custom_appbar.dart';
 import '../../Widgets/rounded_button.dart';
 import '../../styles/custom_textstyle.dart';
+import 'add_friend.dart';
 
-class AddNewFriend extends StatelessWidget {
-  const AddNewFriend({super.key});
+class AddNewFriend extends StatefulWidget {
+  AddNewFriend({super.key});
+
+  @override
+  State<AddNewFriend> createState() => _AddNewFriendState();
+}
+
+class _AddNewFriendState extends State<AddNewFriend> {
+  FriendsSocialController _friendsController =
+      Get.find<FriendsSocialController>();
+
+  @override
+  void initState() {
+    _friendsController.filteredList = _friendsController.userList;
+    // _friendsController.filteredList.assignAll(_friendsController.userList);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,44 +40,78 @@ class AddNewFriend extends StatelessWidget {
         actions: [],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 30),
-        child: Container(
-          child: Column(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: SingleChildScrollView(
+          child: Stack(
             children: [
-              RoundedSearchTextField(
-                hintText: 'Search',
-                controller: TextEditingController(),
-                onChanged: (value) {
-                  print('Search text changed: $value');
-                },
+              Container(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 4.h,
+                    ),
+                    RoundedSearchTextField(
+                        onChanged: _friendsController.searchByName,
+                        hintText: 'Search users',
+                        controller: TextEditingController()),
+                    SizedBox(
+                      height: 1.h,
+                    ),
+                    Obx(() => _friendsController.filteredList.length == 0
+                        ? Center(
+                            child: Text(
+                              'No users found',
+                              style: CustomTextStyles.lightTextStyle(),
+                            ),
+                          )
+                        : Obx(() => ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: _friendsController.filteredList.length,
+                            itemBuilder: ((context, index) {
+                              final data =
+                                  _friendsController.filteredList[index];
+
+                              return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Get.to(MyProfileScreen(
+                                        myProfile: true,
+                                        friendId: data.userId.toString(),
+                                      ));
+                                    },
+                                    child: NewFriendRequestWidget(
+                                        onAddFriend: () {
+                                          _friendsController.AddFriend(
+                                              data.userId, context);
+                                        },
+                                        profileImage: data.image!
+                                                .contains('http')
+                                            ? data.image.toString()
+                                            : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                        userName: data.name.toString(),
+                                        mutualFriends: [],
+                                        mutualFriendsCount: 0),
+                                  ));
+                            })))),
+                    SizedBox(
+                      height: 1.h,
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(
-                height: 2.h,
-              ),
-              NewFriendRequestWidget(
-                profileImage:
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                userName: 'Jim Hopper',
-                mutualFriends: [
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                ],
-                mutualFriendsCount: 3,
-              ),
-              SizedBox(
-                height: 1.h,
-              ),
-              NewFriendRequestWidget(
-                profileImage:
-                    'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                userName: 'Jim Hopper',
-                mutualFriends: [
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                ],
-                mutualFriendsCount: 3,
-              ),
+              Obx(() => _friendsController.updateRequestLoader.value
+                  ? Positioned(
+                      top: 0,
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: Theme.of(context).primaryColor,
+                      )))
+                  : Container())
             ],
           ),
         ),
@@ -73,6 +125,7 @@ class NewFriendRequestWidget extends StatelessWidget {
   final String userName;
   final List<String> mutualFriends;
   final int mutualFriendsCount;
+  final Function() onAddFriend;
 
   const NewFriendRequestWidget({
     Key? key,
@@ -80,6 +133,7 @@ class NewFriendRequestWidget extends StatelessWidget {
     required this.userName,
     required this.mutualFriends,
     required this.mutualFriendsCount,
+    required this.onAddFriend,
   }) : super(key: key);
 
   @override
@@ -156,7 +210,7 @@ class NewFriendRequestWidget extends StatelessWidget {
             ),
             RoundedButtonSmall(
                 text: "Add Friend",
-                onPressed: () {},
+                onPressed: onAddFriend,
                 backgroundColor: ThemeUtil.isDarkMode(context)
                     ? Color(0xffC5D3E3)
                     : Color(0xff1C2A3A),

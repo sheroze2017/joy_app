@@ -89,7 +89,7 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
                         )
                       : ListView.builder(
                           shrinkWrap: true,
-                          physics: const AlwaysScrollableScrollPhysics(),
+                          physics: NeverScrollableScrollPhysics(),
                           itemCount:
                               _userdoctorController.userAppointment.length,
                           itemBuilder: (context, index) {
@@ -134,7 +134,6 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
                         )
                       : ListView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
                           itemCount:
                               _userdoctorController.userAppointment.length,
                           itemBuilder: (context, index) {
@@ -204,8 +203,8 @@ class AppointmentCardUser extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: Image.asset(
-                    'Assets/images/doctor.png',
+                  child: Image.network(
+                    "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                     width: 27.9.w,
                     height: 27.9.w,
                     fit: BoxFit.cover,
@@ -223,14 +222,16 @@ class AppointmentCardUser extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Dr. James Robins',
+                            bookingDetail.doctorDetails!.doctorName.toString(),
                             style: CustomTextStyles.darkHeadingTextStyle(),
                           ),
                           SizedBox(
                             height: 1.h,
                           ),
                           Text(
-                            'Gastroenterologist',
+                            bookingDetail
+                                .doctorDetails!.doctorDetails!.qualification
+                                .toString(),
                             style: CustomTextStyles.w600TextStyle(
                                 size: 14, color: Color(0xff4B5563)),
                           ),
@@ -243,7 +244,7 @@ class AppointmentCardUser extends StatelessWidget {
                               SizedBox(
                                 width: 0.5.w,
                               ),
-                              Text('Elite Ortho Clinic, USA',
+                              Text(bookingDetail.location.toString(),
                                   style: CustomTextStyles.lightTextStyle(
                                       color: Color(0xff4B5563), size: 14))
                             ],

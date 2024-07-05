@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -11,347 +12,529 @@ import 'package:joy_app/view/home/profile_screen.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/rounded_button.dart';
+import 'all_photos_screen.dart';
+import 'all_posts_screen.dart';
 import 'editprofile_screen.dart';
 
-class MyProfileScreen extends StatelessWidget {
-  bool? myProfile;
-  MyProfileScreen({this.myProfile = false});
+class MyProfileScreen extends StatefulWidget {
+  bool myProfile;
+  String? friendId;
+  MyProfileScreen({required this.myProfile, this.friendId});
+
+  @override
+  State<MyProfileScreen> createState() => _MyProfileScreenState();
+}
+
+class _MyProfileScreenState extends State<MyProfileScreen> {
+  FriendsSocialController _friendsController =
+      Get.find<FriendsSocialController>();
+  @override
+  void initState() {
+    _friendsController.getSearchUserProfileData(
+        widget.myProfile, !widget.myProfile ? '' : widget.friendId, context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> userNames = [
-      'Erina',
-      'Willia',
-      'Millie',
-      'Rachael',
-      'Kate m.'
-    ];
-    List<String> userAssets = [
-      'https://s3-alpha-sig.figma.com/img/2e2c/f1b6/f441c6f28c3b0e1e0eb4863eb80b7401?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OyHaSwq3RQUwqVyFeX-s0TPwdVl3MyspHk4ha5TuocQQlfrZslhYWSc0Dt6SNY9t8cBucIE9M-yN0wL4hIMWEXnjcUoXiCV0qSnDl0PdCg6csLGUvC54HxbCR13nV9CWzIjXJ1GTEEwezdirXYAo8zxUvxA~NfBU7JSFvNku~xEBKBuiaejwOZBVcCIr-ZugxpQNLEPAfnKBubrSY3OLD3Ab6hS1pt-kZbX55g3efEA7Qea~PVNIYAgyl56P6nWFMYcxOBc560XVAtXCYszZSwyo-pVi1V5lnCW1fAr1xzQ4mAlrDUEQ0AS9RrS~shD4coWqimFOAN2KuBN6k~dMuA__',
-      'https://s3-alpha-sig.figma.com/img/2e2c/f1b6/f441c6f28c3b0e1e0eb4863eb80b7401?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OyHaSwq3RQUwqVyFeX-s0TPwdVl3MyspHk4ha5TuocQQlfrZslhYWSc0Dt6SNY9t8cBucIE9M-yN0wL4hIMWEXnjcUoXiCV0qSnDl0PdCg6csLGUvC54HxbCR13nV9CWzIjXJ1GTEEwezdirXYAo8zxUvxA~NfBU7JSFvNku~xEBKBuiaejwOZBVcCIr-ZugxpQNLEPAfnKBubrSY3OLD3Ab6hS1pt-kZbX55g3efEA7Qea~PVNIYAgyl56P6nWFMYcxOBc560XVAtXCYszZSwyo-pVi1V5lnCW1fAr1xzQ4mAlrDUEQ0AS9RrS~shD4coWqimFOAN2KuBN6k~dMuA__',
-      'https://s3-alpha-sig.figma.com/img/504b/c691/102d8a6217d1fc1f8e79a810b1842a0d?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Yd7Pi3bm~RQDDgnpWNarZdcqX5a-J9FbtvT63l5XLxLN2VSsDsMVn2kT2mb1PsKdZlBieZoJ6XoRVzDA~UkcqvdHMvd35qVGVR26M~DEOLWuWmbAmiCuq6KmQFurraqQxFoVQ9nI1GOJ5daoBF115ufImWcW6APxDftNToo2AszZ55MZssJ1Gxh9z7XoyxPTLuXsnPQ45vZ3bqRS7z20isaNyxI2eX1~6G2B7rFkMPpAv~opNaU9OxxN1NGq~9n-~0dVqZgzAM97ASPb-6h88Toavx4XLF7Mx4bp~RGj~mUdPpuc4hdFJnuGBjemLR1OBK4Ku-3J16V5DuHxXsK3FQ__',
-      'https://s3-alpha-sig.figma.com/img/2e2c/f1b6/f441c6f28c3b0e1e0eb4863eb80b7401?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OyHaSwq3RQUwqVyFeX-s0TPwdVl3MyspHk4ha5TuocQQlfrZslhYWSc0Dt6SNY9t8cBucIE9M-yN0wL4hIMWEXnjcUoXiCV0qSnDl0PdCg6csLGUvC54HxbCR13nV9CWzIjXJ1GTEEwezdirXYAo8zxUvxA~NfBU7JSFvNku~xEBKBuiaejwOZBVcCIr-ZugxpQNLEPAfnKBubrSY3OLD3Ab6hS1pt-kZbX55g3efEA7Qea~PVNIYAgyl56P6nWFMYcxOBc560XVAtXCYszZSwyo-pVi1V5lnCW1fAr1xzQ4mAlrDUEQ0AS9RrS~shD4coWqimFOAN2KuBN6k~dMuA__',
-      'https://s3-alpha-sig.figma.com/img/2e2c/f1b6/f441c6f28c3b0e1e0eb4863eb80b7401?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OyHaSwq3RQUwqVyFeX-s0TPwdVl3MyspHk4ha5TuocQQlfrZslhYWSc0Dt6SNY9t8cBucIE9M-yN0wL4hIMWEXnjcUoXiCV0qSnDl0PdCg6csLGUvC54HxbCR13nV9CWzIjXJ1GTEEwezdirXYAo8zxUvxA~NfBU7JSFvNku~xEBKBuiaejwOZBVcCIr-ZugxpQNLEPAfnKBubrSY3OLD3Ab6hS1pt-kZbX55g3efEA7Qea~PVNIYAgyl56P6nWFMYcxOBc560XVAtXCYszZSwyo-pVi1V5lnCW1fAr1xzQ4mAlrDUEQ0AS9RrS~shD4coWqimFOAN2KuBN6k~dMuA__',
-    ];
     return Scaffold(
-      appBar: HomeAppBar(
-        showIcon: true,
-        title: 'My Profile',
-        actions: [
-          InkWell(
-            onTap: () {
-              Get.to(EditProfile());
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: SvgPicture.asset('Assets/icons/edit-2.svg'),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              Get.to(ProfileScreen());
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: SvgPicture.asset('Assets/icons/setting-2.svg'),
-            ),
-          )
-        ],
-        leading: InkWell(onTap: () {}, child: Icon(Icons.arrow_back)),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 45.w,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            width: 100.w,
-                            height: 23.58.w,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: ThemeUtil.isDarkMode(context)
-                                        ? Colors.transparent
-                                        : Color(0xffF3F4F6)),
-                                color: ThemeUtil.isDarkMode(context)
-                                    ? Color(0xff121212)
-                                    : Color(0xffFAFAFA),
-                                borderRadius: BorderRadius.circular(12)),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 4.w,
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '1K',
-                                      style:
-                                          CustomTextStyles.darkHeadingTextStyle(
-                                              color:
-                                                  ThemeUtil.isDarkMode(context)
-                                                      ? AppColors.whiteColor
-                                                      : Color(0xff000000),
-                                              size: 15.41),
-                                    ),
-                                    Text(
-                                      'Posts',
-                                      style: CustomTextStyles.lightTextStyle(
-                                          color: ThemeUtil.isDarkMode(context)
-                                              ? AppColors.whiteColor
-                                              : Color(0xff000000),
-                                          size: 13.21),
-                                    )
-                                  ],
-                                ),
-                                Spacer(),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '2000',
-                                      style:
-                                          CustomTextStyles.darkHeadingTextStyle(
-                                              color:
-                                                  ThemeUtil.isDarkMode(context)
-                                                      ? AppColors.whiteColor
-                                                      : Color(0xff000000),
-                                              size: 15.41),
-                                    ),
-                                    Text(
-                                      'Friends',
-                                      style: CustomTextStyles.lightTextStyle(
-                                          color: ThemeUtil.isDarkMode(context)
-                                              ? AppColors.whiteColor
-                                              : Color(0xff000000),
-                                          size: 13.21),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 4.w,
-                                ),
-                              ],
-                            ),
-                          )),
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                                radius: 65,
-                                backgroundImage:
-                                    AssetImage('Assets/images/onboard3.png')),
-                            SizedBox(
-                              height: 1.h,
-                            ),
-                            Text(
-                              'Sheroze Rehman',
-                              style: CustomTextStyles.darkHeadingTextStyle(
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xffC8D3E0)
-                                      : null,
-                                  size: 14),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+        appBar: HomeAppBar(
+          showIcon: false,
+          title: widget.myProfile ? 'Profile' : 'My Profile',
+          actions: [
+            widget.myProfile
+                ? Container()
+                : InkWell(
+                    onTap: () {
+                      Get.to(EditProfile());
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: SvgPicture.asset('Assets/icons/edit-2.svg'),
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                myProfile == true
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: RoundedButtonSmall(
-                                  isSmall: true,
-                                  text: "Message",
-                                  onPressed: () {},
-                                  backgroundColor: ThemeUtil.isDarkMode(context)
-                                      ? Color(0XFF1F2228)
-                                      : Color(0xffE5E7EB),
-                                  textColor: ThemeUtil.isDarkMode(context)
-                                      ? Color(0XFFC5D3E3)
-                                      : Color(0xff1C2A3A)),
-                            ),
-                            SizedBox(
-                              width: 4.w,
-                            ),
-                            Expanded(
-                              child: RoundedButtonSmall(
-                                  isSmall: true,
-                                  text: "Add Friend",
-                                  onPressed: () {},
-                                  backgroundColor: ThemeUtil.isDarkMode(context)
-                                      ? Color(0XFFC5D3E3)
-                                      : Color(0xff1C2A3A),
-                                  textColor: ThemeUtil.isDarkMode(context)
-                                      ? AppColors.blackColor
-                                      : Color(0xffFFFFFF)),
-                            )
-                          ],
+            widget.myProfile
+                ? Container()
+                : InkWell(
+                    onTap: () {
+                      Get.to(ProfileScreen());
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: SvgPicture.asset('Assets/icons/setting-2.svg'),
+                    ),
+                  )
+          ],
+          leading: InkWell(onTap: () {}, child: Icon(Icons.arrow_back)),
+        ),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            _friendsController.getSearchUserProfileData(widget.myProfile,
+                !widget.myProfile ? '' : widget.friendId, context);
+          },
+          child: Stack(
+            children: [
+              Obx(
+                () => _friendsController.profileScreenLoader.value
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
                         ),
                       )
-                    : Container(),
-                myProfile == true ? SizedBox(height: 2.h) : Container(),
-                Heading(
-                  title: 'About me',
-                ),
-                SizedBox(height: 1.h),
-                Text(
-                  "I’m Alexa David, diagnosed with Cancer last year. Starting getting chemotherapeutic treatment and now i’m getting better day by day.",
-                  textAlign: TextAlign.justify,
-                  style: CustomTextStyles.lightTextStyle(
-                      color: ThemeUtil.isDarkMode(context)
-                          ? Color(0xffAAAAAA)
-                          : null),
-                ),
-                SizedBox(height: 2.h),
-                Heading(
-                  title: 'My Friends',
-                ),
-                SizedBox(height: 1.h),
-                UserSlider(userNames: userNames, userAssets: userAssets),
-                Row(
-                  children: [
-                    Text(
-                      'My Photos',
-                      style: CustomTextStyles.darkHeadingTextStyle(
-                          color: ThemeUtil.isDarkMode(context)
-                              ? Color(0xffC5D3E3)
-                              : null),
-                    ),
-                    Spacer(),
-                    Text(
-                      'See All',
-                      style: CustomTextStyles.lightSmallTextStyle(),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.h),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 49.52.w,
-                        height: 47.9.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(12),
-                            topLeft: Radius.circular(12),
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(12),
-                            topLeft: Radius.circular(12),
-                          ),
-                          child: Image.network(
-                            'https://s3-alpha-sig.figma.com/img/3bde/5fa1/9ddfb5ff7fe8cb0e46e8a057916c84ea?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Eu01T1nSUTUea~6s6LseRnloN5KBWlYEStHvRAK6phG87NaLGOxwljNisAs~ge8K2O3NcT~hOUYa6oWt2EiftirxGlx2JhHdzJzgFDnjsBsEIFBa-zVoBUNK5br86ws~G2iGSwWeleJN0dfLpxTx9lMXLtregG7CEWr748ysqVEn96XkW~UbEdZTPf1CyVOGI1nnQ6sbsTe2cBRNFbKSl0mXw7nJUzbK8R~xm3z0L-lfFfctbNLcluO78d5wmu4Sjw9oUslC77XXvJB~9pucZnAvADWnmvY1bCVjAqF7LLw5dUMsVp2q0ma8CeN3H~FvuGj4ATwwEan-N0ncl-of2g__',
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            width: 35.5.w,
-                            height: 22.8.w,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(12),
-                              ),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(12),
-                              ),
-                              child: Image.network(
-                                'https://s3-alpha-sig.figma.com/img/3bde/5fa1/9ddfb5ff7fe8cb0e46e8a057916c84ea?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Eu01T1nSUTUea~6s6LseRnloN5KBWlYEStHvRAK6phG87NaLGOxwljNisAs~ge8K2O3NcT~hOUYa6oWt2EiftirxGlx2JhHdzJzgFDnjsBsEIFBa-zVoBUNK5br86ws~G2iGSwWeleJN0dfLpxTx9lMXLtregG7CEWr748ysqVEn96XkW~UbEdZTPf1CyVOGI1nnQ6sbsTe2cBRNFbKSl0mXw7nJUzbK8R~xm3z0L-lfFfctbNLcluO78d5wmu4Sjw9oUslC77XXvJB~9pucZnAvADWnmvY1bCVjAqF7LLw5dUMsVp2q0ma8CeN3H~FvuGj4ATwwEan-N0ncl-of2g__',
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 1.h,
-                          ),
-                          Container(
-                            width: 35.5.w,
-                            height: 22.8.w,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(12),
-                              ),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(12),
-                              ),
-                              child: Image.network(
-                                'https://s3-alpha-sig.figma.com/img/3bde/5fa1/9ddfb5ff7fe8cb0e46e8a057916c84ea?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Eu01T1nSUTUea~6s6LseRnloN5KBWlYEStHvRAK6phG87NaLGOxwljNisAs~ge8K2O3NcT~hOUYa6oWt2EiftirxGlx2JhHdzJzgFDnjsBsEIFBa-zVoBUNK5br86ws~G2iGSwWeleJN0dfLpxTx9lMXLtregG7CEWr748ysqVEn96XkW~UbEdZTPf1CyVOGI1nnQ6sbsTe2cBRNFbKSl0mXw7nJUzbK8R~xm3z0L-lfFfctbNLcluO78d5wmu4Sjw9oUslC77XXvJB~9pucZnAvADWnmvY1bCVjAqF7LLw5dUMsVp2q0ma8CeN3H~FvuGj4ATwwEan-N0ncl-of2g__',
-                                fit: BoxFit.fill,
-                              ),
+                    : _friendsController.userProfileData.value == null
+                        ? Center(
+                            child: Text(
+                              'Error Fetching User Profile',
+                              style: CustomTextStyles.lightTextStyle(),
                             ),
                           )
-                        ],
-                      )
-                    ],
+                        : SingleChildScrollView(
+                            child: Container(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 45.w,
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                              bottom: 0,
+                                              left: 0,
+                                              right: 0,
+                                              child: Container(
+                                                width: 100.w,
+                                                height: 23.58.w,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: ThemeUtil
+                                                                .isDarkMode(
+                                                                    context)
+                                                            ? Colors.transparent
+                                                            : Color(
+                                                                0xffF3F4F6)),
+                                                    color: ThemeUtil.isDarkMode(
+                                                            context)
+                                                        ? Color(0xff121212)
+                                                        : Color(0xffFAFAFA),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12)),
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 4.w,
+                                                    ),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          _friendsController
+                                                              .userProfileData!
+                                                              .value!
+                                                              .posts!
+                                                              .length
+                                                              .toString(),
+                                                          style: CustomTextStyles.darkHeadingTextStyle(
+                                                              color: ThemeUtil
+                                                                      .isDarkMode(
+                                                                          context)
+                                                                  ? AppColors
+                                                                      .whiteColor
+                                                                  : Color(
+                                                                      0xff000000),
+                                                              size: 15.41),
+                                                        ),
+                                                        Text(
+                                                          'Posts',
+                                                          style: CustomTextStyles.lightTextStyle(
+                                                              color: ThemeUtil
+                                                                      .isDarkMode(
+                                                                          context)
+                                                                  ? AppColors
+                                                                      .whiteColor
+                                                                  : Color(
+                                                                      0xff000000),
+                                                              size: 13.21),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Spacer(),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          _friendsController
+                                                              .userProfileData
+                                                              .value!
+                                                              .allFriends!
+                                                              .length
+                                                              .toString(),
+                                                          style: CustomTextStyles.darkHeadingTextStyle(
+                                                              color: ThemeUtil
+                                                                      .isDarkMode(
+                                                                          context)
+                                                                  ? AppColors
+                                                                      .whiteColor
+                                                                  : Color(
+                                                                      0xff000000),
+                                                              size: 15.41),
+                                                        ),
+                                                        Text(
+                                                          'Friends',
+                                                          style: CustomTextStyles.lightTextStyle(
+                                                              color: ThemeUtil
+                                                                      .isDarkMode(
+                                                                          context)
+                                                                  ? AppColors
+                                                                      .whiteColor
+                                                                  : Color(
+                                                                      0xff000000),
+                                                              size: 13.21),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      width: 4.w,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )),
+                                          Positioned(
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            child: Column(
+                                              children: [
+                                                CircleAvatar(
+                                                    radius: 65,
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                      _friendsController
+                                                              .userProfileData
+                                                              .value!
+                                                              .image!
+                                                              .contains('http')
+                                                          ? _friendsController
+                                                              .userProfileData
+                                                              .value!
+                                                              .image!
+                                                          : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                                    )),
+                                                SizedBox(
+                                                  height: 1.h,
+                                                ),
+                                                Text(
+                                                  _friendsController
+                                                      .userProfileData
+                                                      .value!
+                                                      .name
+                                                      .toString(),
+                                                  style: CustomTextStyles
+                                                      .darkHeadingTextStyle(
+                                                          color: ThemeUtil
+                                                                  .isDarkMode(
+                                                                      context)
+                                                              ? Color(
+                                                                  0xffC8D3E0)
+                                                              : null,
+                                                          size: 14),
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 2.h,
+                                    ),
+                                    widget.myProfile == true
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: RoundedButtonSmall(
+                                                      isSmall: true,
+                                                      text: "Message",
+                                                      onPressed: () {},
+                                                      backgroundColor: ThemeUtil
+                                                              .isDarkMode(
+                                                                  context)
+                                                          ? Color(0XFF1F2228)
+                                                          : Color(0xffE5E7EB),
+                                                      textColor: ThemeUtil
+                                                              .isDarkMode(
+                                                                  context)
+                                                          ? Color(0XFFC5D3E3)
+                                                          : Color(0xff1C2A3A)),
+                                                ),
+                                                SizedBox(
+                                                  width: 4.w,
+                                                ),
+                                                Expanded(
+                                                  child: RoundedButtonSmall(
+                                                      isSmall: true,
+                                                      text: "Add Friend",
+                                                      onPressed: () {
+                                                        _friendsController
+                                                            .AddFriend(
+                                                                widget.friendId,
+                                                                context);
+                                                      },
+                                                      backgroundColor: ThemeUtil
+                                                              .isDarkMode(
+                                                                  context)
+                                                          ? Color(0XFFC5D3E3)
+                                                          : Color(0xff1C2A3A),
+                                                      textColor: ThemeUtil
+                                                              .isDarkMode(
+                                                                  context)
+                                                          ? AppColors.blackColor
+                                                          : Color(0xffFFFFFF)),
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        : Container(),
+                                    // widget.myProfile == true
+                                    //     ? SizedBox(height: 2.h)
+                                    //     : Container(),
+                                    // Heading(
+                                    //   title: 'About me',
+                                    // ),
+                                    // SizedBox(height: 1.h),
+                                    // Text(
+                                    //   "I’m Alexa David, diagnosed with Cancer last year. Starting getting chemotherapeutic treatment and now i’m getting better day by day.",
+                                    //   textAlign: TextAlign.justify,
+                                    //   style: CustomTextStyles.lightTextStyle(
+                                    //       color: ThemeUtil.isDarkMode(context)
+                                    //           ? Color(0xffAAAAAA)
+                                    //           : null),
+                                    // ),
+
+                                    SizedBox(height: 2.h),
+                                    Heading(
+                                      title: widget.myProfile
+                                          ? '${_friendsController.userProfileData.value!.name.toString()} Friends'
+                                          : 'My Friends',
+                                    ),
+                                    SizedBox(height: 1.h),
+                                    UserSlider(
+                                        userNames: _friendsController
+                                            .getAllUserNames(),
+                                        userAssets: _friendsController
+                                            .getAllUserAssets()),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          widget.myProfile
+                                              ? 'Photos'
+                                              : 'My Photos',
+                                          style: CustomTextStyles
+                                              .darkHeadingTextStyle(
+                                                  color: ThemeUtil.isDarkMode(
+                                                          context)
+                                                      ? Color(0xffC5D3E3)
+                                                      : null),
+                                        ),
+                                        Spacer(),
+                                        InkWell(
+                                          onTap: () {
+                                            Get.to(AllPhotoScreen());
+                                          },
+                                          child: Text(
+                                            'See All',
+                                            style: CustomTextStyles
+                                                .lightSmallTextStyle(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 1.h),
+                                    MyPhotosWidget(
+                                      imgList: _friendsController
+                                          .getAllProfileImagesUser(),
+                                    ),
+                                    SizedBox(
+                                      height: 2.h,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          widget.myProfile
+                                              ? 'Posts'
+                                              : 'My Posts',
+                                          style: CustomTextStyles
+                                              .darkHeadingTextStyle(
+                                                  color: ThemeUtil.isDarkMode(
+                                                          context)
+                                                      ? Color(0xffC5D3E3)
+                                                      : null),
+                                        ),
+                                        Spacer(),
+                                        InkWell(
+                                          onTap: () {
+                                            Get.to(AllPostScreen());
+                                          },
+                                          child: Text(
+                                            'See All',
+                                            style: CustomTextStyles
+                                                .lightSmallTextStyle(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 1.h,
+                                    ),
+                                    Obx(() => ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: _friendsController
+                                            .userProfileData
+                                            .value!
+                                            .posts!
+                                            .length,
+                                        itemBuilder: ((context, index) {
+                                          final data = _friendsController
+                                              .userProfileData
+                                              .value!
+                                              .posts![index];
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 12.0),
+                                            child: MyCustomWidget(
+                                              imgPath: data.image.toString(),
+                                              isLiked: true,
+                                              isReply: false,
+                                              showImg: (data.image == null ||
+                                                      data.image!.isEmpty)
+                                                  ? false
+                                                  : true,
+                                              postName: _friendsController
+                                                  .userProfileData.value!.name
+                                                  .toString(),
+                                              text: data.description.toString(),
+                                            ),
+                                          );
+                                        }))),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+              ),
+              Obx(() => _friendsController.updateRequestLoader.value
+                  ? Positioned(
+                      top: 0,
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: Theme.of(context).primaryColor,
+                      )))
+                  : Container())
+            ],
+          ),
+        ));
+  }
+}
+
+class MyPhotosWidget extends StatelessWidget {
+  List<String> imgList;
+  MyPhotosWidget({
+    required this.imgList,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          imgList.first.isEmpty
+              ? Container()
+              : Container(
+                  width: 49.52.w,
+                  height: 47.9.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      topLeft: Radius.circular(12),
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      topLeft: Radius.circular(12),
+                    ),
+                    child: Image.network(
+                      imgList[0],
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'My Posts',
-                      style: CustomTextStyles.darkHeadingTextStyle(
-                          color: ThemeUtil.isDarkMode(context)
-                              ? Color(0xffC5D3E3)
-                              : null),
+          Column(
+            children: [
+              imgList[1].isEmpty
+                  ? Container()
+                  : Container(
+                      width: 35.5.w,
+                      height: 22.8.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(12),
+                        ),
+                        child: Image.network(
+                          imgList[1],
+                          fit: BoxFit.fill,
+                        ),
+                      ),
                     ),
-                    Spacer(),
-                    Text(
-                      'See All',
-                      style: CustomTextStyles.lightSmallTextStyle(),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                MyCustomWidget(
-                  postName: 'Sheroze',
-                  isReply: true,
-                  showImg: true,
-                  text:
-                      'Hey pals ! Had my third day of chemo. feeling much better.',
-                ),
-                SizedBox(
-                  height: 3.h,
-                ),
-              ],
-            ),
-          ),
-        ),
+              SizedBox(
+                height: 1.h,
+              ),
+              imgList[2].isEmpty
+                  ? Container()
+                  : Container(
+                      width: 35.5.w,
+                      height: 22.8.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(12),
+                        ),
+                        child: Image.network(
+                          imgList[2],
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    )
+            ],
+          )
+        ],
       ),
     );
   }
@@ -520,27 +703,37 @@ class UserSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 14.h,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: userNames.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundImage: NetworkImage(userAssets[index]),
-                ),
-                SizedBox(height: 1.h),
-                Text(userNames[index],
-                    style: CustomTextStyles.lightSmallTextStyle(
-                        size: 9.4, color: Color(0xff99A1BE))),
-              ],
+      child: userNames.isEmpty
+          ? Center(
+              child: Text(
+                "No friends found",
+                style: CustomTextStyles.lightTextStyle(),
+              ),
+            )
+          : ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: userNames.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 8.0),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundImage: NetworkImage(userAssets[index]
+                                .contains('http')
+                            ? userAssets[index]
+                            : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'),
+                      ),
+                      SizedBox(height: 1.h),
+                      Text(userNames[index],
+                          style: CustomTextStyles.lightSmallTextStyle(
+                              size: 9.4, color: Color(0xff99A1BE))),
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

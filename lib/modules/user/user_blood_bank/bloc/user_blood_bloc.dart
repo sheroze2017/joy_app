@@ -4,14 +4,20 @@ import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/blood_bank/model/all_blood_request_model.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_api.dart';
 import 'package:joy_app/modules/user/user_blood_bank/model/all_bloodbank_model.dart';
 
 import '../../../../Widgets/success_dailog.dart';
+import '../../../blood_bank/bloc/blood_bank_api.dart';
 
 class UserBloodBankController extends GetxController {
   late DioClient dioClient;
   late UserBloodBankApi userBloodBankApi;
+  late BloodBankApi bloodBankApi;
+  RxList<BloodRequest> allBloodRequest = <BloodRequest>[].obs;
+  RxList<BloodRequest> allPlasmaRequest = <BloodRequest>[].obs;
+
   var showLoader = false.obs;
   RxList<BloodBank> bloodbank = <BloodBank>[].obs;
 
@@ -19,6 +25,8 @@ class UserBloodBankController extends GetxController {
   void onInit() async {
     super.onInit();
     dioClient = DioClient.getInstance();
+    bloodBankApi = BloodBankApi(dioClient);
+
     userBloodBankApi = UserBloodBankApi(dioClient);
   }
 
@@ -104,6 +112,26 @@ class UserBloodBankController extends GetxController {
       if (response.data != null) {
         response.data!.forEach((element) {
           bloodbank.add(element);
+        });
+      } else {}
+      return response;
+    } catch (error) {
+      throw (error);
+    } finally {}
+  }
+
+  Future<AllBloodRequest> getAllBloodRequest() async {
+    allBloodRequest.clear();
+    allPlasmaRequest.clear();
+    try {
+      AllBloodRequest response = await bloodBankApi.getAllBloodRequest();
+      if (response.data != null) {
+        response.data!.forEach((element) {
+          if (element.type == 'Plasma') {
+            allPlasmaRequest.add(element);
+          } else {
+            allBloodRequest.add(element);
+          }
         });
       } else {}
       return response;

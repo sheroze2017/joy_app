@@ -107,7 +107,9 @@ class _NavBarState extends State<NavBarScreen> {
                                   AddFriend(),
                                   HomeScreen(),
                                   NotificationScreen(),
-                                  MyProfileScreen()
+                                  MyProfileScreen(
+                                    myProfile: false,
+                                  )
                                 ],
                               )
                             : IndexedStack(

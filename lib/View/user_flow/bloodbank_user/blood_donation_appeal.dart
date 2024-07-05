@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/bloodbank_flow/component/blood_donation_widget.dart';
+import 'package:joy_app/view/doctor_flow/all_appointment.dart';
 import 'package:sizer/sizer.dart';
 
 class BloodDonationAppealUser extends StatefulWidget {
@@ -36,6 +40,9 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
     _tabController.dispose();
     super.dispose();
   }
+
+  UserBloodBankController _bloodBankController =
+      Get.find<UserBloodBankController>();
 
   @override
   Widget build(BuildContext context) {
@@ -76,29 +83,36 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: [
+                  Divider(
+                    color: Color(0xffE5E7EB),
+                  ),
+                  Obx(() => ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: widget.isBloodDontate
+                          ? _bloodBankController.allBloodRequest.length
+                          : _bloodBankController.allPlasmaRequest.length,
+                      itemBuilder: (context, index) {
+                        final data = widget.isBloodDontate
+                            ? _bloodBankController.allBloodRequest[index]
+                            : _bloodBankController.allBloodRequest[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: DonationApproval(
+                            isBloodDonate: widget.isBloodDontate,
+                            isPlasmaDonate: widget.isPlasmaDonate,
+                            patName: data.patientName.toString(),
+                            date: formatDateTime(data.date.toString()),
+                            location: data.location.toString(),
+                            bloodType: data.bloodGroup.toString(),
+                            count: data.unitsOfBlood.toString(),
+                            time: data.time.toString(),
+                            phoneNo: data.phone.toString(),
+                          ),
+                        );
+                      })),
                   SizedBox(
                     height: 2.h,
-                  ),
-                  DonationApproval(
-                    isUser: widget.isUser,
-                    isBloodDonate: widget.isBloodDontate,
-                    isPlasmaDonate: widget.isPlasmaDonate,
-                  ),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  DonationApproval(
-                    isUser: widget.isUser,
-                    isBloodDonate: widget.isBloodDontate,
-                    isPlasmaDonate: widget.isPlasmaDonate,
-                  ),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  DonationApproval(
-                    isUser: widget.isUser,
-                    isBloodDonate: widget.isBloodDontate,
-                    isPlasmaDonate: widget.isPlasmaDonate,
                   ),
                 ],
               ),
@@ -112,29 +126,33 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
                   Divider(
                     color: Color(0xffE5E7EB),
                   ),
+                  Obx(() => ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: widget.isBloodDontate
+                          ? _bloodBankController.allBloodRequest.length
+                          : _bloodBankController.allPlasmaRequest.length,
+                      itemBuilder: (context, index) {
+                        final data = widget.isBloodDontate
+                            ? _bloodBankController.allBloodRequest[index]
+                            : _bloodBankController.allBloodRequest[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: DonationApproval(
+                            isBloodDonate: widget.isBloodDontate,
+                            isPlasmaDonate: widget.isPlasmaDonate,
+                            patName: data.patientName.toString(),
+                            date: formatDateTime(data.date.toString()),
+                            location: data.location.toString(),
+                            bloodType: data.bloodGroup.toString(),
+                            count: data.unitsOfBlood.toString(),
+                            time: data.time.toString(),
+                            phoneNo: data.phone.toString(),
+                          ),
+                        );
+                      })),
                   SizedBox(
                     height: 2.h,
-                  ),
-                  DonationApproval(
-                    isUser: widget.isUser,
-                    isBloodDonate: widget.isBloodDontate,
-                    isPlasmaDonate: widget.isPlasmaDonate,
-                  ),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  DonationApproval(
-                    isUser: widget.isUser,
-                    isBloodDonate: widget.isBloodDontate,
-                    isPlasmaDonate: widget.isPlasmaDonate,
-                  ),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  DonationApproval(
-                    isUser: widget.isUser,
-                    isBloodDonate: widget.isBloodDontate,
-                    isPlasmaDonate: widget.isPlasmaDonate,
                   ),
                 ],
               ),

@@ -51,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _userdoctorController.getAllUserAppointment();
     _bloodBankController.getAllBloodBank();
     _userHospitalController.getAllHospitals();
+    _bloodBankController.getAllBloodRequest();
   }
 
   @override
@@ -240,7 +241,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 70.w,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: pharmacyController.pharmacies.length,
+                  itemCount: pharmacyController.pharmacies.length < 5
+                      ? pharmacyController.pharmacies.length
+                      : 4,
                   itemBuilder: (context, index) {
                     final data = pharmacyController.pharmacies[index];
                     return Padding(

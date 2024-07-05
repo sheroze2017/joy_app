@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/checkout/checkout_detail.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/medicine_detail_screen.dart';
@@ -18,7 +20,7 @@ class MyCartScreen extends StatefulWidget {
   State<MyCartScreen> createState() => _MyCartScreenState();
 }
 
-int count = 0;
+final pharmacyController = Get.put(AllPharmacyController());
 
 class _MyCartScreenState extends State<MyCartScreen> {
   @override
@@ -52,11 +54,12 @@ class _MyCartScreenState extends State<MyCartScreen> {
                             borderRadius: BorderRadius.circular(50),
                             color: Color(0xffD65B5B)),
                         child: Center(
-                          child: Text(
-                            '2',
+                            child: Obx(
+                          () => Text(
+                            pharmacyController.cartList.length.toString(),
                             style: TextStyle(color: Colors.white, fontSize: 6),
                           ),
-                        ),
+                        )),
                       ))
                 ],
               ),
@@ -75,187 +78,230 @@ class _MyCartScreenState extends State<MyCartScreen> {
                 ),
                 Column(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          color: AppColors.lightGreenColor,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Image.network(
-                                    'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
-                                    width: 12.5.w,
-                                    height: 12.5.w,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 2.w,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Panadol',
-                                        style: CustomTextStyles
-                                            .darkHeadingTextStyle(),
-                                      ),
-                                      Text(
-                                        '${count} Tablets for 5\$',
-                                        style: CustomTextStyles.w600TextStyle(
-                                            size: 14, color: Color(0xff4B5563)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 2.w,
-                            ),
-                            Divider(
-                              color: AppColors.lightGreyColor,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: RoundedButtonSmall(
-                                      isBold: true,
-                                      isSmall: true,
-                                      text: "Total 25\$",
-                                      onPressed: () {},
-                                      backgroundColor:
-                                          ThemeUtil.isDarkMode(context)
-                                              ? Color(0xff1F2228)
-                                              : AppColors.lightGreyColor,
-                                      textColor: ThemeUtil.isDarkMode(context)
-                                          ? AppColors.lightGreenColoreb1
-                                          : AppColors.darkGreenColor),
-                                ),
-                                Row(
+                    SizedBox(height: 2.h),
+                    Obx(() => ListView.builder(
+                        shrinkWrap: true,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        itemCount: pharmacyController.cartList.length,
+                        itemBuilder: ((context, index) {
+                          final data = pharmacyController.cartList[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: AppColors.lightGreenColor,
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          right: 8.0, left: 16),
-                                      child: InkWell(
-                                        onTap: () {
-                                          count--;
-                                          setState(() {});
-                                        },
-                                        child: Container(
-                                          width: 7.6.w,
-                                          height: 7.6.w,
-                                          decoration: BoxDecoration(
-                                              color:
+                                    Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          child: Image.network(
+                                            'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
+                                            width: 12.5.w,
+                                            height: 12.5.w,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 2.w,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                data.name.toString(),
+                                                style: CustomTextStyles
+                                                    .darkHeadingTextStyle(),
+                                              ),
+                                              Text(
+                                                '${1} Tablets for ${data.price}\$',
+                                                style: CustomTextStyles
+                                                    .w600TextStyle(
+                                                        size: 14,
+                                                        color:
+                                                            Color(0xff4B5563)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 2.w,
+                                    ),
+                                    Divider(
+                                      color: AppColors.lightGreyColor,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: RoundedButtonSmall(
+                                              isBold: true,
+                                              isSmall: true,
+                                              text: "Total 25\$",
+                                              onPressed: () {},
+                                              backgroundColor:
                                                   ThemeUtil.isDarkMode(context)
                                                       ? Color(0xff1F2228)
-                                                      : AppColors.whiteColor,
-                                              border: Border.all(
-                                                  color: Color(0xffBABABA)),
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          child: Center(
+                                                      : AppColors
+                                                          .lightGreyColor,
+                                              textColor: ThemeUtil.isDarkMode(
+                                                      context)
+                                                  ? AppColors.lightGreenColoreb1
+                                                  : AppColors.darkGreenColor),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 8.0, left: 16),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  pharmacyController
+                                                      .removeFromCart(data);
+                                                },
+                                                child: Container(
+                                                  width: 7.6.w,
+                                                  height: 7.6.w,
+                                                  decoration: BoxDecoration(
+                                                      color: ThemeUtil
+                                                              .isDarkMode(
+                                                                  context)
+                                                          ? Color(0xff1F2228)
+                                                          : AppColors
+                                                              .whiteColor,
+                                                      border: Border.all(
+                                                          color: Color(
+                                                              0xffBABABA)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Center(
+                                                      child: SvgPicture.asset(
+                                                          color: ThemeUtil
+                                                                  .isDarkMode(
+                                                                      context)
+                                                              ? AppColors
+                                                                  .whiteColor
+                                                              : null,
+                                                          'Assets/icons/minus.svg')),
+                                                ),
+                                              ),
+                                            ),
+                                            Text(count.toString(),
+                                                style: CustomTextStyles
+                                                    .lightTextStyle(
+                                                        size: 16,
+                                                        color:
+                                                            Color(0xff000000))),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0, right: 16),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  pharmacyController.addToCart(
+                                                      data, context);
+                                                },
+                                                child: Container(
+                                                  width: 7.6.w,
+                                                  height: 7.6.w,
+                                                  decoration: BoxDecoration(
+                                                      color: ThemeUtil
+                                                              .isDarkMode(
+                                                                  context)
+                                                          ? Color(0xff1F2228)
+                                                          : AppColors
+                                                              .whiteColor,
+                                                      border: Border.all(
+                                                          color: Color(
+                                                              0xffBABABA)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Center(
+                                                      child: Icon(Icons.add)),
+                                                ),
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                pharmacyController
+                                                    .removeproductCart(data);
+                                              },
                                               child: SvgPicture.asset(
-                                                  color: ThemeUtil.isDarkMode(
-                                                          context)
-                                                      ? AppColors.whiteColor
-                                                      : null,
-                                                  'Assets/icons/minus.svg')),
-                                        ),
-                                      ),
-                                    ),
-                                    Text(count.toString(),
-                                        style: CustomTextStyles.lightTextStyle(
-                                            size: 16,
-                                            color: Color(0xff000000))),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 8.0, right: 16),
-                                      child: InkWell(
-                                        onTap: () {
-                                          count = count + 1;
-                                          setState(() {});
-                                        },
-                                        child: Container(
-                                          width: 7.6.w,
-                                          height: 7.6.w,
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  ThemeUtil.isDarkMode(context)
-                                                      ? Color(0xff1F2228)
-                                                      : AppColors.whiteColor,
-                                              border: Border.all(
-                                                  color: Color(0xffBABABA)),
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          child: Center(child: Icon(Icons.add)),
-                                        ),
-                                      ),
-                                    ),
-                                    SvgPicture.asset('Assets/icons/trash-2.svg')
+                                                  'Assets/icons/trash-2.svg'),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }))),
                   ],
                 ),
+                SizedBox(
+                  height: 25.h,
+                )
               ],
             ),
             Positioned(
               bottom: 0,
               left: 0,
               right: 0,
-              child: Column(
-                children: [
-                  // Second column content here
-                  NameCharges(
-                    medName: 'Panadol',
-                    charges: '25\$',
-                  ),
-                  NameCharges(
-                    medName: 'Delivery Charges',
-                    charges: '2\$',
-                  ),
-                  NameCharges(
-                    medName: 'Grand Total',
-                    charges: '27\$',
-                    isTotal: true,
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RoundedButtonSmall(
-                          isBold: true,
-                          isSmall: true,
-                          text: 'Proceed to Check Out',
-                          onPressed: () {
-                            Get.to(CheckoutForm());
-                          },
-                          backgroundColor: ThemeUtil.isDarkMode(context)
-                              ? AppColors.lightGreenColoreb1
-                              : AppColors.darkGreenColor,
-                          textColor: ThemeUtil.isDarkMode(context)
-                              ? Color(0xff1F2228)
-                              : Color(0xffFFFFFF),
+              child: Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: Column(
+                  children: [
+                    // Second column content here
+                    NameCharges(
+                      medName: 'Panadol',
+                      charges: '25\$',
+                    ),
+                    NameCharges(
+                      medName: 'Delivery Charges',
+                      charges: '2\$',
+                    ),
+                    NameCharges(
+                      medName: 'Grand Total',
+                      charges: '27\$',
+                      isTotal: true,
+                    ),
+                    SizedBox(
+                      height: 2.h,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RoundedButtonSmall(
+                            isBold: true,
+                            isSmall: true,
+                            text: 'Proceed to Check Out',
+                            onPressed: () {
+                              Get.to(CheckoutForm());
+                            },
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? AppColors.lightGreenColoreb1
+                                : AppColors.darkGreenColor,
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff1F2228)
+                                : Color(0xffFFFFFF),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -34,6 +34,13 @@ class Endpoints {
   static String uploadBase64Image = '/auth/uploadBase64';
   static String createPost = '/auth/createPost';
 
+  static String getAllFriendRequest = '/user/getAllFriendRequests';
+  static String getAllUser = '/user/getAllUsers';
+  static String addFriend = '/user/addFriend';
+  static String updateFriendRequest = '/user/updateFriendRequest';
+  static String getAllFriendWithStatus = '/user/getAllFriends';
+  static String getAllSearchUserDetail = '/user/getSearchedUserDetails';
+
   //Doctor
 
   static String getAllAppointment = '/doctor/getDoctorAppoinntments';

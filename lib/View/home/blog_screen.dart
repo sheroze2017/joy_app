@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/modules/user/user_hospital/bloc/user_hospital_bloc.dart';
@@ -29,6 +30,9 @@ class UserBlogScreen extends StatelessWidget {
   UserHospitalController _userHospitalController =
       Get.put(UserHospitalController());
   UserDoctorController _userDoctorController = Get.put(UserDoctorController());
+
+  FriendsSocialController _friendSocialController =
+      Get.put(FriendsSocialController());
 
   @override
   Widget build(BuildContext context) {
@@ -173,16 +177,6 @@ class UserBlogScreen extends StatelessWidget {
                       );
                     }))),
 
-                // SizedBox(
-                //   height: 3.h,
-                // ),
-                // MyCustomWidget(
-                //   isLiked: false,
-                //   showImg: false,
-                //   isReply: false,
-                //   postName: 'Mille Brown',
-                //   text: 'Feeling depressed today.',
-                // )
               ],
             ),
           ),

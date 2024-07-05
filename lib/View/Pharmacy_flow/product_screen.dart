@@ -5,6 +5,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/user_flow/pharmacy_user/mycart_screen.dart';
 import 'package:sizer/sizer.dart';
 
 import '../social_media/new_friend.dart';
@@ -22,7 +23,7 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  final pharmacyController = Get.put(AllPharmacyController());
+  final pharmacyController = Get.find<AllPharmacyController>();
 
   @override
   void initState() {
@@ -50,8 +51,13 @@ class _ProductScreenState extends State<ProductScreen> {
                     border: Border.all(color: Color(0xffBABABA))),
                 child: Padding(
                   padding: const EdgeInsets.all(6.0),
-                  child: SvgPicture.asset(
-                    'Assets/icons/cardreddot.svg',
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(MyCartScreen());
+                    },
+                    child: SvgPicture.asset(
+                      'Assets/icons/cardreddot.svg',
+                    ),
                   ),
                 ),
               ),
@@ -103,6 +109,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             child: InkWell(
                               onTap: () {
                                 Get.to(MedicineDetailScreen(
+                                  product: data,
                                   isPharmacyAdmin: widget.isAdmin,
                                   productId: data.productId.toString(),
                                 ));
@@ -112,6 +119,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 onPressed: () {
                                   widget.isAdmin
                                       ? Get.to(MedicineDetailScreen(
+                                          product: data,
                                           isPharmacyAdmin: widget.isAdmin,
                                           productId: data.productId.toString(),
                                         ))

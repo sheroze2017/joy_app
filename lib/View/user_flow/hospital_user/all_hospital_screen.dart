@@ -7,6 +7,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
@@ -42,16 +43,15 @@ class AllHospitalScreen extends StatefulWidget {
 }
 
 class _AllHospitalScreenState extends State<AllHospitalScreen> {
-  final pharmacyController = Get.put(AllPharmacyController());
-  final bloodBankController = Get.put(UserBloodBankController());
-  final _userHospitalController = Get.put(UserHospitalController());
+  final pharmacyController = Get.find<AllPharmacyController>();
+  final bloodBankController = Get.find<UserBloodBankController>();
+  final _userHospitalController = Get.find<UserHospitalController>();
   @override
   void initState() {
     super.initState();
-    pharmacyController.getAllPharmacy();
-    bloodBankController.getAllBloodBank();
-    pharmacyController.getPharmacyProduct('3');
-    _userHospitalController.getAllHospitals();
+    // pharmacyController.getAllPharmacy();
+    // bloodBankController.getAllBloodBank();
+    //  _userHospitalController.getAllHospitals();
   }
 
   @override
@@ -171,9 +171,14 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
               Obx(
                 () => Text(
                   widget.isBloodBank
-                      ? bloodBankController.bloodbank.length.toString()
-                      : pharmacyController.pharmacies.length.toString() +
-                          ' found',
+                      ? bloodBankController.bloodbank.length.toString() +
+                          ' found'
+                      : widget.isPharmacy
+                          ? pharmacyController.pharmacies.length.toString() +
+                              ' found'
+                          : _userHospitalController.hospitalList.length
+                                  .toString() +
+                              ' found',
                   style: CustomTextStyles.darkHeadingTextStyle(
                       color: ThemeUtil.isDarkMode(context)
                           ? Color(0xffC8D3E0)
@@ -188,26 +193,28 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                   () => ListView.separated(
                       itemCount: widget.isBloodBank
                           ? bloodBankController.bloodbank.length
-                          : pharmacyController.pharmacies.length,
+                          : widget.isPharmacy
+                              ? pharmacyController.pharmacies.length
+                              : _userHospitalController.hospitalList.length,
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 2.w),
                       itemBuilder: (context, index) {
-                        final data = pharmacyController.pharmacies[index];
                         return InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => widget.isPharmacy
-                                    ? PharmacyProductScreen(
-                                        userId: data.userId.toString(),
-                                      )
-                                    : HospitalHomeScreen(
+                            widget.isPharmacy
+                                ? Get.to(PharmacyProductScreen(
+                                    userId: pharmacyController
+                                        .pharmacies[index].userId
+                                        .toString(),
+                                  ))
+                                : widget.isHospital
+                                    ? Get.to(HospitalHomeScreen(
                                         isUser: true,
-                                        hospitalId: data.userId.toString(),
-                                      ),
-                              ),
-                            );
+                                        hospitalId: _userHospitalController
+                                            .hospitalList[index].userId
+                                            .toString(),
+                                      ))
+                                    : print('null');
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -224,7 +231,32 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12.0),
                                     child: Image.network(
-                                      'http://194.233.69.219/joy-Images//f56fd7ce-0522-41b4-9c4d-9bdbd250e304.png',
+                                      widget.isBloodBank
+                                          ? bloodBankController
+                                                  .bloodbank[index].image
+                                                  .toString()
+                                                  .contains('http')
+                                              ? bloodBankController
+                                                  .bloodbank[index].image
+                                                  .toString()
+                                              : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'
+                                          : widget.isPharmacy
+                                              ? pharmacyController
+                                                      .pharmacies[index].image
+                                                      .toString()
+                                                      .contains('http')
+                                                  ? pharmacyController
+                                                      .pharmacies[index].image
+                                                      .toString()
+                                                  : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'
+                                              : _userHospitalController
+                                                      .hospitalList[index].image
+                                                      .toString()
+                                                      .contains('http')
+                                                  ? _userHospitalController
+                                                      .hospitalList[index].image
+                                                      .toString()
+                                                  : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
                                       width: 28.w,
                                       height: 28.w,
                                       fit: BoxFit.cover,
@@ -241,10 +273,49 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         HospitalName(
-                                          hospitalName: data.name,
+                                          hospitalName: widget.isBloodBank
+                                              ? bloodBankController
+                                                  .bloodbank[index].name
+                                                  .toString()
+                                              : widget.isPharmacy
+                                                  ? pharmacyController
+                                                      .pharmacies[index].name
+                                                      .toString()
+                                                  : _userHospitalController
+                                                      .hospitalList[index].name
+                                                      .toString(),
                                         ),
-                                        LocationWidget(location: ''),
-                                        ReviewBar(),
+                                        LocationWidget(
+                                          location: widget.isBloodBank
+                                              ? bloodBankController
+                                                  .bloodbank[index].location
+                                                  .toString()
+                                              : widget.isPharmacy
+                                                  ? pharmacyController
+                                                      .pharmacies[index]
+                                                      .location
+                                                      .toString()
+                                                  : _userHospitalController
+                                                      .hospitalList[index]
+                                                      .location
+                                                      .toString(),
+                                        ),
+                                        ReviewBar(
+                                            rating: '0',
+                                            count: widget.isBloodBank
+                                                ? bloodBankController
+                                                    .bloodbank[index]
+                                                    .reviews!
+                                                    .length
+                                                : widget.isPharmacy
+                                                    ? pharmacyController
+                                                        .pharmacies[index]
+                                                        .reviews!
+                                                        .length
+                                                    : _userHospitalController
+                                                        .hospitalList[index]
+                                                        .reviews!
+                                                        .length),
                                         Divider(
                                           color: Color(0xff6B7280),
                                           thickness: 0.1.h,
@@ -258,7 +329,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                                 SizedBox(
                                                   width: 0.5.w,
                                                 ),
-                                                Text('2.5 km/40min',
+                                                Text('0.0 km/0min',
                                                     style: CustomTextStyles
                                                         .lightTextStyle(
                                                             color: Color(
@@ -347,24 +418,27 @@ class LocationWidget extends StatelessWidget {
 }
 
 class ReviewBar extends StatelessWidget {
-  const ReviewBar({
-    super.key,
-  });
+  int count;
+  String rating;
+  ReviewBar({super.key, required this.count, required this.rating});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text('5.0',
+        Text(rating,
             style: CustomTextStyles.w600TextStyle(
                 color: Color(0xff6B7280), size: 10.8)),
         RatingBar.builder(
           itemSize: 15,
-          initialRating: 6,
+          initialRating: double.parse(rating),
           minRating: 1,
           direction: Axis.horizontal,
           allowHalfRating: true,
+          ignoreGestures: true,
+          tapOnlyMode: true,
           itemCount: 5,
+          updateOnDrag: true,
           itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
           itemBuilder: (context, _) => Icon(
             Icons.star,
@@ -377,7 +451,7 @@ class ReviewBar extends StatelessWidget {
         SizedBox(
           width: 0.5.w,
         ),
-        Text('(58 Reviews)',
+        Text('(${count} Reviews)',
             style: CustomTextStyles.lightTextStyle(
                 color: Color(0xff6B7280), size: 10.8)),
       ],

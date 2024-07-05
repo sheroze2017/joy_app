@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/modules/blood_bank/bloc/blood_bank_bloc.dart';
+import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/social_media/new_friend.dart';
@@ -9,9 +11,12 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/custom_appbar.dart';
+import '../home/my_profile.dart';
 
 class AddFriend extends StatelessWidget {
-  const AddFriend({super.key});
+  AddFriend({super.key});
+  FriendsSocialController _friendsController =
+      Get.find<FriendsSocialController>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,74 +30,131 @@ class AddFriend extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 5.h,
+          child: Stack(
+            children: [
+              Container(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 4.h,
+                    ),
+                    Obx(
+                      () => countRequest(
+                        title: 'Requests',
+                        requestCount: '(' +
+                            _friendsController.friendRequest.length.toString() +
+                            ')',
+                        showCount: true,
+                      ),
+                    ),
+                    Obx(() => _friendsController.friendRequest.length == 0
+                        ? Center(
+                            child: Text(
+                              'No Friend Request',
+                              style: CustomTextStyles.lightTextStyle(),
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: _friendsController.friendRequest.length,
+                            itemBuilder: ((context, index) {
+                              final data =
+                                  _friendsController.friendRequest[index];
+
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    Get.to(MyProfileScreen(
+                                      myProfile: true,
+                                      friendId: data.userId.toString(),
+                                    ));
+                                  },
+                                  child: FriendRequestWidget(
+                                    profileImage: data.friendDetails!.image!
+                                            .contains('http')
+                                        ? data.friendDetails!.image.toString()
+                                        : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                    userName:
+                                        data.friendDetails!.name.toString(),
+                                    mutualFriends: [],
+                                    mutualFriendsCount: data
+                                        .friendDetails!.mutualFriends!.length,
+                                    friendsId: data.friendsId.toString(),
+                                  ),
+                                ),
+                              );
+                            }))),
+                    countRequest(
+                      title: 'People you may know',
+                      requestCount: '',
+                      showCount: false,
+                    ),
+                    SizedBox(
+                      height: 1.h,
+                    ),
+                    Container(
+                        height: 60.w,
+                        child: Obx(
+                          () => _friendsController.userList.length == 0
+                              ? Center(
+                                  child: Text(
+                                    'No user found',
+                                    style: CustomTextStyles.lightTextStyle(),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount:
+                                      _friendsController.userList.length > 3
+                                          ? 3
+                                          : _friendsController.userList.length,
+                                  itemBuilder: (context, index) {
+                                    final data =
+                                        _friendsController.userList[index];
+                                    return InkWell(
+                                      onTap: () {
+                                        Get.to(MyProfileScreen(
+                                          myProfile: true,
+                                          friendId: data.userId.toString(),
+                                        ));
+                                      },
+                                      child: AddFriendWidget(
+                                          profileImage: data.image!
+                                                  .contains('http')
+                                              ? data.image.toString()
+                                              : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                          userName: data.name.toString(),
+                                          mutualFriends: [],
+                                          mutualFriendsCount: 0,
+                                          onRemove: () {
+                                            _friendsController
+                                                .removeUser(data.userId);
+                                          },
+                                          onAddFriend: () {
+                                            _friendsController.AddFriend(
+                                                data.userId, context);
+                                          }),
+                                    );
+                                  },
+                                ),
+                        ))
+                  ],
                 ),
-                countRequest(
-                  title: 'Requests',
-                  requestCount: ' (331)',
-                  showCount: true,
-                ),
-                FriendRequestWidget(
-                  profileImage:
-                      'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  userName: 'Jim Hopper',
-                  mutualFriends: [],
-                  mutualFriendsCount: 34,
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                FriendRequestWidget(
-                  profileImage:
-                      'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  userName: 'Jim Hopper',
-                  mutualFriends: [],
-                  mutualFriendsCount: 34,
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                FriendRequestWidget(
-                  profileImage:
-                      'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  userName: 'Jim Hopper',
-                  mutualFriends: [],
-                  mutualFriendsCount: 34,
-                ),
-                SizedBox(
-                  height: 3.h,
-                ),
-                countRequest(
-                  title: 'People you may know',
-                  requestCount: '',
-                  showCount: false,
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                Container(
-                  height: 60.w,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return AddFriendWidget(
-                          profileImage:
-                              'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=600',
-                          userName: 'Sheroze Rehman',
-                          mutualFriends: [],
-                          mutualFriendsCount: 5,
-                          onRemove: () {},
-                          onAddFriend: () {});
-                    },
-                  ),
-                )
-              ],
-            ),
+              ),
+              Obx(() => _friendsController.updateRequestLoader.value
+                  ? Positioned(
+                      top: 0,
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: Theme.of(context).primaryColor,
+                      )))
+                  : Container())
+            ],
           ),
         ),
       ),
@@ -152,15 +214,18 @@ class FriendRequestWidget extends StatelessWidget {
   final String userName;
   final List<String> mutualFriends;
   final int mutualFriendsCount;
+  final String friendsId;
 
-  const FriendRequestWidget({
-    Key? key,
-    required this.profileImage,
-    required this.userName,
-    required this.mutualFriends,
-    required this.mutualFriendsCount,
-  }) : super(key: key);
-
+  FriendRequestWidget(
+      {Key? key,
+      required this.profileImage,
+      required this.userName,
+      required this.mutualFriends,
+      required this.mutualFriendsCount,
+      required this.friendsId})
+      : super(key: key);
+  FriendsSocialController _friendsController =
+      Get.find<FriendsSocialController>();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -231,7 +296,10 @@ class FriendRequestWidget extends StatelessWidget {
               children: [
                 RoundedButtonSmall(
                     text: "Accept",
-                    onPressed: () {},
+                    onPressed: () {
+                      _friendsController.updateFriendRequest(
+                          friendsId, 'Accepted', context);
+                    },
                     backgroundColor: ThemeUtil.isDarkMode(context)
                         ? Color(0xffC5D3E3)
                         : Color(0xff1C2A3A),
@@ -243,7 +311,10 @@ class FriendRequestWidget extends StatelessWidget {
                 ),
                 RoundedButtonSmall(
                     text: "Reject",
-                    onPressed: () {},
+                    onPressed: () {
+                      _friendsController.updateFriendRequest(
+                          friendsId, 'Rejected', context);
+                    },
                     backgroundColor: ThemeUtil.isDarkMode(context)
                         ? Color(0xff191919)
                         : Color(0xffF1F4F5),
@@ -295,15 +366,16 @@ class AddFriendWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   InkWell(
+                      onTap: onRemove,
                       child: Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: Align(
-                        alignment: Alignment.topRight,
-                        child: Icon(
-                          Icons.close,
-                          size: 16,
-                        )),
-                  )),
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: Icon(
+                              Icons.close,
+                              size: 16,
+                            )),
+                      )),
                   ClipOval(
                     child: Image.network(
                       profileImage,
@@ -323,42 +395,43 @@ class AddFriendWidget extends StatelessWidget {
                       maxLines: 1,
                     ),
                   ),
-                  SizedBox(height: 0.5.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: List.generate(
-                          mutualFriends.length,
-                          (index) => ClipOval(
-                            child: Image.network(
-                              mutualFriends[index],
-                              width: 1.9.h,
-                              height: 1.9.h,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 2.w,
-                      ),
-                      Expanded(
-                        child: Text(
-                          '$mutualFriendsCount mutual friends',
-                          style: CustomTextStyles.lightTextStyle(
-                              size: 10, color: Color(0xff99A1BE)),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // SizedBox(height: 0.5.h),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Row(
+                  //       children: List.generate(
+                  //         mutualFriends.length,
+                  //         (index) => ClipOval(
+                  //           child: Image.network(
+                  //             mutualFriends[index],
+                  //             width: 1.9.h,
+                  //             height: 1.9.h,
+                  //             fit: BoxFit.cover,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       width: 2.w,
+                  //     ),
+                  //     Expanded(
+                  //       child: Text(
+                  //         '$mutualFriendsCount mutual friends',
+                  //         style: CustomTextStyles.lightTextStyle(
+                  //             size: 10, color: Color(0xff99A1BE)),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+
                   SizedBox(height: 0.5.h),
                   Row(
                     children: [
                       Expanded(
                         child: RoundedButtonSmall(
                             text: 'Add Friend',
-                            onPressed: () {},
+                            onPressed: onAddFriend,
                             backgroundColor: ThemeUtil.isDarkMode(context)
                                 ? Color(0xffC5D3E3)
                                 : Color(0xff1C2A3A),

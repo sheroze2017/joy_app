@@ -55,9 +55,10 @@ class UserDoctorController extends GetxController {
 
   Future<AllUserAppointment> getAllUserAppointment() async {
     User? currentUser = await getCurrentUser();
+    userAppointment.clear();
     try {
-      AllUserAppointment response =
-          await userDoctorApi.getAllUserAppointment('50');
+      AllUserAppointment response = await userDoctorApi
+          .getAllUserAppointment(currentUser!.userId.toString());
       if (response.data != null) {
         response.data!.forEach((element) {
           userAppointment.add(element);
@@ -182,7 +183,6 @@ class UserDoctorController extends GetxController {
                   'Your appointment with ${doctorName} is confirmed for ${date} at ${time}.',
               showButton: true,
               isBookAppointment: true,
-              
             );
           },
         );

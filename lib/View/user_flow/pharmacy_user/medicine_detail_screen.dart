@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -14,9 +15,12 @@ import 'package:sizer/sizer.dart';
 
 class MedicineDetailScreen extends StatefulWidget {
   final bool isPharmacyAdmin;
+  PharmacyProductData product;
   final String productId;
   MedicineDetailScreen(
-      {required this.isPharmacyAdmin, required this.productId});
+      {required this.isPharmacyAdmin,
+      required this.productId,
+      required this.product});
   @override
   State<MedicineDetailScreen> createState() => _MedicineDetailScreenState();
 }
@@ -24,7 +28,7 @@ class MedicineDetailScreen extends StatefulWidget {
 int count = 0;
 
 class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
-  final pharmacyController = Get.put(AllPharmacyController());
+  final pharmacyController = Get.find<AllPharmacyController>();
 
   @override
   void initState() {
@@ -50,7 +54,11 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                     padding: EdgeInsets.only(right: 16),
                     child: Stack(
                       children: [
-                        SvgPicture.asset('Assets/icons/cart.svg'),
+                        InkWell(
+                            onTap: () {
+                              Get.to(MyCartScreen());
+                            },
+                            child: SvgPicture.asset('Assets/icons/cart.svg')),
                         Positioned(
                             top: 0,
                             right: 0,
@@ -61,12 +69,13 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                   borderRadius: BorderRadius.circular(50),
                                   color: Color(0xffD65B5B)),
                               child: Center(
-                                child: Text(
-                                  '2',
+                                  child: Obx(
+                                () => Text(
+                                  pharmacyController.cartList.length.toString(),
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 6),
                                 ),
-                              ),
+                              )),
                             ))
                       ],
                     ),
@@ -158,8 +167,8 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                             const EdgeInsets.only(right: 8.0),
                                         child: InkWell(
                                           onTap: () {
-                                            count--;
-                                            setState(() {});
+                                            pharmacyController
+                                                .removeFromCart(widget.product);
                                           },
                                           child: Container(
                                             width: 7.6.w,
@@ -179,21 +188,29 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                           ),
                                         ),
                                       ),
-                                      Text(count.toString(),
-                                          style:
-                                              CustomTextStyles.lightTextStyle(
-                                                  size: 16,
-                                                  color: ThemeUtil.isDarkMode(
-                                                          context)
-                                                      ? Color(0xffE8E8E8)
-                                                      : Color(0xff000000))),
+                                      Obx(
+                                        () => Text(
+                                            pharmacyController.cartList
+                                                .where((cart) =>
+                                                    cart.productId ==
+                                                    widget.productId)
+                                                .length
+                                                .toString(),
+                                            style:
+                                                CustomTextStyles.lightTextStyle(
+                                                    size: 16,
+                                                    color: ThemeUtil.isDarkMode(
+                                                            context)
+                                                        ? Color(0xffE8E8E8)
+                                                        : Color(0xff000000))),
+                                      ),
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 8.0),
                                         child: InkWell(
                                           onTap: () {
-                                            count = count + 1;
-                                            setState(() {});
+                                            pharmacyController.addToCart(
+                                                widget.product, context);
                                           },
                                           child: Container(
                                             width: 7.6.w,
@@ -274,7 +291,10 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                         Expanded(
                                           child: RoundedButtonSmall(
                                               text: "Add to Cart",
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                pharmacyController.addToCart(
+                                                    widget.product, context);
+                                              },
                                               backgroundColor:
                                                   ThemeUtil.isDarkMode(context)
                                                       ? Color(0xff1F2228)
@@ -292,6 +312,8 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                           child: RoundedButtonSmall(
                                               text: "Buy Now",
                                               onPressed: () {
+                                                pharmacyController.addToCart(
+                                                    widget.product, context);
                                                 Get.to(MyCartScreen());
                                               },
                                               backgroundColor:
