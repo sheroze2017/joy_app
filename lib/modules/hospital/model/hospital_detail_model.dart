@@ -1,20 +1,16 @@
-class AllHospital {
+class HospitalDetail {
   int? code;
   bool? sucess;
-  List<Hospital>? data;
+  hospitaldetail? data;
   String? message;
 
-  AllHospital({this.code, this.sucess, this.data, this.message});
+  HospitalDetail({this.code, this.sucess, this.data, this.message});
 
-  AllHospital.fromJson(Map<String, dynamic> json) {
+  HospitalDetail.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     sucess = json['sucess'];
-    if (json['data'] != null) {
-      data = <Hospital>[];
-      json['data'].forEach((v) {
-        data!.add(new Hospital.fromJson(v));
-      });
-    }
+    data =
+        json['data'] != null ? new hospitaldetail.fromJson(json['data']) : null;
     message = json['message'];
   }
 
@@ -23,14 +19,14 @@ class AllHospital {
     data['code'] = this.code;
     data['sucess'] = this.sucess;
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.toJson();
     }
     data['message'] = this.message;
     return data;
   }
 }
 
-class Hospital {
+class hospitaldetail {
   int? userId;
   String? name;
   String? email;
@@ -48,9 +44,8 @@ class Hospital {
   String? institute;
   String? checkupFee;
   String? location;
-  List<Reviews>? reviews;
 
-  Hospital(
+  hospitaldetail(
       {this.userId,
       this.name,
       this.email,
@@ -67,10 +62,9 @@ class Hospital {
       this.about,
       this.institute,
       this.checkupFee,
-      this.location,
-      this.reviews});
+      this.location});
 
-  Hospital.fromJson(Map<String, dynamic> json) {
+  hospitaldetail.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
     name = json['name'] ?? '';
     email = json['email'] ?? '';
@@ -88,14 +82,6 @@ class Hospital {
     institute = json['institute'] ?? '';
     checkupFee = json['checkup_fee'] ?? '';
     location = json['location'] ?? '';
-    if (json['reviews'] != null) {
-      reviews = <Reviews>[];
-      json['reviews'].forEach((v) {
-        reviews!.add(new Reviews.fromJson(v));
-      });
-    } else {
-      reviews = [];
-    }
   }
 
   Map<String, dynamic> toJson() {
@@ -117,66 +103,6 @@ class Hospital {
     data['institute'] = this.institute;
     data['checkup_fee'] = this.checkupFee;
     data['location'] = this.location;
-    data['reviews'] = this.reviews;
-    return data;
-  }
-}
-
-class Reviews {
-  String? rating;
-  String? review;
-  String? status;
-  GiveBy? giveBy;
-  int? reviewId;
-  String? createdAt;
-
-  Reviews(
-      {this.rating,
-      this.review,
-      this.status,
-      this.giveBy,
-      this.reviewId,
-      this.createdAt});
-
-  Reviews.fromJson(Map<String, dynamic> json) {
-    rating = json['rating'];
-    review = json['review'];
-    status = json['status'];
-    giveBy =
-        json['give_by'] != null ? new GiveBy.fromJson(json['give_by']) : null;
-    reviewId = json['review_id'];
-    createdAt = json['created_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['rating'] = this.rating;
-    data['review'] = this.review;
-    data['status'] = this.status;
-    if (this.giveBy != null) {
-      data['give_by'] = this.giveBy!.toJson();
-    }
-    data['review_id'] = this.reviewId;
-    data['created_at'] = this.createdAt;
-    return data;
-  }
-}
-
-class GiveBy {
-  String? name;
-  String? image;
-
-  GiveBy({this.name, this.image});
-
-  GiveBy.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    image = json['image'].toString();
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    data['image'] = this.image;
     return data;
   }
 }

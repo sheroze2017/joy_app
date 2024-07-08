@@ -21,13 +21,14 @@ class Endpoints {
   static String editPharmacyProduct = '/pharmacy/editProduct';
   static String getAllOrders = '/auth/getAllOrders';
   static String updateOrderStatus = '/auth/updateOrderStatus';
+  static String placeOrder = '/auth/placeOrder';
 
   //Hospial Details
 
   static String getAllHospitalPharmacies = '/hospital/getHospitalPharmacies';
   static String getAllHospitalDoctors = '/hospital/getHospitalDoctors';
   static String getAllHospital = '/hospital/getAllHospitals';
-
+  static String getHospitalDetail = '/hospital/getHospitalDetails';
   //Social Media
   static String getAllPosts = '/auth/getAllPosts';
   static String getAllPostById = '/auth/getPosts';
@@ -52,6 +53,7 @@ class Endpoints {
   static String giveReview = '/doctor/giveReview';
   static String giveAppointmentMedication = '/doctor/appointmentMedications';
   static String getAllUserAppointment = '/auth/getUserAppointments';
+  static String giveMedication = '/doctor/appointmentMedications';
 
   // BLOOD BANK
 

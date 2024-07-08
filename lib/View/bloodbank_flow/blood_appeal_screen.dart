@@ -53,6 +53,8 @@ class BloodDonationAppeal extends StatelessWidget {
                         count: data.unitsOfBlood.toString(),
                         time: data.time.toString(),
                         phoneNo: data.phone.toString(),
+                        city: data.city.toString(),
+                        gender: data.gender.toString(),
                       ),
                     );
                   })),

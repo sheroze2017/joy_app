@@ -45,14 +45,26 @@ class AddFriend extends StatelessWidget {
                             _friendsController.friendRequest.length.toString() +
                             ')',
                         showCount: true,
+                        isRequest: true,
                       ),
                     ),
                     Obx(() => _friendsController.friendRequest.length == 0
-                        ? Center(
-                            child: Text(
-                              'No Friend Request',
-                              style: CustomTextStyles.lightTextStyle(),
-                            ),
+                        ? Column(
+                            children: [
+                              Center(
+                                child: Text(
+                                  'No Friend Request',
+                                  style: CustomTextStyles.lightTextStyle(),
+                                ),
+                              ),
+                              RoundedButtonSmall(
+                                  text: 'refresh',
+                                  onPressed: () {
+                                    _friendsController.getAllFriendRequest();
+                                  },
+                                  backgroundColor: Colors.black,
+                                  textColor: Colors.white)
+                            ],
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -78,7 +90,11 @@ class AddFriend extends StatelessWidget {
                                         : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                                     userName:
                                         data.friendDetails!.name.toString(),
-                                    mutualFriends: [],
+                                    mutualFriends: data
+                                        .friendDetails!.mutualFriends!
+                                        .map((friend) =>
+                                            friend.mutualFriendImage!)
+                                        .toList(),
                                     mutualFriendsCount: data
                                         .friendDetails!.mutualFriends!.length,
                                     friendsId: data.friendsId.toString(),
@@ -166,12 +182,14 @@ class countRequest extends StatelessWidget {
   final String requestCount;
   final bool showCount;
   final String title;
+  bool isRequest;
 
-  const countRequest(
+  countRequest(
       {super.key,
       required this.requestCount,
       required this.showCount,
-      required this.title});
+      required this.title,
+      this.isRequest = false});
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +211,9 @@ class countRequest extends StatelessWidget {
         Spacer(),
         InkWell(
           onTap: () {
-            Get.to(AddNewFriend());
+            Get.to(AddNewFriend(
+              isRequests: isRequest,
+            ));
           },
           child: Text(
             'See all',
@@ -268,10 +288,12 @@ class FriendRequestWidget extends StatelessWidget {
                     children: [
                       Row(
                         children: List.generate(
-                          mutualFriends.length,
+                          mutualFriends.length > 3 ? 3 : mutualFriends.length,
                           (index) => ClipOval(
                             child: Image.network(
-                              mutualFriends[index],
+                              mutualFriends[index].contains('http')
+                                  ? mutualFriends[index]
+                                  : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                               width: 20,
                               height: 20,
                               fit: BoxFit.cover,

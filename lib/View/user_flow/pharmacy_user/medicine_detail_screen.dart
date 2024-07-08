@@ -71,7 +71,8 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                               child: Center(
                                   child: Obx(
                                 () => Text(
-                                  pharmacyController.cartList.length.toString(),
+                                  pharmacyController.cartItems.length
+                                      .toString(),
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 6),
                                 ),
@@ -169,6 +170,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                           onTap: () {
                                             pharmacyController
                                                 .removeFromCart(widget.product);
+                                            setState(() {});
                                           },
                                           child: Container(
                                             width: 7.6.w,
@@ -188,22 +190,21 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                           ),
                                         ),
                                       ),
-                                      Obx(
-                                        () => Text(
-                                            pharmacyController.cartList
-                                                .where((cart) =>
-                                                    cart.productId ==
-                                                    widget.productId)
-                                                .length
-                                                .toString(),
+                                      Obx(() {
+                                        int quantity = pharmacyController
+                                            .getQuantityOfProduct(
+                                          widget.product,
+                                        );
+
+                                        return Text(quantity.toString(),
                                             style:
                                                 CustomTextStyles.lightTextStyle(
                                                     size: 16,
                                                     color: ThemeUtil.isDarkMode(
                                                             context)
                                                         ? Color(0xffE8E8E8)
-                                                        : Color(0xff000000))),
-                                      ),
+                                                        : Color(0xff000000)));
+                                      }),
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 8.0),
@@ -211,6 +212,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                           onTap: () {
                                             pharmacyController.addToCart(
                                                 widget.product, context);
+                                            setState(() {});
                                           },
                                           child: Container(
                                             width: 7.6.w,

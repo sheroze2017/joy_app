@@ -69,16 +69,16 @@ class DoctorDetailsMap {
     email = json['email'];
     password = json['password'];
     image = json['image'].toString();
-    userRole = json['user_role'];
-    authType = json['auth_type'];
-    phone = json['phone'];
-    deviceToken = json['device_token'];
+    userRole = json['user_role'] ?? '';
+    authType = json['auth_type'] ?? '';
+    phone = json['phone'] ?? '';
+    deviceToken = json['device_token'] ?? '';
     doctorDetailId = json['doctor_detail_id'];
-    gender = json['gender'];
-    expertise = json['expertise'];
-    location = json['location'];
-    consultationFee = json['consultation_fee'];
-    qualifications = json['qualifications'];
+    gender = json['gender'] ?? '';
+    expertise = json['expertise'] ?? '';
+    location = json['location'].toString();
+    consultationFee = json['consultation_fee'].toString();
+    qualifications = json['qualifications'].toString();
     if (json['reviews'] != null) {
       reviews = <Reviews>[];
       json['reviews'].forEach((v) {

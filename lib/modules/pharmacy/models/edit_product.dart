@@ -1,20 +1,15 @@
-class PharmacyProductModel {
+class editProduct {
   int? code;
   bool? sucess;
-  List<PharmacyProductData>? data;
+  Data? data;
   String? message;
 
-  PharmacyProductModel({this.code, this.sucess, this.data, this.message});
+  editProduct({this.code, this.sucess, this.data, this.message});
 
-  PharmacyProductModel.fromJson(Map<String, dynamic> json) {
+  editProduct.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     sucess = json['sucess'];
-    if (json['data'] != null) {
-      data = <PharmacyProductData>[];
-      json['data'].forEach((v) {
-        data!.add(new PharmacyProductData.fromJson(v));
-      });
-    }
+    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     message = json['message'];
   }
 
@@ -23,14 +18,14 @@ class PharmacyProductModel {
     data['code'] = this.code;
     data['sucess'] = this.sucess;
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.toJson();
     }
     data['message'] = this.message;
     return data;
   }
 }
 
-class PharmacyProductData {
+class Data {
   int? productId;
   String? name;
   String? shortDescription;
@@ -38,13 +33,10 @@ class PharmacyProductData {
   String? price;
   String? discount;
   int? pharmacyId;
-  int? cartQuantity;
-
   int? quantity;
-
   String? dosage;
 
-  PharmacyProductData(
+  Data(
       {this.productId,
       this.name,
       this.shortDescription,
@@ -53,10 +45,9 @@ class PharmacyProductData {
       this.discount,
       this.pharmacyId,
       this.quantity,
-      this.cartQuantity = 1,
       this.dosage});
 
-  PharmacyProductData.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     productId = json['product_id'];
     name = json['name'];
     shortDescription = json['short_description'];
@@ -65,7 +56,6 @@ class PharmacyProductData {
     discount = json['discount'];
     pharmacyId = json['pharmacy_id'];
     quantity = json['quantity'];
-    cartQuantity = 1;
     dosage = json['dosage'];
   }
 

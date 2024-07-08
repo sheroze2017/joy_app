@@ -9,12 +9,21 @@ class UserHospitalController extends GetxController {
   late UserHospitalApi userHospitalApi;
   late DoctorApi doctorApi;
   RxList<Hospital> hospitalList = <Hospital>[].obs;
+  RxList<Hospital> searchResults = <Hospital>[].obs;
+  RxString searchQuery = ''.obs;
 
   @override
   void onInit() async {
     super.onInit();
     dioClient = DioClient.getInstance();
     userHospitalApi = UserHospitalApi(dioClient);
+  }
+
+  void searchHospital(String query) {
+    searchQuery.value = query;
+    searchResults.value = hospitalList.value
+        .where((hosp) => hosp.name!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   Future<AllHospital> getAllHospitals() async {

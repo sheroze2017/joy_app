@@ -49,6 +49,12 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
   @override
   void initState() {
     super.initState();
+    pharmacyController.searchResults.value =
+        pharmacyController.pharmacies.value;
+    bloodBankController.searchResults.value =
+        bloodBankController.bloodbank.value;
+    _userHospitalController.searchResults.value =
+        _userHospitalController.hospitalList.value;
     // pharmacyController.getAllPharmacy();
     // bloodBankController.getAllBloodBank();
     //  _userHospitalController.getAllHospitals();
@@ -69,6 +75,14 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RoundedSearchTextField(
+                  onChanged: widget.isBloodBank
+                      ? (query) => bloodBankController.searchBloodBanks(query)
+                      : widget.isPharmacy
+                          ? (query) => pharmacyController.searchPharmacy(query)
+                          : widget.isHospital
+                              ? (query) =>
+                                  _userHospitalController.searchHospital(query)
+                              : null,
                   hintText: widget.isPharmacy
                       ? 'Search Pharmacies'
                       : widget.isHospital
@@ -171,12 +185,12 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
               Obx(
                 () => Text(
                   widget.isBloodBank
-                      ? bloodBankController.bloodbank.length.toString() +
+                      ? bloodBankController.searchResults.length.toString() +
                           ' found'
                       : widget.isPharmacy
-                          ? pharmacyController.pharmacies.length.toString() +
+                          ? pharmacyController.searchResults.length.toString() +
                               ' found'
-                          : _userHospitalController.hospitalList.length
+                          : _userHospitalController.searchResults.length
                                   .toString() +
                               ' found',
                   style: CustomTextStyles.darkHeadingTextStyle(
@@ -192,10 +206,10 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                 child: Obx(
                   () => ListView.separated(
                       itemCount: widget.isBloodBank
-                          ? bloodBankController.bloodbank.length
+                          ? bloodBankController.searchResults.length
                           : widget.isPharmacy
-                              ? pharmacyController.pharmacies.length
-                              : _userHospitalController.hospitalList.length,
+                              ? pharmacyController.searchResults.length
+                              : _userHospitalController.searchResults.length,
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 2.w),
                       itemBuilder: (context, index) {
@@ -204,14 +218,14 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                             widget.isPharmacy
                                 ? Get.to(PharmacyProductScreen(
                                     userId: pharmacyController
-                                        .pharmacies[index].userId
+                                        .searchResults[index].userId
                                         .toString(),
                                   ))
                                 : widget.isHospital
                                     ? Get.to(HospitalHomeScreen(
                                         isUser: true,
                                         hospitalId: _userHospitalController
-                                            .hospitalList[index].userId
+                                            .searchResults[index].userId
                                             .toString(),
                                       ))
                                     : print('null');
@@ -233,28 +247,32 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                     child: Image.network(
                                       widget.isBloodBank
                                           ? bloodBankController
-                                                  .bloodbank[index].image
+                                                  .searchResults[index].image
                                                   .toString()
                                                   .contains('http')
                                               ? bloodBankController
-                                                  .bloodbank[index].image
+                                                  .searchResults[index].image
                                                   .toString()
                                               : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'
                                           : widget.isPharmacy
                                               ? pharmacyController
-                                                      .pharmacies[index].image
+                                                      .searchResults[index]
+                                                      .image
                                                       .toString()
                                                       .contains('http')
                                                   ? pharmacyController
-                                                      .pharmacies[index].image
+                                                      .searchResults[index]
+                                                      .image
                                                       .toString()
                                                   : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'
                                               : _userHospitalController
-                                                      .hospitalList[index].image
+                                                      .searchResults[index]
+                                                      .image
                                                       .toString()
                                                       .contains('http')
                                                   ? _userHospitalController
-                                                      .hospitalList[index].image
+                                                      .searchResults[index]
+                                                      .image
                                                       .toString()
                                                   : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
                                       width: 28.w,
@@ -275,28 +293,28 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                         HospitalName(
                                           hospitalName: widget.isBloodBank
                                               ? bloodBankController
-                                                  .bloodbank[index].name
+                                                  .searchResults[index].name
                                                   .toString()
                                               : widget.isPharmacy
                                                   ? pharmacyController
-                                                      .pharmacies[index].name
+                                                      .searchResults[index].name
                                                       .toString()
                                                   : _userHospitalController
-                                                      .hospitalList[index].name
+                                                      .searchResults[index].name
                                                       .toString(),
                                         ),
                                         LocationWidget(
                                           location: widget.isBloodBank
                                               ? bloodBankController
-                                                  .bloodbank[index].location
+                                                  .searchResults[index].location
                                                   .toString()
                                               : widget.isPharmacy
                                                   ? pharmacyController
-                                                      .pharmacies[index]
+                                                      .searchResults[index]
                                                       .location
                                                       .toString()
                                                   : _userHospitalController
-                                                      .hospitalList[index]
+                                                      .searchResults[index]
                                                       .location
                                                       .toString(),
                                         ),
@@ -304,16 +322,16 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                             rating: '0',
                                             count: widget.isBloodBank
                                                 ? bloodBankController
-                                                    .bloodbank[index]
+                                                    .searchResults[index]
                                                     .reviews!
                                                     .length
                                                 : widget.isPharmacy
                                                     ? pharmacyController
-                                                        .pharmacies[index]
+                                                        .searchResults[index]
                                                         .reviews!
                                                         .length
                                                     : _userHospitalController
-                                                        .hospitalList[index]
+                                                        .searchResults[index]
                                                         .reviews!
                                                         .length),
                                         Divider(

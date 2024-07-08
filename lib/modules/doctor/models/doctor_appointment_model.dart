@@ -42,6 +42,12 @@ class Appointment {
   String? symptoms;
   String? location;
   String? remarks;
+  String? patientName;
+  String? age;
+  String? gender;
+  String? certificate;
+  String? diagnosis;
+  String? medications;
   UserDetails? userDetails;
 
   Appointment(
@@ -56,20 +62,32 @@ class Appointment {
       this.symptoms,
       this.location,
       this.remarks,
+      this.patientName,
+      this.age,
+      this.gender,
+      this.certificate,
+      this.diagnosis,
+      this.medications,
       this.userDetails});
 
   Appointment.fromJson(Map<String, dynamic> json) {
     appointmentId = json['appointment_id'];
     doctorUserId = json['doctor_user_id'];
     patientUserId = json['patient_user_id'];
-    date = json['date'];
-    time = json['time'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    complain = json['complain'];
-    symptoms = json['symptoms'];
-    location = json['location'];
-    remarks = json['remarks'];
+    date = json['date'] ?? '';
+    time = json['time'] ?? '';
+    status = json['status'] ?? '';
+    createdAt = json['created_at'] ?? '';
+    complain = json['complain'] ?? '';
+    symptoms = json['symptoms'] ?? '';
+    location = json['location'] ?? '';
+    remarks = json['remarks'] ?? '';
+    patientName = json['patient_name'] ?? '';
+    age = json['age'] ?? '';
+    gender = json['gender'] ?? '';
+    certificate = json['certificate'] ?? '';
+    diagnosis = json['diagnosis'] ?? '';
+    medications = json['medications'] ?? '';
     userDetails = json['user_details'] != null
         ? new UserDetails.fromJson(json['user_details'])
         : null;
@@ -88,6 +106,12 @@ class Appointment {
     data['symptoms'] = this.symptoms;
     data['location'] = this.location;
     data['remarks'] = this.remarks;
+    data['patient_name'] = this.patientName;
+    data['age'] = this.age;
+    data['gender'] = this.gender;
+    data['certificate'] = this.certificate;
+    data['diagnosis'] = this.diagnosis;
+    data['medications'] = this.medications;
     if (this.userDetails != null) {
       data['user_details'] = this.userDetails!.toJson();
     }
@@ -104,10 +128,10 @@ class UserDetails {
   UserDetails({this.name, this.email, this.phone, this.userId});
 
   UserDetails.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    email = json['email'];
-    phone = json['phone'];
-    userId = json['user_id'];
+    name = json['name'] ?? '';
+    email = json['email'] ?? '';
+    phone = json['phone'] ?? '';
+    userId = json['user_id'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {

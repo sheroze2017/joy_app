@@ -56,7 +56,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ? Container()
                 : InkWell(
                     onTap: () {
-                      Get.to(ProfileScreen());
+                      Get.to(ProfileScreen(
+                        isUser: true,
+                      ));
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(right: 16.0),

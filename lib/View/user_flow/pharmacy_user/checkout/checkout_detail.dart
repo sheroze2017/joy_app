@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/widgets/flutter_toast_message.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 class CheckoutForm extends StatefulWidget {
@@ -31,10 +36,24 @@ class _CheckoutFormState extends State<CheckoutForm> {
   final FocusNode _focusNode7 = FocusNode();
   final FocusNode _focusNode8 = FocusNode();
   final FocusNode _focusNode9 = FocusNode();
+  final _profileController = Get.find<ProfileController>();
 
   TextEditingController controller = TextEditingController();
   bool isButtonSelectedCod = false;
   bool isButtonSelectedOp = false;
+  bool isSelected = false;
+  bool onlinepay = false;
+  bool codpay = false;
+  final _formKey = GlobalKey<FormState>();
+  final pharmacyController = Get.find<AllPharmacyController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.setText(_profileController.firstName.toString());
+    _contactController.setText(_profileController.phone.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     // List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
@@ -49,130 +68,176 @@ class _CheckoutFormState extends State<CheckoutForm> {
           ),
           actions: [],
           showIcon: true),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                RoundedBorderTextField(
-                  controller: _nameController,
-                  focusNode: _focusNode1,
-                  nextFocusNode: _focusNode2,
-                  hintText: 'Sheroze Rehman',
-                  icon: '',
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                RoundedBorderTextField(
-                  controller: _contactController,
-                  focusNode: _focusNode2,
-                  nextFocusNode: _focusNode3,
-                  hintText: 'Contact Number',
-                  icon: '',
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                RoundedBorderTextField(
-                  controller: _addressController,
-                  focusNode: _focusNode3,
-                  nextFocusNode: _focusNode4,
-                  hintText: 'Address',
-                  icon: '',
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                RoundedBorderTextField(
-                  controller: _cityController,
-                  focusNode: _focusNode4,
-                  nextFocusNode: _focusNode5,
-                  hintText: 'City',
-                  icon: '',
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Container(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  RoundedBorderTextField(
+                    controller: _nameController,
+                    focusNode: _focusNode1,
+                    nextFocusNode: _focusNode2,
+                    hintText: 'Name',
+                    icon: '',
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                    controller: _contactController,
+                    focusNode: _focusNode2,
+                    nextFocusNode: _focusNode3,
+                    hintText: 'Contact Number',
+                    icon: '',
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                      controller: _addressController,
+                      focusNode: _focusNode3,
+                      nextFocusNode: _focusNode4,
+                      hintText: 'Address',
+                      icon: '',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your address';
+                        } else {
+                          return null;
+                        }
+                      }),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                      controller: _cityController,
+                      focusNode: _focusNode4,
+                      nextFocusNode: _focusNode5,
+                      hintText: 'City',
+                      icon: '',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your city';
+                        } else {
+                          return null;
+                        }
+                      }),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
                         child: RoundedButtonSmall(
-                      text: "Cash On Delivery",
-                      onPressed: () {
-                        setState(() {
-                          isButtonSelectedCod = !isButtonSelectedCod;
-                        });
-                      },
-                      backgroundColor: ThemeUtil.isDarkMode(context)
-                          ? isButtonSelectedOp
+                          text: "Cash On Delivery",
+                          onPressed: () {
+                            setState(() {
+                              codpay = true;
+                              onlinepay = false;
+                              isSelected = true;
+                            });
+                          },
+                          backgroundColor: codpay
+                              ? ThemeUtil.isDarkMode(context)
+                                  ? AppColors.lightGreenColoreb1
+                                  : AppColors.darkGreenColor
+                              : ThemeUtil.isDarkMode(context)
+                                  ? Color(0xff121212)
+                                  : AppColors.bgBackGroundColor,
+                          textColor: codpay
+                              ? ThemeUtil.isDarkMode(context)
+                                  ? AppColors.blackColor
+                                  : AppColors.whiteColor
+                              : ThemeUtil.isDarkMode(context)
+                                  ? AppColors.borderColor
+                                  : AppColors.borderColor,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 4.w,
+                      ),
+                      Expanded(
+                        child: RoundedButtonSmall(
+                          text: "Online Payment",
+                          onPressed: () {
+                            setState(() {
+                              onlinepay = true;
+                              codpay = false;
+                              isSelected = false;
+                            });
+                          },
+                          backgroundColor: onlinepay
+                              ? ThemeUtil.isDarkMode(context)
+                                  ? AppColors.lightGreenColoreb1
+                                  : AppColors.darkGreenColor
+                              : ThemeUtil.isDarkMode(context)
+                                  ? Color(0xff121212)
+                                  : AppColors.bgBackGroundColor,
+                          textColor: onlinepay
+                              ? ThemeUtil.isDarkMode(context)
+                                  ? AppColors.blackColor
+                                  : AppColors.whiteColor
+                              : ThemeUtil.isDarkMode(context)
+                                  ? AppColors.borderColor
+                                  : AppColors.borderColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 3.h,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: Obx(
+                        () => RoundedButton(
+                          showLoader: pharmacyController.placeOrderLoader.value,
+                          text: 'Confirm Order',
+                          onPressed: () {
+                            FocusScope.of(context).unfocus();
+                            if (!_formKey.currentState!.validate()) {
+                            } else if (codpay) {
+                              pharmacyController.placeOrderPharmacy(
+                                  context,
+                                  pharmacyController
+                                      .calculateGrandTotal()
+                                      .toString(),
+                                  'Pending',
+                                  pharmacyController.cartItems.length
+                                      .toString(),
+                                  _addressController.text +
+                                      ' ' +
+                                      _cityController.text,
+                                  '22',
+                                  '22',
+                                  '123456789',
+                                  pharmacyController.cartItemsToJson);
+                            } else if (onlinepay) {
+                              showPaymentBottomSheet(context, false, true);
+                            } else {
+                              showErrorMessage(
+                                  context, 'please select payment method');
+                            }
+                          },
+                          backgroundColor: ThemeUtil.isDarkMode(context)
                               ? AppColors.lightGreenColoreb1
-                              : Color(0xff121212)
-                          : isButtonSelectedOp
-                              ? AppColors.darkGreenColor
-                              : AppColors.bgBackGroundColor,
-                      textColor: ThemeUtil.isDarkMode(context)
-                          ? isButtonSelectedOp
-                              ? AppColors.blackColor
-                              : AppColors.borderColor
-                          : isButtonSelectedOp
-                              ? AppColors.whiteColor
-                              : AppColors.borderColor,
-                    )),
-                    SizedBox(
-                      width: 4.w,
-                    ),
-                    Expanded(
-                      child: RoundedButtonSmall(
-                        text: "Online Payment",
-                        onPressed: () {
-                          setState(() {
-                            isButtonSelectedOp = !isButtonSelectedOp;
-                          });
-                        },
-                        backgroundColor: ThemeUtil.isDarkMode(context)
-                            ? isButtonSelectedOp
-                                ? AppColors.lightGreenColoreb1
-                                : Color(0xff121212)
-                            : isButtonSelectedOp
-                                ? AppColors.darkGreenColor
-                                : AppColors.bgBackGroundColor,
-                        textColor: ThemeUtil.isDarkMode(context)
-                            ? isButtonSelectedOp
-                                ? AppColors.blackColor
-                                : AppColors.borderColor
-                            : isButtonSelectedOp
-                                ? AppColors.whiteColor
-                                : AppColors.borderColor,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 3.h,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: RoundedButton(
-                        text: 'Confirm Order',
-                        onPressed: () {
-                          showPaymentBottomSheet(context, false, true);
-                        },
-                        backgroundColor: ThemeUtil.isDarkMode(context)
-                            ? AppColors.lightGreenColoreb1
-                            : AppColors.darkGreenColor,
-                        textColor: ThemeUtil.isDarkMode(context)
-                            ? Color(0xff1F2228)
-                            : Color(0xffFFFFFF),
-                      ),
-                    )
-                  ],
-                )
-              ],
+                              : AppColors.darkGreenColor,
+                          textColor: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff1F2228)
+                              : Color(0xffFFFFFF),
+                        ),
+                      ))
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -10,7 +12,7 @@ import 'package:sizer/sizer.dart';
 class DonationApproval extends StatelessWidget {
   bool isBloodDonate;
   bool isPlasmaDonate;
-
+  bool isOld;
   String date;
   String patName;
   String count;
@@ -20,10 +22,13 @@ class DonationApproval extends StatelessWidget {
   bool isUser;
   String time;
   String phoneNo;
+  String city;
+  String gender;
 
   DonationApproval(
       {this.isBloodDonate = false,
       this.isPlasmaDonate = false,
+      this.isOld = false,
       this.date = '',
       this.patName = '',
       this.count = '4',
@@ -32,7 +37,11 @@ class DonationApproval extends StatelessWidget {
       this.bloodType = 'B+',
       this.isUser = false,
       this.time = '',
-      this.phoneNo = ''});
+      this.phoneNo = '',
+      this.city = '',
+      this.gender = ''});
+  UserBloodBankController _userBloodBankController =
+      Get.put(UserBloodBankController());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -128,7 +137,7 @@ class DonationApproval extends StatelessWidget {
               children: [
                 Expanded(
                   child: RoundedButtonSmall(
-                      text: 'Donate',
+                      text: isOld ? 'Cancel' : 'Donate',
                       onPressed: () {
                         //      showPaymentBottomSheet(context, true);
                       },
@@ -142,10 +151,27 @@ class DonationApproval extends StatelessWidget {
                 ),
                 Expanded(
                   child: RoundedButtonSmall(
-                      text: isUser ? 'Share' : 'Contact',
+                      text: isUser
+                          ? 'Share'
+                          : isOld
+                              ? 'Repost'
+                              : 'Share',
                       onPressed: () {
-                        makingPhoneCall(
-                            phoneNo); //      showPaymentBottomSheet(context, true);
+                        isOld
+                            ? _userBloodBankController.createBloodAppeal(
+                                patName,
+                                date,
+                                time,
+                                count,
+                                bloodType,
+                                gender,
+                                city,
+                                location,
+                                '',
+                                isBloodDonate ? 'Blood' : 'Plasna',
+                                context)
+                            : makingPhoneCall(
+                                phoneNo); //      showPaymentBottomSheet(context, true);
                       },
                       backgroundColor: ThemeUtil.isDarkMode(context)
                           ? AppColors.blackColor

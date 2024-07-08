@@ -7,6 +7,7 @@ import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
+import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
 import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/view/doctor_booking/manage_booking.dart';
 import 'package:joy_app/view/doctor_flow/all_appointment.dart';
@@ -16,6 +17,8 @@ import 'package:joy_app/view/home/notification_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/hospital_flow/profile_form.dart';
+import 'package:joy_app/view/pharmacy_flow/profile_form.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../common/profile/bloc/profile_bloc.dart';
@@ -23,7 +26,15 @@ import '../../common/profile/bloc/profile_bloc.dart';
 class ProfileScreen extends StatefulWidget {
   bool isDoctor;
   bool isPharmacy;
-  ProfileScreen({this.isDoctor = false, this.isPharmacy = false});
+  bool isUser;
+  bool isBloodbank;
+  bool isHospital;
+  ProfileScreen(
+      {this.isDoctor = false,
+      this.isPharmacy = false,
+      this.isUser = false,
+      this.isHospital = false,
+      this.isBloodbank = false});
   @override
   State<ProfileScreen> createState() => _FormScreenState();
 }
@@ -118,7 +129,24 @@ class _FormScreenState extends State<ProfileScreen> {
                                 Category: 'Cardiologist',
                                 isDoctor: widget.isDoctor,
                               ))
-                            : Get.to(EditProfile());
+                            : widget.isUser
+                                ? Get.to(EditProfile())
+                                : widget.isBloodbank
+                                    ? Get.to(BloodBankFormScreen(
+                                        email: 'email',
+                                        password: 'password',
+                                        name: 'name'))
+                                    : widget.isHospital
+                                        ? Get.to(HospitalFormScreen(
+                                            email: 'email',
+                                            password: 'password',
+                                            name: 'name'))
+                                        : widget.isPharmacy
+                                            ? Get.to(PharmacyFormScreen(
+                                                email: 'email',
+                                                password: 'password',
+                                                name: 'name'))
+                                            : null;
                       },
                       child: Row(
                         children: [
@@ -188,44 +216,48 @@ class _FormScreenState extends State<ProfileScreen> {
                   color: Color(0xffE5E7EB),
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  widget.isDoctor
-                      ? Get.to(AllAppointments())
-                      : Get.to(ManageAllAppointmentUser());
-                },
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'Assets/images/appointment.svg',
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    SizedBox(
-                      width: 3.w,
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Appointments',
-                        style: CustomTextStyles.lightTextStyle(
-                            color: ThemeUtil.isDarkMode(context)
-                                ? AppColors.whiteColor
-                                : Color(0xff6B7280),
-                            size: 18),
+              (widget.isDoctor || widget.isUser)
+                  ? InkWell(
+                      onTap: () {
+                        widget.isDoctor
+                            ? Get.to(AllAppointments())
+                            : Get.to(ManageAllAppointmentUser());
+                      },
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'Assets/images/appointment.svg',
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Appointments',
+                              style: CustomTextStyles.lightTextStyle(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? AppColors.whiteColor
+                                      : Color(0xff6B7280),
+                                  size: 18),
+                            ),
+                          ),
+                          SvgPicture.asset(
+                            'Assets/images/arrow-right.svg',
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ],
                       ),
-                    ),
-                    SvgPicture.asset(
-                      'Assets/images/arrow-right.svg',
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ],
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.0),
-                child: Divider(
-                  color: Color(0xffE5E7EB),
-                ),
-              ),
+                    )
+                  : Container(),
+              (widget.isDoctor || widget.isUser)
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4.0),
+                      child: Divider(
+                        color: Color(0xffE5E7EB),
+                      ),
+                    )
+                  : Container(),
               Row(
                 children: [
                   Icon(Icons.sunny),
@@ -243,23 +275,13 @@ class _FormScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.dark_mode),
+                    icon: Icon(_themeController.isDarkMode
+                        ? Icons.dark_mode
+                        : Icons.light_mode),
                     onPressed: () {
                       _themeController.toggleTheme();
                     },
-                  ),
-                  Switch(
-                    value: _themeController.isDarkMode,
-                    onChanged: (value) {
-                      _themeController.toggleTheme();
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.light_mode),
-                    onPressed: () {
-                      _themeController.toggleTheme();
-                    },
-                  ),
+                  )
                 ],
               ),
 

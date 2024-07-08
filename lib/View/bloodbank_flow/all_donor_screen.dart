@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
@@ -55,9 +54,6 @@ class AllDonorScreen extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class _VerticalDonorsList extends StatelessWidget {
   final List<BloodDonor> donors;

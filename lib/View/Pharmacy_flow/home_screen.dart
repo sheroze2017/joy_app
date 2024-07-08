@@ -254,7 +254,7 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                                     : AppColors.darkGreenColor,
                                 bgColor: AppColors.lightGreenColor,
                                 nextMeeting: true,
-                                imgPath: 'Assets/images/tablet.jpg',
+                                imgPath: '',
                                 name: 'Order Id: ' +
                                     productsController
                                         .onTheWayOrders[index].orderId

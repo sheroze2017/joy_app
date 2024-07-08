@@ -29,8 +29,8 @@ class DoctorController extends GetxController {
     super.onInit();
     dioClient = DioClient.getInstance();
     doctorApi = DoctorApi(dioClient);
+    AllAppointments();
     User? currentUser = await getCurrentUser();
-    AllAppointments('44');
     getDoctorDetail('56');
   }
 
@@ -41,10 +41,13 @@ class DoctorController extends GetxController {
     });
   }
 
-  Future<DoctorAppointment> AllAppointments(userId) async {
+  Future<DoctorAppointment> AllAppointments() async {
+    User? currentUser = await getCurrentUser();
+
     doctorAppointment.clear();
     try {
-      DoctorAppointment response = await doctorApi.getAllAppointments(userId);
+      DoctorAppointment response =
+          await doctorApi.getAllAppointments(currentUser!.userId.toString());
 
       if (response.data != null) {
         response.data!.forEach((element) {
@@ -80,8 +83,6 @@ class DoctorController extends GetxController {
     }
   }
 
-  
-  
   updateDoctor(
       String userId,
       String name,
@@ -136,10 +137,27 @@ class DoctorController extends GetxController {
       if (response == true) {
         showSuccessMessage(context, 'Appointment ${status}');
         Get.offAll(DoctorHomeScreen());
-        AllAppointments('44');
+        AllAppointments();
       } else {
         showErrorMessage(context, 'Error updating Profile');
       }
+    } catch (error) {
+      appointmentLoader.value = false;
+      throw (error);
+    } finally {
+      appointmentLoader.value = false;
+    }
+  }
+
+  giveMedication(String appointmentId, String daignosis, String prescription,
+      BuildContext context) async {
+    appointmentLoader.value = true;
+    try {
+      bool response = await doctorApi.giveMedication(
+          appointmentId, daignosis, prescription);
+
+      if (response == true) {
+      } else {}
     } catch (error) {
       appointmentLoader.value = false;
       throw (error);

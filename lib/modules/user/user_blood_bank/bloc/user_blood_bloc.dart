@@ -20,6 +20,8 @@ class UserBloodBankController extends GetxController {
 
   var showLoader = false.obs;
   RxList<BloodBank> bloodbank = <BloodBank>[].obs;
+  RxList<BloodBank> searchResults = <BloodBank>[].obs;
+  RxString searchQuery = ''.obs;
 
   @override
   void onInit() async {
@@ -28,6 +30,14 @@ class UserBloodBankController extends GetxController {
     bloodBankApi = BloodBankApi(dioClient);
 
     userBloodBankApi = UserBloodBankApi(dioClient);
+  }
+
+  void searchBloodBanks(String query) {
+    searchQuery.value = query;
+    searchResults.value = bloodbank.value
+        .where((bloodBank) =>
+            bloodBank.name!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   Future<bool> createDonorUser(

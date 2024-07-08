@@ -110,6 +110,7 @@ class FriendDetails {
   }
 }
 
+
 class MutualFriends {
   int? mutualFriendId;
   String? mutualFriendName;

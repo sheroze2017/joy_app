@@ -23,11 +23,13 @@ class BloodBankFormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
+  bool isEdit;
 
   BloodBankFormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.isEdit = false,
       super.key});
   @override
   State<BloodBankFormScreen> createState() => _BloodBankFormScreenState();
@@ -72,7 +74,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Add Blood Bank',
+        title: widget.isEdit ? 'Edit Blood Bank' : 'Add Blood Bank',
         icon: Icons.arrow_back_sharp,
         onPressed: () {},
       ),
@@ -257,7 +259,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                           child: Obx(
                         () => RoundedButton(
                             showLoader: authController.registerLoader.value,
-                            text: 'Save',
+                            text: widget.isEdit ? 'Edit' : 'Save',
                             onPressed: () async {
                               FocusScope.of(context).unfocus();
 

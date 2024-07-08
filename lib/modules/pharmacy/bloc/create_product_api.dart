@@ -84,7 +84,6 @@ class CreateProductApi {
     }
   }
 
-
   Future<AllCategory> getAllCategory() async {
     try {
       final result = await _dioClient.get(Endpoints.getAllCategories);

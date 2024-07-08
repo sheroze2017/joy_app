@@ -105,8 +105,7 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                                               ? AppColors.purpleBlueColor
                                               : AppColors.lightishBlueColor5ff,
                                           isActive: false,
-                                          imgPath:
-                                              'Assets/images/oldPerson.png',
+                                          imgPath: '',
                                           name:
                                               data.userDetails!.name.toString(),
                                           time: '${data.date}  ${data.time}',
@@ -297,6 +296,16 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                                                           context,
                                                           widget.doctorId
                                                               .toString());
+                                                  _doctorController
+                                                      .giveMedication(
+                                                    widget.appointmentId
+                                                        .toString(),
+                                                    _daignosisController.text
+                                                        .toString(),
+                                                    _prescriptionController.text
+                                                        .toString(),
+                                                    context,
+                                                  );
                                                 }
                                               },
                                               backgroundColor:

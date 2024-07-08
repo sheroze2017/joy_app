@@ -9,12 +9,14 @@ import 'package:joy_app/modules/auth/models/auth.model.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 
+import '../model/hospital_detail_model.dart';
+
 class HospitalDetailsApi {
   final DioClient _dioClient;
   //final LocationService _locationService = LocationService.getInstance();
 
   HospitalDetailsApi(this._dioClient);
-  
+
   Future<PharmacyModel> getAllHospitalPharmacy(String hospitalId) async {
     try {
       final result = await _dioClient.get(
@@ -28,9 +30,20 @@ class HospitalDetailsApi {
 
   Future<PharmacyModel> getAllHospitalDoctors(String hospitalId) async {
     try {
-      final result = await _dioClient.get(
-          Endpoints.getAllHospitalDoctors + '?hospital_id=${hospitalId}');
+      final result = await _dioClient
+          .get(Endpoints.getAllHospitalDoctors + '?hospital_id=${hospitalId}');
       return PharmacyModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<HospitalDetail> getHospitalDetails(String hospitalId) async {
+    try {
+      final result = await _dioClient
+          .get(Endpoints.getHospitalDetail + '?hospital_id=${hospitalId}');
+      return HospitalDetail.fromJson(result);
     } catch (e) {
       print(e.toString());
       throw e;

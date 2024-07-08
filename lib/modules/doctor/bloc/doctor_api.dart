@@ -103,8 +103,25 @@ class DoctorApi {
     }
   }
 
- 
- 
+  Future<bool> giveMedication(
+      String appointmentId, String diagnosis, String medication) async {
+    try {
+      final result = await _dioClient.post(Endpoints.giveMedication, data: {
+        "appointment_id": appointmentId,
+        "diagnosis": diagnosis,
+        "medications": medication,
+      });
+      if (result['sucess'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
   Future<DoctorRegisterModel> EditDoctor(
       String firstName,
       String email,

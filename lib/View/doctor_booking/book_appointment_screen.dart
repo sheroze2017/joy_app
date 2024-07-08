@@ -47,7 +47,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   void selectionChanged(DateRangePickerSelectionChangedArgs args) {
     SchedulerBinding.instance!.addPostFrameCallback((duration) {
       setState(() {
-        _date = DateFormat('dd, MMMM yyyy').format(args.value).toString();
+        _date = DateFormat('MMMM dd, yyyy').format(args.value).toString();
       });
     });
   }

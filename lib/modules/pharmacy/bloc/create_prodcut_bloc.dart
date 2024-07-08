@@ -46,7 +46,6 @@ class ProductController extends GetxController {
         Get.offAll(NavBarScreen(
           isPharmacy: true,
         ));
-        showSuccessMessage(context, 'Login Successfully');
         // if (response.data!.userRole == 1) {
         //   Get.offAll(NavBarScreen(isUser: true));
         // }
@@ -79,7 +78,7 @@ class ProductController extends GetxController {
       CreateProduct response = await createProductApi.editProduct(
         medName,
         shortDesc,
-        categoryId,
+        categoryId.toString(),
         price,
         discount,
         pharmacyId,
@@ -102,6 +101,7 @@ class ProductController extends GetxController {
       }
       return response;
     } catch (error) {
+      print(error);
       createProLoader.value = false;
 
       throw (error);

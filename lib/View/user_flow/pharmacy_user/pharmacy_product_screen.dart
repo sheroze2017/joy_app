@@ -65,7 +65,7 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
                           child: Center(
                               child: Obx(
                             () => Text(
-                              pharmacyController.cartList.length.toString(),
+                              pharmacyController.cartItems.length.toString(),
                               style:
                                   TextStyle(color: Colors.white, fontSize: 6),
                             ),

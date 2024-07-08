@@ -14,6 +14,7 @@ import 'package:sizer/sizer.dart';
 import '../../modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 import '../../modules/user/user_doctor/model/all_user_appointment.dart';
 import '../home/my_profile.dart';
+import 'doctor_daignosis.dart';
 
 class ManageAllAppointmentUser extends StatefulWidget {
   const ManageAllAppointmentUser({super.key});
@@ -146,10 +147,22 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
                                   SizedBox(
                                     height: 1.h,
                                   ),
-                                  AppointmentCardUser(
-                                    bookingDetail: _userdoctorController
-                                        .userAppointment[index],
-                                    isCompleted: true,
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(DoctorDaginosis(
+                                        prescription: _userdoctorController
+                                            .userAppointment[index].medications,
+                                        patName: _userdoctorController
+                                            .userAppointment[index].patientName,
+                                        daignosis: _userdoctorController
+                                            .userAppointment[index].diagnosis,
+                                      ));
+                                    },
+                                    child: AppointmentCardUser(
+                                      bookingDetail: _userdoctorController
+                                          .userAppointment[index],
+                                      isCompleted: true,
+                                    ),
                                   ),
                                 ],
                               );
@@ -187,7 +200,7 @@ class AppointmentCardUser extends StatelessWidget {
           children: [
             Text(
               bookingDetail.date.toString() +
-                  ' ' +
+                  ' - ' +
                   bookingDetail.time.toString(),
               style: CustomTextStyles.darkHeadingTextStyle(size: 14),
             ),

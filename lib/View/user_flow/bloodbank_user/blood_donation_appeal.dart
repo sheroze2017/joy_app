@@ -42,7 +42,7 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
   }
 
   UserBloodBankController _bloodBankController =
-      Get.find<UserBloodBankController>();
+      Get.put(UserBloodBankController());
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +99,8 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: DonationApproval(
+                            city: data.city.toString(),
+                            gender: data.gender.toString(),
                             isBloodDonate: widget.isBloodDontate,
                             isPlasmaDonate: widget.isPlasmaDonate,
                             patName: data.patientName.toString(),
@@ -139,16 +141,17 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: DonationApproval(
-                            isBloodDonate: widget.isBloodDontate,
-                            isPlasmaDonate: widget.isPlasmaDonate,
-                            patName: data.patientName.toString(),
-                            date: formatDateTime(data.date.toString()),
-                            location: data.location.toString(),
-                            bloodType: data.bloodGroup.toString(),
-                            count: data.unitsOfBlood.toString(),
-                            time: data.time.toString(),
-                            phoneNo: data.phone.toString(),
-                          ),
+                              isOld: true,
+                              isBloodDonate: widget.isBloodDontate,
+                              isPlasmaDonate: widget.isPlasmaDonate,
+                              patName: data.patientName.toString(),
+                              date: formatDateTime(data.date.toString()),
+                              location: data.location.toString(),
+                              bloodType: data.bloodGroup.toString(),
+                              count: data.unitsOfBlood.toString(),
+                              time: data.time.toString(),
+                              phoneNo: data.phone.toString(),
+                              city: data.city.toString()),
                         );
                       })),
                   SizedBox(

@@ -83,7 +83,9 @@ class _NavBarState extends State<NavBarScreen> {
                             isBloodDontate: true,
                           ),
                           NotificationScreen(),
-                          ProfileScreen()
+                          ProfileScreen(
+                            isBloodbank: true,
+                          )
                         ],
                       )
                     : widget.isHospital == true
@@ -96,7 +98,9 @@ class _NavBarState extends State<NavBarScreen> {
                                 hospitalId: widget.hospitalDetailId,
                               ),
                               NotificationScreen(),
-                              ProfileScreen()
+                              ProfileScreen(
+                                isHospital: true,
+                              )
                             ],
                           )
                         : widget.isUser == true

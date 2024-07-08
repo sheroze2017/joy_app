@@ -16,7 +16,7 @@ import 'package:sizer/sizer.dart';
 
 class AllAppointments extends StatelessWidget {
   AllAppointments({super.key});
-  final _doctorController = Get.find<DoctorController>();
+  DoctorController _doctorController = Get.put(DoctorController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,59 +25,76 @@ class AllAppointments extends StatelessWidget {
             leading: Container(),
             actions: [],
             showIcon: false),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    Divider(
-                      color: Color(0xffE5E7EB),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    Obx(() => _doctorController.doctorAppointment.isEmpty ||
-                            _doctorController.doctorAppointment
-                                .where((element) => element.status == 'Pending')
-                                .isEmpty
-                        ? Center(
-                            child: SubHeading(
-                              title: 'No pending appointments',
-                            ),
-                          )
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount:
-                                _doctorController.doctorAppointment.length,
-                            itemBuilder: (context, index) {
-                              if (_doctorController
-                                      .doctorAppointment[index].status ==
-                                  'Pending') {
-                                return Column(
-                                  children: [
-                                    AppointmentSelector(
-                                      details: _doctorController
-                                          .doctorAppointment[index],
-                                    ),
-                                    SizedBox(
-                                      height: 1.h,
-                                    ),
-                                  ],
-                                );
-                              } else
-                                return Container();
-                            }))
-                  ],
+        body: RefreshIndicator(
+          onRefresh: () async {
+            _doctorController.AllAppointments();
+          },
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: [
+                      Divider(
+                        color: Color(0xffE5E7EB),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      Obx(() => _doctorController.doctorAppointment.isEmpty ||
+                              _doctorController.doctorAppointment
+                                  .where(
+                                      (element) => element.status == 'Pending')
+                                  .isEmpty
+                          ? Column(
+                              children: [
+                                Center(
+                                  child: SubHeading(
+                                    title: 'No pending appointments',
+                                  ),
+                                ),
+                                RoundedButtonSmall(
+                                    text: 'refresh',
+                                    onPressed: () {
+                                      _doctorController.AllAppointments();
+                                    },
+                                    backgroundColor: Colors.black,
+                                    textColor: Colors.white)
+                              ],
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount:
+                                  _doctorController.doctorAppointment.length,
+                              itemBuilder: (context, index) {
+                                if (_doctorController
+                                        .doctorAppointment[index].status ==
+                                    'Pending') {
+                                  return Column(
+                                    children: [
+                                      AppointmentSelector(
+                                        details: _doctorController
+                                            .doctorAppointment[index],
+                                      ),
+                                      SizedBox(
+                                        height: 1.h,
+                                      ),
+                                    ],
+                                  );
+                                } else
+                                  return Container();
+                              }))
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Obx(() => _doctorController.appointmentLoader.value
-                ? Center(child: CircularProgressIndicator())
-                : SizedBox())
-          ],
+              Obx(() => _doctorController.appointmentLoader.value
+                  ? Center(child: CircularProgressIndicator())
+                  : SizedBox())
+            ],
+          ),
         ));
   }
 }

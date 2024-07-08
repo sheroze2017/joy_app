@@ -107,7 +107,7 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                                     : AppColors.darkGreenColor,
                                 bgColor: AppColors.lightGreenColor,
                                 nextMeeting: true,
-                                imgPath: 'Assets/images/tablet.jpg',
+                                imgPath: '',
                                 name: 'Order Id: ' +
                                     ordersController
                                         .pendingOrders[index].orderId
@@ -165,7 +165,7 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                                     : AppColors.darkGreenColor,
                                 bgColor: AppColors.lightGreenColor,
                                 nextMeeting: true,
-                                imgPath: 'Assets/images/tablet.jpg',
+                                imgPath: '',
                                 name: 'Order Id: ' +
                                     ordersController
                                         .onTheWayOrders[index].orderId
@@ -209,7 +209,7 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                               : AppColors.darkGreenColor,
                           bgColor: AppColors.lightGreenColor,
                           nextMeeting: true,
-                          imgPath: 'Assets/images/tablet.jpg',
+                          imgPath: '',
                           name: 'Order Id: ' +
                               ordersController.deliveredOrders[index].orderId
                                   .toString(),

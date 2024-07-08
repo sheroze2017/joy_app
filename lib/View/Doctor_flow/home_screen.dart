@@ -232,7 +232,7 @@ class DoctorHomeScreen extends StatelessWidget {
                                     : AppColors.lightishBlueColor5ff,
                                 isHospital: true,
                                 nextMeeting: true,
-                                imgPath: 'Assets/images/onboard3.png',
+                                imgPath: '',
                                 name: data.userDetails!.name.toString(),
                                 time: '${data.date}  ${data.time}',
                                 location: data.location.toString(),
@@ -366,8 +366,10 @@ class MeetingCallScheduler extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: Image.asset(
-                    imgPath,
+                  child: Image.network(
+                    imgPath.contains('http')
+                        ? imgPath
+                        : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                     width: 27.9.w,
                     height: 27.9.w,
                     fit: BoxFit.cover,

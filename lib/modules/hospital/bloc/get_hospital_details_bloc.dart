@@ -7,13 +7,15 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharm
 import 'package:joy_app/view/home/navbar.dart';
 
 import '../../../core/network/request.dart';
+import '../model/hospital_detail_model.dart';
 
 class HospitalDetailController extends GetxController {
   late DioClient dioClient;
   RxList<PharmacyModelData> hospitalPharmacies = <PharmacyModelData>[].obs;
   RxList<PharmacyModelData> hospitalDoctors = <PharmacyModelData>[].obs;
   RxList<PharmacyModelData> hospitalBloodBank = <PharmacyModelData>[].obs;
-
+  final hospitald = Rxn<hospitaldetail>();
+  var hospitaldetailloader = false.obs;
   late HospitalDetailsApi hospitalDetailsApi;
 
   @override
@@ -27,7 +29,7 @@ class HospitalDetailController extends GetxController {
       String hospitalId, BuildContext context) async {
     try {
       PharmacyModel response =
-          await hospitalDetailsApi.getAllHospitalPharmacy('6');
+          await hospitalDetailsApi.getAllHospitalPharmacy(hospitalId);
       if (response.data != null) {
         response.data!.forEach((element) {
           hospitalPharmacies.add(element);
@@ -43,7 +45,7 @@ class HospitalDetailController extends GetxController {
       String hospitalId, BuildContext context) async {
     try {
       PharmacyModel response =
-          await hospitalDetailsApi.getAllHospitalDoctors('6');
+          await hospitalDetailsApi.getAllHospitalDoctors(hospitalId);
       if (response.data != null) {
         response.data!.forEach((element) {
           hospitalDoctors.add(element);
@@ -53,5 +55,28 @@ class HospitalDetailController extends GetxController {
     } catch (error) {
       throw (error);
     } finally {}
+  }
+
+  Future<HospitalDetail> getHospitalDetails(
+      String hospitalId, BuildContext context) async {
+    hospitaldetailloader.value = true;
+    try {
+      HospitalDetail response =
+          await hospitalDetailsApi.getHospitalDetails(hospitalId);
+      if (response.data != null) {
+        hospitald.value = response.data;
+        hospitaldetailloader.value = false;
+      } else {
+        hospitald.value = null;
+        hospitaldetailloader.value = false;
+      }
+      return response;
+    } catch (error) {
+      hospitaldetailloader.value = false;
+
+      throw (error);
+    } finally {
+      hospitaldetailloader.value = false;
+    }
   }
 }
