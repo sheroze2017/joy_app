@@ -10,7 +10,7 @@ import 'package:joy_app/modules/doctor/models/doctor_appointment_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/doctor_flow/patient_profile.dart';
+import 'package:joy_app/modules/doctor/view/patient_profile.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
@@ -139,8 +139,8 @@ class AppointmentSelector extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12.0),
-                    child: Image.asset(
-                      'Assets/images/oldPerson.png',
+                    child: Image.network(
+                      "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                       width: 27.9.w,
                       height: 27.9.w,
                       fit: BoxFit.cover,
@@ -196,20 +196,20 @@ class AppointmentSelector extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: RoundedButtonSmall(
-                        text: 'Reschedule',
-                        onPressed: () {
-                          //      showPaymentBottomSheet(context, true);
-                        },
-                        backgroundColor: ThemeUtil.isDarkMode(context)
-                            ? Color(0xff0443A9)
-                            : AppColors.darkBlueColor,
-                        textColor: AppColors.whiteColor),
-                  ),
-                  SizedBox(
-                    width: 2.w,
-                  ),
+                  // Expanded(
+                  //   child: RoundedButtonSmall(
+                  //       text: 'Reschedule',
+                  //       onPressed: () {
+                  //         //      showPaymentBottomSheet(context, true);
+                  //       },
+                  //       backgroundColor: ThemeUtil.isDarkMode(context)
+                  //           ? Color(0xff0443A9)
+                  //           : AppColors.darkBlueColor,
+                  //       textColor: AppColors.whiteColor),
+                  // ),
+                  // SizedBox(
+                  //   width: 2.w,
+                  // ),
                   Expanded(
                     child: RoundedButtonSmall(
                         text: 'Cancel',

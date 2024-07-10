@@ -250,15 +250,15 @@ class _FormScreenState extends State<ProfileFormScreen> {
                           showLoader: mediaController.imgUploaded.value,
                           isenable: false,
                           controller: _medicalCertificateController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please attach documents';
-                            } else if (mediaController.imgUrl.isEmpty) {
-                              return 'Please attach files';
-                            } else {
-                              return null;
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please attach documents';
+                          //   } else if (mediaController.imgUrl.isEmpty) {
+                          //     return 'Please attach files';
+                          //   } else {
+                          //     return null;
+                          //   }
+                          // },
                           hintText: 'Attach File of Medical Certificate',
                           icon: 'Assets/icons/attach-icon.svg',
                         ),
@@ -289,8 +289,6 @@ class _FormScreenState extends State<ProfileFormScreen> {
                         } else {
                           if (_genderController.text.isEmpty) {
                             showErrorMessage(context, 'please select gender');
-                          } else if (mediaController.imgUrl.value.isEmpty) {
-                            showErrorMessage(context, 'Please upload image');
                           } else {}
                           Get.to(BookAppointmentScreen(
                             age: _ageController.text,

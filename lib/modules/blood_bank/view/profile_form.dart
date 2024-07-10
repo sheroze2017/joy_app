@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
@@ -12,45 +12,37 @@ import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../Widgets/appbar.dart';
-import '../../modules/auth/bloc/auth_bloc.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../../auth/utils/auth_utils.dart';
 
-class HospitalFormScreen extends StatefulWidget {
+class BloodBankFormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
   bool isEdit;
-
-  HospitalFormScreen(
+  bool isSocial;
+  BloodBankFormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.isSocial = false,
       this.isEdit = false,
       super.key});
   @override
-  State<HospitalFormScreen> createState() => _HospitalFormScreenState();
+  State<BloodBankFormScreen> createState() => _BloodBankFormScreenState();
 }
 
-class _HospitalFormScreenState extends State<HospitalFormScreen> {
+class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
   String? selectedValue;
-
-  final TextEditingController _contactController = TextEditingController();
-
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _availabilityController = TextEditingController();
-
-  final TextEditingController _feesController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _instituteController = TextEditingController();
-
-  final TextEditingController _aboutController = TextEditingController();
-
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _availabilityController = TextEditingController();
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
@@ -58,13 +50,12 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
-  final FocusNode _focusNode8 = FocusNode();
-  final authController = Get.find<AuthController>();
 
+  final authController = Get.find<AuthController>();
   final _formKey = GlobalKey<FormState>();
   String? _selectedImage;
-  final mediaController = Get.find<MediaPostController>();
   ProfileController _profileController = Get.put(ProfileController());
+  final mediaController = Get.find<MediaPostController>();
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -90,11 +81,15 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
+
     return Scaffold(
       appBar: CustomAppBar(
-        title: widget.isEdit ? 'Edit Hospital' : 'Add Your Hospital',
+        title: widget.isEdit ? 'Edit Blood Bank' : 'Add Blood Bank',
         icon: Icons.arrow_back_sharp,
-        onPressed: () {},
+        onPressed: () {
+          Get.back();
+        },
       ),
       body: Form(
         key: _formKey,
@@ -183,27 +178,44 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   RoundedBorderTextField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter hospital name';
+                        return 'Please enter blood bank name';
                       } else {
                         return null;
                       }
                     },
-                    controller: _nameController,
                     focusNode: _focusNode1,
                     nextFocusNode: _focusNode2,
-                    hintText: 'Hospital Name',
+                    controller: _nameController,
+                    hintText: 'Blood Bank Name',
                     icon: '',
                   ),
                   SizedBox(
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
-                      controller: _contactController,
                       focusNode: _focusNode2,
                       nextFocusNode: _focusNode3,
+                      controller: _contactController,
                       hintText: 'Contact',
                       icon: '',
                       validator: validatePhoneNumber),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                    focusNode: _focusNode3,
+                    nextFocusNode: _focusNode4,
+                    controller: _locationController,
+                    hintText: 'Location',
+                    icon: '',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your location';
+                      } else {
+                        return null;
+                      }
+                    },
+                  ),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -236,8 +248,8 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                       );
                     },
                     child: RoundedBorderTextField(
-                      focusNode: _focusNode3,
-                      nextFocusNode: _focusNode4,
+                      focusNode: _focusNode5,
+                      nextFocusNode: _focusNode6,
                       isenable: false,
                       controller: _availabilityController,
                       hintText: 'Availability',
@@ -254,140 +266,75 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    controller: _feesController,
-                    focusNode: _focusNode4,
-                    nextFocusNode: _focusNode5,
-                    hintText: 'Check Up Fee',
-                    icon: '',
-                    validator: validateCurrencyAmount,
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  RoundedBorderTextField(
-                    controller: _locationController,
-                    focusNode: _focusNode5,
-                    nextFocusNode: _focusNode6,
-                    hintText: 'Location',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your location';
-                      } else {
-                        return null;
-                      }
-                    },
-                    icon: '',
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  SearchDropdown(
-                    hintText: 'Public or Private Institute',
-                    items: ['Public', 'Private'],
-                    value: '',
-                    onChanged: (String? value) {
-                      _instituteController.text = value.toString();
-                    },
-                    icon: '',
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  RoundedBorderTextField(
-                    controller: _aboutController,
-                    focusNode: _focusNode7,
-                    nextFocusNode: _focusNode8,
-                    hintText: 'About',
-                    icon: '',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your about';
-                      } else {
-                        return null;
-                      }
-                    },
-                    maxlines: true,
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
                   Row(
                     children: [
                       Expanded(
-                        child: Obx(
-                          () => RoundedButton(
-                              showLoader: authController.registerLoader.value,
-                              text: 'Save',
-                              onPressed: () async {
-                                FocusScope.of(context).unfocus();
+                          child: Obx(
+                        () => RoundedButton(
+                            showLoader: authController.registerLoader.value,
+                            text: widget.isEdit ? 'Edit' : 'Save',
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
 
-                                if (!_formKey.currentState!.validate()) {
-                                } else {
-                                  List result = widget.isEdit
-                                      ? await authController.editHospital(
-                                          _nameController.text,
-                                          _profileController.email.value
-                                              .toString(),
-                                          _profileController.password.value
-                                              .toString(),
-                                          _locationController.text,
-                                          "",
-                                          _contactController.text,
-                                          "AD1234",
-                                          "22",
-                                          "22",
-                                          _feesController.text,
-                                          _aboutController.text,
-                                          _instituteController.text,
-                                          context,
-                                          _selectedImage.toString())
-                                      : await authController.HospitalRegister(
-                                          _nameController.text,
-                                          widget.email,
-                                          widget.password,
-                                          _locationController.text,
-                                          "",
-                                          _contactController.text,
-                                          'EMAIL',
-                                          'HOSPITAL',
-                                          "22",
-                                          "22",
-                                          "AD1234",
-                                          _instituteController.text,
-                                          _aboutController.text,
-                                          _feesController.text,
-                                          context,
-                                          _selectedImage.toString());
-                                  if (result[0] == true) {
-                                    widget.isEdit
-                                        ? {_profileController.updateUserDetal()}
-                                        : showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return CustomDialog(
-                                                hospitalDetailId:
-                                                    result[1].toString(),
-                                                isHospitalForm: true,
-                                                buttonColor: Color(0xff1C2A3A),
-                                                showButton: true,
-                                                title: 'Congratulations!',
-                                                content:
-                                                    'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                              );
-                                            },
-                                          );
-                                  }
+                              if (!_formKey.currentState!.validate()) {
+                              } else {
+                                bool result = widget.isEdit
+                                    ? await authController.editBloodBank(
+                                        _nameController.text,
+                                        _profileController.email.value
+                                            .toString(),
+                                        _profileController.password.value
+                                            .toString(),
+                                        _locationController.text,
+                                        "",
+                                        _contactController.text,
+                                        "EMAIL",
+                                        "BLOODBANK",
+                                        "22",
+                                        "22",
+                                        "ASDA21321",
+                                        context,
+                                        _selectedImage.toString())
+                                    : await authController.bloodBankRegister(
+                                        _nameController.text,
+                                        widget.email,
+                                        widget.password,
+                                        _locationController.text,
+                                        "",
+                                        _contactController.text,
+                                        widget.isSocial ? 'SOCIAL' : "EMAIL",
+                                        "BLOODBANK",
+                                        "22",
+                                        "22",
+                                        "ASDA21321",
+                                        context,
+                                        _selectedImage.toString());
+                                if (result) {
+                                  widget.isEdit
+                                      ? {_profileController.updateUserDetal()}
+                                      : showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomDialog(
+                                              isBloodBankForm: true,
+                                              buttonColor: Color(0xff1C2A3A),
+                                              showButton: true,
+                                              title: 'Congratulations!',
+                                              content:
+                                                  'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                            );
+                                          },
+                                        );
                                 }
-                              },
-                              backgroundColor: ThemeUtil.isDarkMode(context)
-                                  ? Color(0xffC5D3E3)
-                                  : Color(0xff1C2A3A),
-                              textColor: ThemeUtil.isDarkMode(context)
-                                  ? Color(0xff121212)
-                                  : Color(0xffFFFFFF)),
-                        ),
-                      )
+                              }
+                            },
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xffC5D3E3)
+                                : Color(0xff1C2A3A),
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : Color(0xffFFFFFF)),
+                      )),
                     ],
                   ),
                   SizedBox(

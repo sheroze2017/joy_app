@@ -17,8 +17,8 @@ import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 
-import '../home/my_profile.dart';
-import '../user_flow/hospital_user/hospital_detail_screen.dart';
+import '../../../view/home/my_profile.dart';
+import '../../../view/user_flow/hospital_user/hospital_detail_screen.dart';
 
 class HospitalHomeScreen extends StatefulWidget {
   bool isHospital;

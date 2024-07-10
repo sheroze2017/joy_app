@@ -139,8 +139,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 await authController.login(
                                     _emailController.text,
                                     _passwordController.text,
-                                    context);
-     
+                                    context,
+                                    "EMAIL");
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
@@ -170,8 +170,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      RoundedContainer(
-                        imagePath: 'Assets/images/google.png',
+                      InkWell(
+                        onTap: () {
+                          authController.signInWithGoogle(context);
+                        },
+                        child: RoundedContainer(
+                          imagePath: 'Assets/images/google.png',
+                        ),
                       ),
                       RoundedContainer(
                         imagePath: 'Assets/images/facebook.png',

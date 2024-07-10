@@ -54,7 +54,7 @@ class UserDoctorController extends GetxController {
   }
 
   Future<AllUserAppointment> getAllUserAppointment() async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
     userAppointment.clear();
     try {
       AllUserAppointment response = await userDoctorApi
@@ -73,7 +73,7 @@ class UserDoctorController extends GetxController {
   Future<bool> createReview(String given_to, String given_by, String rating,
       String review, context) async {
     reviewLoader.value = true;
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
     try {
       bool response = await userDoctorApi.CreateReview(
           given_to, currentUser!.userId.toString(), rating, review);
@@ -158,7 +158,7 @@ class UserDoctorController extends GetxController {
       doctorName,
       context) async {
     createAppointmentLoader.value = true;
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
     try {
       bool response = await userDoctorApi.createAppointment(
           currentUser!.userId.toString(),

@@ -6,8 +6,9 @@ import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_api.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_model.dart';
-import 'package:joy_app/view/doctor_flow/all_appointment.dart';
-import 'package:joy_app/view/doctor_flow/home_screen.dart';
+import 'package:joy_app/modules/doctor/view/all_appointment.dart';
+import 'package:joy_app/modules/doctor/view/home_screen.dart';
+import 'package:joy_app/view/home/navbar.dart';
 
 import '../../auth/models/user.dart';
 import '../models/doctor_appointment_model.dart';
@@ -30,7 +31,7 @@ class DoctorController extends GetxController {
     dioClient = DioClient.getInstance();
     doctorApi = DoctorApi(dioClient);
     AllAppointments();
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
     getDoctorDetail('56');
   }
 
@@ -42,7 +43,7 @@ class DoctorController extends GetxController {
   }
 
   Future<DoctorAppointment> AllAppointments() async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     doctorAppointment.clear();
     try {
@@ -136,7 +137,9 @@ class DoctorController extends GetxController {
 
       if (response == true) {
         showSuccessMessage(context, 'Appointment ${status}');
-        Get.offAll(DoctorHomeScreen());
+        Get.offAll(NavBarScreen(
+          isDoctor: true,
+        ));
         AllAppointments();
       } else {
         showErrorMessage(context, 'Error updating Profile');
@@ -182,7 +185,7 @@ class DoctorController extends GetxController {
       consultationFees,
       BuildContext context) async {
     try {
-      User? currentUser = await getCurrentUser();
+      UserHive? currentUser = await getCurrentUser();
 
       editLoader.value = true;
       final response = await doctorApi.EditDoctor(
@@ -240,7 +243,7 @@ class DoctorController extends GetxController {
       String phone,
       String lastName,
       String deviceToken) async {
-    var user = User(
+    var user = UserHive(
         userId: userId,
         firstName: firstName,
         email: email,
@@ -250,8 +253,8 @@ class DoctorController extends GetxController {
         phone: phone,
         lastName: lastName,
         deviceToken: deviceToken);
-    await Hive.openBox<User>('users');
-    final userBox = await Hive.openBox<User>('users');
+    await Hive.openBox<UserHive>('users');
+    final userBox = await Hive.openBox<UserHive>('users');
     await userBox.put('current_user', user);
   }
 }

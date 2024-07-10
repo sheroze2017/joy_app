@@ -31,7 +31,7 @@ class BloodBankController extends GetxController {
     super.onInit();
     dioClient = DioClient.getInstance();
     bloodBankApi = BloodBankApi(dioClient);
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
     getBloodBankDetail(currentUser!.userId.toString());
 
     getAllBloodRequest();
@@ -99,8 +99,6 @@ class BloodBankController extends GetxController {
       throw (error);
     } finally {}
   }
-
-
 
   // updateDoctor(
   //     String userId,
@@ -184,7 +182,7 @@ class BloodBankController extends GetxController {
   //     consultationFees,
   //     BuildContext context) async {
   //   try {
-  //     User? currentUser = await getCurrentUser();
+  //     UserHive? currentUser = await getCurrentUser();
 
   //     editLoader.value = true;
   //     final response = await doctorApi.EditDoctor(

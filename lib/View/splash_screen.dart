@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/auth/utils/route.dart';
-import 'package:joy_app/view/onboarding/onboarding_screen.dart';
+import 'package:joy_app/common/onboarding/onboarding_screen.dart';
 import 'package:sizer/sizer.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   checkUserAndRoute() async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
     if (currentUser != null) {
       Timer(Duration(seconds: 5),
           () => handleUserRoleNavigation(currentUser.userRole));

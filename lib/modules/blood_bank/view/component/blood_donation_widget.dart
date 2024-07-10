@@ -6,7 +6,7 @@ import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/bloodbank_flow/component/donors_card.dart';
+import 'package:joy_app/modules/blood_bank/view/component/donors_card.dart';
 import 'package:sizer/sizer.dart';
 
 class DonationApproval extends StatelessWidget {

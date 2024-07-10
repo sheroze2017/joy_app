@@ -5,13 +5,13 @@ import 'package:joy_app/modules/blood_bank/bloc/blood_bank_bloc.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/social_media/new_friend.dart';
+import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../Widgets/custom_appbar.dart';
-import '../home/my_profile.dart';
+import '../../../../Widgets/custom_appbar.dart';
+import '../../../../view/home/my_profile.dart';
 
 class AddFriend extends StatelessWidget {
   AddFriend({super.key});

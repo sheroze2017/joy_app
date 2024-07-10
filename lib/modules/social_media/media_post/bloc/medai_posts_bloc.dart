@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:joy_app/core/network/request.dart';
+import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/media_posts_api.dart';
-import 'package:joy_app/view/hospital_flow/dashboard.dart';
+import 'package:joy_app/modules/hospital/view/dashboard.dart';
 
+import '../../../auth/utils/auth_hive_utils.dart';
+import '../model/comment_model.dart';
 import '../model/create_post_model.dart';
 import '../model/media_post.dart';
 
@@ -22,6 +25,7 @@ class MediaPostController extends GetxController {
   var postUpload = false.obs;
   late MediaPosts mediaPosts;
   var profileUpload = false.obs;
+  var commentLoad = false.obs;
 
   @override
   void onInit() {
@@ -141,6 +145,39 @@ class MediaPostController extends GetxController {
       throw (error);
     } finally {
       postUpload.value = false;
+    }
+  }
+
+  Future<Comment> commentAdd(
+      postId, comment, BuildContext context, postIndex) async {
+    commentLoad.value = true;
+    UserHive? currentUser = await getCurrentUser();
+
+    try {
+      Comment response = await mediaPosts.addComment(
+          currentUser!.userId.toString(), postId, comment);
+      if (response.sucess == true) {
+        showSuccessMessage(context, 'Comment added');
+        Comments newComment = await Comments(
+          comment: comment,
+          commentId: response.data!.commentId,
+          createdAt: DateTime.now().toString(),
+        );
+        allPost[postIndex].comments!.add(newComment);
+        update();
+        commentLoad.value = false;
+
+        return response;
+      } else {
+        showErrorMessage(context, 'Error adding comment');
+        commentLoad.value = false;
+        return response;
+      }
+    } catch (error) {
+      commentLoad.value = false;
+      throw (error);
+    } finally {
+      commentLoad.value = false;
     }
   }
 }

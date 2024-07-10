@@ -8,18 +8,18 @@ import 'package:joy_app/modules/auth/view/profileform_screen.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
-import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
+import 'package:joy_app/modules/blood_bank/view/profile_form.dart';
 import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/view/doctor_booking/manage_booking.dart';
-import 'package:joy_app/view/doctor_flow/all_appointment.dart';
-import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
+import 'package:joy_app/modules/doctor/view/all_appointment.dart';
+import 'package:joy_app/modules/doctor/view/manage_appointment.dart';
 import 'package:joy_app/view/home/editprofile_screen.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/view/hospital_flow/profile_form.dart';
-import 'package:joy_app/view/pharmacy_flow/profile_form.dart';
+import 'package:joy_app/modules/hospital/view/profile_form.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/profile_form.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../common/profile/bloc/profile_bloc.dart';
@@ -53,7 +53,7 @@ class _FormScreenState extends State<ProfileScreen> {
         title: 'Profile',
         leading: Icon(Icons.arrow_back),
         actions: [],
-        showIcon: true,
+        showIcon: false,
       ),
       body: Container(
         child: Padding(

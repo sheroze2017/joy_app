@@ -38,6 +38,7 @@ class Endpoints {
   static String getAllPostById = '/auth/getPosts';
   static String uploadBase64Image = '/auth/uploadBase64';
   static String createPost = '/auth/createPost';
+  static String addComment = '/auth/addComment';
 
   static String getAllFriendRequest = '/user/getAllFriendRequests';
   static String getAllUser = '/user/getAllUsers';

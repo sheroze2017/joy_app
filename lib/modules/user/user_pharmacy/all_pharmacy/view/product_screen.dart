@@ -8,9 +8,9 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/mycart_screen.dart';
 import 'package:sizer/sizer.dart';
 
-import '../social_media/new_friend.dart';
-import '../user_flow/hospital_user/hospital_detail_screen.dart';
-import '../user_flow/pharmacy_user/medicine_detail_screen.dart';
+import '../../../../social_media/friend_request/view/new_friend.dart';
+import '../../../../../view/user_flow/hospital_user/hospital_detail_screen.dart';
+import '../../../../../view/user_flow/pharmacy_user/medicine_detail_screen.dart';
 import 'add_medicine.dart';
 
 class ProductScreen extends StatefulWidget {

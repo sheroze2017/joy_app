@@ -11,7 +11,7 @@ import 'package:joy_app/modules/social_media/friend_request/model/all_friend_req
 import 'package:joy_app/modules/social_media/friend_request/model/all_user_list.dart';
 import 'package:joy_app/modules/social_media/friend_request/model/search_user_profile_model.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/media_posts_api.dart';
-import 'package:joy_app/view/hospital_flow/dashboard.dart';
+import 'package:joy_app/modules/hospital/view/dashboard.dart';
 
 import '../../../auth/models/user.dart';
 import '../../../auth/utils/auth_hive_utils.dart';
@@ -45,7 +45,7 @@ class FriendsSocialController extends GetxController {
   Future<AllFriendRequest> getAllFriendRequest() async {
     try {
       friendRequest.clear();
-      User? currentUser = await getCurrentUser();
+      UserHive? currentUser = await getCurrentUser();
 
       AllFriendRequest response =
           await friendApi.getAllFriendRequest(currentUser!.userId.toString());
@@ -63,7 +63,7 @@ class FriendsSocialController extends GetxController {
   Future<void> AddFriend(friendId, BuildContext context) async {
     updateRequestLoader.value = true;
     try {
-      User? currentUser = await getCurrentUser();
+      UserHive? currentUser = await getCurrentUser();
 
       bool response =
           await friendApi.addFriend(currentUser!.userId.toString(), friendId);
@@ -84,7 +84,7 @@ class FriendsSocialController extends GetxController {
 
   Future<SearchUserProfileDetail> getSearchUserProfileData(
       bool myProfile, friendId, BuildContext context) async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
     // userProfileData.value = null;
     try {
       profileScreenLoader.value = true;
@@ -114,7 +114,7 @@ class FriendsSocialController extends GetxController {
       friendId, status, BuildContext context) async {
     updateRequestLoader.value = true;
     try {
-      User? currentUser = await getCurrentUser();
+      UserHive? currentUser = await getCurrentUser();
 
       bool response = await friendApi.updateFriendRequest(status, friendId);
       if (response == true) {
@@ -166,8 +166,6 @@ class FriendsSocialController extends GetxController {
       });
     }
   }
-
-
 
   List<String> getAllUserNames() {
     List<String> names = [];

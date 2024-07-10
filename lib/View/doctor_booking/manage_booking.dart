@@ -150,6 +150,8 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
                                   InkWell(
                                     onTap: () {
                                       Get.to(DoctorDaginosis(
+                                        details: _userdoctorController
+                                            .userAppointment[index],
                                         prescription: _userdoctorController
                                             .userAppointment[index].medications,
                                         patName: _userdoctorController

@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/doctor_flow/home_screen.dart';
+import 'package:joy_app/modules/doctor/view/home_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -13,7 +13,7 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../modules/doctor/bloc/doctor_bloc.dart';
+import '../bloc/doctor_bloc.dart';
 import 'all_appointment.dart';
 import 'patient_profile.dart';
 

@@ -27,12 +27,14 @@ class FormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
+  bool isSocial;
   bool isEdit;
 
   FormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.isSocial = false,
       this.isEdit = false,
       super.key});
 
@@ -95,7 +97,7 @@ class _FormScreenState extends State<FormScreen> {
     _nameController.setText(widget.name);
     return Scaffold(
       appBar: CustomAppBar(
-        title:widget.isEdit?'Edit Profile': 'Fill Your Profile',
+        title: widget.isEdit ? 'Edit Profile' : 'Fill Your Profile',
         icon: Icons.arrow_back_sharp,
         onPressed: () {},
       ),
@@ -315,7 +317,7 @@ class _FormScreenState extends State<FormScreen> {
                                         _locationController.text,
                                         _phoneController.text,
                                         "",
-                                        'EMAIL',
+                                        widget.isSocial ? 'SOCIAL' : 'EMAIL',
                                         "USER",
                                         widget.email,
                                         widget.password,

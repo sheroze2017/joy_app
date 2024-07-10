@@ -3,13 +3,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/social_media/direct_chat.dart';
+import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../Widgets/custom_appbar.dart';
-import 'add_friend.dart';
-import 'new_friend.dart';
+import '../../../../Widgets/custom_appbar.dart';
+import '../../friend_request/view/add_friend.dart';
+import '../../friend_request/view/new_friend.dart';
 
 class AllChats extends StatelessWidget {
   const AllChats({super.key});

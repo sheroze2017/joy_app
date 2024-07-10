@@ -21,7 +21,7 @@ class ProfileController extends GetxController {
   }
 
   updateUserDetal() async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
     if (currentUser != null) {
       firstName.value = currentUser.firstName;
       lastName.value = currentUser.lastName;

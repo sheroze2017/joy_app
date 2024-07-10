@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,19 +9,19 @@ import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
-import 'package:joy_app/view/doctor_flow/profile_form.dart';
-import 'package:joy_app/view/pharmacy_flow/home_screen.dart';
+import 'package:joy_app/modules/doctor/view/profile_form.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/home_screen.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/view/hospital_flow/profile_form.dart';
+import 'package:joy_app/modules/hospital/view/profile_form.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../view/pharmacy_flow/profile_form.dart';
-import '../../../view/bloodbank_flow/home_screen.dart';
-import '../../../view/bloodbank_flow/profile_form.dart';
+import '../../user/user_pharmacy/all_pharmacy/view/profile_form.dart';
+import '../../blood_bank/view/home_screen.dart';
+import '../../blood_bank/view/profile_form.dart';
 import 'profileform_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -258,15 +259,85 @@ class _SignupScreenState extends State<SignupScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      RoundedContainer(
-                        imagePath: 'Assets/images/google.png',
+                      InkWell(
+                        onTap: () async {
+                          if (selectedButton.isEmpty) {
+                            showErrorMessage(
+                                context, 'Please select profile type');
+                          } else if (selectedButton == 'Professional' &&
+                              selectedFieldValue == null) {
+                            showErrorMessage(
+                                context, 'Please select professional category');
+                          } else {
+                            UserCredential user =
+                                await authController.registerWithGoogle();
+                            if (await authController.isValidMail(
+                                user.user!.email.toString(), context)) {
+                              if (selectedButton == 'User') {
+                                Get.to(FormScreen(
+                                  isSocial: true,
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                  name: _nameController.text,
+                                ));
+                              } else if (selectedButton == 'Professional') {
+                                navigateToFormScreen(
+                                  context: context,
+                                  selectedFieldValue:
+                                      selectedFieldValue!.toInt(),
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                  name: _nameController.text,
+                                );
+                              }
+                            } else {}
+                          }
+                        },
+                        child: RoundedContainer(
+                          imagePath: 'Assets/images/google.png',
+                        ),
                       ),
                       RoundedContainer(
                         imagePath: 'Assets/images/facebook.png',
                       ),
-                      RoundedContainer(
-                        imagePath: 'Assets/images/apple.png',
-                        isApple: true,
+                      InkWell(
+                        onTap: () async {
+                          if (selectedButton.isEmpty) {
+                            showErrorMessage(
+                                context, 'Please select profile type');
+                          } else if (selectedButton == 'Professional' &&
+                              selectedFieldValue == null) {
+                            showErrorMessage(
+                                context, 'Please select professional category');
+                          } else {
+                            UserCredential user =
+                                await authController.registerWithApple();
+                            if (await authController.isValidMail(
+                                user.user!.email.toString(), context)) {
+                              if (selectedButton == 'User') {
+                                Get.to(FormScreen(
+                                  isSocial: true,
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                  name: _nameController.text,
+                                ));
+                              } else if (selectedButton == 'Professional') {
+                                navigateToFormScreen(
+                                  context: context,
+                                  selectedFieldValue:
+                                      selectedFieldValue!.toInt(),
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                  name: _nameController.text,
+                                );
+                              }
+                            } else {}
+                          }
+                        },
+                        child: RoundedContainer(
+                          imagePath: 'Assets/images/apple.png',
+                          isApple: true,
+                        ),
                       ),
                     ],
                   ),
@@ -444,6 +515,60 @@ class _CustomDialogState extends State<CustomDialog> {
           ],
         ),
       ),
+    );
+  }
+}
+
+void navigateToFormScreen({
+  required BuildContext context,
+  required int selectedFieldValue,
+  required String email,
+  required String password,
+  required String name,
+}) {
+  Widget? destinationScreen;
+
+  switch (selectedFieldValue) {
+    case 1:
+      destinationScreen = DoctorFormScreen(
+        isSocial: true,
+        email: email,
+        password: password,
+        name: name,
+      );
+      break;
+    case 2:
+      destinationScreen = PharmacyFormScreen(
+        isSocial: true,
+        email: email,
+        password: password,
+        name: name,
+      );
+      break;
+    case 3:
+      destinationScreen = BloodBankFormScreen(
+        isSocial: true,
+        email: email,
+        password: password,
+        name: name,
+      );
+      break;
+    case 4:
+      destinationScreen = HospitalFormScreen(
+        isSocial: true,
+        email: email,
+        password: password,
+        name: name,
+      );
+      break;
+    default:
+      print('Invalid selectedFieldValue: $selectedFieldValue');
+      return;
+  }
+
+  if (destinationScreen != null) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => destinationScreen!),
     );
   }
 }

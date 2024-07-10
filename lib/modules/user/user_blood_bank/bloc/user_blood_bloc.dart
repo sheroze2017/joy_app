@@ -43,7 +43,7 @@ class UserBloodBankController extends GetxController {
   Future<bool> createDonorUser(
       name, bloodGroup, location, gender, city, userId, context, type) async {
     showLoader.value = true;
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     try {
       bool response = await userBloodBankApi.CreateDonor(name, bloodGroup,
@@ -73,7 +73,7 @@ class UserBloodBankController extends GetxController {
   Future<bool> createBloodAppeal(name, date, time, units, bloodGroup, gender,
       city, location, userId, bloodType, context) async {
     showLoader.value = true;
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     try {
       bool response = await userBloodBankApi.CreateBloodRequest(

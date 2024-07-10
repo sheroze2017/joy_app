@@ -7,11 +7,11 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmac
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/bloodbank_flow/all_donor_screen.dart';
+import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/view/home/components/hospital_card_widget.dart';
-import 'package:joy_app/view/hospital_flow/home_screen.dart';
-import 'package:joy_app/view/social_media/new_friend.dart';
+import 'package:joy_app/modules/hospital/view/home_screen.dart';
+import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';

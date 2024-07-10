@@ -6,17 +6,17 @@ import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/doctor_flow/home_screen.dart';
-import 'package:joy_app/view/pharmacy_flow/order_detail_screen.dart';
-import 'package:joy_app/view/pharmacy_flow/order_screen.dart';
+import 'package:joy_app/modules/doctor/view/home_screen.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/order_detail_screen.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/order_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../modules/pharmacy/bloc/create_prodcut_bloc.dart';
-import '../../styles/colors.dart';
+import '../../../../pharmacy/bloc/create_prodcut_bloc.dart';
+import '../../../../../styles/colors.dart';
 import 'product_screen.dart';
 
 class PharmacyHomeScreen extends StatefulWidget {

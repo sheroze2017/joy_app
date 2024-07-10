@@ -21,10 +21,11 @@ class AuthApi {
   Future<LoginModel> login(
     String email,
     String password,
+    String authType,
   ) async {
     try {
       final result = await _dioClient.post(Endpoints.loginApi,
-          data: {"email": email, "password": password, "auth_type": "EMAIL"});
+          data: {"email": email, "password": password, "auth_type": authType});
       return LoginModel.fromJson(result);
     } catch (e) {
       print(e.toString());

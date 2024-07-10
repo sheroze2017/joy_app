@@ -8,40 +8,44 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
-import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
+import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../modules/auth/bloc/auth_bloc.dart';
-import '../../modules/auth/utils/auth_utils.dart';
+import '../../../../../common/profile/bloc/profile_bloc.dart';
+import '../../../../auth/bloc/auth_bloc.dart';
+import '../../../../auth/utils/auth_utils.dart';
 
-class BloodBankFormScreen extends StatefulWidget {
+class PharmacyFormScreen extends StatefulWidget {
   final String email;
   final String password;
+  bool isSocial;
   final String name;
   bool isEdit;
-
-  BloodBankFormScreen(
+  PharmacyFormScreen(
       {required this.email,
       required this.password,
+      this.isSocial = false,
       required this.name,
       this.isEdit = false,
       super.key});
   @override
-  State<BloodBankFormScreen> createState() => _BloodBankFormScreenState();
+  State<PharmacyFormScreen> createState() => _PharmacyFormScreenState();
 }
 
-class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
+class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
   String? selectedValue;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _availabilityController = TextEditingController();
+  final TextEditingController _prescriptionController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
@@ -49,12 +53,14 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
+  final FocusNode _focusNode8 = FocusNode();
+
+  final _formKey = GlobalKey<FormState>();
 
   final authController = Get.find<AuthController>();
-  final _formKey = GlobalKey<FormState>();
+  final mediaController = Get.find<MediaPostController>();
   String? _selectedImage;
   ProfileController _profileController = Get.put(ProfileController());
-  final mediaController = Get.find<MediaPostController>();
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -76,6 +82,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
       _nameController.setText(_profileController.firstName.toString());
       _contactController.setText(_profileController.phone.toString());
     }
+    ;
   }
 
   @override
@@ -84,9 +91,11 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: widget.isEdit ? 'Edit Blood Bank' : 'Add Blood Bank',
+        title: widget.isEdit ? 'Edit Pharmacy' : 'Add Your Pharmacy',
         icon: Icons.arrow_back_sharp,
-        onPressed: () {},
+        onPressed: () {
+          Get.back();
+        },
       ),
       body: Form(
         key: _formKey,
@@ -173,45 +182,46 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter blood bank name';
-                      } else {
-                        return null;
-                      }
-                    },
+                    controller: _nameController,
                     focusNode: _focusNode1,
                     nextFocusNode: _focusNode2,
-                    controller: _nameController,
-                    hintText: 'Blood Bank Name',
-                    icon: '',
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  RoundedBorderTextField(
-                      focusNode: _focusNode2,
-                      nextFocusNode: _focusNode3,
-                      controller: _contactController,
-                      hintText: 'Contact',
-                      icon: '',
-                      validator: validatePhoneNumber),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  RoundedBorderTextField(
-                    focusNode: _focusNode3,
-                    nextFocusNode: _focusNode4,
-                    controller: _locationController,
-                    hintText: 'Location',
+                    hintText: 'Pharmacy Name',
                     icon: '',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your location';
+                        return 'Please enter pharmacy name';
                       } else {
                         return null;
                       }
                     },
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                    controller: _contactController,
+                    focusNode: _focusNode2,
+                    nextFocusNode: _focusNode3,
+                    hintText: 'Contact',
+                    icon: '',
+                    validator: validatePhoneNumber,
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter location';
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: _locationController,
+                    focusNode: _focusNode3,
+                    nextFocusNode: _focusNode4,
+                    hintText: 'Location',
+                    icon: '',
                   ),
                   SizedBox(
                     height: 2.h,
@@ -245,8 +255,8 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                       );
                     },
                     child: RoundedBorderTextField(
-                      focusNode: _focusNode5,
-                      nextFocusNode: _focusNode6,
+                      focusNode: _focusNode4,
+                      nextFocusNode: _focusNode5,
                       isenable: false,
                       controller: _availabilityController,
                       hintText: 'Availability',
@@ -263,6 +273,38 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  InkWell(
+                      onTap: () {
+                        pickSingleFile().then((filePaths) {
+                          if (filePaths.isEmpty) {
+                          } else {
+                            _prescriptionController
+                                .setText(filePaths[0].toString());
+                          }
+                        }).then((value) => mediaController.uploadPhoto(
+                            _prescriptionController.text, context));
+                      },
+                      child: Obx(
+                        () => RoundedBorderTextField(
+                          isenable: false,
+                          showLoader: mediaController.imgUploaded.value,
+                          controller: _prescriptionController,
+                          focusNode: _focusNode5,
+                          nextFocusNode: _focusNode6,
+                          hintText: 'Attach File of Prescription',
+                          icon: 'Assets/icons/attach-icon.svg',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please attach file prescription';
+                            } else {
+                              return null;
+                            }
+                          },
+                        ),
+                      )),
+                  SizedBox(
+                    height: 2.h,
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -276,7 +318,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                               if (!_formKey.currentState!.validate()) {
                               } else {
                                 bool result = widget.isEdit
-                                    ? await authController.editBloodBank(
+                                    ? await authController.editPharmacy(
                                         _nameController.text,
                                         _profileController.email.value
                                             .toString(),
@@ -286,26 +328,27 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                         "",
                                         _contactController.text,
                                         "EMAIL",
-                                        "BLOODBANK",
+                                        "PHARMACY",
                                         "22",
                                         "22",
-                                        "ASDA21321",
+                                        "ASDA21321312312",
                                         context,
                                         _selectedImage.toString())
-                                    : await authController.bloodBankRegister(
+                                    : await authController.PharmacyRegister(
                                         _nameController.text,
                                         widget.email,
                                         widget.password,
                                         _locationController.text,
                                         "",
                                         _contactController.text,
-                                        "EMAIL",
-                                        "BLOODBANK",
+                                        widget.isSocial ? 'SOCIAL' : "EMAIL",
+                                        "PHARMACY",
                                         "22",
                                         "22",
-                                        "ASDA21321",
+                                        "ASDA21321312312",
                                         context,
                                         _selectedImage.toString());
+
                                 if (result) {
                                   widget.isEdit
                                       ? {_profileController.updateUserDetal()}
@@ -313,7 +356,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return CustomDialog(
-                                              isBloodBankForm: true,
+                                              isPharmacyForm: true,
                                               buttonColor: Color(0xff1C2A3A),
                                               showButton: true,
                                               title: 'Congratulations!',

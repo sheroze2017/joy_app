@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
-import 'package:joy_app/view/bloodbank_flow/home_screen.dart';
-import 'package:joy_app/view/bloodbank_flow/profile_form.dart';
-import 'package:joy_app/view/doctor_flow/all_appointment.dart';
-import 'package:joy_app/view/doctor_flow/home_screen.dart';
-import 'package:joy_app/view/doctor_flow/manage_appointment.dart';
-import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
+import 'package:joy_app/modules/blood_bank/view/blood_appeal_screen.dart';
+import 'package:joy_app/modules/blood_bank/view/home_screen.dart';
+import 'package:joy_app/modules/blood_bank/view/profile_form.dart';
+import 'package:joy_app/modules/doctor/view/all_appointment.dart';
+import 'package:joy_app/modules/doctor/view/home_screen.dart';
+import 'package:joy_app/modules/doctor/view/manage_appointment.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/product_screen.dart';
 import 'package:joy_app/modules/auth/view/signup_screen.dart';
 import 'package:joy_app/view/home/blog_screen.dart';
 import 'package:joy_app/view/home/home_screen.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
 import 'package:joy_app/view/home/profile_screen.dart';
-import 'package:joy_app/view/hospital_flow/dashboard.dart';
-import 'package:joy_app/view/hospital_flow/home_screen.dart';
+import 'package:joy_app/modules/hospital/view/dashboard.dart';
+import 'package:joy_app/modules/hospital/view/home_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
-import 'package:joy_app/view/social_media/add_friend.dart';
+import 'package:joy_app/modules/social_media/friend_request/view/add_friend.dart';
 import 'package:joy_app/common/navbar/controller/navbar_controller.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:sizer/sizer.dart';
 
-import '../pharmacy_flow/home_screen.dart';
+import '../../modules/user/user_pharmacy/all_pharmacy/view/home_screen.dart';
 
 class NavBarScreen extends StatefulWidget {
   final bool? isDoctor;

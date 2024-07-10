@@ -30,11 +30,13 @@ class DoctorFormScreen extends StatefulWidget {
   final String password;
   final String name;
   DoctorDetailsMap? details;
+  bool isSocial;
 
   DoctorFormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.isSocial = false,
       this.details,
       super.key});
   @override
@@ -451,7 +453,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                             _locationController.text,
                                             _phoneController.text,
                                             '',
-                                            'EMAIL',
+                                            widget.isSocial
+                                                ? 'SOCIAL'
+                                                : 'EMAIL',
                                             'DOCTOR',
                                             widget.email,
                                             widget.password,

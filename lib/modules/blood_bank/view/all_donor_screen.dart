@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/social_media/new_friend.dart';
+import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../modules/blood_bank/bloc/blood_bank_bloc.dart';
+import '../bloc/blood_bank_bloc.dart';
 import 'component/donors_card.dart';
 
 class AllDonorScreen extends StatelessWidget {

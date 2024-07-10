@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
-import 'package:joy_app/view/social_media/new_friend.dart';
+import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:joy_app/widgets/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
 
@@ -42,6 +42,9 @@ class AllPostScreen extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(top: 12.0),
                       child: MyCustomWidget(
+                        cm: [],
+                        postIndex: index,
+                        postId: data.postId.toString(),
                         postTime: '',
                         imgPath: data.image.toString(),
                         isLiked: true,

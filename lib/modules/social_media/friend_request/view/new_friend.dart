@@ -8,9 +8,9 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../Widgets/custom_appbar.dart';
-import '../../Widgets/rounded_button.dart';
-import '../../styles/custom_textstyle.dart';
+import '../../../../Widgets/custom_appbar.dart';
+import '../../../../Widgets/rounded_button.dart';
+import '../../../../styles/custom_textstyle.dart';
 import 'add_friend.dart';
 
 class AddNewFriend extends StatefulWidget {
@@ -273,6 +273,65 @@ class NewFriendRequestWidget extends StatelessWidget {
                     : Color(0xffFFFFFF)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class RoundedCommentTextField extends StatelessWidget {
+  final String hintText;
+  final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
+  final VoidCallback? onSendPressed;
+  final bool isEnable;
+
+  RoundedCommentTextField({
+    Key? key,
+    required this.hintText,
+    required this.controller,
+    this.onChanged,
+    this.onSendPressed,
+    this.isEnable = true,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 10.25.w,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          color: ThemeUtil.isDarkMode(context)
+              ? Color(0xff171717)
+              : Color(0xffF3F4F6)),
+      child: Row(
+        children: [
+          SizedBox(width: 12.0),
+          Expanded(
+            child: TextField(
+              enabled: isEnable,
+              controller: controller,
+              onChanged: onChanged,
+              decoration: InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 5.0, horizontal: 0.0),
+                  fillColor: Colors.transparent,
+                  hintText: hintText,
+                  enabledBorder:
+                      OutlineInputBorder(borderSide: BorderSide.none),
+                  focusedBorder:
+                      OutlineInputBorder(borderSide: BorderSide.none),
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  hintStyle: CustomTextStyles.lightSmallTextStyle(
+                      color: Color(0xff9CA3AF), size: 14)),
+            ),
+          ),
+          IconButton(
+            onPressed: onSendPressed,
+            icon: Icon(Icons.send), // Send icon
+            color: Theme.of(context).primaryColor,
+          ),
+          SizedBox(width: 12.0), // Right padding
+        ],
       ),
     );
   }

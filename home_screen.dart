@@ -4,8 +4,8 @@ import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/blood_bank/model/all_blood_request_model.dart';
 import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/bloodbank_flow/all_donor_screen.dart';
-import 'package:joy_app/view/bloodbank_flow/blood_appeal_screen.dart';
+import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
+import 'package:joy_app/modules/blood_bank/view/blood_appeal_screen.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
@@ -15,8 +15,8 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../modules/blood_bank/bloc/blood_bank_bloc.dart';
-import '../social_media/new_friend.dart';
+import 'lib/modules/blood_bank/bloc/blood_bank_bloc.dart';
+import 'lib/modules/social_media/friend_request/view/new_friend.dart';
 
 class BloodBankHomeScreen extends StatelessWidget {
   BloodBankHomeScreen({super.key});
@@ -27,18 +27,13 @@ class BloodBankHomeScreen extends StatelessWidget {
     return Scaffold(
         appBar: HomeAppBar(
             title: 'Donate Blood',
-            leading: Image(
-              image: AssetImage('Assets/icons/arrow-left.png'),
-              color: ThemeUtil.isDarkMode(context)
-                  ? AppColors.whiteColor
-                  : Color(0xff374151),
-            ),
+            leading: Text(''),
             actions: [],
             showIcon: true),
         body: Obx(
           () => _bloodBankController.bloodBankHomeLoader.value
               ? Center(child: CircularProgressIndicator())
-              : _bloodBankController.bloodBankDetail!.data == null
+              : _bloodBankController.bloodBankDetail == null
                   ? Center(
                       child: Text('Error Fetching DATA'),
                     )
@@ -260,7 +255,7 @@ class _HorizontalDoctorCategories extends StatelessWidget {
                     : index == 1
                         ? 'Donate Plasma'
                         : index == 2
-                            ? 'Appeal Blood'
+                            ? 'Request Blood'
                             : bloodBankCategory[index]
                 : 'Dental',
             DoctorCount: isBloodBank

@@ -7,8 +7,8 @@ import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/bloodbank_flow/component/blood_donation_widget.dart';
-import 'package:joy_app/view/doctor_flow/all_appointment.dart';
+import 'package:joy_app/modules/blood_bank/view/component/blood_donation_widget.dart';
+import 'package:joy_app/modules/doctor/view/all_appointment.dart';
 import 'package:sizer/sizer.dart';
 
 class BloodDonationAppealUser extends StatefulWidget {

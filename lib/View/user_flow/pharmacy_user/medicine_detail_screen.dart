@@ -8,7 +8,7 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/pharmacy_flow/add_medicine.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/add_medicine.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/mycart_screen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';

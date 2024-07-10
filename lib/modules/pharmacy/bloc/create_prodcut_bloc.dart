@@ -47,7 +47,7 @@ class ProductController extends GetxController {
       imgUrl,
       BuildContext context) async {
     createProLoader.value = true;
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     try {
       CreateProduct response = await createProductApi.createProduct(
@@ -96,7 +96,7 @@ class ProductController extends GetxController {
       BuildContext context) async {
     createProLoader.value = true;
     try {
-      User? currentUser = await getCurrentUser();
+      UserHive? currentUser = await getCurrentUser();
 
       CreateProduct response = await createProductApi.editProduct(
         medName,
@@ -135,7 +135,7 @@ class ProductController extends GetxController {
 
   Future<AllOrders> allOrders(userId, BuildContext context) async {
     try {
-      User? currentUser = await getCurrentUser();
+      UserHive? currentUser = await getCurrentUser();
 
       AllOrders response =
           await createProductApi.getAllOrders(currentUser!.userId.toString());

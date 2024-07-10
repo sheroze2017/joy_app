@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:joy_app/common/notification/api/firebase_api.dart';
 import 'package:joy_app/common/theme/controller/theme_controller.dart';
 import 'package:joy_app/common/theme/theme_controller.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
@@ -13,11 +14,21 @@ import 'package:joy_app/styles/theme.dart';
 import 'package:joy_app/view/splash_screen.dart';
 import 'package:sizer/sizer.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+    apiKey: 'AIzaSyD9VoJD6i_LQ6dFH3JQsZO_z4RlPYki4rk',
+    appId: '1:850638861206:android:98362d7a24d2c2dc2de3b7',
+    messagingSenderId: '850638861206',
+    projectId: 'joyapp-34878',
+  ));
+  await FirebaseApi().initNotification();
+
   await Hive.initFlutter();
-  Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(UserHiveAdapter());
   Hive.registerAdapter(DoctorDetailModelAdapter());
   Hive.registerAdapter(DataModelAdapter());
   Hive.registerAdapter(ReviewModelAdapter());

@@ -6,7 +6,7 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmac
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/social_media/new_friend.dart';
+import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:sizer/sizer.dart';
 
 import '../hospital_user/hospital_detail_screen.dart';

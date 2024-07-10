@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:joy_app/modules/user/user_doctor/model/all_user_appointment.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:pinput/pinput.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/doctor_flow/home_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -15,17 +18,17 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../modules/doctor/bloc/doctor_bloc.dart';
-
 class DoctorDaginosis extends StatefulWidget {
   String? patName;
   String? daignosis;
   String? prescription;
+  UserAppointment details;
   DoctorDaginosis(
       {super.key,
       required this.patName,
       required this.daignosis,
-      required this.prescription});
+      required this.prescription,
+      required this.details});
 
   @override
   State<DoctorDaginosis> createState() => _ManageAppointmentState();
@@ -163,7 +166,9 @@ class _ManageAppointmentState extends State<DoctorDaginosis> {
                               isSmall: true,
                               isBold: true,
                               text: 'Download',
-                              onPressed: () {},
+                              onPressed: () {
+                                downloadPDF(widget.details);
+                              },
                               textColor: ThemeUtil.isDarkMode(context)
                                   ? Color(0xff00143D)
                                   : AppColors.lightGreyColor,
@@ -179,6 +184,67 @@ class _ManageAppointmentState extends State<DoctorDaginosis> {
             ),
           ),
         ));
+  }
+
+  void downloadPDF(UserAppointment details) async {
+    await Permission.storage.request();
+    print(await Permission.storage.isGranted);
+    final PdfDocument document = PdfDocument();
+
+    // Add a page
+    final PdfPage page = document.pages.add();
+
+    // Create a grid
+    final PdfGrid grid = PdfGrid();
+
+    // Add columns to the grid
+    grid.columns.add(count: 3);
+
+    // Add a header row to the grid
+    final PdfGridRow headerRow = grid.headers.add(1)[0];
+    headerRow.cells[0].value = 'Customer ID';
+    headerRow.cells[1].value = 'Contact Name';
+    headerRow.cells[2].value = 'Location';
+
+    // Set header row font
+    headerRow.style.font =
+        PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold);
+
+    // Add data rows to the grid
+    PdfGridRow row = grid.rows.add();
+    row.cells[0].value = details.patientUserId.toString();
+    row.cells[1].value = details.patientName;
+    row.cells[2].value = details.location;
+
+    // Draw the grid on the page
+    grid.style.cellPadding = PdfPaddings(left: 5, top: 5);
+    grid.draw(
+      page: page,
+      bounds: Rect.fromLTWH(
+        0,
+        0,
+        page.getClientSize().width,
+        page.getClientSize().height,
+      ),
+    );
+
+    // Save the document as bytes
+    final List<int> bytes = await document.save();
+
+    // Dispose the document
+    document.dispose();
+
+    // Get the directory for saving the file
+    final Directory? directory = await getDownloadsDirectory();
+    final String path = directory!.path;
+
+    // Create the file and write the bytes
+    final File file = File('$path/PDFTable.pdf');
+    await file.writeAsBytes(bytes);
+// Add a PDF page and draw text.
+
+    // Show a message or handle further actions (e.g., open the file)
+    print('PDF saved to: $path/PDFTable.pdf');
   }
 
   _makingPhoneCall(String phoneNo) async {

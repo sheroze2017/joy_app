@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/modules/auth/view/profileform_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -45,7 +46,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ? Container()
                 : InkWell(
                     onTap: () {
-                      Get.to(EditProfile());
+                      Get.to(FormScreen(
+                          isEdit: true,
+                          email: 'email',
+                          password: 'password',
+                          name: 'name'));
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(right: 12.0),
@@ -417,6 +422,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                             padding: const EdgeInsets.only(
                                                 top: 12.0),
                                             child: MyCustomWidget(
+                                              cm: [],
+                                              postIndex: index,
+                                              postId: data.postId.toString(),
                                               imgPath: data.image.toString(),
                                               isLiked: true,
                                               isReply: false,

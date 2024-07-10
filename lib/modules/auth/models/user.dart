@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 part 'user.g.dart';
 
 @HiveType(typeId: 0)
-class User extends HiveObject {
+class UserHive extends HiveObject {
   @HiveField(0)
   int userId;
 
@@ -33,7 +33,7 @@ class User extends HiveObject {
   @HiveField(9)
   String deviceToken;
 
-  User({
+  UserHive({
     required this.userId,
     required this.firstName,
     required this.email,

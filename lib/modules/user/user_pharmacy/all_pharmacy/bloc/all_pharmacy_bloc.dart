@@ -127,7 +127,7 @@ class AllPharmacyController extends GetxController {
 
   Future<PharmacyProductModel> getPharmacyProduct(bool isUser, userId) async {
     allProductLoader.value = true;
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     try {
       pharmacyProducts.clear();
@@ -183,7 +183,7 @@ class AllPharmacyController extends GetxController {
       quantity, location, lat, lng, placeId, cart) async {
     placeOrderLoader.value = true;
     try {
-      User? currentUser = await getCurrentUser();
+      UserHive? currentUser = await getCurrentUser();
       List<Map<String, dynamic>> cartlist = await cartItemsToJson();
       print(cartlist);
       ProductPurchaseModel response = await pharmacyApi.placeOrder(

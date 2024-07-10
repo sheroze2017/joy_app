@@ -3,6 +3,7 @@ import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 
+import '../model/comment_model.dart';
 import '../model/create_post_model.dart';
 
 class MediaPosts {
@@ -59,6 +60,18 @@ class MediaPosts {
       }
     } catch (e) {
       return '';
+    } finally {}
+  }
+
+  Future<Comment> addComment(
+      String userId, String postId, String comment) async {
+    try {
+      final result = await _dioClient.post(Endpoints.addComment,
+          data: {"user_id": userId, "post_id": postId, "comment": comment});
+      return Comment.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
     } finally {}
   }
 }

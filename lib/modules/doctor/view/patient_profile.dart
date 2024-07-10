@@ -51,17 +51,21 @@ class _FormScreenState extends State<PatientProfileScreen> {
   Widget build(BuildContext context) {
     _fnameController.setText(widget.details == null
         ? ''
-        : widget.details!.userDetails!.name.toString());
+        : 'Name ' + widget.details!.userDetails!.name.toString());
     _symptomsController.setText(
         widget.details == null ? '' : widget.details!.symptoms.toString());
     _complainController.setText(
         widget.details == null ? '' : widget.details!.complain.toString());
-    _locationController.setText(
-        widget.details == null ? '' : widget.details!.location.toString());
+    _locationController.setText(widget.details == null
+        ? ''
+        : 'Location ' + widget.details!.location.toString());
     _timeController.setText(widget.details == null
         ? ''
-        : widget.details!.date.toString() + widget.details!.time.toString());
-        
+        : widget.details!.date.toString() +
+            'Time ' +
+            widget.details!.time.toString());
+    _ageController.setText(
+        widget.details == null ? '' : 'Age ' + widget.details!.age.toString());
     return Scaffold(
       appBar: HomeAppBar(
         title: "Patient's Profile",

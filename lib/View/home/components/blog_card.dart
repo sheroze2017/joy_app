@@ -1,13 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/network/utils/extra.dart';
+import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/model/comment_model.dart';
+import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/my_profile.dart';
+import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
+import 'package:joy_app/widgets/custom_textfield.dart';
 import 'package:sizer/sizer.dart';
 
 class MyCustomWidget extends StatefulWidget {
@@ -19,10 +25,12 @@ class MyCustomWidget extends StatefulWidget {
   String recentName;
   String id;
   String postTime;
-
+  String postId;
   String likeCount;
   bool isLiked;
   String userImage;
+  int postIndex;
+  List<Comments> cm;
 
   MyCustomWidget(
       {this.isReply = false,
@@ -34,7 +42,10 @@ class MyCustomWidget extends StatefulWidget {
       this.recentName = '',
       this.isLiked = false,
       required this.id,
+      required this.postId,
+      required this.postIndex,
       this.postName = '',
+      required this.cm,
       this.userImage = ''});
 
   @override
@@ -42,6 +53,11 @@ class MyCustomWidget extends StatefulWidget {
 }
 
 final _profileController = Get.find<ProfileController>();
+final TextEditingController comment = TextEditingController();
+final mediaController = Get.find<MediaPostController>();
+
+int? showCommentIndex;
+bool? showComment;
 
 class _MyCustomWidgetState extends State<MyCustomWidget> {
   @override
@@ -119,11 +135,10 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
           height: 1.h,
         ),
         ReactionCount(
-          comment: '3.4k',
-          share: '46',
+          comment: widget.cm.length.toString(),
+          share: '0',
         ),
-
-        SizedBox(height: 2.h), // Adjust as needed
+        SizedBox(height: 2.h),
         Row(
           children: [
             InkWell(
@@ -149,15 +164,19 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                         : AppColors.whiteColorf9f,
               ),
             ),
-            SizedBox(width: 10), // Adjust as needed
-            CircleButton(
-              isLikeButton: false,
-              img: 'Assets/images/message.png',
-              color: ThemeUtil.isDarkMode(context)
-                  ? Color(0xff121212)
-                  : AppColors.whiteColorf9f,
-            ),
-            SizedBox(width: 10), // Adjust as needed
+//            SizedBox(width: 10),
+            // InkWell(
+            //   onTap: () {},
+            //   child: CircleButton(
+            //     isLikeButton: false,
+            //     img: 'Assets/images/message.png',
+            //     color: ThemeUtil.isDarkMode(context)
+            //         ? Color(0xff121212)
+            //         : AppColors.whiteColorf9f,
+            //   ),
+            // ),
+
+            SizedBox(width: 10),
             CircleButton(
               isLikeButton: false,
               img: 'Assets/images/send.png',
@@ -166,85 +185,137 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                   : AppColors.whiteColorf9f,
             ),
             Spacer(),
-            LikeCount(
-              like: '32.1K',
-              name: 'Ali',
-            ),
-
+            // LikeCount(
+            //   like: '32.1K',
+            //   name: 'Ali',
+            // ),
             Divider(
               color: Color(0xffE5E7EB),
             ),
           ],
         ),
         SizedBox(
+          height: 1.h,
+        ),
+        RoundedCommentTextField(
+          controller: comment,
+          hintText: 'Add comment',
+          onSendPressed: () async {
+            FocusScope.of(context).unfocus();
+            mediaController
+                .commentAdd(
+                    widget.postId, comment.text, context, widget.postIndex)
+                .then((value) {
+              setState(() {});
+            });
+            comment.clear();
+          },
+        ),
+        SizedBox(
           height: 1.5.h,
         ),
-        widget.isReply == true
-            ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 13,
-                    backgroundImage: NetworkImage(
-                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwyF78CgXqp5uX0g-SvGy4uLB2Qlg8Up3fhYYVlx9Vag&s'),
-                  ),
-                  SizedBox(width: 2.w), // Adjust as needed
-
-                  Column(
+        (widget.cm.length > 0)
+            ? Obx(() => ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: widget.postIndex == showCommentIndex
+                    ? mediaController.allPost[widget.postIndex].comments!.length
+                    : mediaController
+                                .allPost[widget.postIndex].comments!.length <
+                            4
+                        ? mediaController
+                            .allPost[widget.postIndex].comments!.length
+                        : 3,
+                itemBuilder: ((context, index) {
+                  final commen = widget.cm[index];
+                  return Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Mark Ramos',
-                        style: CustomTextStyles.w600TextStyle(
-                            letterspacing: 0.5,
-                            size: 13.21,
-                            color: ThemeUtil.isDarkMode(context)
-                                ? AppColors.whiteColor
-                                : Color(0xff19295C)),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Greet work! Well done girl. 👏🏽',
-                            style: CustomTextStyles.lightTextStyle(size: 11.28),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 1.h,
-                      ),
-                      Row(
-                        children: [
-                          Text('Like',
-                              style: CustomTextStyles.darkHeadingTextStyle(
-                                  size: 10,
+                      CircleAvatar(
+                          radius: 13,
+                          backgroundImage: NetworkImage(
+                            "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                          )),
+                      SizedBox(width: 2.w), // Adjust as needed
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              commen.commentId.toString(),
+                              style: CustomTextStyles.w600TextStyle(
+                                  letterspacing: 0.5,
+                                  size: 13.21,
                                   color: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xffC9C9C9)
-                                      : Color(0xff60709D))),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 30.0),
-                            child: Text('Reply',
-                                style: CustomTextStyles.darkHeadingTextStyle(
-                                    size: 10,
-                                    color: ThemeUtil.isDarkMode(context)
-                                        ? Color(0xffC9C9C9)
-                                        : Color(0xff60709D))),
-                          ),
-                          Text('2m',
-                              style: CustomTextStyles.lightTextStyle(
-                                  size: 10,
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xffC9C9C9)
-                                      : Color(0xff60709D)))
-                        ],
-                      ),
+                                      ? AppColors.whiteColor
+                                      : Color(0xff19295C)),
+                            ),
+                            Text(
+                              commen.comment.toString(),
+                              style:
+                                  CustomTextStyles.lightTextStyle(size: 11.28),
+                            ),
+                            SizedBox(
+                              height: 1.h,
+                            ),
+                            Row(
+                              children: [
+                                Text('Like',
+                                    style:
+                                        CustomTextStyles.darkHeadingTextStyle(
+                                            size: 10,
+                                            color: ThemeUtil.isDarkMode(context)
+                                                ? Color(0xffC9C9C9)
+                                                : Color(0xff60709D))),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30.0),
+                                  child: Text('Reply',
+                                      style:
+                                          CustomTextStyles.darkHeadingTextStyle(
+                                              size: 10,
+                                              color:
+                                                  ThemeUtil.isDarkMode(context)
+                                                      ? Color(0xffC9C9C9)
+                                                      : Color(0xff60709D))),
+                                ),
+                                Text(
+                                    getElapsedTime(commen.createdAt.toString()),
+                                    style: CustomTextStyles.lightTextStyle(
+                                        size: 10,
+                                        color: ThemeUtil.isDarkMode(context)
+                                            ? Color(0xffC9C9C9)
+                                            : Color(0xff60709D)))
+                              ],
+                            ),
+                            SizedBox(height: 1.h),
+                          ],
+                        ),
+                      )
                     ],
-                  )
-                ],
-              )
+                  );
+                })))
             : Container(),
-        SizedBox(height: 1.h), // Adjust as needed
+        (showCommentIndex == widget.postIndex)
+            ? Container()
+            : (widget.cm.length > 3)
+                ? InkWell(
+                    onTap: () {
+                      showCommentIndex = widget.postIndex;
+                      setState(() {});
+                    },
+                    child: Text(
+                      (widget.cm.length - 3).toString() + ' comment',
+                      style: CustomTextStyles.lightTextStyle(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? null
+                              : Color(0xff2D3F7B),
+                          size: 11.56),
+                    ),
+                  )
+                : Container(),
+        SizedBox(height: 2.h),
       ],
     );
   }

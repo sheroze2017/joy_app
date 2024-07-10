@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
+import 'package:crypto/crypto.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:joy_app/modules/auth/bloc/auth_api.dart';
@@ -13,6 +18,7 @@ import 'package:joy_app/modules/auth/models/hospital_resgister_model.dart';
 import 'package:joy_app/modules/auth/models/user_register_model.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/view/home/navbar.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../core/network/request.dart';
 import '../models/pharmacy_register_model.dart';
@@ -47,7 +53,7 @@ class AuthController extends GetxController {
       String phone,
       String lastName,
       String deviceToken) async {
-    var user = User(
+    var user = UserHive(
         userId: userId,
         firstName: firstName,
         email: email,
@@ -58,8 +64,8 @@ class AuthController extends GetxController {
         phone: phone,
         lastName: lastName,
         deviceToken: deviceToken);
-    await Hive.openBox<User>('users');
-    final userBox = await Hive.openBox<User>('users');
+    await Hive.openBox<UserHive>('users');
+    final userBox = await Hive.openBox<UserHive>('users');
     await userBox.put('current_user', user);
   }
 
@@ -76,7 +82,7 @@ class AuthController extends GetxController {
       gender,
       BuildContext context,
       image) async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     try {
       registerLoader.value = true;
@@ -132,7 +138,7 @@ class AuthController extends GetxController {
       placeId,
       BuildContext context,
       image) async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     try {
       registerLoader.value = true;
@@ -190,7 +196,7 @@ class AuthController extends GetxController {
       placeId,
       BuildContext context,
       image) async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     try {
       registerLoader.value = true;
@@ -251,7 +257,7 @@ class AuthController extends GetxController {
       instituteType,
       BuildContext context,
       image) async {
-    User? currentUser = await getCurrentUser();
+    UserHive? currentUser = await getCurrentUser();
 
     try {
       registerLoader.value = true;
@@ -299,10 +305,10 @@ class AuthController extends GetxController {
   }
 
   Future<LoginModel> login(
-      String email, String password, BuildContext context) async {
+      String email, String password, BuildContext context, authType) async {
     loginLoader.value = true;
     try {
-      LoginModel response = await authApi.login(email, password);
+      LoginModel response = await authApi.login(email, password, authType);
       if (response.data != null) {
         showSuccessMessage(context, 'Login Successfully');
         saveUserDetailInLocal(
@@ -697,5 +703,96 @@ class AuthController extends GetxController {
       isLoading(false);
       return city.value + ' ' + area.value;
     }
+  }
+
+  Future signInWithGoogle(context) async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      UserCredential user =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      login(user.user!.email.toString(), '', context, 'SOCIAL');
+    } catch (e) {
+      print('Error signing in with Google: $e');
+      return Future.error(e);
+    } finally {}
+  }
+
+  Future<UserCredential> registerWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      print('Error signing in with Google: $e');
+      return Future.error(e);
+    } finally {}
+  }
+
+  String sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  Future<void> signInWithApple(context) async {
+    final rawNonce = generateNonce();
+    final nonce = sha256ofString(rawNonce);
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+      UserCredential user =
+          await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      login(user.user!.email.toString(), '', context, 'SOCIAL');
+    } catch (e) {
+      showErrorMessage(context, 'Error signing in with Apple');
+      return Future.error(e);
+    } finally {}
+  }
+
+  Future<UserCredential> registerWithApple() async {
+    final rawNonce = generateNonce();
+    final nonce = sha256ofString(rawNonce);
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+      return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    } catch (e) {
+      print('Error signing in with Apple: $e');
+      return Future.error(e);
+    } finally {}
   }
 }

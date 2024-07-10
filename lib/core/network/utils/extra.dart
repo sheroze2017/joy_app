@@ -1,5 +1,10 @@
 String getElapsedTime(String createdTimeString) {
-  DateTime createdTime = DateTime.parse(createdTimeString);
+  DateTime createdTime;
+  if (createdTimeString.isEmpty) {
+    createdTime = DateTime.now();
+  } else {
+    createdTime = DateTime.parse(createdTimeString) ?? DateTime.now();
+  }
 
   DateTime now = DateTime.now();
   Duration difference = now.difference(createdTime);

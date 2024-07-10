@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_booking/your_profileform_screen.dart';
-import 'package:joy_app/view/doctor_flow/profile_form.dart';
+import 'package:joy_app/modules/doctor/view/profile_form.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';

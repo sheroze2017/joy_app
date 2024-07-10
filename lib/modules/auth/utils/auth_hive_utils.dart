@@ -2,13 +2,13 @@ import 'package:hive/hive.dart';
 
 import '../models/user.dart';
 
-void saveUser(User user) async {
-  final userBox = await Hive.openBox<User>('users');
+void saveUser(UserHive user) async {
+  final userBox = await Hive.openBox<UserHive>('users');
   await userBox.put('current_user', user);
 }
 
-Future<User?> getCurrentUser() async {
-  final userBox = await Hive.openBox<User>('users');
+Future<UserHive?> getCurrentUser() async {
+  final userBox = await Hive.openBox<UserHive>('users');
   return userBox.get('current_user');
 }
 
@@ -17,6 +17,6 @@ void closeHiveBox() async {
 }
 
 void clearUserInformation() async {
-  final userBox = await Hive.openBox<User>('users');
+  final userBox = await Hive.openBox<UserHive>('users');
   await userBox.clear();
 }

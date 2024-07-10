@@ -10,10 +10,10 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmac
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/pharmacy_flow/product_screen.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/product_screen.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
-import 'package:joy_app/view/hospital_flow/home_screen.dart';
-import 'package:joy_app/view/social_media/new_friend.dart';
+import 'package:joy_app/modules/hospital/view/home_screen.dart';
+import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/user_flow/bloodbank_user/blood_donation_appeal.dart';
@@ -21,7 +21,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../modules/user/user_hospital/bloc/user_hospital_bloc.dart';
-import '../../bloodbank_flow/blood_appeal_screen.dart';
+import '../../../modules/blood_bank/view/blood_appeal_screen.dart';
 import '../bloodbank_user/request_blood.dart';
 import '../pharmacy_user/pharmacy_product_screen.dart';
 import 'hospital_detail_screen.dart';
