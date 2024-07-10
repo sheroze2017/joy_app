@@ -7,10 +7,12 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
+import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
+import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
 
@@ -42,6 +44,20 @@ class _AddMedicineState extends State<AddMedicine> {
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
+  final mediaController = Get.find<MediaPostController>();
+  String? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final List<String?> paths = await pickSingleFile();
+    if (paths.isNotEmpty) {
+      final String path = await paths.first!;
+      String profileImg =
+          await mediaController.uploadProfilePhoto(path, context);
+      setState(() {
+        _selectedImage = profileImg;
+      });
+    }
+  }
 
   final _formKey = GlobalKey<FormState>();
   final productsController = Get.find<ProductController>();
@@ -78,10 +94,41 @@ class _AddMedicineState extends State<AddMedicine> {
                 children: [
                   Stack(
                     children: <Widget>[
-                      Center(
-                        child: SvgPicture.asset(
-                            'Assets/images/profile-circle.svg'),
-                      ),
+                      InkWell(
+                          onTap: () {
+                            _pickImage();
+                          },
+                          child: _selectedImage == null ||
+                                  !_selectedImage!.contains('http')
+                              ? Center(
+                                  child: SvgPicture.asset(
+                                      'Assets/images/profile-circle.svg'),
+                                )
+                              : Center(
+                                  child: Container(
+                                    width: 43.w,
+                                    height: 43.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle, // Add this line
+                                      border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1), // Optional
+                                    ),
+                                    child: Center(
+                                      child: Container(
+                                        child: ClipOval(
+                                          // Add this widget
+                                          child: Image.network(
+                                            fit: BoxFit.cover,
+                                            _selectedImage!,
+                                            width: 43.w,
+                                            height: 43.w,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )),
                       Positioned(
                         bottom: 20,
                         right: 100,
@@ -105,6 +152,9 @@ class _AddMedicineState extends State<AddMedicine> {
                             )),
                       ),
                     ],
+                  ),
+                  SizedBox(
+                    height: 2.h,
                   ),
                   RoundedBorderTextField(
                     validator: (value) {
@@ -212,29 +262,38 @@ class _AddMedicineState extends State<AddMedicine> {
                               } else {
                                 if (widget.isEdit) {
                                   productsController.editProduct(
-                                      _nameController.text,
-                                      _descController.text,
-                                      category.indexOf(
-                                              _categoryController.text) ??
+                                      _nameController.text.toString(),
+                                      _descController.text.toString(),
+                                      (category.indexOf(_categoryController
+                                                      .text) +
+                                                  1)
+                                              .toString() ??
                                           '0',
-                                      _priceController.text,
+                                      _priceController.text.toString(),
                                       '0',
-                                      '3',
-                                      _stockController.text,
-                                      _dosageController.text,
-                                      widget.productDetail!.productId!
+                                      '',
+                                      _stockController.text.toString(),
+                                      _dosageController.text.toString(),
+                                      widget.productDetail!.productId
                                           .toString(),
                                       context);
                                 } else {
                                   productsController.createProduct(
-                                      _nameController.text,
-                                      _descController.text,
-                                      '1',
-                                      _priceController.text,
+                                      _nameController.text.toString(),
+                                      _descController.text.toString(),
+                                      (category.indexOf(_categoryController
+                                                      .text) +
+                                                  1)
+                                              .toString() ??
+                                          '0',
+                                      _priceController.text.toString(),
                                       '0',
-                                      '3',
-                                      _stockController.text,
-                                      _dosageController.text,
+                                      '',
+                                      _stockController.text.toString(),
+                                      _dosageController.text.toString(),
+                                      _selectedImage.toString().contains('http')
+                                          ? _selectedImage.toString()
+                                          : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                                       context);
                                 }
                               }

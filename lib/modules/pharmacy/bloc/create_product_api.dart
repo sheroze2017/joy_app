@@ -23,7 +23,8 @@ class CreateProductApi {
       String discount,
       String pharmacyId,
       String quantity,
-      String dosage) async {
+      String dosage,
+      String imgUrl) async {
     try {
       final result = await _dioClient.post(Endpoints.createProduct, data: {
         "name": medName,
@@ -33,7 +34,8 @@ class CreateProductApi {
         "discount": discount,
         "pharmacy_id": pharmacyId,
         "quantity": quantity,
-        "dosage": dosage
+        "dosage": dosage,
+        "image": imgUrl
       });
       return CreateProduct.fromJson(result);
     } catch (e) {

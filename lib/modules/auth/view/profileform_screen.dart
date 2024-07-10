@@ -9,6 +9,7 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/auth/components/calendar_dob.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -26,11 +27,13 @@ class FormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
+  bool isEdit;
 
   FormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.isEdit = false,
       super.key});
 
   @override
@@ -42,6 +45,7 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _diseaseController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _profileImgController = TextEditingController();
@@ -73,13 +77,25 @@ class _FormScreenState extends State<FormScreen> {
     }
   }
 
+  ProfileController _profileController = Get.put(ProfileController());
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit) {
+      _selectedImage = _profileController.image.value;
+      _nameController.setText(_profileController.firstName.toString());
+      _phoneController.setText(_profileController.phone.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
     _nameController.setText(widget.name);
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Fill Your Profile',
+        title:widget.isEdit?'Edit Profile': 'Fill Your Profile',
         icon: Icons.arrow_back_sharp,
         onPressed: () {},
       ),
@@ -177,11 +193,18 @@ class _FormScreenState extends State<FormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  SearchDropdown(
+                  RoundedBorderTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter disease';
+                      } else {
+                        return null;
+                      }
+                    },
+                    focusNode: _focusNode2,
+                    nextFocusNode: _focusNode3,
+                    controller: _diseaseController,
                     hintText: 'Disease',
-                    items: [],
-                    value: '',
-                    onChanged: (String? value) {},
                     icon: '',
                   ),
                   SizedBox(
@@ -199,19 +222,28 @@ class _FormScreenState extends State<FormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your location';
-                      } else {
-                        return null;
-                      }
-                    },
-                    focusNode: _focusNode4,
-                    nextFocusNode: _focusNode5,
-                    controller: _locationController,
-                    hintText: 'Location',
-                    icon: '',
+                  Obx(
+                    () => RoundedBorderTextField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your location';
+                          } else {
+                            return null;
+                          }
+                        },
+                        focusNode: _focusNode4,
+                        nextFocusNode: _focusNode5,
+                        controller: _locationController,
+                        hintText: 'Location',
+                        icon: '',
+                        showLoader: authController.isLoading.value,
+                        onTap: () async {
+                          String location =
+                              await authController.getCurrentLocation();
+                          _locationController.setText(location);
+                        },
+                        icondata: Icons.pin_drop,
+                        isLocation: true),
                   ),
                   SizedBox(
                     height: 2.h,
@@ -257,13 +289,28 @@ class _FormScreenState extends State<FormScreen> {
                           child: Obx(
                         () => RoundedButton(
                             showLoader: authController.registerLoader.value,
-                            text: 'Save',
+                            text: widget.isEdit ? 'Edit' : 'Save',
                             onPressed: () async {
                               FocusScope.of(context).unfocus();
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                bool success =
-                                    await authController.userRegister(
+                                bool success = widget.isEdit
+                                    ? await authController.editUser(
+                                        _nameController.text,
+                                        _locationController.text,
+                                        _phoneController.text,
+                                        "",
+                                        'EMAIL',
+                                        "USER",
+                                        _profileController.email.value
+                                            .toString(),
+                                        _profileController.password.value
+                                            .toString(),
+                                        _dobController.text,
+                                        _genderController.text,
+                                        context,
+                                        _selectedImage.toString())
+                                    : await authController.userRegister(
                                         _nameController.text,
                                         _locationController.text,
                                         _phoneController.text,
@@ -277,19 +324,21 @@ class _FormScreenState extends State<FormScreen> {
                                         context,
                                         _selectedImage.toString());
                                 if (success == true) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Obx(() => CustomDialog(
-                                            isUser: true,
-                                            showButton: !authController
-                                                .registerLoader.value,
-                                            title: 'Congratulations!',
-                                            content:
-                                                'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                          ));
-                                    },
-                                  );
+                                  widget.isEdit
+                                      ? {_profileController.updateUserDetal()}
+                                      : showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Obx(() => CustomDialog(
+                                                  isUser: true,
+                                                  showButton: !authController
+                                                      .registerLoader.value,
+                                                  title: 'Congratulations!',
+                                                  content:
+                                                      'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                                ));
+                                          },
+                                        );
                                 }
                               }
                             },
@@ -301,7 +350,42 @@ class _FormScreenState extends State<FormScreen> {
                                 : Color(0xffFFFFFF)),
                       )),
                     ],
-                  )
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  widget.isEdit
+                      ? Row(
+                          children: [
+                            Expanded(
+                              child: RoundedButton(
+                                  text: 'Change Password',
+                                  onPressed: () {
+                                    // showDialog(
+                                    //   context: context,
+                                    //   builder: (BuildContext context) {
+                                    //     return CustomDialog(
+
+                                    //       title: 'Congratulations!',
+                                    //       content:
+                                    //           'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                    //     );
+                                    //   },
+                                    // );
+                                  },
+                                  backgroundColor: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xffC5D3E3)
+                                      : Color(0xff1C2A3A),
+                                  textColor: ThemeUtil.isDarkMode(context)
+                                      ? AppColors.blackColor
+                                      : Color(0xffFFFFFF)),
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  SizedBox(
+                    height: 4.h,
+                  ),
                 ],
               ),
             ),

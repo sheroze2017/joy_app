@@ -35,8 +35,8 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
   @override
   void initState() {
     super.initState();
-    pharmacyController.getPharmacyProduct('3');
-    productsController.allOrders('15', context);
+    pharmacyController.getPharmacyProduct(false, '');
+    productsController.allOrders('', context);
   }
 
   @override

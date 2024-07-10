@@ -34,7 +34,6 @@ class _CreatePostModalState extends State<CreatePostModal> {
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,11 +121,8 @@ class _CreatePostModalState extends State<CreatePostModal> {
                         ),
                       ),
                     )),
-              SizedBox(
-                height: 2.h,
-              ),
               Align(
-                  alignment: Alignment.bottomRight,
+                  alignment: Alignment.topRight,
                   child: Obx(
                     () => RoundedButton(
                         showLoader: mediaController.postUpload.value,

@@ -629,29 +629,29 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                   : SizedBox(
                                       height: 1.h,
                                     ),
-                              widget.isUser
-                                  ? Container()
-                                  : MyCustomWidget(
-                                      isLiked: true,
-                                      isReply: true,
-                                      postName: 'Sheroze',
-                                      text:
-                                          'Hey pals ! Had my third day of chemo. feeling much better.',
-                                    ),
-                              widget.isUser
-                                  ? Container()
-                                  : SizedBox(
-                                      height: 3.h,
-                                    ),
-                              widget.isUser
-                                  ? Container()
-                                  : MyCustomWidget(
-                                      isLiked: false,
-                                      showImg: false,
-                                      isReply: false,
-                                      postName: 'Mille Brown',
-                                      text: 'Feeling depressed today.',
-                                    )
+                              // widget.isUser
+                              //     ? Container()
+                              //     : MyCustomWidget(
+                              //         isLiked: true,
+                              //         isReply: true,
+                              //         postName: 'Sheroze',
+                              //         text:
+                              //             'Hey pals ! Had my third day of chemo. feeling much better.',
+                              //       ),
+                              // widget.isUser
+                              //     ? Container()
+                              //     : SizedBox(
+                              //         height: 3.h,
+                              //       ),
+                              // widget.isUser
+                              //     ? Container()
+                              //     : MyCustomWidget(
+                              //         isLiked: false,
+                              //         showImg: false,
+                              //         isReply: false,
+                              //         postName: 'Mille Brown',
+                              //         text: 'Feeling depressed today.',
+                              //       )
                             ],
                           ),
                         ),

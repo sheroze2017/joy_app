@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/common/theme/controller/theme_controller.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/auth/view/profileform_screen.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
@@ -118,62 +119,67 @@ class _FormScreenState extends State<ProfileScreen> {
               SizedBox(
                 height: 2.h,
               ),
-              widget.isPharmacy
-                  ? Container()
-                  : InkWell(
-                      onTap: () {
-                        widget.isDoctor == true
-                            ? Get.to(DoctorDetailScreen(
-                                docName: 'Dr David Patel',
-                                location: 'USA Cantucky',
-                                Category: 'Cardiologist',
-                                isDoctor: widget.isDoctor,
-                              ))
-                            : widget.isUser
-                                ? Get.to(EditProfile())
-                                : widget.isBloodbank
-                                    ? Get.to(BloodBankFormScreen(
-                                        email: 'email',
-                                        password: 'password',
-                                        name: 'name'))
-                                    : widget.isHospital
-                                        ? Get.to(HospitalFormScreen(
-                                            email: 'email',
-                                            password: 'password',
-                                            name: 'name'))
-                                        : widget.isPharmacy
-                                            ? Get.to(PharmacyFormScreen(
-                                                email: 'email',
-                                                password: 'password',
-                                                name: 'name'))
-                                            : null;
-                      },
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'Assets/images/user-edit.svg',
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          SizedBox(
-                            width: 3.w,
-                          ),
-                          Expanded(
-                            child: Text(
-                              'Edit Profile',
-                              style: CustomTextStyles.lightTextStyle(
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? AppColors.whiteColor
-                                      : Color(0xff6B7280),
-                                  size: 18),
-                            ),
-                          ),
-                          SvgPicture.asset(
-                            'Assets/images/arrow-right.svg',
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ],
+              InkWell(
+                onTap: () {
+                  widget.isDoctor == true
+                      ? Get.to(DoctorDetailScreen(
+                          docName: 'Dr David Patel',
+                          location: 'USA Cantucky',
+                          Category: 'Cardiologist',
+                          isDoctor: widget.isDoctor,
+                        ))
+                      : widget.isUser
+                          ? Get.to(FormScreen(
+                              isEdit: true,
+                              email: 'email',
+                              password: 'password',
+                              name: 'name'))
+                          : widget.isBloodbank
+                              ? Get.to(BloodBankFormScreen(
+                                  isEdit: true,
+                                  email: 'email',
+                                  password: 'password',
+                                  name: 'name'))
+                              : widget.isHospital
+                                  ? Get.to(HospitalFormScreen(
+                                      isEdit: true,
+                                      email: 'email',
+                                      password: 'password',
+                                      name: 'name'))
+                                  : widget.isPharmacy
+                                      ? Get.to(PharmacyFormScreen(
+                                          isEdit: true,
+                                          email: 'email',
+                                          password: 'password',
+                                          name: 'name'))
+                                      : null;
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'Assets/images/user-edit.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    SizedBox(
+                      width: 3.w,
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Edit Profile',
+                        style: CustomTextStyles.lightTextStyle(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : Color(0xff6B7280),
+                            size: 18),
                       ),
                     ),
+                    SvgPicture.asset(
+                      'Assets/images/arrow-right.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Divider(

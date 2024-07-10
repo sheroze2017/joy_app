@@ -12,10 +12,12 @@ import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.da
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
+import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../common/profile/bloc/profile_bloc.dart';
 import '../../modules/auth/bloc/auth_bloc.dart';
 import '../../modules/auth/utils/auth_utils.dart';
 
@@ -23,11 +25,12 @@ class PharmacyFormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
-
+  bool isEdit;
   PharmacyFormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.isEdit = false,
       super.key});
   @override
   State<PharmacyFormScreen> createState() => _PharmacyFormScreenState();
@@ -55,6 +58,7 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
   final authController = Get.find<AuthController>();
   final mediaController = Get.find<MediaPostController>();
   String? _selectedImage;
+  ProfileController _profileController = Get.put(ProfileController());
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -69,12 +73,23 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit) {
+      _selectedImage = _profileController.image.value;
+      _nameController.setText(_profileController.firstName.toString());
+      _contactController.setText(_profileController.phone.toString());
+    }
+    ;
+  }
+
+  @override
   Widget build(BuildContext context) {
     //List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Add Your Pharmacy',
+        title: widget.isEdit ? 'Edit Pharmacy' : 'Add Your Pharmacy',
         icon: Icons.arrow_back_sharp,
         onPressed: () {},
       ),
@@ -292,14 +307,30 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                           child: Obx(
                         () => RoundedButton(
                             showLoader: authController.registerLoader.value,
-                            text: 'Save',
+                            text: widget.isEdit ? 'Edit' : 'Save',
                             onPressed: () async {
                               FocusScope.of(context).unfocus();
 
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                bool result =
-                                    await authController.PharmacyRegister(
+                                bool result = widget.isEdit
+                                    ? await authController.editPharmacy(
+                                        _nameController.text,
+                                        _profileController.email.value
+                                            .toString(),
+                                        _profileController.password.value
+                                            .toString(),
+                                        _locationController.text,
+                                        "",
+                                        _contactController.text,
+                                        "EMAIL",
+                                        "PHARMACY",
+                                        "22",
+                                        "22",
+                                        "ASDA21321312312",
+                                        context,
+                                        _selectedImage.toString())
+                                    : await authController.PharmacyRegister(
                                         _nameController.text,
                                         widget.email,
                                         widget.password,
@@ -313,20 +344,23 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                                         "ASDA21321312312",
                                         context,
                                         _selectedImage.toString());
+
                                 if (result) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        isPharmacyForm: true,
-                                        buttonColor: Color(0xff1C2A3A),
-                                        showButton: true,
-                                        title: 'Congratulations!',
-                                        content:
-                                            'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                      );
-                                    },
-                                  );
+                                  widget.isEdit
+                                      ? {_profileController.updateUserDetal()}
+                                      : showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomDialog(
+                                              isPharmacyForm: true,
+                                              buttonColor: Color(0xff1C2A3A),
+                                              showButton: true,
+                                              title: 'Congratulations!',
+                                              content:
+                                                  'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                            );
+                                          },
+                                        );
                                 }
                               }
                             },

@@ -115,7 +115,9 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                 child: Image.network(
                                   height: 67.17.w,
                                   width: 100.w,
-                                  'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
+                                  widget.product.image!.contains('http')
+                                      ? widget.product.image.toString()
+                                      : 'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
                                   fit: BoxFit.cover,
                                 ),
                               ),

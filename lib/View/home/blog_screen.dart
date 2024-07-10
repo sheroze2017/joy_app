@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
@@ -165,18 +166,124 @@ class UserBlogScreen extends StatelessWidget {
                     itemCount: mediaController.allPost.length,
                     itemBuilder: ((context, index) {
                       final data = mediaController.allPost[index];
-                      return MyCustomWidget(
-                        imgPath: data.image.toString(),
-                        isLiked: true,
-                        isReply: false,
-                        showImg: (data.image == null || data.image!.isEmpty)
-                            ? false
-                            : true,
-                        postName: data.title.toString(),
-                        text: data.description.toString(),
+                      return Column(
+                        children: [
+                          MyCustomWidget(
+                            postTime: data.createdAt.toString(),
+                            id: data.createdBy.toString(),
+                            imgPath: data.image.toString(),
+                            isLiked: true,
+                            isReply: false,
+                            showImg: (data.image == null || data.image!.isEmpty)
+                                ? false
+                                : true,
+                            postName: data.name.toString(),
+                            text: data.description.toString(),
+                          ),
+                          (data.comments!.length > 0)
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: data.comments!.length,
+                                  itemBuilder: ((context, index) {
+                                    final commen = data.comments![index];
+                                    return Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CircleAvatar(
+                                            radius: 13,
+                                            backgroundImage: NetworkImage(
+                                              "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                            )),
+                                        SizedBox(
+                                            width: 2.w), // Adjust as needed
+
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              commen.commentId.toString(),
+                                              style: CustomTextStyles
+                                                  .w600TextStyle(
+                                                      letterspacing: 0.5,
+                                                      size: 13.21,
+                                                      color: ThemeUtil
+                                                              .isDarkMode(
+                                                                  context)
+                                                          ? AppColors.whiteColor
+                                                          : Color(0xff19295C)),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  commen.comment.toString(),
+                                                  style: CustomTextStyles
+                                                      .lightTextStyle(
+                                                          size: 11.28),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 1.h,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text('Like',
+                                                    style: CustomTextStyles
+                                                        .darkHeadingTextStyle(
+                                                            size: 10,
+                                                            color: ThemeUtil
+                                                                    .isDarkMode(
+                                                                        context)
+                                                                ? Color(
+                                                                    0xffC9C9C9)
+                                                                : Color(
+                                                                    0xff60709D))),
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 30.0),
+                                                  child: Text('Reply',
+                                                      style: CustomTextStyles
+                                                          .darkHeadingTextStyle(
+                                                              size: 10,
+                                                              color: ThemeUtil
+                                                                      .isDarkMode(
+                                                                          context)
+                                                                  ? Color(
+                                                                      0xffC9C9C9)
+                                                                  : Color(
+                                                                      0xff60709D))),
+                                                ),
+                                                Text(
+                                                    getElapsedTime(commen
+                                                        .createdAt
+                                                        .toString()),
+                                                    style: CustomTextStyles
+                                                        .lightTextStyle(
+                                                            size: 10,
+                                                            color: ThemeUtil
+                                                                    .isDarkMode(
+                                                                        context)
+                                                                ? Color(
+                                                                    0xffC9C9C9)
+                                                                : Color(
+                                                                    0xff60709D)))
+                                              ],
+                                            ),
+                                            SizedBox(height: 1.h),
+                                          ],
+                                        )
+                                      ],
+                                    );
+                                  }))
+                              : Container(),
+                          SizedBox(height: 2.h),
+                        ],
                       );
                     }))),
-
               ],
             ),
           ),

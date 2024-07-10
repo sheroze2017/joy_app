@@ -8,6 +8,7 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -24,11 +25,13 @@ class HospitalFormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
+  bool isEdit;
 
   HospitalFormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.isEdit = false,
       super.key});
   @override
   State<HospitalFormScreen> createState() => _HospitalFormScreenState();
@@ -61,6 +64,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _selectedImage;
   final mediaController = Get.find<MediaPostController>();
+  ProfileController _profileController = Get.put(ProfileController());
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -75,10 +79,20 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit) {
+      _selectedImage = _profileController.image.value;
+      _nameController.setText(_profileController.firstName.toString());
+      _contactController.setText(_profileController.phone.toString());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Add Your Hospital',
+        title: widget.isEdit ? 'Edit Hospital' : 'Add Your Hospital',
         icon: Icons.arrow_back_sharp,
         onPressed: () {},
       ),
@@ -310,8 +324,25 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
 
                                 if (!_formKey.currentState!.validate()) {
                                 } else {
-                                  List result =
-                                      await authController.HospitalRegister(
+                                  List result = widget.isEdit
+                                      ? await authController.editHospital(
+                                          _nameController.text,
+                                          _profileController.email.value
+                                              .toString(),
+                                          _profileController.password.value
+                                              .toString(),
+                                          _locationController.text,
+                                          "",
+                                          _contactController.text,
+                                          "AD1234",
+                                          "22",
+                                          "22",
+                                          _feesController.text,
+                                          _aboutController.text,
+                                          _instituteController.text,
+                                          context,
+                                          _selectedImage.toString())
+                                      : await authController.HospitalRegister(
                                           _nameController.text,
                                           widget.email,
                                           widget.password,
@@ -329,21 +360,23 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                           context,
                                           _selectedImage.toString());
                                   if (result[0] == true) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CustomDialog(
-                                          hospitalDetailId:
-                                              result[1].toString(),
-                                          isHospitalForm: true,
-                                          buttonColor: Color(0xff1C2A3A),
-                                          showButton: true,
-                                          title: 'Congratulations!',
-                                          content:
-                                              'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                        );
-                                      },
-                                    );
+                                    widget.isEdit
+                                        ? {_profileController.updateUserDetal()}
+                                        : showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return CustomDialog(
+                                                hospitalDetailId:
+                                                    result[1].toString(),
+                                                isHospitalForm: true,
+                                                buttonColor: Color(0xff1C2A3A),
+                                                showButton: true,
+                                                title: 'Congratulations!',
+                                                content:
+                                                    'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                              );
+                                            },
+                                          );
                                   }
                                 }
                               },

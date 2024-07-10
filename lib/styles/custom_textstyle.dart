@@ -18,8 +18,10 @@ class CustomTextStyles {
         fontFamily: 'Inter');
   }
 
-  static TextStyle lightTextStyle({Color? color, double size = 14}) {
+  static TextStyle lightTextStyle(
+      {Color? color, double size = 14, double heigh = 1.5}) {
     return TextStyle(
+        height: heigh,
         fontSize: (size / 3.9).w,
         fontWeight: FontWeight.w400,
         color: color ?? Color(0xff6B7280),

@@ -25,14 +25,11 @@ class DirectMessageScreen extends StatelessWidget {
                   return Column(
                     children: [
                       MyMessage(
-                        message: 'Hi hope you are doing well',
+                        message: 'Do you know what time is it?',
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 8),
-                        child: YourMessage(
-                          message:
-                              'Im fine how about you will come tomorrow for meeting',
-                        ),
+                        child: YourMessage(message: "It’s morning in Tokyo 😎"),
                       ),
                     ],
                   );
@@ -146,7 +143,7 @@ class MyMessage extends StatelessWidget {
               borderRadius: BorderRadius.circular(24)),
           child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text('Your Message dsf dsf sdf sdfsd fsdf sdf',
+              child: Text(message,
                   style: CustomTextStyles.lightTextStyle(
                       color: ThemeUtil.isDarkMode(context)
                           ? AppColors.whiteColor
@@ -175,11 +172,12 @@ class YourMessage extends StatelessWidget {
               color: ThemeUtil.isDarkMode(context)
                   ? Color(0xffC5D3E3)
                   : Color(0xff1C2A3A),
-              borderRadius: BorderRadius.circular(24)),
+              borderRadius: BorderRadius.circular(18)),
           child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(12.0),
               child: Text(message,
                   style: CustomTextStyles.lightTextStyle(
+                      heigh: 0.6,
                       color: ThemeUtil.isDarkMode(context)
                           ? AppColors.blackColor
                           : Colors.white,

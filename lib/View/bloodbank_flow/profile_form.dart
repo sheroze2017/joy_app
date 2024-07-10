@@ -8,6 +8,7 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -50,10 +51,9 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
   final FocusNode _focusNode7 = FocusNode();
 
   final authController = Get.find<AuthController>();
-
   final _formKey = GlobalKey<FormState>();
   String? _selectedImage;
-
+  ProfileController _profileController = Get.put(ProfileController());
   final mediaController = Get.find<MediaPostController>();
 
   Future<void> _pickImage() async {
@@ -65,6 +65,16 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
       setState(() {
         _selectedImage = profileImg;
       });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit) {
+      _selectedImage = _profileController.image.value;
+      _nameController.setText(_profileController.firstName.toString());
+      _contactController.setText(_profileController.phone.toString());
     }
   }
 
@@ -265,8 +275,24 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
 
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                bool result =
-                                    await authController.bloodBankRegister(
+                                bool result = widget.isEdit
+                                    ? await authController.editBloodBank(
+                                        _nameController.text,
+                                        _profileController.email.value
+                                            .toString(),
+                                        _profileController.password.value
+                                            .toString(),
+                                        _locationController.text,
+                                        "",
+                                        _contactController.text,
+                                        "EMAIL",
+                                        "BLOODBANK",
+                                        "22",
+                                        "22",
+                                        "ASDA21321",
+                                        context,
+                                        _selectedImage.toString())
+                                    : await authController.bloodBankRegister(
                                         _nameController.text,
                                         widget.email,
                                         widget.password,
@@ -281,19 +307,21 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                         context,
                                         _selectedImage.toString());
                                 if (result) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomDialog(
-                                        isBloodBankForm: true,
-                                        buttonColor: Color(0xff1C2A3A),
-                                        showButton: true,
-                                        title: 'Congratulations!',
-                                        content:
-                                            'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                      );
-                                    },
-                                  );
+                                  widget.isEdit
+                                      ? {_profileController.updateUserDetal()}
+                                      : showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return CustomDialog(
+                                              isBloodBankForm: true,
+                                              buttonColor: Color(0xff1C2A3A),
+                                              showButton: true,
+                                              title: 'Congratulations!',
+                                              content:
+                                                  'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                            );
+                                          },
+                                        );
                                 }
                               }
                             },

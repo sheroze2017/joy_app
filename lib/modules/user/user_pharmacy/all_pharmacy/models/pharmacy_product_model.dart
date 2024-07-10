@@ -39,10 +39,9 @@ class PharmacyProductData {
   String? discount;
   int? pharmacyId;
   int? cartQuantity;
-
   int? quantity;
-
   String? dosage;
+  String? image;
 
   PharmacyProductData(
       {this.productId,
@@ -54,7 +53,8 @@ class PharmacyProductData {
       this.pharmacyId,
       this.quantity,
       this.cartQuantity = 1,
-      this.dosage});
+      this.dosage,
+      this.image});
 
   PharmacyProductData.fromJson(Map<String, dynamic> json) {
     productId = json['product_id'];
@@ -67,6 +67,7 @@ class PharmacyProductData {
     quantity = json['quantity'];
     cartQuantity = 1;
     dosage = json['dosage'];
+    image = json['image'].toString();
   }
 
   Map<String, dynamic> toJson() {

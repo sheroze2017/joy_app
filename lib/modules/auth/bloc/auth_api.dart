@@ -78,6 +78,143 @@ class AuthApi {
     }
   }
 
+  Future<UserRegisterModel> editUser(
+      String userId,
+      String firstName,
+      String email,
+      String password,
+      String location,
+      String deviceToken,
+      String dob,
+      String gender,
+      String phoneNo,
+      String image) async {
+    try {
+      final result = await _dioClient.post(Endpoints.editUser, data: {
+        "user_id": userId,
+        "name": firstName,
+        "email": email,
+        "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "date_of_birth": dob,
+        "gender": gender,
+        "phone": phoneNo,
+        "image": image
+      });
+      return UserRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<BloodBankRegisterModel> editBloodBank(
+    String userId,
+    String firstName,
+    String email,
+    String password,
+    String location,
+    String deviceToken,
+    String phoneNo,
+    String placeID,
+    String lat,
+    String lng,
+    String image,
+  ) async {
+    try {
+      final result = await _dioClient.post(Endpoints.editBloodBank, data: {
+        "user_id": userId,
+        "name": firstName,
+        "email": email,
+        "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "phone": phoneNo,
+        "place_id": placeID,
+        "lat": lat,
+        "lng": lng,
+        "image": image
+      });
+      return BloodBankRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<PharmacyRegisterModel> editPharmacy(
+      String userId,
+      String name,
+      String email,
+      String password,
+      String location,
+      String deviceToken,
+      String phoneNo,
+      String lat,
+      String long,
+      String placeId,
+      String image) async {
+    try {
+      final result = await _dioClient.post(Endpoints.editPharmacy, data: {
+        "user_id": userId,
+        "name": name,
+        "email": email,
+        "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "phone": phoneNo,
+        "place_id": placeId,
+        "lat": lat,
+        "lng": long,
+        "image": image
+      });
+      return PharmacyRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<HospitalRegisterModel> editHospital(
+      String userId,
+      String name,
+      String email,
+      String password,
+      String location,
+      String deviceToken,
+      String phoneNo,
+      String lat,
+      String long,
+      String placeId,
+      String instituteType,
+      String about,
+      String checkupFee,
+      String image) async {
+    try {
+      final result = await _dioClient.post(Endpoints.editHospital, data: {
+        "user_id": userId,
+        "name": name,
+        "email": email,
+        "password": password,
+        "location": location,
+        "device_token": deviceToken,
+        "phone": phoneNo,
+        "place_id": placeId,
+        "lat": lat,
+        "lng": long,
+        "checkup_fee": checkupFee,
+        "about": about,
+        "institute": instituteType,
+        "image": image
+      });
+      return HospitalRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
   Future<DoctorRegisterModel> doctorRegister(
       String firstName,
       String email,

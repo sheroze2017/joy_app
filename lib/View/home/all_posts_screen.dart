@@ -42,6 +42,7 @@ class AllPostScreen extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(top: 12.0),
                       child: MyCustomWidget(
+                        postTime: '',
                         imgPath: data.image.toString(),
                         isLiked: true,
                         isReply: false,
@@ -51,6 +52,8 @@ class AllPostScreen extends StatelessWidget {
                         postName: _friendsController.userProfileData.value!.name
                             .toString(),
                         text: data.description.toString(),
+                        id: _friendsController.userProfileData.value!.userId
+                            .toString(),
                       ),
                     );
                   }))),

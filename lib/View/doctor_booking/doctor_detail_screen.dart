@@ -92,8 +92,8 @@ class DoctorDetailScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12.0),
                                 child: Image.network(
                                   data!.image!.contains('http')
-                                      ? data!.image!
-                                      : 'https://s3-alpha-sig.figma.com/img/ab8e/d8d0/b0db1e98ab7f1a31afba13769f282033?Expires=1720396800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=A2kgxmFS3NyrGIED4w0Uw6nnjCe8fvcEyHsH~rNg~mavb2NytmeodcQ1rVRKC1Frw5ij6OZipykcHyGt9pvScezcs1HBrXoFMZ9GytVPKpeCYI9X8wz3mFXQ64t4y1GXDtGNcHh-73AF0PBVX4dkgGEk4BY2X~YnEoFvuDc~5ncYe20Qoz6~VqSO7wgJpRNKjqjgmjiKaRX8mViOAzxu-wRG3O7pOLkRr2z3rESjfFoHCC~GdxFlVyNoI-0nt1TkERX45RmHGsghecsEiu9pxnof-WiyHLbxMnWc~4QQENIHTtf36R0EpYDzUy5nhtnUO6xVLgoMhqjtdOCFfhgpUg__',
+                                      ? data.image!
+                                      : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
                                   width: 27.9.w,
                                   height: 27.9.w,
                                   fit: BoxFit.cover,

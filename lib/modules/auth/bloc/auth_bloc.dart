@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
@@ -20,6 +22,10 @@ import '../utils/route.dart';
 class AuthController extends GetxController {
   late DioClient dioClient;
   late AuthApi authApi;
+  var isLoading = false.obs;
+  var city = ''.obs;
+  var area = ''.obs;
+
   var loginLoader = false.obs;
   var registerLoader = false.obs;
 
@@ -55,6 +61,241 @@ class AuthController extends GetxController {
     await Hive.openBox<User>('users');
     final userBox = await Hive.openBox<User>('users');
     await userBox.put('current_user', user);
+  }
+
+  Future<bool> editUser(
+      firstName,
+      location,
+      phoneNo,
+      deviceToken,
+      authType,
+      userRole,
+      String email,
+      String password,
+      dob,
+      gender,
+      BuildContext context,
+      image) async {
+    User? currentUser = await getCurrentUser();
+
+    try {
+      registerLoader.value = true;
+      UserRegisterModel response = await authApi.editUser(
+          currentUser!.userId.toString(),
+          firstName,
+          email,
+          password,
+          location,
+          deviceToken,
+          dob,
+          gender,
+          phoneNo,
+          image);
+      if (response.data != null) {
+        saveUserDetailInLocal(
+          response.data!.userId!,
+          response.data!.name!.toString(),
+          email,
+          password,
+          response.data!.image.toString(),
+          response.data!.userRole.toString(),
+          response.data!.authType.toString(),
+          response.data!.phone.toString(),
+          '',
+          response.data!.deviceToken.toString(),
+        );
+        showSuccessMessage(context, 'Edit Successfully');
+        return true;
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return false;
+      }
+    } catch (error) {
+      registerLoader.value = false;
+      throw (error);
+    } finally {
+      registerLoader.value = false;
+    }
+  }
+
+  Future<bool> editBloodBank(
+      name,
+      email,
+      password,
+      location,
+      deviceToken,
+      phoneNo,
+      authType,
+      userRole,
+      lat,
+      long,
+      placeId,
+      BuildContext context,
+      image) async {
+    User? currentUser = await getCurrentUser();
+
+    try {
+      registerLoader.value = true;
+
+      BloodBankRegisterModel response = await authApi.editBloodBank(
+          currentUser!.userId.toString(),
+          name,
+          email,
+          password,
+          location,
+          deviceToken,
+          phoneNo,
+          placeId,
+          lat,
+          long,
+          image);
+      if (response.data != null) {
+        saveUserDetailInLocal(
+            response.data!.userId!,
+            response.data!.name!.toString(),
+            email,
+            password,
+            response.data!.image.toString(),
+            response.data!.userRole.toString(),
+            response.data!.authType.toString(),
+            response.data!.phone.toString(),
+            '',
+            response.data!.deviceToken.toString());
+        showSuccessMessage(context, 'Profile Edit Successfully');
+        return true;
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return false;
+      }
+    } catch (error) {
+      registerLoader.value = false;
+
+      throw (error);
+    } finally {
+      registerLoader.value = false;
+    }
+  }
+
+  Future<bool> editPharmacy(
+      name,
+      email,
+      password,
+      location,
+      deviceToken,
+      phoneNo,
+      authType,
+      userRole,
+      lat,
+      long,
+      placeId,
+      BuildContext context,
+      image) async {
+    User? currentUser = await getCurrentUser();
+
+    try {
+      registerLoader.value = true;
+
+      PharmacyRegisterModel response = await authApi.editPharmacy(
+          currentUser!.userId.toString(),
+          name,
+          email,
+          password,
+          location,
+          deviceToken,
+          phoneNo,
+          lat,
+          long,
+          placeId,
+          image);
+      if (response.data != null) {
+        saveUserDetailInLocal(
+            response.data!.userId!,
+            response.data!.name!.toString(),
+            email,
+            password,
+            response.data!.image.toString(),
+            response.data!.userRole.toString(),
+            response.data!.authType.toString(),
+            response.data!.phone.toString(),
+            '',
+            response.data!.deviceToken.toString());
+
+        showSuccessMessage(context, 'Profile Edit Successfully');
+
+        return true;
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return false;
+      }
+    } catch (error) {
+      registerLoader.value = false;
+
+      throw (error);
+    } finally {
+      registerLoader.value = false;
+    }
+  }
+
+  Future<List<dynamic>> editHospital(
+      name,
+      email,
+      password,
+      location,
+      deviceToken,
+      phoneNo,
+      placeId,
+      lat,
+      long,
+      checkupFee,
+      about,
+      instituteType,
+      BuildContext context,
+      image) async {
+    User? currentUser = await getCurrentUser();
+
+    try {
+      registerLoader.value = true;
+
+      HospitalRegisterModel response = await authApi.editHospital(
+          currentUser!.userId.toString(),
+          name,
+          email,
+          password,
+          location,
+          deviceToken,
+          phoneNo,
+          lat,
+          long,
+          placeId,
+          instituteType,
+          about,
+          checkupFee,
+          image);
+      if (response.data != null) {
+        saveUserDetailInLocal(
+            response.data!.userId!,
+            response.data!.name!.toString(),
+            email,
+            password,
+            response.data!.image.toString(),
+            response.data!.userRole.toString(),
+            response.data!.authType.toString(),
+            response.data!.phone.toString(),
+            '',
+            response.data!.deviceToken.toString());
+        showSuccessMessage(context, 'Register Successfully');
+        return [true, response.data!.hospitalDetailId];
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return [false];
+      }
+    } catch (error) {
+      registerLoader.value = false;
+
+      throw (error);
+    } finally {
+      registerLoader.value = false;
+    }
   }
 
   Future<LoginModel> login(
@@ -403,6 +644,58 @@ class AuthController extends GetxController {
       throw (error);
     } finally {
       registerLoader.value = false;
+    }
+  }
+
+  Future<String> getCurrentLocation() async {
+    isLoading(true);
+    city.value = '';
+    area.value = '';
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      Get.snackbar('Location Error', 'Location services are disabled.');
+      isLoading(false);
+      return '';
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.deniedForever) {
+      Get.snackbar(
+          'Location Error', 'Location permissions are permanently denied.');
+      isLoading(false);
+      return '';
+    }
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        Get.snackbar('Location Error', 'Location permissions are denied.');
+        isLoading(false);
+        return '';
+      }
+    }
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      Placemark placemark = placemarks[0];
+      city.value = placemark.locality ?? '';
+      area.value = placemark.subLocality ?? '';
+
+      return area.value + ', ' + city.value;
+    } catch (e) {
+      Get.snackbar('Location Error', 'Failed to get location: $e');
+    } finally {
+      isLoading(false);
+      return city.value + ' ' + area.value;
     }
   }
 }

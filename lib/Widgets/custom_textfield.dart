@@ -8,7 +8,9 @@ class RoundedBorderTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   bool showLoader;
-
+  bool isLocation;
+  IconData? icondata;
+  final VoidCallback? onTap;
   final String icon;
   final bool maxlines;
   bool isenable;
@@ -18,10 +20,13 @@ class RoundedBorderTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
 
   RoundedBorderTextField({
+    this.isLocation = false,
     this.showLoader = false,
     required this.controller,
     required this.hintText,
     required this.icon,
+    this.icondata,
+    this.onTap,
     this.focusNode,
     this.nextFocusNode,
     this.maxlines = false,
@@ -52,7 +57,16 @@ class RoundedBorderTextField extends StatelessWidget {
                   color: Colors.green,
                 ),
               )
-            : null,
+            : isLocation
+                ? InkWell(
+                    onTap: onTap,
+                    child: Container(
+                      height: 2.h,
+                      width: 2.h,
+                      child: Icon(icondata),
+                    ),
+                  )
+                : null,
         hintText: hintText,
         hintStyle: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
         prefixIcon: icon.isEmpty

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -14,23 +17,31 @@ class MyCustomWidget extends StatefulWidget {
   String text;
   String imgPath;
   String recentName;
+  String id;
+  String postTime;
 
   String likeCount;
   bool isLiked;
+  String userImage;
 
   MyCustomWidget(
       {this.isReply = false,
       this.showImg = true,
       this.text = '',
+      required this.postTime,
       this.imgPath = '',
       this.likeCount = '',
       this.recentName = '',
       this.isLiked = false,
-      this.postName = ''});
+      required this.id,
+      this.postName = '',
+      this.userImage = ''});
 
   @override
   State<MyCustomWidget> createState() => _MyCustomWidgetState();
 }
+
+final _profileController = Get.find<ProfileController>();
 
 class _MyCustomWidgetState extends State<MyCustomWidget> {
   @override
@@ -38,41 +49,50 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: 25,
-              backgroundImage: NetworkImage(
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwyF78CgXqp5uX0g-SvGy4uLB2Qlg8Up3fhYYVlx9Vag&s'),
-            ),
-            SizedBox(width: 2.w), // Adjust as needed
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.postName.toString(),
-                  style: CustomTextStyles.w600TextStyle(
-                      letterspacing: 0.5,
-                      size: 13.21,
-                      color: ThemeUtil.isDarkMode(context)
-                          ? AppColors.whiteColor
-                          : Color(0xff19295C)),
-                ),
-                Row(
-                  children: [
-                    SvgPicture.asset('Assets/icons/world.svg'),
-                    SizedBox(
-                      width: 1.w,
-                    ),
-                    Text(
-                      '2 Hours ago',
-                      style: CustomTextStyles.lightTextStyle(size: 8.25),
-                    ),
-                  ],
-                ),
-              ],
-            )
-          ],
+        InkWell(
+          onTap: () {
+            Get.to(MyProfileScreen(
+                myProfile:
+                    widget.id == _profileController.userId.value ? false : true,
+                friendId: widget.id));
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundImage: NetworkImage(widget.userImage.contains('http')
+                    ? widget.userImage.toString()
+                    : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png"),
+              ),
+              SizedBox(width: 2.w), // Adjust as needed
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.postName.toString(),
+                    style: CustomTextStyles.w600TextStyle(
+                        letterspacing: 0.5,
+                        size: 13.21,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : Color(0xff19295C)),
+                  ),
+                  Row(
+                    children: [
+                      SvgPicture.asset('Assets/icons/world.svg'),
+                      SizedBox(
+                        width: 1.w,
+                      ),
+                      Text(
+                        getElapsedTime(widget.postTime),
+                        style: CustomTextStyles.lightTextStyle(size: 8.25),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
         SizedBox(height: 1.h),
         Text(

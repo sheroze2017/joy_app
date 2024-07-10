@@ -12,6 +12,8 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmac
 import 'package:joy_app/view/home/navbar.dart';
 
 import '../../../core/network/request.dart';
+import '../../auth/models/user.dart';
+import '../../auth/utils/auth_hive_utils.dart';
 
 class ProductController extends GetxController {
   late DioClient dioClient;
@@ -33,12 +35,31 @@ class ProductController extends GetxController {
     allCategory();
   }
 
-  Future<CreateProduct> createProduct(medName, shortDesc, categoryId, price,
-      discount, pharmacyId, quantity, dosage, BuildContext context) async {
+  Future<CreateProduct> createProduct(
+      medName,
+      shortDesc,
+      categoryId,
+      price,
+      discount,
+      pharmacyId,
+      quantity,
+      dosage,
+      imgUrl,
+      BuildContext context) async {
     createProLoader.value = true;
+    User? currentUser = await getCurrentUser();
+
     try {
-      CreateProduct response = await createProductApi.createProduct(medName,
-          shortDesc, categoryId, price, discount, pharmacyId, quantity, dosage);
+      CreateProduct response = await createProductApi.createProduct(
+          medName.toString(),
+          shortDesc.toString(),
+          categoryId.toString(),
+          price.toString(),
+          discount.toString(),
+          currentUser!.userId.toString(),
+          quantity.toString(),
+          dosage.toString(),
+          imgUrl.toString());
 
       if (response.data != null) {
         showSuccessMessage(context, 'Medicine Added');
@@ -75,13 +96,15 @@ class ProductController extends GetxController {
       BuildContext context) async {
     createProLoader.value = true;
     try {
+      User? currentUser = await getCurrentUser();
+
       CreateProduct response = await createProductApi.editProduct(
         medName,
         shortDesc,
         categoryId.toString(),
         price,
         discount,
-        pharmacyId,
+        currentUser!.userId.toString(),
         quantity,
         dosage,
         productId,
@@ -112,7 +135,10 @@ class ProductController extends GetxController {
 
   Future<AllOrders> allOrders(userId, BuildContext context) async {
     try {
-      AllOrders response = await createProductApi.getAllOrders(userId);
+      User? currentUser = await getCurrentUser();
+
+      AllOrders response =
+          await createProductApi.getAllOrders(currentUser!.userId.toString());
 
       if (response.data != null) {
         pendingOrders.clear();

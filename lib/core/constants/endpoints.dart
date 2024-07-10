@@ -10,6 +10,10 @@ class Endpoints {
   static String hospitalSignUpApi = '/auth/hospitalSignup';
   static String pharmacySignUpApi = '/auth/pharmacySignup';
   static String isValidEmail = '/auth/checkEmail';
+  static String editUser = '/auth/editUser';
+  static String editBloodBank = '/auth/editBloodBank';
+  static String editPharmacy = '/pharmacy/editPharmacy';
+  static String editHospital = '/hospital/editHospital';
 
   //Pharmacy
 

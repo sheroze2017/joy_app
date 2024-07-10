@@ -125,16 +125,17 @@ class AllPharmacyController extends GetxController {
     } finally {}
   }
 
-  Future<PharmacyProductModel> getPharmacyProduct(userId) async {
+  Future<PharmacyProductModel> getPharmacyProduct(bool isUser, userId) async {
     allProductLoader.value = true;
+    User? currentUser = await getCurrentUser();
+
     try {
       pharmacyProducts.clear();
-      PharmacyProductModel response =
-          await pharmacyApi.getAllPharmacyProducts(userId);
+      PharmacyProductModel response = await pharmacyApi.getAllPharmacyProducts(
+          isUser ? userId : currentUser!.userId.toString());
       if (response.data != null) {
         response.data!.forEach((element) {
           pharmacyProducts.add(element);
-          print(pharmacyProducts.length);
         });
         allProductLoader.value = false;
 

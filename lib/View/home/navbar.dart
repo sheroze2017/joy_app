@@ -92,7 +92,6 @@ class _NavBarState extends State<NavBarScreen> {
                         ? IndexedStack(
                             index: navbarController.tabIndex,
                             children: [
-                              UserBlogScreen(),
                               HospitalHomeScreen(
                                 isHospital: true,
                                 hospitalId: widget.hospitalDetailId,
@@ -160,8 +159,6 @@ class _NavBarState extends State<NavBarScreen> {
                         ]
                       : widget.isHospital == true
                           ? [
-                              _bottomBarItem('Assets/icons/home.svg',
-                                  'Assets/icons/homebold.svg'),
                               _bottomBarItem('Assets/icons/health-care.svg',
                                   'Assets/icons/healthbold.svg'),
                               _bottomBarItem('Assets/icons/notification.svg',
