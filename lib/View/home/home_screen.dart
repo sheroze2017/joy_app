@@ -344,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => HospitalHomeScreen(
-                                        hospitalDetail: hospitaldata,
+                                        //   hospitalDetail: hospitaldata,
                                         hospitalId:
                                             hospitaldata.userId.toString(),
                                         isUser: true,

@@ -140,7 +140,9 @@ class AppointmentSelector extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12.0),
                     child: Image.network(
-                      "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                      details.userDetails!.image!.contains('http')
+                          ? details.userDetails!.image.toString()
+                          : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                       width: 27.9.w,
                       height: 27.9.w,
                       fit: BoxFit.cover,

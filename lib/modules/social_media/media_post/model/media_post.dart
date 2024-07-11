@@ -101,10 +101,11 @@ class Comments {
   String? comment;
   int? commentId;
   String? createdAt;
-
-  Comments({this.comment, this.commentId, this.createdAt});
+  String? name;
+  Comments({this.name, this.comment, this.commentId, this.createdAt});
 
   Comments.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
     comment = json['comment'];
     commentId = json['comment_id'];
     createdAt = json['created_at'];

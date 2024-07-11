@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:joy_app/common/notification/api/firebase_api.dart';
 import 'package:joy_app/common/theme/controller/theme_controller.dart';
 import 'package:joy_app/common/theme/theme_controller.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_hive_model.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
           // ),
           // initialRoute: AppPage.getNavbar(),
           //getPages: AppPage.routes,
-          home: SplashScreen(),
+          home: MapScreen(),
           initialBinding: YourBinding(),
         ),
       );

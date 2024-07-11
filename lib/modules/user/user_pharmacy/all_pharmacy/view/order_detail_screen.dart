@@ -107,6 +107,9 @@ class _FormScreenState extends State<OrderDetailScreen> {
                 SizedBox(
                   height: 2.h,
                 ),
+                Text('Details',
+                    style: CustomTextStyles.lightTextStyle(
+                        color: AppColors.blackColor3D4)),
                 ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),

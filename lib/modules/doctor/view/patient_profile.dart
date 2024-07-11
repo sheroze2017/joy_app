@@ -83,7 +83,17 @@ class _FormScreenState extends State<PatientProfileScreen> {
                 Stack(
                   children: <Widget>[
                     Center(
-                      child: Image.asset('Assets/images/profile.png'),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50.0),
+                        child: Image.network(
+                          widget.details!.userDetails!.image!.contains('http')
+                              ? widget.details!.userDetails!.image!
+                              : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                          width: 33.9.w,
+                          height: 33.9.w,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ],
                 ),

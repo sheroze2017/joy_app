@@ -9,6 +9,7 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/auth/components/calendar_dob.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
@@ -224,28 +225,34 @@ class _FormScreenState extends State<FormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  Obx(
-                    () => RoundedBorderTextField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your location';
-                          } else {
-                            return null;
-                          }
-                        },
-                        focusNode: _focusNode4,
-                        nextFocusNode: _focusNode5,
-                        controller: _locationController,
-                        hintText: 'Location',
-                        icon: '',
-                        showLoader: authController.isLoading.value,
-                        onTap: () async {
-                          String location =
-                              await authController.getCurrentLocation();
-                          _locationController.setText(location);
-                        },
-                        icondata: Icons.pin_drop,
-                        isLocation: true),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => MapScreen(
+                              // onLocationPicked: (locationData) {
+                              //   _locationController.setText(
+                              //       locationData.addressName.split(',')[0]);
+                              // },
+                              ),
+                        ),
+                      );
+                    },
+                    child: RoundedBorderTextField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your location';
+                        } else {
+                          return null;
+                        }
+                      },
+                      isenable: false,
+                      focusNode: _focusNode4,
+                      nextFocusNode: _focusNode5,
+                      controller: _locationController,
+                      hintText: 'Location',
+                      icon: '',
+                    ),
                   ),
                   SizedBox(
                     height: 2.h,

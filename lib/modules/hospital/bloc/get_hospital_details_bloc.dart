@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_api.dart';
 import 'package:joy_app/modules/pharmacy/models/create_product_model.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/view/home/navbar.dart';
 
 import '../../../core/network/request.dart';
+import '../../auth/utils/auth_hive_utils.dart';
 import '../model/hospital_detail_model.dart';
 
 class HospitalDetailController extends GetxController {
@@ -26,8 +28,13 @@ class HospitalDetailController extends GetxController {
   }
 
   Future<PharmacyModel> getAllDoctorPharmacies(
-      String hospitalId, BuildContext context) async {
+      isHospital, String hospitalId, BuildContext context) async {
+    UserHive? currentUser = await getCurrentUser();
+    hospitalPharmacies.clear();
+
     try {
+      hospitalId = isHospital ? currentUser!.userId.toString() : hospitalId;
+
       PharmacyModel response =
           await hospitalDetailsApi.getAllHospitalPharmacy(hospitalId);
       if (response.data != null) {
@@ -42,8 +49,11 @@ class HospitalDetailController extends GetxController {
   }
 
   Future<PharmacyModel> getAllDoctorHospital(
-      String hospitalId, BuildContext context) async {
+      bool isHospital, String hospitalId, BuildContext context) async {
+    UserHive? currentUser = await getCurrentUser();
+    hospitalDoctors.clear();
     try {
+      hospitalId = isHospital ? currentUser!.userId.toString() : hospitalId;
       PharmacyModel response =
           await hospitalDetailsApi.getAllHospitalDoctors(hospitalId);
       if (response.data != null) {
@@ -58,9 +68,13 @@ class HospitalDetailController extends GetxController {
   }
 
   Future<HospitalDetail> getHospitalDetails(
-      String hospitalId, BuildContext context) async {
+      isHospital, String hospitalId, BuildContext context) async {
+    UserHive? currentUser = await getCurrentUser();
+
     hospitaldetailloader.value = true;
     try {
+      hospitalId = isHospital ? currentUser!.userId.toString() : hospitalId;
+
       HospitalDetail response =
           await hospitalDetailsApi.getHospitalDetails(hospitalId);
       if (response.data != null) {

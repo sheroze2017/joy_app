@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/blood_bank/view/blood_appeal_screen.dart';
 import 'package:joy_app/modules/blood_bank/view/home_screen.dart';
@@ -45,6 +46,8 @@ class NavBarScreen extends StatefulWidget {
 
 class _NavBarState extends State<NavBarScreen> {
   final navbarController = Get.put(NavBarController());
+  ProfileController _profileController = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<NavBarController>(builder: (context) {
@@ -94,7 +97,7 @@ class _NavBarState extends State<NavBarScreen> {
                             children: [
                               HospitalHomeScreen(
                                 isHospital: true,
-                                hospitalId: widget.hospitalDetailId,
+                                //      hospitalId: widget.hospitalDetailId,
                               ),
                               NotificationScreen(),
                               ProfileScreen(

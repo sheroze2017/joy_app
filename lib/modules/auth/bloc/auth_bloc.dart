@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
@@ -653,57 +652,60 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<String> getCurrentLocation() async {
-    isLoading(true);
-    city.value = '';
-    area.value = '';
-    bool serviceEnabled;
-    LocationPermission permission;
+  // Future<String> getCurrentLocation() async {
+    // isLoading(true);
+    // city.value = '';
+    // area.value = '';
+    // bool serviceEnabled;
+    // LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      Get.snackbar('Location Error', 'Location services are disabled.');
-      isLoading(false);
-      return '';
-    }
+ 
+ 
+ 
+    // serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!serviceEnabled) {
+    //   Get.snackbar('Location Error', 'Location services are disabled.');
+    //   isLoading(false);
+    //   return '';
+    // }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.deniedForever) {
-      Get.snackbar(
-          'Location Error', 'Location permissions are permanently denied.');
-      isLoading(false);
-      return '';
-    }
+    // permission = await Geolocator.checkPermission();
+    // if (permission == LocationPermission.deniedForever) {
+    //   Get.snackbar(
+    //       'Location Error', 'Location permissions are permanently denied.');
+    //   isLoading(false);
+    //   return '';
+    // }
 
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
-        Get.snackbar('Location Error', 'Location permissions are denied.');
-        isLoading(false);
-        return '';
-      }
-    }
+    // if (permission == LocationPermission.denied) {
+    //   permission = await Geolocator.requestPermission();
+    //   if (permission != LocationPermission.whileInUse &&
+    //       permission != LocationPermission.always) {
+    //     Get.snackbar('Location Error', 'Location permissions are denied.');
+    //     isLoading(false);
+    //     return '';
+    //   }
+    // }
 
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+    // try {
+    //   Position position = await Geolocator.getCurrentPosition(
+    //       desiredAccuracy: LocationAccuracy.high);
 
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
+    //   List<Placemark> placemarks =
+    //       await placemarkFromCoordinates(position.latitude, position.longitude);
 
-      Placemark placemark = placemarks[0];
-      city.value = placemark.locality ?? '';
-      area.value = placemark.subLocality ?? '';
+    //   Placemark placemark = placemarks[0];
+    //   city.value = placemark.locality ?? '';
+    //   area.value = placemark.subLocality ?? '';
 
-      return area.value + ', ' + city.value;
-    } catch (e) {
-      Get.snackbar('Location Error', 'Failed to get location: $e');
-    } finally {
-      isLoading(false);
-      return city.value + ' ' + area.value;
-    }
-  }
+    //   return area.value + ', ' + city.value;
+    // } catch (e) {
+    //   Get.snackbar('Location Error', 'Failed to get location: $e');
+    // } finally {
+    //   isLoading(false);
+    //   return city.value + ' ' + area.value;
+    // }
+  // }
 
   Future signInWithGoogle(context) async {
     try {

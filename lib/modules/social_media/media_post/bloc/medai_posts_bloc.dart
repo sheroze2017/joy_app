@@ -51,9 +51,11 @@ class MediaPostController extends GetxController {
   }
 
   Future<MediaPostModel> getAllPostById(
-      hosipitalId, BuildContext context) async {
+      bool isHospital, hosipitalId, BuildContext context) async {
     postsByUserId.clear();
-
+    UserHive? currentUser = await getCurrentUser();
+    hosipitalId =
+        await isHospital ? currentUser!.userId.toString() : hosipitalId;
     try {
       MediaPostModel response = await mediaPosts.getAllPostById(hosipitalId);
       if (response.data != null) {
@@ -159,10 +161,10 @@ class MediaPostController extends GetxController {
       if (response.sucess == true) {
         showSuccessMessage(context, 'Comment added');
         Comments newComment = await Comments(
-          comment: comment,
-          commentId: response.data!.commentId,
-          createdAt: DateTime.now().toString(),
-        );
+            comment: comment,
+            commentId: response.data!.commentId,
+            createdAt: DateTime.now().toString(),
+            name: currentUser.firstName.toString());
         allPost[postIndex].comments!.add(newComment);
         update();
         commentLoad.value = false;

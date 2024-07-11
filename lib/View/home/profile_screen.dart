@@ -45,7 +45,7 @@ class _FormScreenState extends State<ProfileScreen> {
 
   TextEditingController controller = TextEditingController();
   final ThemeController _themeController = Get.find<ThemeController>();
-  ProfileController _profileController = Get.find<ProfileController>();
+  ProfileController _profileController = Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

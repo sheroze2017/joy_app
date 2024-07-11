@@ -31,6 +31,7 @@ class MyCustomWidget extends StatefulWidget {
   String userImage;
   int postIndex;
   List<Comments> cm;
+  bool isHospital;
 
   MyCustomWidget(
       {this.isReply = false,
@@ -46,7 +47,8 @@ class MyCustomWidget extends StatefulWidget {
       required this.postIndex,
       this.postName = '',
       required this.cm,
-      this.userImage = ''});
+      this.userImage = '',
+      this.isHospital = false});
 
   @override
   State<MyCustomWidget> createState() => _MyCustomWidgetState();
@@ -218,14 +220,25 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
             ? Obx(() => ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: widget.postIndex == showCommentIndex
-                    ? mediaController.allPost[widget.postIndex].comments!.length
-                    : mediaController
-                                .allPost[widget.postIndex].comments!.length <
-                            4
+                itemCount: widget.isHospital
+                    ? widget.postIndex == showCommentIndex
+                        ? mediaController
+                            .postsByUserId[widget.postIndex].comments!.length
+                        : mediaController.postsByUserId[widget.postIndex]
+                                    .comments!.length <
+                                4
+                            ? mediaController.postsByUserId[widget.postIndex]
+                                .comments!.length
+                            : 3
+                    : widget.postIndex == showCommentIndex
                         ? mediaController
                             .allPost[widget.postIndex].comments!.length
-                        : 3,
+                        : mediaController.allPost[widget.postIndex].comments!
+                                    .length <
+                                4
+                            ? mediaController
+                                .allPost[widget.postIndex].comments!.length
+                            : 3,
                 itemBuilder: ((context, index) {
                   final commen = widget.cm[index];
                   return Row(
@@ -243,7 +256,7 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              commen.commentId.toString(),
+                              commen.name.toString(),
                               style: CustomTextStyles.w600TextStyle(
                                   letterspacing: 0.5,
                                   size: 13.21,

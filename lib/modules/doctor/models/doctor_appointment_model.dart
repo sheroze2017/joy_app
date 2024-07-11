@@ -124,14 +124,16 @@ class UserDetails {
   String? email;
   String? phone;
   int? userId;
+  String? image;
 
-  UserDetails({this.name, this.email, this.phone, this.userId});
+  UserDetails({this.name, this.email, this.phone, this.userId, this.image});
 
   UserDetails.fromJson(Map<String, dynamic> json) {
     name = json['name'] ?? '';
     email = json['email'] ?? '';
     phone = json['phone'] ?? '';
     userId = json['user_id'] ?? 0;
+    image = json[image] ?? '';
   }
 
   Map<String, dynamic> toJson() {
