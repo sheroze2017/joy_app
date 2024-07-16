@@ -124,7 +124,8 @@ class AppointmentSelector extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                formatDateTime(details.createdAt ?? "2024-06-28 04:29:33"),
+                formatDateTime(
+                    details.createdAt ?? "2024-06-28 04:29:33", false),
                 style: CustomTextStyles.darkHeadingTextStyle(size: 14),
               ),
               Divider(
@@ -240,10 +241,13 @@ class AppointmentSelector extends StatelessWidget {
   }
 }
 
-String formatDateTime(String dateTimeString) {
+String formatDateTime(String dateTimeString, bool isblood) {
   try {
     final dateTime = DateTime.parse(dateTimeString);
-    final formatter = DateFormat.yMMMMd('en_US').add_Hm();
+
+    final formatter = (isblood != null && isblood == true)
+        ? DateFormat.yMMMMd('en_US')
+        : DateFormat.yMMMMd('en_US').add_Hm();
     return formatter.format(dateTime);
   } catch (e) {
     return dateTimeString;

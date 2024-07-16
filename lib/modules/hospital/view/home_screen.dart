@@ -24,6 +24,8 @@ import 'package:sizer/sizer.dart';
 
 import '../../../view/home/my_profile.dart';
 import '../../../view/user_flow/hospital_user/hospital_detail_screen.dart';
+import '../../social_media/chat/view/chats.dart';
+import 'doctor_all_post.dart';
 
 class HospitalHomeScreen extends StatefulWidget {
   bool isHospital;
@@ -174,8 +176,13 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                 padding:
                                                     const EdgeInsets.all(10.0),
                                                 child: Center(
-                                                  child: SvgPicture.asset(
-                                                      'Assets/icons/sms.svg'),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      Get.to(AllChats());
+                                                    },
+                                                    child: SvgPicture.asset(
+                                                        'Assets/icons/sms.svg'),
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -785,10 +792,15 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                         : null),
                                           ),
                                           Spacer(),
-                                          Text(
-                                            'See All',
-                                            style: CustomTextStyles
-                                                .lightSmallTextStyle(),
+                                          InkWell(
+                                            onTap: () {
+                                              Get.to(DoctorAllPost());
+                                            },
+                                            child: Text(
+                                              'See All',
+                                              style: CustomTextStyles
+                                                  .lightSmallTextStyle(),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -805,6 +817,8 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                           return Column(
                                             children: [
                                               Obx(() => MyCustomWidget(
+                                                    userImage: data.user_image
+                                                        .toString(),
                                                     isHospital: true,
                                                     cm: mediaController
                                                         .postsByUserId[index]

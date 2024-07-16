@@ -184,6 +184,7 @@ class FriendsSocialController extends GetxController {
     return names;
   }
 
+  
   List<String> getAllUserAssets() {
     List<String> assets = [];
 
@@ -193,7 +194,7 @@ class FriendsSocialController extends GetxController {
       userProfileData.value!.allFriends!.forEach((user) {
         if (user.status == 'Accepted') {
           assets.add(user.friendDetails!.image.toString() ??
-              ''); // Add each user's name to the list
+              'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'); // Add each user's name to the list
         }
       });
     }

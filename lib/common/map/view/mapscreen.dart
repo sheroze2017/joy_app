@@ -5,14 +5,20 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/map/model/place_model.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
+import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/theme.dart';
+import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:joy_app/widgets/rounded_button.dart';
 import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
+import 'package:pinput/pinput.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -24,14 +30,31 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
   final Set<Marker> _markers = {};
-  final TextEditingController _searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   Position? _currentLocation;
   String? _currentAddress;
+  CameraPosition cm = CameraPosition(target: LatLng(0, 0));
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    // _getCurrentLocation();
+  }
+
+  Future<String> _getPlaceName(double lat, double lng) async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+    if (placemarks != null && placemarks.isNotEmpty) {
+      Placemark placemark = placemarks[0];
+      print('location:' + placemark.name.toString());
+      _searchController.setText(placemark.name.toString() +
+          ' ' +
+          placemark.subLocality.toString() +
+          ' ' +
+          placemark.locality.toString());
+      return placemark.name ?? '';
+    } else {
+      return '';
+    }
   }
 
   void _getCurrentLocation() async {
@@ -72,6 +95,15 @@ class _MapScreenState extends State<MapScreen> {
           _currentAddress = address;
         });
       }
+      _getPlaceName(position.latitude, position.longitude);
+      if (mapController != null) {
+        mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(position.latitude, position.longitude),
+            zoom: 14.0,
+          ),
+        ));
+      }
     } catch (e) {
       Get.snackbar('Location Error', 'Failed to get location: $e');
     } finally {
@@ -87,7 +119,8 @@ class _MapScreenState extends State<MapScreen> {
           markerId: MarkerId('current_location'),
           position: LatLng(lat, lng),
           draggable: true,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          onDragEnd: (value) {},
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
           infoWindow: InfoWindow(
             title: _currentAddress ?? 'Current Location',
           ),
@@ -96,22 +129,30 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  Future<List<String>> _handleSearch(String query) async {
-    final url =
-        'https://nominatim.openstreetmap.org/search?q=$query&format=json&addressdetails=1';
-    final response = await http.get(Uri.parse(url));
-    final jsonData = jsonDecode(response.body);
-    return jsonData.map((element) => element['display_name']).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _getCurrentLocation();
+        },
+        child: Icon(Icons.pin_drop),
+      ),
       body: Stack(
         children: [
           GoogleMap(
+            zoomControlsEnabled: false,
             onMapCreated: (GoogleMapController controller) {
               mapController = controller;
+            },
+            onCameraMove: (position) {
+              cm = position;
+              setState(() {});
+              _updateMarkers(
+                  position.target.latitude, position.target.longitude);
+            },
+            onCameraIdle: () {
+              _getPlaceName(cm.target.latitude, cm.target.longitude);
             },
             initialCameraPosition: CameraPosition(
               target: LatLng(
@@ -126,47 +167,45 @@ class _MapScreenState extends State<MapScreen> {
                 argument.latitude,
                 argument.longitude,
               );
+              _getPlaceName(argument.latitude, argument.longitude);
             },
             markers: _markers,
+            myLocationEnabled: true,
           ),
           Positioned(
-            top: 20,
-            left: 20,
-            right: 20,
-            child: CustomDropdown<String>.searchRequest(
-              hintText: 'Select location',
-              onChanged: (value) {
-                print(value);
-              },
-              futureRequest: _handleSearch,
-            ),
-          ),
+              top: 50,
+              left: 20,
+              right: 20,
+              child: RoundedSearchTextField(
+                controller: _searchController,
+                hintText: 'Location',
+              )),
+          Positioned(
+              bottom: 20,
+              left: 20,
+              right: 100,
+              child: RoundedButton(
+                backgroundColor: ThemeUtil.isDarkMode(context)
+                    ? AppColors.lightBlueColor3e3
+                    : Color(0xff1C2A3A),
+                text: 'Set Location',
+                onPressed: () {
+                  if (_searchController.text.isEmpty) {
+                    showErrorMessage(context, 'Please select location');
+                  } else {
+                    Navigator.pop(context, {
+                      'latitude': cm.target.latitude,
+                      'longitude': cm.target.longitude,
+                      'searchValue': _searchController.text
+                    });
+                  }
+                },
+                textColor: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff0D0D0D)
+                    : Color(0xffE5E7EB),
+              )),
         ],
       ),
     );
   }
 }
-  // Positioned(
-  //             top: 20,
-  //             left: 20,
-  //             right: 20,
-  //             child: RoundedButtonSmall(
-  //               backgroundColor: Colors.black,
-  //               textColor: Colors.white,
-  //               text: 'press',
-  //               onPressed: () {
-  //                 _handleSearch('Naya nazimabad');
-  //               },
-  //             )),
-  //         Positioned(
-  //             top: 50,
-  //             left: 20,
-  //             right: 20,
-  //             child: CustomDropdown<String>.searchRequest(
-  //               hintText: 'Select job role',
-  //               onChanged: (value) {
-  //                 print(value);
-  //               },
-  //               futureRequest: _handleSearch,
-  //             )),
-       

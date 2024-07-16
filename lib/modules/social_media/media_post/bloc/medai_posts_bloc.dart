@@ -135,6 +135,7 @@ class MediaPostController extends GetxController {
           await mediaPosts.createPost('', desc, userIdPost, imgPath);
       if (response.sucess == true) {
         showSuccessMessage(context, 'Post posted successfully');
+        getAllPost();
         Get.back();
         postUpload.value = false;
       } else {

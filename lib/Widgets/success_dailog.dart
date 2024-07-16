@@ -29,9 +29,11 @@ class CustomDialog extends StatelessWidget {
   bool? isHospitalForm;
   bool isBloodRequest;
   bool isUser;
+  String? pharmacyId;
   CustomDialog(
       {super.key,
       required this.title,
+      this.pharmacyId,
       required this.content,
       this.buttonColor,
       this.hospitalDetailId,
@@ -111,7 +113,8 @@ class CustomDialog extends StatelessWidget {
                               onPressed: () {
                                 isPharmacyCheckout == true
                                     ? Get.to(ReviewScreen(
-                                    
+                                        isPharmacy: true,
+                                        pharmacyId: pharmacyId,
                                         buttonBgColor:
                                             ThemeUtil.isDarkMode(context)
                                                 ? AppColors.lightGreenColoreb1

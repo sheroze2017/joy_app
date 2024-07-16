@@ -1,18 +1,97 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/chat_appbar.dart';
+import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:http/http.dart' as http;
+import '../../../../common/profile/bloc/profile_bloc.dart';
+import '../widgets/message_widget.dart';
 
-class DirectMessageScreen extends StatelessWidget {
-  const DirectMessageScreen({super.key});
+String _conversationId = "";
+int _senderId = 0;
+int _receiverId = 0;
+String _date = "";
+
+class DirectMessageScreen extends StatefulWidget {
+  String userName;
+  String userAsset;
+  String userId;
+  String friendId;
+  DirectMessageScreen(
+      {super.key,
+      required this.userName,
+      required this.userAsset,
+      required this.userId,
+      required this.friendId});
+
+  @override
+  State<DirectMessageScreen> createState() => _DirectMessageScreenState();
+}
+
+class _DirectMessageScreenState extends State<DirectMessageScreen> {
+  final chatMsgTextController = TextEditingController();
+  late IO.Socket socket;
+  StreamSocket streamSocket = StreamSocket();
+  List<MessageBubble> messageWidgets = [];
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    connectAndListen();
+    print("************** ${DateTime.now().toString()} *****************");
+    super.initState();
+  }
+
+  void connectAndListen() async {
+    socket = IO.io('Endpoints.CHAT_PROD_URL', <String, dynamic>{
+      'transports': ['websocket'],
+      'force new connection': true,
+    });
+    print("Socket Connected: ${socket.connected}");
+
+    socket.onConnect((_) async {
+      print('connecting');
+    });
+
+    //   await getConversationID();
+    // await getConversations();
+    socket.on('receiveMessageEvent', (data) {
+      print("@@@@@@@@@@@@@@@@ $data @@@@@@@@@@@@@@");
+      final msgBubble = MessageBubble(
+        msgText: data,
+        msgSender: widget.userName,
+        user: false,
+      );
+      if (mounted) {
+        setState(() {
+          messageWidgets.add(msgBubble);
+        });
+      }
+      streamSocket.addResponse;
+    });
+    socket.onDisconnect((_) => print('Socket.IO disconnect'));
+    socket.on('fromServer', (e) => print(e));
+    socket.on('error', (error) => print('Socket.IO Error: $error'));
+  }
+
+  @override
+  void dispose() {
+    socket.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ChatAppBar(username: 'Awais Arshad', status: 'Offline'),
+      appBar: ChatAppBar(username: widget.userName, status: 'Offline'),
       body: Container(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -24,13 +103,17 @@ class DirectMessageScreen extends StatelessWidget {
                   // Replace this with your chat message widget
                   return Column(
                     children: [
-                      MyMessage(
-                        message: 'Do you know what time is it?',
-                      ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8),
-                        child: YourMessage(message: "It’s morning in Tokyo 😎"),
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: MessageBubble(
+                            msgText: 'It’s morning in Tokyo 😎',
+                            msgSender: 'Sheroze',
+                            user: false),
                       ),
+                      MessageBubble(
+                          msgText: 'It’s morning in Tokyo 😎',
+                          msgSender: 'Asad',
+                          user: true),
                     ],
                   );
                 },
@@ -113,86 +196,122 @@ class DirectMessageScreen extends StatelessWidget {
       // ),
     );
   }
+
+  // Future<void> getConversationID() async {
+  //   try {
+  //     final fcmToken = await getToken();
+  //     print(fcmToken);
+  //     FirebaseApp app = await Firebase.initializeApp();
+  //     final response = await http.post(
+  //         Uri.parse(
+  //             'Endpoints.CHAT_PROD_URL' + 'Endpoints.CHAT_CREATE_CONVERSATION'),
+  //         body: jsonEncode({
+  //           // "orderId": widget.orderDetail.id,
+  //           // "customerId": widget.orderDetail.customer?.id,
+  //           // "driverId": widget.orderDetail.driver?.id,
+  //           // "customerName": widget.orderDetail.customer?.name,
+  //           // "driverName": widget.orderDetail.driver?.name,
+  //           // "projectId": app.options.projectId,
+  //           // "driverImageURL": _profileController.photoImageURL!.value,
+  //           // // "driverFcmToken":"",
+  //           // // "customerFcmToken":"",
+  //           // "status": widget.orderDetail.status,
+  //         }),
+  //         headers: {"Content-Type": "application/json"});
+
+  //     if (response.statusCode == 201 || response.statusCode == 200) {
+  //       final resp =
+  //           CreateConversationResponse.fromJson(jsonDecode(response.body));
+
+  //       _conversationId = resp.conversationData?.sId ?? "";
+  //       _senderId = resp.conversationData?.driverId ?? 0;
+  //       _receiverId = resp.conversationData?.customerId ?? 0;
+  //       _date = resp.conversationData?.createdAt ?? "";
+
+  //       socket.emit('addUser', {
+  //         'conversationId': resp.conversationData?.sId,
+  //         'userId': resp.conversationData?.driverId,
+  //       });
+
+  //       updateUserDeviceToken(_conversationId);
+  //     }
+  //   } on Exception catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
+
+  // Future<void> updateUserDeviceToken(String conversationId) async {
+  //   try {
+  //     final fcmToken = await getToken();
+  //     print(fcmToken);
+  //     FirebaseApp app = await Firebase.initializeApp();
+  //     final response = await http.post(
+  //         Uri.parse('Endpoints.CHAT_PROD_URL' +
+  //             'Endpoints.CHAT_UPDATE_DEVICE_TOKEN' +
+  //             '$conversationId'),
+  //         body: jsonEncode({
+  //           "userType": "driver",
+  //           "fcmToken": fcmToken,
+  //         }),
+  //         headers: {"Content-Type": "application/json"});
+
+  //     if (response.statusCode == 201 || response.statusCode == 200) {
+  //       print(
+  //           'Chat: Device token has been updated Response ${response.toString()}');
+  //     }
+  //   } on Exception catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
+
+  // Future<void> getConversations() async {
+  //   try {
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+  //     final url = 'Endpoints.CHAT_PROD_URL' +
+  //         'Endpoints.CHAT_GET_CONVERSATION' +
+  //         '$_conversationId';
+  //     final response = await http.get(
+  //       Uri.parse(url),
+  //       headers: {"Content-Type": "application/json"},
+  //     );
+  //     print('url ${url}');
+  //     if (response.statusCode == 200) {
+  //       // final resp = MessageResponse.fromJson(jsonDecode(response.body));
+  //       final resp = (jsonDecode(response.body) as List)
+  //           .map((e) => MessageResponse.fromJson(e));
+  //       print(resp);
+  //       for (final message in resp) {
+  //         final msgBubble = MessageBubble(
+  //             msgText: message.text ?? "",
+  //             msgSender:
+  //                 message.senderId == widget.userId ? "You" : widget.userName,
+  //             user: message.senderId == widget.userId,
+  //             date: message.createdAt!);
+  //         setState(() {
+  //           messageWidgets.add(msgBubble);
+  //         });
+  //       }
+  //     }
+  //   } on Exception catch (e) {
+  //     print(e.toString());
+  //   } finally {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
 }
 
-class MyMessage extends StatelessWidget {
-  final String message;
+class StreamSocket {
+  final _socketResponse = StreamController<String>();
 
-  const MyMessage({super.key, required this.message});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ClipOval(
-          child: Image.network(
-            'https://via.placeholder.com/50',
-            width: 5.h,
-            height: 5.h,
-            fit: BoxFit.cover,
-          ),
-        ),
-        SizedBox(
-          width: 2.w,
-        ),
-        Container(
-          width: 56.4.w,
-          decoration: BoxDecoration(
-              color: ThemeUtil.isDarkMode(context)
-                  ? Color(0xff151515)
-                  : Color.fromRGBO(0, 0, 0, 0.06),
-              borderRadius: BorderRadius.circular(24)),
-          child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(message,
-                  style: CustomTextStyles.lightTextStyle(
-                      color: ThemeUtil.isDarkMode(context)
-                          ? AppColors.whiteColor
-                          : Colors.black,
-                      size: 16))),
-        )
-      ],
-    );
-  }
-}
+  void Function(String) get addResponse => _socketResponse.sink.add;
 
-class YourMessage extends StatelessWidget {
-  final String message;
+  Stream<String> get getResponse => _socketResponse.stream;
 
-  const YourMessage({super.key, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Spacer(),
-        Container(
-          width: 56.4.w,
-          decoration: BoxDecoration(
-              color: ThemeUtil.isDarkMode(context)
-                  ? Color(0xffC5D3E3)
-                  : Color(0xff1C2A3A),
-              borderRadius: BorderRadius.circular(18)),
-          child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(message,
-                  style: CustomTextStyles.lightTextStyle(
-                      heigh: 0.6,
-                      color: ThemeUtil.isDarkMode(context)
-                          ? AppColors.blackColor
-                          : Colors.white,
-                      size: 16))),
-        ),
-        SizedBox(
-          width: 2.w,
-        ),
-        Image(
-          image: AssetImage(
-            'Assets/icons/read.png',
-          ),
-          color: ThemeUtil.isDarkMode(context) ? Color(0xffC5D3E3) : null,
-        )
-      ],
-    );
+  void dispose() {
+    _socketResponse.close();
   }
 }

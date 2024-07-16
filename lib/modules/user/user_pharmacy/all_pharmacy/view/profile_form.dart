@@ -8,6 +8,7 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -62,6 +63,8 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
   String? _selectedImage;
   ProfileController _profileController = Get.put(ProfileController());
 
+  double latitude = 0;
+  double longitude = 0;
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
     if (paths.isNotEmpty) {
@@ -209,19 +212,34 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter location';
-                      } else {
-                        return null;
-                      }
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MapScreen()),
+                      ).then((value) {
+                        if (value != null) {
+                          latitude = value['latitude'];
+                          longitude = value['longitude'];
+                          _locationController.setText(value['searchValue']);
+                        }
+                      });
                     },
-                    controller: _locationController,
-                    focusNode: _focusNode3,
-                    nextFocusNode: _focusNode4,
-                    hintText: 'Location',
-                    icon: '',
+                    child: RoundedBorderTextField(
+                      isenable: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter location';
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: _locationController,
+                      focusNode: _focusNode3,
+                      nextFocusNode: _focusNode4,
+                      hintText: 'Location',
+                      icon: '',
+                    ),
                   ),
                   SizedBox(
                     height: 2.h,
@@ -329,8 +347,8 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                                         _contactController.text,
                                         "EMAIL",
                                         "PHARMACY",
-                                        "22",
-                                        "22",
+                                        latitude.toString(),
+                                        longitude.toString(),
                                         "ASDA21321312312",
                                         context,
                                         _selectedImage.toString())
@@ -343,8 +361,8 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                                         _contactController.text,
                                         widget.isSocial ? 'SOCIAL' : "EMAIL",
                                         "PHARMACY",
-                                        "22",
-                                        "22",
+                                        latitude.toString(),
+                                        longitude.toString(),
                                         "ASDA21321312312",
                                         context,
                                         _selectedImage.toString());

@@ -17,6 +17,7 @@ class BloodBankController extends GetxController {
   RxList<BloodDonor> allDonors = <BloodDonor>[].obs;
   RxList<BloodRequest> allBloodRequest = <BloodRequest>[].obs;
   RxList<BloodRequest> allPlasmaRequest = <BloodRequest>[].obs;
+  RxList<BloodDonor> searchedDonors = <BloodDonor>[].obs;
 
   final _bloodBankDetails = Rxn<BloodBankDetails>();
   var appointmentLoader = false.obs;
@@ -36,6 +37,13 @@ class BloodBankController extends GetxController {
 
     getAllBloodRequest();
     getallDonor();
+  }
+
+  void searchByBloodGroup(String bloodGroup) {
+    searchedDonors.value = allDonors.value
+        .where((donor) => donor.bloodGroup!.toLowerCase().contains(bloodGroup))
+        .toList();
+    print(searchedDonors);
   }
 
   // avgrating() async {

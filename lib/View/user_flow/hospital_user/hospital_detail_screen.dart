@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -426,6 +428,7 @@ class MedicineCard extends StatelessWidget {
   final String btnText;
   final VoidCallback onPressed;
   bool isUserProductScreen;
+  int categoryId;
 
   MedicineCard(
       {super.key,
@@ -435,7 +438,9 @@ class MedicineCard extends StatelessWidget {
       required this.name,
       required this.btnText,
       this.isUserProductScreen = false,
+      this.categoryId = 1,
       required this.onPressed});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -472,7 +477,7 @@ class MedicineCard extends StatelessWidget {
                             style: CustomTextStyles.darkHeadingTextStyle(),
                           ),
                           Text(
-                            '${count} Tablets for ${cost}\$',
+                            '${count} ${category[categoryId - 1]} for ${cost}\$',
                             style: CustomTextStyles.w600TextStyle(
                                 size: 13, color: Color(0xff4B5563)),
                           ),
@@ -565,3 +570,5 @@ class RoundedSVGContainer extends StatelessWidget {
     );
   }
 }
+
+List<String> category = ['pills', 'round_pills', 'syrupe'];

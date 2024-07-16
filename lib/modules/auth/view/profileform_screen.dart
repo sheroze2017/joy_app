@@ -227,16 +227,18 @@ class _FormScreenState extends State<FormScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MapScreen(
-                              // onLocationPicked: (locationData) {
-                              //   _locationController.setText(
-                              //       locationData.addressName.split(',')[0]);
-                              // },
-                              ),
-                        ),
-                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MapScreen()),
+                      ).then((value) {
+                        if (value != null) {
+                          double latitude = value['latitude'];
+                          double longitude = value['longitude'];
+                          String searchValue = value['searchValue'];
+
+                          _locationController.setText(value['searchValue']);
+                        }
+                      });
                     },
                     child: RoundedBorderTextField(
                       validator: (value) {

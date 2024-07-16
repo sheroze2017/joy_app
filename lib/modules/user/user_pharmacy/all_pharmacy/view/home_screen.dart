@@ -3,6 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/social_media/chat/view/chats.dart';
+import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/theme.dart';
@@ -31,7 +33,8 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
   final productsController = Get.put(ProductController());
   final profileController = Get.put(ProfileController());
   ProfileController _profileController = Get.put(ProfileController());
-
+  FriendsSocialController _friendSocialController =
+      Get.put(FriendsSocialController());
   @override
   void initState() {
     super.initState();
@@ -76,8 +79,12 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Center(
+                      child: InkWell(
+                    onTap: () {
+                      Get.to(AllChats());
+                    },
                     child: SvgPicture.asset('Assets/icons/sms.svg'),
-                  ),
+                  )),
                 ),
               ),
             )

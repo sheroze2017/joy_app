@@ -115,6 +115,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 ));
                               },
                               child: MedicineCard(
+                                categoryId: data.categoryId!.toInt(),
                                 isUserProductScreen: true,
                                 onPressed: () {
                                   widget.isAdmin

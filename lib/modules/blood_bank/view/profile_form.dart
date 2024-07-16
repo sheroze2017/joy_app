@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:joy_app/Widgets/appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -56,6 +58,8 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
   String? _selectedImage;
   ProfileController _profileController = Get.put(ProfileController());
   final mediaController = Get.find<MediaPostController>();
+  double latitude = 0;
+  double longitude = 0;
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -202,19 +206,34 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    focusNode: _focusNode3,
-                    nextFocusNode: _focusNode4,
-                    controller: _locationController,
-                    hintText: 'Location',
-                    icon: '',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your location';
-                      } else {
-                        return null;
-                      }
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MapScreen()),
+                      ).then((value) {
+                        if (value != null) {
+                          latitude = value['latitude'];
+                          longitude = value['longitude'];
+                          _locationController.setText(value['searchValue']);
+                        }
+                      });
                     },
+                    child: RoundedBorderTextField(
+                      focusNode: _focusNode3,
+                      isenable: false,
+                      nextFocusNode: _focusNode4,
+                      controller: _locationController,
+                      hintText: 'Location',
+                      icon: '',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your location';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 2.h,
@@ -290,8 +309,8 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                         _contactController.text,
                                         "EMAIL",
                                         "BLOODBANK",
-                                        "22",
-                                        "22",
+                                        latitude.toString(),
+                                        longitude.toString(),
                                         "ASDA21321",
                                         context,
                                         _selectedImage.toString())
@@ -304,8 +323,8 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                         _contactController.text,
                                         widget.isSocial ? 'SOCIAL' : "EMAIL",
                                         "BLOODBANK",
-                                        "22",
-                                        "22",
+                                        latitude.toString(),
+                                        longitude.toString(),
                                         "ASDA21321",
                                         context,
                                         _selectedImage.toString());

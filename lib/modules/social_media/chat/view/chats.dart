@@ -8,12 +8,14 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../Widgets/custom_appbar.dart';
+import '../../friend_request/bloc/friends_bloc.dart';
 import '../../friend_request/view/add_friend.dart';
 import '../../friend_request/view/new_friend.dart';
 
 class AllChats extends StatelessWidget {
-  const AllChats({super.key});
-
+  AllChats({super.key});
+  FriendsSocialController _friendsController =
+      Get.find<FriendsSocialController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,36 +53,38 @@ class AllChats extends StatelessWidget {
               SizedBox(
                 height: 1.h,
               ),
-              InkWell(
-                onTap: () {
-                  Get.to(DirectMessageScreen());
-                },
-                child: ChatBox(
-                  profileImageUrl:
-                      'https://s3-alpha-sig.figma.com/img/45ca/b6f1/c6e732109a3a88876b3f2d11f70ae16b?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Lxn--DS955tIcK4nuEHnI3Nf97VOICuiRYSTk7kw4iILDp~ndRGp--fUQ2GoNVtj1QzNJ1vmz8F4vbAWfeV1w5NObLhkP0986RcpJg2GQueSeyvuTIXDKe8LHhV-PwZBUQAUIT5fXj2wSXMbeZ38PtSZbsYvwwpll1QxALkMmr3ys~bOJD5NHXDFagkMsC1Iiqm2HlSNnvjbuSdJdHcbo~f1ll7cFP9lW-gIl2T9U~R1RKJpCYUCyz~IOiVHmt5WyRoWvlgdhyRBNl0LGoN-LodJvddSNKTJEq6hmKuGK4iHOQKjdHySEzjMsC1HTIgc3rtwsfvK10jqJW-JpuMCTw__',
-                  personName: 'John Doe',
-                  lastMessage: 'Hello there!',
-                  dateTime: '2:30 PM',
-                ),
-              ),
-              SizedBox(
-                height: 2.h,
-              ),
-              InkWell(
-                onTap: () {
-                  Get.to(DirectMessageScreen());
-                },
-                child: ChatBox(
-                  profileImageUrl:
-                      'https://s3-alpha-sig.figma.com/img/45ca/b6f1/c6e732109a3a88876b3f2d11f70ae16b?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Lxn--DS955tIcK4nuEHnI3Nf97VOICuiRYSTk7kw4iILDp~ndRGp--fUQ2GoNVtj1QzNJ1vmz8F4vbAWfeV1w5NObLhkP0986RcpJg2GQueSeyvuTIXDKe8LHhV-PwZBUQAUIT5fXj2wSXMbeZ38PtSZbsYvwwpll1QxALkMmr3ys~bOJD5NHXDFagkMsC1Iiqm2HlSNnvjbuSdJdHcbo~f1ll7cFP9lW-gIl2T9U~R1RKJpCYUCyz~IOiVHmt5WyRoWvlgdhyRBNl0LGoN-LodJvddSNKTJEq6hmKuGK4iHOQKjdHySEzjMsC1HTIgc3rtwsfvK10jqJW-JpuMCTw__',
-                  personName: 'John Doe',
-                  lastMessage: 'Hello there!',
-                  dateTime: '2:30 PM',
-                ),
-              ),
-              SizedBox(
-                height: 2.h,
-              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: _friendsController.getAllUserNames().length,
+                  itemBuilder: (context, index) {
+                    final img = _friendsController.getAllUserAssets()[index];
+                    final name = _friendsController.getAllUserNames()[index];
+
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Get.to(DirectMessageScreen(
+                              userName: name,
+                              userAsset: img,
+                              userId: '',
+                              friendId: '',
+                            ));
+                          },
+                          child: ChatBox(
+                            profileImageUrl: img,
+                            personName: name,
+                            lastMessage: 'Hello there!',
+                            dateTime: '2:30 PM',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 2.h,
+                        ),
+                      ],
+                    );
+                  })
             ],
           ),
         ),

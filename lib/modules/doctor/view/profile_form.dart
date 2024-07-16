@@ -9,6 +9,7 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_update_bloc.dart';
@@ -265,19 +266,36 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    focusNode: _focusNode5,
-                    nextFocusNode: _focusNode6,
-                    controller: _locationController,
-                    hintText: 'Location',
-                    icon: '',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your location';
-                      } else {
-                        return null;
-                      }
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MapScreen()),
+                      ).then((value) {
+                        if (value != null) {
+                          double latitude = value['latitude'];
+                          double longitude = value['longitude'];
+                          String searchValue = value['searchValue'];
+
+                          _locationController.setText(value['searchValue']);
+                        }
+                      });
                     },
+                    child: RoundedBorderTextField(
+                      isenable: false,
+                      focusNode: _focusNode5,
+                      nextFocusNode: _focusNode6,
+                      controller: _locationController,
+                      hintText: 'Location',
+                      icon: '',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your location';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 2.h,
@@ -339,13 +357,13 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                           focusNode: _focusNode9,
                           nextFocusNode: _focusNode10,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please attach documents';
-                            } else if (mediaController.imgUrl.isEmpty) {
-                              return 'Please attach files';
-                            } else {
-                              return null;
-                            }
+                            // if (value == null || value.isEmpty) {
+                            //   return 'Please attach documents';
+                            // } else if (mediaController.imgUrl.isEmpty) {
+                            //   return 'Please attach files';
+                            // } else {
+                            //   return null;
+                            // }
                           },
                           hintText: 'Attach File of Medical Certificate',
                           icon: 'Assets/icons/attach-icon.svg',

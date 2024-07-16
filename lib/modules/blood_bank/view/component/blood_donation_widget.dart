@@ -155,7 +155,7 @@ class DonationApproval extends StatelessWidget {
                           ? 'Share'
                           : isOld
                               ? 'Repost'
-                              : 'Share',
+                              : 'Contact',
                       onPressed: () {
                         isOld
                             ? _userBloodBankController.createBloodAppeal(

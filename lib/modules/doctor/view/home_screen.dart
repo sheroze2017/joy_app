@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
+import 'package:joy_app/modules/social_media/chat/view/chats.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/doctor/view/all_appointment.dart';
@@ -60,8 +61,12 @@ class DoctorHomeScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Center(
+                      child: InkWell(
+                    onTap: () {
+                      Get.to(AllChats());
+                    },
                     child: SvgPicture.asset('Assets/icons/sms.svg'),
-                  ),
+                  )),
                 ),
               ),
             )
@@ -246,6 +251,7 @@ class DoctorHomeScreen extends StatelessWidget {
                                       doctorId: data.doctorUserId.toString()));
                                 },
                               ),
+                              SizedBox(height: 1.h,)
                             ],
                           );
                         } else

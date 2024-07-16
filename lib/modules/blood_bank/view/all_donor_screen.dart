@@ -10,10 +10,22 @@ import 'package:sizer/sizer.dart';
 import '../bloc/blood_bank_bloc.dart';
 import 'component/donors_card.dart';
 
-class AllDonorScreen extends StatelessWidget {
+class AllDonorScreen extends StatefulWidget {
   AllDonorScreen({super.key});
 
+  @override
+  State<AllDonorScreen> createState() => _AllDonorScreenState();
+}
+
+class _AllDonorScreenState extends State<AllDonorScreen> {
   BloodBankController _bloodBankController = Get.find<BloodBankController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _bloodBankController.searchedDonors.value =
+        _bloodBankController.allDonors.value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +41,7 @@ class AllDonorScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RoundedSearchTextField(
+                onChanged: _bloodBankController.searchByBloodGroup,
                 hintText: 'Search donors available',
                 controller: TextEditingController()),
             SizedBox(
@@ -44,10 +57,11 @@ class AllDonorScreen extends StatelessWidget {
               height: 2.h,
             ),
             Expanded(
-              child: _VerticalDonorsList(
-                donors: _bloodBankController.allDonors.value,
+                child: Obx(
+              () => _VerticalDonorsList(
+                donors: _bloodBankController.searchedDonors.value,
               ),
-            ),
+            )),
           ],
         ),
       ),

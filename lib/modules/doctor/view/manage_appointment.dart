@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_svg/svg.dart';
+import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -71,58 +72,85 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: showPatientHistory == true ||
                         widget.showPatientHistoryFromScreen == true
-                    ? Column(
-                        children: [
-                          Divider(
-                            color: Color(0xffE5E7EB),
-                            thickness: 0.3,
-                          ),
-                          SizedBox(
-                            height: 2.h,
-                          ),
-                          Obx(() => ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount:
-                                  _doctorController.doctorAppointment.length,
-                              itemBuilder: (context, index) {
-                                if (_doctorController
-                                        .doctorAppointment[index].status ==
-                                    'COMPLETED') {
-                                  final data = _doctorController
-                                      .doctorAppointment[index];
-                                  return Column(
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          Get.to(PatientProfileScreen(
-                                            details: data,
-                                          ));
-                                        },
-                                        child: MeetingCallScheduler(
-                                          buttonColor: AppColors.darkBlueColor,
-                                          bgColor: ThemeUtil.isDarkMode(context)
-                                              ? AppColors.purpleBlueColor
-                                              : AppColors.lightishBlueColor5ff,
-                                          isActive: false,
-                                          imgPath: '',
-                                          name:
-                                              data.userDetails!.name.toString(),
-                                          time: '${data.date}  ${data.time}',
-                                          location: data.location.toString(),
-                                          category: 'Cardiology',
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 1.h,
-                                      ),
-                                    ],
-                                  );
-                                } else
-                                  return Container();
-                              }))
-                        ],
-                      )
+                    ? _doctorController.doctorAppointment
+                                .where((p0) => p0.status == 'COMPLETED')
+                                .length ==
+                            0
+                        ? Column(
+                            children: [
+                              Center(
+                                child: Text(
+                                  'No appointments dealt yet',
+                                  style: CustomTextStyles.lightTextStyle(),
+                                ),
+                              ),
+                              RoundedButtonSmall(
+                                  text: 'refresh',
+                                  onPressed: () {
+                                    _doctorController.AllAppointments();
+                                  },
+                                  backgroundColor: Colors.black,
+                                  textColor: Colors.white)
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              Divider(
+                                color: Color(0xffE5E7EB),
+                                thickness: 0.3,
+                              ),
+                              SizedBox(
+                                height: 2.h,
+                              ),
+                              Obx(() => ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: _doctorController
+                                      .doctorAppointment.length,
+                                  itemBuilder: (context, index) {
+                                    if (_doctorController
+                                            .doctorAppointment[index].status ==
+                                        'COMPLETED') {
+                                      final data = _doctorController
+                                          .doctorAppointment[index];
+                                      return Column(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              Get.to(PatientProfileScreen(
+                                                details: data,
+                                              ));
+                                            },
+                                            child: MeetingCallScheduler(
+                                              buttonColor:
+                                                  AppColors.darkBlueColor,
+                                              bgColor:
+                                                  ThemeUtil.isDarkMode(context)
+                                                      ? AppColors
+                                                          .purpleBlueColor
+                                                      : AppColors
+                                                          .lightishBlueColor5ff,
+                                              isActive: false,
+                                              imgPath: '',
+                                              name: data.userDetails!.name
+                                                  .toString(),
+                                              time:
+                                                  '${data.date}  ${data.time}',
+                                              location:
+                                                  data.location.toString(),
+                                              category: data.gender.toString(),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 1.h,
+                                          ),
+                                        ],
+                                      );
+                                    } else
+                                      return Container();
+                                  }))
+                            ],
+                          )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -138,7 +166,10 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                                 Expanded(
                                   child: RoundedButtonSmall(
                                       text: 'Finish',
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        showSuccessMessage(context,
+                                            'Appointment finished please submit review for user');
+                                      },
                                       backgroundColor: AppColors.darkBlueColor,
                                       textColor: AppColors.whiteColor),
                                 ),

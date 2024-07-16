@@ -47,7 +47,7 @@ class BloodDonationAppeal extends StatelessWidget {
                         isBloodDonate: isBloodDontate,
                         isPlasmaDonate: isPlasmaDonate,
                         patName: data.patientName.toString(),
-                        date: formatDateTime(data.date.toString()),
+                        date: formatDateTime(data.date.toString(), true),
                         location: data.location.toString(),
                         bloodType: data.bloodGroup.toString(),
                         count: data.unitsOfBlood.toString(),

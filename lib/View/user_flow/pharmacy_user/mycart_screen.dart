@@ -276,7 +276,11 @@ class _MyCartScreenState extends State<MyCartScreen> {
                             isSmall: true,
                             text: 'Proceed to Check Out',
                             onPressed: () {
-                              Get.to(CheckoutForm());
+                              Get.to(CheckoutForm(
+                                pharmacyId: pharmacyController
+                                    .cartItems[0].pharmacyId
+                                    .toString(),
+                              ));
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
                                 ? AppColors.lightGreenColoreb1

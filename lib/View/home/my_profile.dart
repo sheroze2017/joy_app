@@ -177,9 +177,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                       children: [
                                                         Text(
                                                           _friendsController
-                                                              .userProfileData
-                                                              .value!
-                                                              .allFriends!
+                                                              .getAllUserNames()
                                                               .length
                                                               .toString(),
                                                           style: CustomTextStyles.darkHeadingTextStyle(
@@ -422,6 +420,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                             padding: const EdgeInsets.only(
                                                 top: 12.0),
                                             child: MyCustomWidget(
+                                              userImage: data.image.toString(),
                                               cm: [],
                                               postIndex: index,
                                               postId: data.postId.toString(),

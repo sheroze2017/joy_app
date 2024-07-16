@@ -14,7 +14,8 @@ import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 class CheckoutForm extends StatefulWidget {
-  CheckoutForm({super.key});
+  String? pharmacyId;
+  CheckoutForm({super.key, this.pharmacyId});
 
   @override
   State<CheckoutForm> createState() => _CheckoutFormState();
@@ -220,7 +221,8 @@ class _CheckoutFormState extends State<CheckoutForm> {
                                   '123456789',
                                   pharmacyController.cartItemsToJson);
                             } else if (onlinepay) {
-                              showPaymentBottomSheet(context, false, true);
+                              showPaymentBottomSheet(
+                                  context, false, true, widget.pharmacyId);
                             } else {
                               showErrorMessage(
                                   context, 'please select payment method');
@@ -246,8 +248,8 @@ class _CheckoutFormState extends State<CheckoutForm> {
   }
 }
 
-void showPaymentBottomSheet(
-    BuildContext context, bool isbookAppointment, bool? isPharmacyCheckout) {
+void showPaymentBottomSheet(BuildContext context, bool isbookAppointment,
+    bool? isPharmacyCheckout, pharId) {
   showModalBottomSheet(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     context: context,
@@ -300,6 +302,7 @@ void showPaymentBottomSheet(
                     context: context,
                     builder: (BuildContext context) {
                       return CustomDialog(
+                        pharmacyId: pharId,
                         isPharmacyCheckout: true,
                         title: 'Congratulations!',
                         content: isbookAppointment

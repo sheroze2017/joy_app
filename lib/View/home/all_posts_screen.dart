@@ -42,6 +42,9 @@ class AllPostScreen extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(top: 12.0),
                       child: MyCustomWidget(
+                        userImage: _friendsController
+                            .userProfileData.value!.image
+                            .toString(),
                         cm: [],
                         postIndex: index,
                         postId: data.postId.toString(),

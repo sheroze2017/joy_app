@@ -17,7 +17,13 @@ import '../../../styles/custom_textstyle.dart';
 class ReviewScreen extends StatefulWidget {
   Color buttonBgColor;
   UserAppointment? details;
-  ReviewScreen({required this.buttonBgColor, this.details});
+  bool isPharmacy;
+  String? pharmacyId;
+  ReviewScreen(
+      {required this.buttonBgColor,
+      this.details,
+      this.isPharmacy = false,
+      this.pharmacyId});
   @override
   State<ReviewScreen> createState() => _ReviewScreenState();
 }
@@ -119,7 +125,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                         context, 'Please give rating');
                                   } else {
                                     _userdoctorController.createReview(
-                                        widget.details!.doctorUserId.toString(),
+                                        widget.isPharmacy
+                                            ? widget.pharmacyId.toString()
+                                            : widget.details!.doctorUserId
+                                                .toString(),
                                         '',
                                         starRating.toString(),
                                         _reviewController.text,

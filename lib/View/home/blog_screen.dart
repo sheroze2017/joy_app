@@ -83,112 +83,118 @@ class UserBlogScreen extends StatelessWidget {
           ],
           showIcon: true,
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6.56),
-                  child: Divider(
-                    color: ThemeUtil.isDarkMode(context)
-                        ? Color(0xff1F2228)
-                        : AppColors.lightGreyColor,
+        body: RefreshIndicator(
+          onRefresh: () async {
+            mediaController.getAllPost();
+          },
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6.56),
+                    child: Divider(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff1F2228)
+                          : AppColors.lightGreyColor,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 6.56),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) => CreatePostModal(),
-                            );
-                          },
-                          child: TextField(
-                            enabled: false,
-                            maxLines: null,
-                            cursorColor: AppColors.borderColor,
-                            style: CustomTextStyles.lightTextStyle(
-                                color: AppColors.borderColor),
-                            decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide.none),
-                              fillColor: Colors.transparent,
-                              hintText: "What's on your mind?",
-                              hintStyle: CustomTextStyles.lightTextStyle(
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6.56),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) => CreatePostModal(),
+                              );
+                            },
+                            child: TextField(
+                              enabled: false,
+                              maxLines: null,
+                              cursorColor: AppColors.borderColor,
+                              style: CustomTextStyles.lightTextStyle(
                                   color: AppColors.borderColor),
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none),
+                                fillColor: Colors.transparent,
+                                hintText: "What's on your mind?",
+                                hintStyle: CustomTextStyles.lightTextStyle(
+                                    color: AppColors.borderColor),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(54),
-                          color: ThemeUtil.isDarkMode(context)
-                              ? Color(0xff121212)
-                              : AppColors.whiteColorf9f,
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 8),
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('Assets/icons/camera.svg'),
-                              SizedBox(width: 2.w),
-                              Text(
-                                "Photo",
-                                style: CustomTextStyles.lightTextStyle(
-                                  color: AppColors.borderColor,
-                                  size: 12,
-                                ),
-                              ),
-                            ],
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(54),
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff121212)
+                                : AppColors.whiteColorf9f,
                           ),
-                        ),
-                      )
-                    ],
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset('Assets/icons/camera.svg'),
+                                SizedBox(width: 2.w),
+                                Text(
+                                  "Photo",
+                                  style: CustomTextStyles.lightTextStyle(
+                                    color: AppColors.borderColor,
+                                    size: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 1.5.h,
-                ),
-                Obx(() => ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: mediaController.allPost.length,
-                    itemBuilder: ((context, index) {
-                      final data = mediaController.allPost[index];
-                      return Column(
-                        children: [
-                          Obx(() => MyCustomWidget(
-                                cm: mediaController.allPost[index].comments??[]
-                                    ,
-                                postIndex: index,
-                                postId: data.postId.toString(),
-                                postTime: data.createdAt.toString(),
-                                id: data.createdBy.toString(),
-                                imgPath: data.image.toString(),
-                                isLiked: true,
-                                isReply: false,
-                                showImg:
-                                    (data.image == null || data.image!.isEmpty)
-                                        ? false
-                                        : true,
-                                postName: data.name.toString(),
-                                text: data.description.toString(),
-                              )),
-                        ],
-                      );
-                    }))),
-              ],
+                  SizedBox(
+                    height: 1.5.h,
+                  ),
+                  Obx(() => ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: mediaController.allPost.length,
+                      itemBuilder: ((context, index) {
+                        final data = mediaController.allPost[index];
+                        return Column(
+                          children: [
+                            Obx(() => MyCustomWidget(
+                                  cm: mediaController.allPost[index].comments ??
+                                      [],
+                                  postIndex: index,
+                                  postId: data.postId.toString(),
+                                  postTime: data.createdAt.toString(),
+                                  id: data.createdBy.toString(),
+                                  imgPath: data.image.toString(),
+                                  isLiked: true,
+                                  isReply: false,
+                                  showImg: (data.image == null ||
+                                          data.image!.isEmpty)
+                                      ? false
+                                      : true,
+                                  postName: data.name.toString(),
+                                  text: data.description.toString(),
+                                  userImage: data.user_image.toString(),
+                                )),
+                          ],
+                        );
+                      }))),
+                ],
+              ),
             ),
           ),
         ));

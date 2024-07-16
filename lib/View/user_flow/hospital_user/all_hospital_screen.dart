@@ -4,6 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
@@ -22,6 +23,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../modules/user/user_hospital/bloc/user_hospital_bloc.dart';
 import '../../../modules/blood_bank/view/blood_appeal_screen.dart';
+import '../../home/components/hospital_card_widget.dart';
 import '../bloodbank_user/request_blood.dart';
 import '../pharmacy_user/pharmacy_product_screen.dart';
 import 'hospital_detail_screen.dart';
@@ -46,6 +48,8 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
   final pharmacyController = Get.find<AllPharmacyController>();
   final bloodBankController = Get.find<UserBloodBankController>();
   final _userHospitalController = Get.find<UserHospitalController>();
+  final locationController = Get.find<LocationController>();
+
   @override
   void initState() {
     super.initState();
@@ -147,6 +151,26 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                   : SizedBox(
                       height: 0.h,
                     ),
+              widget.isBloodBank
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: RoundedButton(
+                                text: "All Donors",
+                                onPressed: () {
+                                  Get.to(AllDoctorsScreen(
+                                      appBarText: 'All Donors'));
+                                },
+                                backgroundColor: AppColors.redLightDarkColor,
+                                textColor: Colors.white),
+                          )
+                        ],
+                      ),
+                    )
+                  : Container(),
               widget.isBloodBank
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -347,7 +371,49 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                                 SizedBox(
                                                   width: 0.5.w,
                                                 ),
-                                                Text('0.0 km/0min',
+                                                Text(
+                                                    calculateDistance(
+                                                                widget
+                                                                        .isPharmacy
+                                                                    ? pharmacyController
+                                                                        .searchResults[
+                                                                            index]
+                                                                        .lat!
+                                                                    : widget
+                                                                            .isBloodBank
+                                                                        ? bloodBankController
+                                                                            .searchResults[
+                                                                                index]
+                                                                            .lat!
+                                                                        : _userHospitalController
+                                                                            .searchResults[
+                                                                                index]
+                                                                            .lat!,
+                                                                widget
+                                                                        .isPharmacy
+                                                                    ? pharmacyController
+                                                                        .searchResults[
+                                                                            index]
+                                                                        .lat!
+                                                                    : widget
+                                                                            .isBloodBank
+                                                                        ? bloodBankController
+                                                                            .searchResults[
+                                                                                index]
+                                                                            .lat!
+                                                                        : _userHospitalController
+                                                                            .searchResults[
+                                                                                index]
+                                                                            .lat!,
+                                                                locationController
+                                                                    .latitude
+                                                                    .value,
+                                                                locationController
+                                                                    .longitude
+                                                                    .value)
+                                                            .toStringAsFixed(
+                                                                0) +
+                                                        ' km/0min',
                                                     style: CustomTextStyles
                                                         .lightTextStyle(
                                                             color: Color(

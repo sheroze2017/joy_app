@@ -33,57 +33,57 @@
 // }
 
 // class _ChatScreenState extends State<ChatScreen> {
-//   final chatMsgTextController = TextEditingController();
-//   late IO.Socket socket;
-//   StreamSocket streamSocket = StreamSocket();
-//   List<MessageBubble> messageWidgets = [];
-//   bool _isLoading = false;
-//   final ProfileController _profileController = Get.find();
+  // final chatMsgTextController = TextEditingController();
+  // late IO.Socket socket;
+  // StreamSocket streamSocket = StreamSocket();
+  // List<MessageBubble> messageWidgets = [];
+  // bool _isLoading = false;
+  // final ProfileController _profileController = Get.find();
 
-//   @override
-//   void initState() {
-//     connectAndListen();
-//     print("************** ${DateTime.now().toString()} *****************");
-//     super.initState();
-//   }
+  // @override
+  // void initState() {
+  //   connectAndListen();
+  //   print("************** ${DateTime.now().toString()} *****************");
+  //   super.initState();
+  // }
 
-//   void connectAndListen() async {
-//     socket = IO.io(Endpoints.CHAT_PROD_URL, <String, dynamic>{
-//       'transports': ['websocket'],
-//       'force new connection': true,
-//     });
-//     print("Socket Connected: ${socket.connected}");
+  // void connectAndListen() async {
+  //   socket = IO.io(Endpoints.CHAT_PROD_URL, <String, dynamic>{
+  //     'transports': ['websocket'],
+  //     'force new connection': true,
+  //   });
+  //   print("Socket Connected: ${socket.connected}");
 
-//     socket.onConnect((_) async {
-//       print('connecting');
-//     });
+  //   socket.onConnect((_) async {
+  //     print('connecting');
+  //   });
 
-//     await getConversationID();
-//     await getConversations();
-//     socket.on('receiveMessageEvent', (data) {
-//       print("@@@@@@@@@@@@@@@@ $data @@@@@@@@@@@@@@");
-//       final msgBubble = MessageBubble(
-//         msgText: data,
-//         msgSender: widget.orderDetail.customer?.name ?? "",
-//         user: false,
-//       );
-//       if (mounted) {
-//         setState(() {
-//           messageWidgets.add(msgBubble);
-//         });
-//       }
-//       streamSocket.addResponse;
-//     });
-//     socket.onDisconnect((_) => print('Socket.IO disconnect'));
-//     socket.on('fromServer', () => print());
-//     socket.on('error', (error) => print('Socket.IO Error: $error'));
-//   }
+  //   await getConversationID();
+  //   await getConversations();
+  //   socket.on('receiveMessageEvent', (data) {
+  //     print("@@@@@@@@@@@@@@@@ $data @@@@@@@@@@@@@@");
+  //     final msgBubble = MessageBubble(
+  //       msgText: data,
+  //       msgSender: widget.orderDetail.customer?.name ?? "",
+  //       user: false,
+  //     );
+  //     if (mounted) {
+  //       setState(() {
+  //         messageWidgets.add(msgBubble);
+  //       });
+  //     }
+  //     streamSocket.addResponse;
+  //   });
+  //   socket.onDisconnect((_) => print('Socket.IO disconnect'));
+  //   socket.on('fromServer', () => print());
+  //   socket.on('error', (error) => print('Socket.IO Error: $error'));
+  // }
 
-//   @override
-//   void dispose() {
-//     socket.dispose();
-//     super.dispose();
-//   }
+  // @override
+  // void dispose() {
+  //   socket.dispose();
+  //   super.dispose();
+  // }
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -191,72 +191,76 @@
 //     );
 //   }
 
-//   Future<void> getConversationID() async {
-//     try {
-//       final fcmToken = await PushNotificationsManager().getFcmToken();
-//       print(fcmToken);
-//       FirebaseApp app = await Firebase.initializeApp();
-//       final response = await http.post(
-//           Uri.parse(
-//               Endpoints.CHAT_PROD_URL + Endpoints.CHAT_CREATE_CONVERSATION),
-//           body: jsonEncode({
-//             "orderId": widget.orderDetail.id,
-//             "customerId": widget.orderDetail.customer?.id,
-//             "driverId": widget.orderDetail.driver?.id,
-//             "customerName": widget.orderDetail.customer?.name,
-//             "driverName": widget.orderDetail.driver?.name,
-//             "projectId": app.options.projectId,
-//             "driverImageURL": _profileController.photoImageURL!.value,
-//             // "driverFcmToken":"",
-//             // "customerFcmToken":"",
-//             "status": widget.orderDetail.status,
-//           }),
-//           headers: {"Content-Type": "application/json"});
+  // Future<void> getConversationID() async {
+  //   try {
+  //     final fcmToken = await PushNotificationsManager().getFcmToken();
+  //     print(fcmToken);
+  //     FirebaseApp app = await Firebase.initializeApp();
+  //     final response = await http.post(
+  //         Uri.parse(
+  //             Endpoints.CHAT_PROD_URL + Endpoints.CHAT_CREATE_CONVERSATION),
+  //         body: jsonEncode({
+  //           "orderId": widget.orderDetail.id,
+  //           "customerId": widget.orderDetail.customer?.id,
+  //           "driverId": widget.orderDetail.driver?.id,
+  //           "customerName": widget.orderDetail.customer?.name,
+  //           "driverName": widget.orderDetail.driver?.name,
+  //           "projectId": app.options.projectId,
+  //           "driverImageURL": _profileController.photoImageURL!.value,
+  //           // "driverFcmToken":"",
+  //           // "customerFcmToken":"",
+  //           "status": widget.orderDetail.status,
+  //         }),
+  //         headers: {"Content-Type": "application/json"});
 
-//       if (response.statusCode == 201 || response.statusCode == 200) {
-//         final resp =
-//             CreateConversationResponse.fromJson(jsonDecode(response.body));
 
-//         _conversationId = resp.conversationData?.sId ?? "";
-//         _senderId = resp.conversationData?.driverId ?? 0;
-//         _receiverId = resp.conversationData?.customerId ?? 0;
-//         _date = resp.conversationData?.createdAt ?? "";
 
-//         socket.emit('addUser', {
-//           'conversationId': resp.conversationData?.sId,
-//           'userId': resp.conversationData?.driverId,
-//         });
+  //     if (response.statusCode == 201 || response.statusCode == 200) {
+  //       final resp =
+  //           CreateConversationResponse.fromJson(jsonDecode(response.body));
 
-//         updateUserDeviceToken(_conversationId);
-//       }
-//     } on Exception catch (e) {
-//       print(e.toString());
-//     }
-//   }
+  //       _conversationId = resp.conversationData?.sId ?? "";
+  //       _senderId = resp.conversationData?.driverId ?? 0;
+  //       _receiverId = resp.conversationData?.customerId ?? 0;
+  //       _date = resp.conversationData?.createdAt ?? "";
 
-//   Future<void> updateUserDeviceToken(String conversationId) async {
-//     try {
-//       final fcmToken = await PushNotificationsManager().getFcmToken();
-//       print(fcmToken);
-//       FirebaseApp app = await Firebase.initializeApp();
-//       final response = await http.post(
-//           Uri.parse(Endpoints.CHAT_PROD_URL +
-//               Endpoints.CHAT_UPDATE_DEVICE_TOKEN +
-//               '$conversationId'),
-//           body: jsonEncode({
-//             "userType": "driver",
-//             "fcmToken": fcmToken,
-//           }),
-//           headers: {"Content-Type": "application/json"});
+  //       socket.emit('addUser', {
+  //         'conversationId': resp.conversationData?.sId,
+  //         'userId': resp.conversationData?.driverId,
+  //       });
 
-//       if (response.statusCode == 201 || response.statusCode == 200) {
-//         print(
-//             'Chat: Device token has been updated Response ${response.toString()}');
-//       }
-//     } on Exception catch (e) {
-//       print(e.toString());
-//     }
-//   }
+  //       updateUserDeviceToken(_conversationId);
+  //     }
+  //   } on Exception catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
+
+
+
+  // Future<void> updateUserDeviceToken(String conversationId) async {
+  //   try {
+  //     final fcmToken = await PushNotificationsManager().getFcmToken();
+  //     print(fcmToken);
+  //     FirebaseApp app = await Firebase.initializeApp();
+  //     final response = await http.post(
+  //         Uri.parse(Endpoints.CHAT_PROD_URL +
+  //             Endpoints.CHAT_UPDATE_DEVICE_TOKEN +
+  //             '$conversationId'),
+  //         body: jsonEncode({
+  //           "userType": "driver",
+  //           "fcmToken": fcmToken,
+  //         }),
+  //         headers: {"Content-Type": "application/json"});
+
+  //     if (response.statusCode == 201 || response.statusCode == 200) {
+  //       print(
+  //           'Chat: Device token has been updated Response ${response.toString()}');
+  //     }
+  //   } on Exception catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
 
 //   Future<void> getConversations() async {
 //     try {

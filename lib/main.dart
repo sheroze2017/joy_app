@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/common/notification/api/firebase_api.dart';
 import 'package:joy_app/common/theme/controller/theme_controller.dart';
 import 'package:joy_app/common/theme/theme_controller.dart';
@@ -60,7 +61,7 @@ class MyApp extends StatelessWidget {
           // ),
           // initialRoute: AppPage.getNavbar(),
           //getPages: AppPage.routes,
-          home: MapScreen(),
+          home: SplashScreen(),
           initialBinding: YourBinding(),
         ),
       );
@@ -74,5 +75,6 @@ class YourBinding extends Bindings {
     Get.put(HospitalDetailController());
     Get.put(MediaPostController());
     Get.put(AuthController());
+    Get.put(LocationController());
   }
 }

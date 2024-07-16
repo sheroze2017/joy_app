@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 String getElapsedTime(String createdTimeString) {
   DateTime createdTime;
   if (createdTimeString.isEmpty) {
@@ -18,4 +20,14 @@ String getElapsedTime(String createdTimeString) {
   } else {
     return 'Just now';
   }
+}
+
+setToken(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('deviceToken', token);
+}
+
+Future<String> getToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('deviceToken') ?? '';
 }

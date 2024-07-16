@@ -10,7 +10,7 @@ void showErrorMessage(BuildContext context, String message) {
     timeInSecForIosWeb: 1,
     backgroundColor: AppColors.redColor,
     textColor: Colors.white,
-    fontSize: 13.0,
+    fontSize: 12.0,
   );
 }
 
@@ -22,6 +22,6 @@ void showSuccessMessage(BuildContext context, String message) {
     timeInSecForIosWeb: 1,
     backgroundColor: Colors.green,
     textColor: Colors.white,
-    fontSize: 16.0,
+    fontSize: 12.0,
   );
 }

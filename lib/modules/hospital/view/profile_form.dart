@@ -8,6 +8,7 @@ import 'package:joy_app/Widgets/dropdown_button.dart';
 import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -67,6 +68,9 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   String? _selectedImage;
   final mediaController = Get.find<MediaPostController>();
   ProfileController _profileController = Get.put(ProfileController());
+
+  double latitude = 0;
+  double longitude = 0;
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -269,19 +273,34 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                    controller: _locationController,
-                    focusNode: _focusNode5,
-                    nextFocusNode: _focusNode6,
-                    hintText: 'Location',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your location';
-                      } else {
-                        return null;
-                      }
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MapScreen()),
+                      ).then((value) {
+                        if (value != null) {
+                          latitude = value['latitude'];
+                          longitude = value['longitude'];
+                          _locationController.setText(value['searchValue']);
+                        }
+                      });
                     },
-                    icon: '',
+                    child: RoundedBorderTextField(
+                      isenable: false,
+                      controller: _locationController,
+                      focusNode: _focusNode5,
+                      nextFocusNode: _focusNode6,
+                      hintText: 'Location',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your location';
+                        } else {
+                          return null;
+                        }
+                      },
+                      icon: '',
+                    ),
                   ),
                   SizedBox(
                     height: 2.h,
@@ -339,8 +358,8 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                           "",
                                           _contactController.text,
                                           "AD1234",
-                                          "22",
-                                          "22",
+                                          latitude.toString(),
+                                          longitude.toString(),
                                           _feesController.text,
                                           _aboutController.text,
                                           _instituteController.text,
@@ -355,8 +374,8 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                           _contactController.text,
                                           widget.isSocial ? 'SOCIAL' : "EMAIL",
                                           'HOSPITAL',
-                                          "22",
-                                          "22",
+                                          latitude.toString(),
+                                          longitude.toString(),
                                           "AD1234",
                                           _instituteController.text,
                                           _aboutController.text,

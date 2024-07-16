@@ -32,7 +32,7 @@ class DoctorController extends GetxController {
     doctorApi = DoctorApi(dioClient);
     AllAppointments();
     UserHive? currentUser = await getCurrentUser();
-    getDoctorDetail('56');
+    getDoctorDetail();
   }
 
   avgrating() async {
@@ -61,9 +61,12 @@ class DoctorController extends GetxController {
     } finally {}
   }
 
-  Future<DoctorDetail> getDoctorDetail(userId) async {
+  Future<DoctorDetail> getDoctorDetail() async {
+    UserHive? currentUser = await getCurrentUser();
+
     try {
-      DoctorDetail response = await doctorApi.getDoctorDetail(userId);
+      DoctorDetail response =
+          await doctorApi.getDoctorDetail(currentUser!.userId.toString());
       // await Hive.openBox<DoctorDetailModelAdapter>('doctor_details');
 
       if (response.data != null) {
