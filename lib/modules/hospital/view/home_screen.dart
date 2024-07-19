@@ -191,7 +191,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                       )
                                     : Container(),
                                 SizedBox(
-                                  height: widget.isHospital ? 0.h : 1.5.h,
+                                  height: widget.isHospital ? 0.h : 0.h,
                                 ),
                                 widget.isHospital
                                     ? Row(
@@ -271,9 +271,6 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                         ],
                                       )
                                     : Container(),
-                                SizedBox(
-                                  height: widget.isHospital ? 0.h : 2.h,
-                                ),
                                 Text(
                                   _hospitalDetailController
                                       .hospitald.value!.name
@@ -333,7 +330,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                           ? Color(0xffC5D3E3)
                                           : null,
                                       svgAsset: 'Assets/icons/messages.svg',
-                                      numberText: '1872',
+                                      numberText: '0',
                                       descriptionText: 'Reviews',
                                     ),
                                   ],
@@ -378,7 +375,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                     '${_hospitalDetailController.hospitald.value!.checkupFee.toString()}\$',
                                     style: CustomTextStyles.lightTextStyle(
                                         color: Color(0xff4B5563), size: 14)),
-                                SizedBox(height: 1.h),
+                                SizedBox(height: 2.h),
                                 Row(
                                   children: [
                                     Text(
@@ -408,7 +405,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 0.5.h),
+                                SizedBox(height: 1.h),
                                 Obx(() =>
                                     _hospitalDetailController
                                                 .hospitalDoctors.length ==
@@ -524,7 +521,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                                                 0.05.h,
                                                                           ),
                                                                           Text(
-                                                                            'Cardiologist',
+                                                                            '',
                                                                             style:
                                                                                 CustomTextStyles.w600TextStyle(size: 14, color: Color(0xff4B5563)),
                                                                           ),

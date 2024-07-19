@@ -311,13 +311,13 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                           nextFocusNode: _focusNode6,
                           hintText: 'Attach File of Prescription',
                           icon: 'Assets/icons/attach-icon.svg',
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please attach file prescription';
-                            } else {
-                              return null;
-                            }
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please attach file prescription';
+                          //   } else {
+                          //     return null;
+                          //   }
+                          // },
                         ),
                       )),
                   SizedBox(

@@ -10,6 +10,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -44,14 +45,11 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   String? selectedValue;
 
   final TextEditingController _contactController = TextEditingController();
-
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _availabilityController = TextEditingController();
-
   final TextEditingController _feesController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _instituteController = TextEditingController();
-
   final TextEditingController _aboutController = TextEditingController();
 
   final FocusNode _focusNode1 = FocusNode();
@@ -63,6 +61,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   final FocusNode _focusNode7 = FocusNode();
   final FocusNode _focusNode8 = FocusNode();
   final authController = Get.find<AuthController>();
+  final _hospitalDetailController = Get.find<HospitalDetailController>();
 
   final _formKey = GlobalKey<FormState>();
   String? _selectedImage;
@@ -91,6 +90,18 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
       _selectedImage = _profileController.image.value;
       _nameController.setText(_profileController.firstName.toString());
       _contactController.setText(_profileController.phone.toString());
+      _feesController.setText(
+          _hospitalDetailController.hospitald.value!.checkupFee.toString());
+      _locationController.setText(
+          _hospitalDetailController.hospitald.value!.location.toString());
+      latitude = double.parse(
+              _hospitalDetailController.hospitald.value!.lat.toString()) ??
+          0.0;
+      longitude = double.parse(
+              _hospitalDetailController.hospitald.value!.lng.toString()) ??
+          0.0;
+      _aboutController
+          .setText(_hospitalDetailController.hospitald.value!.about.toString());
     }
   }
 

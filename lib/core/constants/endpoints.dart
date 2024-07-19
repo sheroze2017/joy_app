@@ -11,7 +11,6 @@ class Endpoints {
   static String pharmacySignUpApi = '/auth/pharmacySignup';
   static String isValidEmail = '/auth/checkEmail';
   static String editUser = '/auth/editUser';
-  static String editBloodBank = '/auth/editBloodBank';
   static String editPharmacy = '/pharmacy/editPharmacy';
   static String editHospital = '/hospital/editHospital';
 
@@ -67,6 +66,6 @@ class Endpoints {
   static String getAllBloodRequest = '/bloodbank/getAllBloodRequests';
   static String createBloodDonor = '/bloodbank/createDonor';
   static String createBloodAppeal = '/bloodbank/createBloodRequest';
-
+  static String editBloodBank = '/bloodbank/editBloodBank';
   static String getAllBloodBanks = '/bloodbank/getAllBloodBanks';
 }

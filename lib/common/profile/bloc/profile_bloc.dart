@@ -24,6 +24,7 @@ class ProfileController extends GetxController {
     UserHive? currentUser = await getCurrentUser();
     if (currentUser != null) {
       firstName.value = currentUser.firstName;
+      email.value = currentUser.email;
       lastName.value = currentUser.lastName;
       phone.value = currentUser.phone;
       image.value = currentUser.image.toString()!;

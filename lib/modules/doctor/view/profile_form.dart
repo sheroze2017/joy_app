@@ -10,6 +10,7 @@ import 'package:joy_app/Widgets/multi_time_selector.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
+import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_update_bloc.dart';
@@ -227,7 +228,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
-                    validator: validateName,
+                    // validator: validateName,
                     controller: _lnameController,
                     focusNode: _focusNode2,
                     nextFocusNode: _focusNode3,
@@ -504,18 +505,18 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                     await _doctorUpdateController.updateDoctor(
                                         widget.details!.userId.toString(),
                                         _fnameController.text,
-                                        _locationController.text,
-                                        _phoneController.text,
-                                        '',
-                                        'EMAIL',
-                                        'DOCTOR',
                                         widget.email,
                                         widget.password,
+                                        _locationController.text,
+                                        await getToken().toString(),
                                         _genderController.text,
+                                        'EMAIL',
+                                        'DOCTOR',
+                                        _phoneController.text,
                                         _expertiseController.text,
+                                        _feesController.text,
                                         _qualificationController.text,
                                         _medicalCertificateController.text,
-                                        _feesController.text,
                                         context);
                                   }
                                 }
