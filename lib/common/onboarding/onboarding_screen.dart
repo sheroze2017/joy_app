@@ -5,7 +5,7 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/utils/constant/constant.dart';
+import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

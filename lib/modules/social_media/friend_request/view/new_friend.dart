@@ -394,6 +394,8 @@ class RoundedSearchTextField extends StatelessWidget {
   }
 }
 
+
+
 class RoundedSearchTextFieldLarge extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;

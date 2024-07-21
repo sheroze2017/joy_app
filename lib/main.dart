@@ -10,6 +10,7 @@ import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_hive_model.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
+import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:joy_app/styles/theme.dart';
@@ -76,5 +77,6 @@ class YourBinding extends Bindings {
     Get.put(MediaPostController());
     Get.put(AuthController());
     Get.put(LocationController());
+    Get.put(ChatController());
   }
 }

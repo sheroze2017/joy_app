@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
@@ -16,6 +17,9 @@ class AllChats extends StatelessWidget {
   AllChats({super.key});
   FriendsSocialController _friendsController =
       Get.find<FriendsSocialController>();
+
+  ChatController _chatController = Get.put(ChatController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,17 +64,12 @@ class AllChats extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final img = _friendsController.getAllUserAssets()[index];
                     final name = _friendsController.getAllUserNames()[index];
-
+                    final id = _friendsController.getAllUserId()[index];
                     return Column(
                       children: [
                         InkWell(
                           onTap: () {
-                            Get.to(DirectMessageScreen(
-                              userName: name,
-                              userAsset: img,
-                              userId: '',
-                              friendId: '',
-                            ));
+                            _chatController.createConvo(id, name);
                           },
                           child: ChatBox(
                             profileImageUrl: img,

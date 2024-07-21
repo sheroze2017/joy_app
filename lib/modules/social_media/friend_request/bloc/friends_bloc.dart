@@ -184,7 +184,22 @@ class FriendsSocialController extends GetxController {
     return names;
   }
 
-  
+  List<int> getAllUserId() {
+    List<int> id = [];
+
+    // Check if userProfileData has a value and if data is not null
+    if (userProfileData.value != null &&
+        userProfileData.value!.allFriends!.isNotEmpty) {
+      userProfileData.value!.allFriends!.forEach((user) {
+        if (user.status == 'Accepted') {
+          id.add(user.friendId ?? 0);
+        }
+      });
+    }
+
+    return id;
+  }
+
   List<String> getAllUserAssets() {
     List<String> assets = [];
 

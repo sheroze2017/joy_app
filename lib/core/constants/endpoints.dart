@@ -1,6 +1,8 @@
 class Endpoints {
   static String baseUrl = 'http://194.233.69.219:3006';
-
+  static String chatBaseUrl = 'http://154.38.181.14:4000/api/v1';
+  static String getConversation = 'messages/';
+  static String CHAT_PROD_URL = 'http://154.38.181.14:4000';
   //Auth
 
   static String loginApi = '/auth/login';
@@ -45,6 +47,8 @@ class Endpoints {
   static String updateFriendRequest = '/user/updateFriendRequest';
   static String getAllFriendWithStatus = '/user/getAllFriends';
   static String getAllSearchUserDetail = '/user/getSearchedUserDetails';
+
+  static String createConversation = '/conversations';
 
   //Doctor
 
