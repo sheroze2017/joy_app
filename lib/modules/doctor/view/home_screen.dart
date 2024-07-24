@@ -237,7 +237,7 @@ class DoctorHomeScreen extends StatelessWidget {
                                     : AppColors.lightishBlueColor5ff,
                                 isHospital: true,
                                 nextMeeting: true,
-                                imgPath: '',
+                                imgPath: data.userDetails!.image.toString(),
                                 name: data.userDetails!.name.toString(),
                                 time: '${data.date}  ${data.time}',
                                 location: data.location.toString(),
@@ -251,7 +251,9 @@ class DoctorHomeScreen extends StatelessWidget {
                                       doctorId: data.doctorUserId.toString()));
                                 },
                               ),
-                              SizedBox(height: 1.h,)
+                              SizedBox(
+                                height: 1.h,
+                              )
                             ],
                           );
                         } else

@@ -131,7 +131,8 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                                                       : AppColors
                                                           .lightishBlueColor5ff,
                                               isActive: false,
-                                              imgPath: '',
+                                              imgPath: data.userDetails!.image
+                                                  .toString(),
                                               name: data.userDetails!.name
                                                   .toString(),
                                               time:

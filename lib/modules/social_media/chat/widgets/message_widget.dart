@@ -127,6 +127,7 @@ class MessageBubble extends StatelessWidget {
                     padding: const EdgeInsets.all(16.0),
                     child: Text(msgText,
                         style: CustomTextStyles.lightTextStyle(
+                            heigh: 1,
                             color: ThemeUtil.isDarkMode(context)
                                 ? AppColors.whiteColor
                                 : Colors.black,
@@ -149,7 +150,7 @@ class MessageBubble extends StatelessWidget {
                     padding: const EdgeInsets.all(12.0),
                     child: Text(msgText,
                         style: CustomTextStyles.lightTextStyle(
-                            heigh: 0.6,
+                            heigh: 1,
                             color: ThemeUtil.isDarkMode(context)
                                 ? AppColors.blackColor
                                 : Colors.white,

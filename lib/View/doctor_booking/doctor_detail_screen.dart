@@ -299,6 +299,7 @@ class DoctorDetailScreen extends StatelessWidget {
                                 password: data.password.toString(),
                                 name: data.name.toString(),
                                 details: data,
+                                isEdit: true,
                               ))
                             : null;
                       },

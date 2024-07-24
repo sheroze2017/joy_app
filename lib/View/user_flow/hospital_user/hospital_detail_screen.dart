@@ -355,7 +355,7 @@ class UserRatingWidget extends StatelessWidget {
               child: Image.network(
                 image.contains('http')
                     ? image
-                    : 'https://www.nebosh.org.uk/public/case-studies/shyam-susivrithan.jpg',
+                    : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
                 width: 14.5.w,
                 height: 14.5.w,
                 fit: BoxFit.cover,

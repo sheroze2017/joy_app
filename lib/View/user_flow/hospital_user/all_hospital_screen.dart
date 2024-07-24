@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
+import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
@@ -161,8 +162,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                             child: RoundedButton(
                                 text: "All Donors",
                                 onPressed: () {
-                                  Get.to(AllDoctorsScreen(
-                                      appBarText: 'All Donors'));
+                                  Get.to(AllDonorScreen());
                                 },
                                 backgroundColor: AppColors.redLightDarkColor,
                                 textColor: Colors.white),

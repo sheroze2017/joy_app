@@ -116,7 +116,11 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                         reverse: true,
                         itemCount: messageWidgets.length,
                         itemBuilder: (context, index) {
-                          return messageWidgets.reversed.toList()[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4.0, horizontal: 12),
+                            child: messageWidgets.reversed.toList()[index],
+                          );
                         },
                       ),
                     );
@@ -170,12 +174,12 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                                   "receiverId": widget.friendId,
                                   "message": chatMsgTextController.text,
                                   "type": 'txt',
-                                  "url": ''
+                                  "url": chatMsgTextController.text
                                 });
                                 final msgBubble = MessageBubble(
                                   msgText: chatMsgTextController.text,
                                   msgSender: "You",
-                                  user: true,
+                                  user: false,
                                   sending: true,
                                 );
                                 chatMsgTextController.clear();
@@ -220,12 +224,12 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                             "receiverId": widget.friendId,
                             "message": chatMsgTextController.text,
                             "type": 'txt',
-                            "url": ''
+                            "url": chatMsgTextController.text
                           });
                           final msgBubble = MessageBubble(
                             msgText: chatMsgTextController.text,
                             msgSender: "You",
-                            user: true,
+                            user: false,
                             sending: true,
                           );
                           chatMsgTextController.clear();
@@ -345,7 +349,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
         print(resp);
         for (final message in resp) {
           final msgBubble = MessageBubble(
-              msgText: message.type ?? "",
+              msgText: message.url ?? "",
               msgSender:
                   message.senderId == widget.userId ? "You" : widget.userName,
               user: message.senderId == widget.userId,

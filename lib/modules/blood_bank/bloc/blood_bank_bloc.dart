@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/blood_bank/bloc/blood_bank_api.dart';
@@ -26,22 +27,31 @@ class BloodBankController extends GetxController {
   var val = 0.0.obs;
 
   BloodBankDetails? get bloodBankDetail => _bloodBankDetails.value;
+  ProfileController _profileController = Get.find<ProfileController>();
 
   @override
   void onInit() async {
     super.onInit();
-    dioClient = DioClient.getInstance();
-    bloodBankApi = BloodBankApi(dioClient);
-    UserHive? currentUser = await getCurrentUser();
-    getBloodBankDetail(currentUser!.userId.toString());
-
-    getAllBloodRequest();
-    getallDonor();
+    print(_profileController.userRole.value);
+    if (_profileController.userRole.value == 'USER') {
+      dioClient = DioClient.getInstance();
+      bloodBankApi = BloodBankApi(dioClient);
+      UserHive? currentUser = await getCurrentUser();
+      getallDonor();
+    } else {
+      dioClient = DioClient.getInstance();
+      bloodBankApi = BloodBankApi(dioClient);
+      UserHive? currentUser = await getCurrentUser();
+      getBloodBankDetail(currentUser!.userId.toString());
+      getAllBloodRequest();
+      getallDonor();
+    }
   }
 
   void searchByBloodGroup(String bloodGroup) {
-    searchedDonors.value = allDonors.value
-        .where((donor) => donor.bloodGroup!.toLowerCase().contains(bloodGroup))
+    searchedDonors.value = allDonors
+        .where((donor) =>
+            donor.bloodGroup!.toLowerCase().contains(bloodGroup.toLowerCase()))
         .toList();
     print(searchedDonors);
   }
@@ -65,7 +75,9 @@ class BloodBankController extends GetxController {
       return response;
     } catch (error) {
       throw (error);
-    } finally {}
+    } finally {
+      searchedDonors.value = allDonors;
+    }
   }
 
   Future<BloodBankDetails> getBloodBankDetail(userId) async {

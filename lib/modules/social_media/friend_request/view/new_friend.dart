@@ -27,8 +27,8 @@ class _AddNewFriendState extends State<AddNewFriend> {
 
   @override
   void initState() {
-    _friendsController.filteredList = _friendsController.userList;
-    // _friendsController.filteredList.assignAll(_friendsController.userList);
+    // _friendsController.getAllUserList();
+    _friendsController.filteredList.assignAll(_friendsController.userList);
   }
 
   @override
@@ -63,7 +63,9 @@ class _AddNewFriendState extends State<AddNewFriend> {
                           )
                         : Container(),
                     widget.isRequests
-                        ? Obx(() => _friendsController.friendRequest.length == 0
+                        ? Obx(() => _friendsController
+                                    .friendRequest.value.length ==
+                                0
                             ? Center(
                                 child: Text(
                                   'No Friend Request',
@@ -109,7 +111,8 @@ class _AddNewFriendState extends State<AddNewFriend> {
                                     ),
                                   );
                                 })))
-                        : Obx(() => _friendsController.filteredList.length == 0
+                        : Obx(() => _friendsController
+                                .filteredList.value.isEmpty
                             ? Center(
                                 child: Text(
                                   'No users found',
@@ -119,11 +122,11 @@ class _AddNewFriendState extends State<AddNewFriend> {
                             : Obx(() => ListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
-                                itemCount:
-                                    _friendsController.filteredList.length,
+                                itemCount: _friendsController
+                                    .filteredList.value.length,
                                 itemBuilder: ((context, index) {
-                                  final data =
-                                      _friendsController.filteredList[index];
+                                  final data = _friendsController
+                                      .filteredList.value[index];
 
                                   return Padding(
                                       padding:
@@ -393,8 +396,6 @@ class RoundedSearchTextField extends StatelessWidget {
     );
   }
 }
-
-
 
 class RoundedSearchTextFieldLarge extends StatelessWidget {
   final String hintText;

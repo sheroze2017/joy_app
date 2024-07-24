@@ -395,6 +395,7 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                         .toString(),
                                     details:
                                         _doctorController.doctorDetail!.data,
+                                    isEdit: true,
                                   ))
                                 : Get.to(ProfileFormScreen(
                                     doctorDetail:

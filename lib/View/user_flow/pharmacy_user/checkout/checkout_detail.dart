@@ -4,6 +4,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -55,6 +56,8 @@ class _CheckoutFormState extends State<CheckoutForm> {
     _contactController.setText(_profileController.phone.toString());
   }
 
+  double latitude = 0;
+  double longitude = 0;
   @override
   Widget build(BuildContext context) {
     // List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
@@ -99,19 +102,34 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  RoundedBorderTextField(
-                      controller: _addressController,
-                      focusNode: _focusNode3,
-                      nextFocusNode: _focusNode4,
-                      hintText: 'Address',
-                      icon: '',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your address';
-                        } else {
-                          return null;
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MapScreen()),
+                      ).then((value) {
+                        if (value != null) {
+                          latitude = value['latitude'];
+                          longitude = value['longitude'];
+                          _addressController.setText(value['searchValue']);
                         }
-                      }),
+                      });
+                    },
+                    child: RoundedBorderTextField(
+                        isenable: false,
+                        controller: _addressController,
+                        focusNode: _focusNode3,
+                        nextFocusNode: _focusNode4,
+                        hintText: 'Address',
+                        icon: '',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your address';
+                          } else {
+                            return null;
+                          }
+                        }),
+                  ),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -167,8 +185,10 @@ class _CheckoutFormState extends State<CheckoutForm> {
                         child: RoundedButtonSmall(
                           text: "Online Payment",
                           onPressed: () {
+                            showErrorMessage(
+                                context, 'Online payment not active');
                             setState(() {
-                              onlinepay = true;
+                              onlinepay = false;
                               codpay = false;
                               isSelected = false;
                             });
@@ -216,8 +236,8 @@ class _CheckoutFormState extends State<CheckoutForm> {
                                   _addressController.text +
                                       ' ' +
                                       _cityController.text,
-                                  '22',
-                                  '22',
+                                  latitude,
+                                  longitude,
                                   '123456789',
                                   pharmacyController.cartItemsToJson);
                             } else if (onlinepay) {

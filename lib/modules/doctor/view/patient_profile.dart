@@ -62,10 +62,11 @@ class _FormScreenState extends State<PatientProfileScreen> {
     _timeController.setText(widget.details == null
         ? ''
         : widget.details!.date.toString() +
-            'Time ' +
+            ' Time ' +
             widget.details!.time.toString());
     _ageController.setText(
         widget.details == null ? '' : 'Age ' + widget.details!.age.toString());
+    _genderController.setText(widget.details!.gender.toString());
     return Scaffold(
       appBar: HomeAppBar(
         title: "Patient's Profile",

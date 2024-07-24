@@ -133,7 +133,7 @@ class UserDetails {
     email = json['email'] ?? '';
     phone = json['phone'] ?? '';
     userId = json['user_id'] ?? 0;
-    image = json[image] ?? '';
+    image = json['image'] ?? '';
   }
 
   Map<String, dynamic> toJson() {

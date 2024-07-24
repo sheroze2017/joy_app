@@ -71,28 +71,25 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
       body: TabBarView(
         controller: _tabController,
         children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                children: [
-                  Obx(() => _userdoctorController.userAppointment.isEmpty ||
-                          _userdoctorController.userAppointment
-                              .where((element) => element.status == 'Pending')
-                              .isEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 40.0),
-                          child: Center(
-                            child: SubHeading(
-                              title: 'No upcoming appointments',
-                            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                Obx(() => _userdoctorController.userAppointment.isEmpty ||
+                        _userdoctorController.userAppointment
+                            .where((element) => element.status == 'Pending')
+                            .isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 40.0),
+                        child: Center(
+                          child: SubHeading(
+                            title: 'No upcoming appointments',
                           ),
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount:
-                              _userdoctorController.userAppointment.length,
+                        ),
+                      )
+                    : Expanded(
+                      child: ListView.builder(
+                          itemCount: _userdoctorController.userAppointment.length,
                           itemBuilder: (context, index) {
                             if (_userdoctorController
                                     .userAppointment[index].status ==
@@ -110,69 +107,70 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
                               );
                             } else
                               return Container();
-                          })),
-                ],
-              ),
+                          }),
+                    )),
+              ],
             ),
           ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                children: [
-                  Obx(() => _userdoctorController.userAppointment.isEmpty ||
-                          _userdoctorController.userAppointment
-                              .where((element) =>
-                                  element.status!.toLowerCase() == 'completed')
-                              .isEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 40.0),
-                          child: Center(
-                            child: SubHeading(
-                              title: 'No appointments yet completed',
-                            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                Obx(() => _userdoctorController.userAppointment.isEmpty ||
+                        _userdoctorController.userAppointment
+                            .where((element) =>
+                                element.status!.toLowerCase() == 'completed')
+                            .isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 40.0),
+                        child: Center(
+                          child: SubHeading(
+                            title: 'No appointments yet completed',
                           ),
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount:
-                              _userdoctorController.userAppointment.length,
-                          itemBuilder: (context, index) {
-                            if (_userdoctorController
-                                    .userAppointment[index].status!
-                                    .toLowerCase() ==
-                                'completed') {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: 1.h,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Get.to(DoctorDaginosis(
-                                        details: _userdoctorController
-                                            .userAppointment[index],
-                                        prescription: _userdoctorController
-                                            .userAppointment[index].medications,
-                                        patName: _userdoctorController
-                                            .userAppointment[index].patientName,
-                                        daignosis: _userdoctorController
-                                            .userAppointment[index].diagnosis,
-                                      ));
-                                    },
-                                    child: AppointmentCardUser(
-                                      bookingDetail: _userdoctorController
-                                          .userAppointment[index],
-                                      isCompleted: true,
+                        ),
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                            itemCount:
+                                _userdoctorController.userAppointment.length,
+                            itemBuilder: (context, index) {
+                              if (_userdoctorController
+                                      .userAppointment[index].status!
+                                      .toLowerCase() ==
+                                  'completed') {
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 1.h,
                                     ),
-                                  ),
-                                ],
-                              );
-                            } else
-                              return Container();
-                          })),
-                ],
-              ),
+                                    InkWell(
+                                      onTap: () {
+                                        Get.to(DoctorDaginosis(
+                                          details: _userdoctorController
+                                              .userAppointment[index],
+                                          prescription: _userdoctorController
+                                              .userAppointment[index]
+                                              .medications,
+                                          patName: _userdoctorController
+                                              .userAppointment[index]
+                                              .patientName,
+                                          daignosis: _userdoctorController
+                                              .userAppointment[index].diagnosis,
+                                        ));
+                                      },
+                                      child: AppointmentCardUser(
+                                        bookingDetail: _userdoctorController
+                                            .userAppointment[index],
+                                        isCompleted: true,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else
+                                return Container();
+                            }),
+                      )),
+              ],
             ),
           ),
         ],

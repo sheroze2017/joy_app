@@ -136,7 +136,7 @@ class FriendsSocialController extends GetxController {
 
   Future<AllUserList> getAllUserList() async {
     try {
-      AllUserList response = await friendApi.getAllUserList(20);
+      AllUserList response = await friendApi.getAllUserList(0);
       if (response.data != null) {
         response.data!.forEach((element) {
           userList.add(element);
@@ -154,17 +154,9 @@ class FriendsSocialController extends GetxController {
   }
 
   void searchByName(String query) {
-    filteredList.clear();
-    if (query.isEmpty) {
-      filteredList.assignAll(userList);
-    } else {
-      String lowerCaseQuery = query.toLowerCase();
-      userList.forEach((user) {
-        if (user.name!.toLowerCase().contains(lowerCaseQuery)) {
-          filteredList.add(user);
-        }
-      });
-    }
+    filteredList.value = userList
+        .where((user) => user.name!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   List<String> getAllUserNames() {

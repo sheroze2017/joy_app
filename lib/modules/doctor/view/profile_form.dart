@@ -33,6 +33,7 @@ class DoctorFormScreen extends StatefulWidget {
   final String name;
   DoctorDetailsMap? details;
   bool isSocial;
+  bool isEdit;
 
   DoctorFormScreen(
       {required this.email,
@@ -40,6 +41,7 @@ class DoctorFormScreen extends StatefulWidget {
       required this.name,
       this.isSocial = false,
       this.details,
+      this.isEdit = false,
       super.key});
   @override
   State<DoctorFormScreen> createState() => _DoctorFormScreenState();
@@ -83,26 +85,30 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    _fnameController
-        .setText(widget.details == null ? '' : widget.details!.name.toString());
+    if (widget.isEdit) {
+      _selectedImage = widget.details!.image.toString();
+      _fnameController.setText(
+          widget.details == null ? '' : widget.details!.name.toString());
 
-    _genderController.setText(
-        widget.details == null ? '' : widget.details!.gender.toString());
-    _locationController.setText(
-        widget.details == null ? '' : widget.details!.location.toString());
-    _expertiseController.setText(
-        widget.details == null ? '' : widget.details!.expertise.toString());
-    _feesController.setText(widget.details == null
-        ? ''
-        : widget.details!.consultationFee.toString());
-    _qualificationController
-      ..setText(widget.details == null
+      _genderController.setText(
+          widget.details == null ? '' : widget.details!.gender.toString());
+      _locationController.setText(
+          widget.details == null ? '' : widget.details!.location.toString());
+      _expertiseController.setText(
+          widget.details == null ? '' : widget.details!.expertise.toString());
+      _feesController.setText(widget.details == null
           ? ''
-          : widget.details!.qualifications.toString());
-    _phoneController
-      ..setText(widget.details == null ? '' : widget.details!.phone.toString());
-    _selectedImage =
-        widget.details == null ? '' : widget.details!.image.toString();
+          : widget.details!.consultationFee.toString());
+      _qualificationController
+        ..setText(widget.details == null
+            ? ''
+            : widget.details!.qualifications.toString());
+      _phoneController
+        ..setText(
+            widget.details == null ? '' : widget.details!.phone.toString());
+      _selectedImage =
+          widget.details == null ? '' : widget.details!.image.toString();
+    }
     super.initState();
   }
 
@@ -518,6 +524,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                         _qualificationController.text,
                                         _medicalCertificateController.text,
                                         context);
+                                    final _doctorController =
+                                        Get.find<DoctorController>();
+                                    _doctorController.getDoctorDetail();
                                   }
                                 }
                               },

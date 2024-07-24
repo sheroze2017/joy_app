@@ -18,7 +18,7 @@ class AllDonorScreen extends StatefulWidget {
 }
 
 class _AllDonorScreenState extends State<AllDonorScreen> {
-  BloodBankController _bloodBankController = Get.find<BloodBankController>();
+  BloodBankController _bloodBankController = Get.put(BloodBankController());
 
   @override
   void initState() {

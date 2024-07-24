@@ -9,6 +9,7 @@ import 'package:crypto/crypto.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/modules/auth/bloc/auth_api.dart';
 import 'package:joy_app/modules/auth/models/auth.model.dart';
@@ -17,6 +18,7 @@ import 'package:joy_app/modules/auth/models/doctor_register_model.dart';
 import 'package:joy_app/modules/auth/models/hospital_resgister_model.dart';
 import 'package:joy_app/modules/auth/models/user_register_model.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/view/home/navbar.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -35,6 +37,9 @@ class AuthController extends GetxController {
 
   var loginLoader = false.obs;
   var registerLoader = false.obs;
+
+  final _profileController = Get.put(ProfileController());
+  final _hospitalDetailController = Get.find<HospitalDetailController>();
 
   @override
   void onInit() {
@@ -74,6 +79,7 @@ class AuthController extends GetxController {
     await Hive.openBox<UserHive>('users');
     final userBox = await Hive.openBox<UserHive>('users');
     await userBox.put('current_user', user);
+    _profileController.updateUserDetal();
   }
 
   Future<bool> editUser(
@@ -296,7 +302,9 @@ class AuthController extends GetxController {
             response.data!.phone.toString(),
             '',
             response.data!.deviceToken.toString());
-        showSuccessMessage(context, 'Register Successfully');
+        _hospitalDetailController.getHospitalDetails(
+            true, response.data!.userId.toString(), context);
+        showSuccessMessage(context, 'Edit successfully');
         return [true, response.data!.hospitalDetailId];
       } else {
         showErrorMessage(context, response.message.toString());
@@ -317,7 +325,6 @@ class AuthController extends GetxController {
     try {
       LoginModel response = await authApi.login(email, password, authType);
       if (response.data != null) {
-        showSuccessMessage(context, 'Login Successfully');
         saveUserDetailInLocal(
             response.data!.userId!,
             response.data!.name.toString(),
@@ -329,6 +336,8 @@ class AuthController extends GetxController {
             response.data!.phone.toString(),
             '',
             response.data!.deviceToken.toString());
+
+        showSuccessMessage(context, 'Login Successfully');
 
         handleUserRoleNavigation(response.data!.userRole!);
       } else {

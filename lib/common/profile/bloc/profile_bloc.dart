@@ -30,6 +30,7 @@ class ProfileController extends GetxController {
       image.value = currentUser.image.toString()!;
       userId.value = currentUser.userId.toString();
       deviceToken.value = currentUser.deviceToken.toString();
+      userRole.value = currentUser.userRole.toString();
     }
   }
 }
