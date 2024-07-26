@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/add_medicine.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/mycart_screen.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 
@@ -113,13 +115,21 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(12.0),
-                                child: Image.network(
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.product.image.toString(),
                                   height: 67.17.w,
                                   width: 100.w,
-                                  widget.product.image!.contains('http')
-                                      ? widget.product.image.toString()
-                                      : 'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
                                   fit: BoxFit.cover,
+                                  placeholder: (context, url) => Center(
+                                      child: Padding(
+                                    padding: const EdgeInsets.only(top: 20.0),
+                                    child: LoadingWidget(),
+                                  )),
+                                  errorWidget: (context, url, error) => Center(
+                                      child: Padding(
+                                    padding: const EdgeInsets.only(top: 20.0),
+                                    child: ErorWidget(),
+                                  )),
                                 ),
                               ),
                               SizedBox(
@@ -164,74 +174,86 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                       ],
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8.0),
-                                        child: InkWell(
-                                          onTap: () {
-                                            pharmacyController
-                                                .removeFromCart(widget.product);
-                                            setState(() {});
-                                          },
-                                          child: Container(
-                                            width: 7.6.w,
-                                            height: 7.6.w,
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Color(0xffBABABA)),
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: Center(
-                                                child: SvgPicture.asset(
-                                                    'Assets/icons/minus.svg',
-                                                    color: ThemeUtil.isDarkMode(
-                                                            context)
-                                                        ? Color(0xffE8E8E8)
-                                                        : null)),
-                                          ),
-                                        ),
-                                      ),
-                                      Obx(() {
-                                        int quantity = pharmacyController
-                                            .getQuantityOfProduct(
-                                          widget.product,
-                                        );
+                                  widget.isPharmacyAdmin
+                                      ? Container()
+                                      : Row(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 8.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  pharmacyController
+                                                      .removeFromCart(
+                                                          widget.product);
+                                                  setState(() {});
+                                                },
+                                                child: Container(
+                                                  width: 7.6.w,
+                                                  height: 7.6.w,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Color(
+                                                              0xffBABABA)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Center(
+                                                      child: SvgPicture.asset(
+                                                          'Assets/icons/minus.svg',
+                                                          color: ThemeUtil
+                                                                  .isDarkMode(
+                                                                      context)
+                                                              ? Color(
+                                                                  0xffE8E8E8)
+                                                              : null)),
+                                                ),
+                                              ),
+                                            ),
+                                            Obx(() {
+                                              int quantity = pharmacyController
+                                                  .getQuantityOfProduct(
+                                                widget.product,
+                                              );
 
-                                        return Text(quantity.toString(),
-                                            style:
-                                                CustomTextStyles.lightTextStyle(
-                                                    size: 16,
-                                                    color: ThemeUtil.isDarkMode(
-                                                            context)
-                                                        ? Color(0xffE8E8E8)
-                                                        : Color(0xff000000)));
-                                      }),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 8.0),
-                                        child: InkWell(
-                                          onTap: () {
-                                            pharmacyController.addToCart(
-                                                widget.product, context);
-                                            setState(() {});
-                                          },
-                                          child: Container(
-                                            width: 7.6.w,
-                                            height: 7.6.w,
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Color(0xffBABABA)),
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child:
-                                                Center(child: Icon(Icons.add)),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )
+                                              return Text(quantity.toString(),
+                                                  style: CustomTextStyles
+                                                      .lightTextStyle(
+                                                          size: 16,
+                                                          color: ThemeUtil
+                                                                  .isDarkMode(
+                                                                      context)
+                                                              ? Color(
+                                                                  0xffE8E8E8)
+                                                              : Color(
+                                                                  0xff000000)));
+                                            }),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  pharmacyController.addToCart(
+                                                      widget.product, context);
+                                                  setState(() {});
+                                                },
+                                                child: Container(
+                                                  width: 7.6.w,
+                                                  height: 7.6.w,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Color(
+                                                              0xffBABABA)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Center(
+                                                      child: Icon(Icons.add)),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        )
                                 ],
                               ),
                               SizedBox(height: 1.h),

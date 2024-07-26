@@ -134,7 +134,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
       appBar: CustomAppBar(
         title: widget.details == null ? 'Fill Your Profile' : 'Edit Profile',
         icon: Icons.arrow_back_sharp,
-        onPressed: () {},
+        onPressed: () {
+          Get.back();
+        },
       ),
       body: Form(
         key: _formKey,
@@ -521,7 +523,8 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                         _feesController.text,
                                         _qualificationController.text,
                                         _medicalCertificateController.text,
-                                        context);
+                                        context,
+                                        _selectedImage.toString());
                                     final _doctorController =
                                         Get.find<DoctorController>();
                                     _doctorController.getDoctorDetail();

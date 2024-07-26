@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/components/blog_card.dart';
 import 'package:joy_app/view/home/profile_screen.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../Widgets/rounded_button.dart';
@@ -527,9 +529,19 @@ class MyPhotosWidget extends StatelessWidget {
                       bottomLeft: Radius.circular(12),
                       topLeft: Radius.circular(12),
                     ),
-                    child: Image.network(
-                      imgList[0],
-                      fit: BoxFit.fill,
+                    child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: imgList[0],
+                      placeholder: (context, url) => Center(
+                          child: Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: LoadingWidget(),
+                      )),
+                      errorWidget: (context, url, error) => Center(
+                          child: Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: ErorWidget(),
+                      )),
                     ),
                   ),
                 ),
@@ -549,9 +561,19 @@ class MyPhotosWidget extends StatelessWidget {
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(12),
                         ),
-                        child: Image.network(
-                          imgList[1],
+                        child: CachedNetworkImage(
                           fit: BoxFit.fill,
+                          imageUrl: imgList[1],
+                          placeholder: (context, url) => Center(
+                              child: Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: LoadingWidget(),
+                          )),
+                          errorWidget: (context, url, error) => Center(
+                              child: Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: ErorWidget(),
+                          )),
                         ),
                       ),
                     ),
@@ -572,9 +594,19 @@ class MyPhotosWidget extends StatelessWidget {
                         borderRadius: BorderRadius.only(
                           bottomRight: Radius.circular(12),
                         ),
-                        child: Image.network(
-                          imgList[2],
+                        child: CachedNetworkImage(
                           fit: BoxFit.fill,
+                          imageUrl: imgList[2],
+                          placeholder: (context, url) => Center(
+                              child: Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: LoadingWidget(),
+                          )),
+                          errorWidget: (context, url, error) => Center(
+                              child: Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: ErorWidget(),
+                          )),
                         ),
                       ),
                     )

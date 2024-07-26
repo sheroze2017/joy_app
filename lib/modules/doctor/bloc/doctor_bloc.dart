@@ -6,10 +6,13 @@ import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_api.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_model.dart';
+import 'package:joy_app/modules/doctor/view/all_appointment.dart';
+import 'package:joy_app/modules/doctor/view/home_screen.dart';
 import 'package:joy_app/view/home/navbar.dart';
 
 import '../../auth/models/user.dart';
 import '../models/doctor_appointment_model.dart';
+import '../models/doctor_detail_hive_model.dart';
 
 class DoctorController extends GetxController {
   late DioClient dioClient;
@@ -18,6 +21,7 @@ class DoctorController extends GetxController {
   final _doctorDetail = Rxn<DoctorDetail>();
   var appointmentLoader = false.obs;
   var editLoader = false.obs;
+  var fetchAppointmentLoader = false.obs;
   var val = 0.0.obs;
 
   DoctorDetail? get doctorDetail => _doctorDetail.value;
@@ -40,6 +44,7 @@ class DoctorController extends GetxController {
   }
 
   Future<DoctorAppointment> AllAppointments() async {
+    fetchAppointmentLoader.value = true;
     UserHive? currentUser = await getCurrentUser();
 
     doctorAppointment.clear();
@@ -52,10 +57,15 @@ class DoctorController extends GetxController {
           doctorAppointment.add(element);
         });
       } else {}
+      fetchAppointmentLoader.value = false;
       return response;
     } catch (error) {
+      fetchAppointmentLoader.value = false;
+
       throw (error);
-    } finally {}
+    } finally {
+      fetchAppointmentLoader.value = false;
+    }
   }
 
   Future<DoctorDetail> getDoctorDetail() async {
@@ -99,24 +109,25 @@ class DoctorController extends GetxController {
       String consultationFee,
       String qualifications,
       String document,
-      BuildContext context) async {
+      BuildContext context,
+      image) async {
     try {
       bool response = await doctorApi.updateDoctor(
-        userId,
-        name,
-        email,
-        password,
-        location,
-        deviceToken,
-        gender,
-        userRole,
-        authType,
-        phone,
-        expertise,
-        consultationFee,
-        qualifications,
-        document,
-      );
+          userId,
+          name,
+          email,
+          password,
+          location,
+          deviceToken,
+          gender,
+          userRole,
+          authType,
+          phone,
+          expertise,
+          consultationFee,
+          qualifications,
+          document,
+          image);
 
       if (response == true) {
         showSuccessMessage(context, 'Profile Updated');

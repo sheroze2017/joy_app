@@ -95,7 +95,9 @@ class _FormScreenState extends State<FormScreen> {
       appBar: CustomAppBar(
         title: widget.isEdit ? 'Edit Profile' : 'Fill Your Profile',
         icon: Icons.arrow_back_sharp,
-        onPressed: () {},
+        onPressed: () {
+          Get.back();
+        },
       ),
       body: Form(
         key: _formKey,

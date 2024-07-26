@@ -12,6 +12,7 @@ import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/widgets/rounded_button.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 
@@ -32,183 +33,218 @@ class BloodBankHomeScreen extends StatelessWidget {
             showIcon: true),
         body: Obx(
           () => _bloodBankController.bloodBankHomeLoader.value
-              ? Center(child: CircularProgressIndicator())
+              ? Center(
+                  child: CircularProgressIndicator(
+                  color: ThemeUtil.getCurrentTheme(context).primaryColor,
+                ))
               : _bloodBankController.bloodBankDetail == null
-                  ? Center(
-                      child: Text('Error Fetching DATA'),
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Text('Error Fetching Data'),
+                        ),
+                        SizedBox(
+                          height: 2.h,
+                        ),
+                        RoundedButtonSmall(
+                            text: 'refresh',
+                            onPressed: () async {
+                              _bloodBankController.getBloodBankDetail();
+                              _bloodBankController.getAllBloodRequest();
+                              _bloodBankController.getallDonor();
+                            },
+                            backgroundColor: AppColors.redColor,
+                            textColor: Colors.white)
+                      ],
                     )
-                  : SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: RoundedSearchTextField(
-                                  hintText: 'Search',
-                                  controller: TextEditingController()),
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            Container(
-                              height: 45.w,
-                              child: _HorizontalDoctorCategories(
-                                isBloodBank: true,
-                                bloodRequest:
-                                    _bloodBankController.allBloodRequest,
-                                plasmaRequest:
-                                    _bloodBankController.allPlasmaRequest,
-                                allDonors: _bloodBankController.allDonors,
+                  : RefreshIndicator(
+                      onRefresh: () async {
+                        await _bloodBankController.getBloodBankDetail();
+                        await _bloodBankController.getAllBloodRequest();
+                        await _bloodBankController.getallDonor();
+                      },
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: RoundedSearchTextField(
+                                    hintText: 'Search',
+                                    controller: TextEditingController()),
                               ),
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            Text(
-                              _bloodBankController.bloodBankDetail!.data!.name
-                                  .toString(),
-                              style: CustomTextStyles.darkHeadingTextStyle(
-                                  size: 20,
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xFFFFFFFF)
-                                      : Color(0xff383D44)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: LocationWidget(
-                                isBloodbank: true,
-                                location: _bloodBankController
-                                    .bloodBankDetail!.data!.location,
+                              SizedBox(
+                                height: 2.h,
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: Divider(
-                                color: Color(0xffE5E7EB),
+                              Container(
+                                height: 45.w,
+                                child: _HorizontalDoctorCategories(
+                                  isBloodBank: true,
+                                  bloodRequest:
+                                      _bloodBankController.allBloodRequest,
+                                  plasmaRequest:
+                                      _bloodBankController.allPlasmaRequest,
+                                  allDonors: _bloodBankController.allDonors,
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              SizedBox(
+                                height: 2.h,
+                              ),
+                              Text(
+                                _bloodBankController.bloodBankDetail!.data!.name
+                                    .toString(),
+                                style: CustomTextStyles.darkHeadingTextStyle(
+                                    size: 20,
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xFFFFFFFF)
+                                        : Color(0xff383D44)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: LocationWidget(
+                                  isBloodbank: true,
+                                  location: _bloodBankController
+                                      .bloodBankDetail!.data!.location,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: Divider(
+                                  color: Color(0xffE5E7EB),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 2.h,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    RoundedSVGContainer(
+                                      bgColor: AppColors.lightishBlueColorebf,
+                                      iconColor: ThemeUtil.isDarkMode(context)
+                                          ? Color(0xffC5D3E3)
+                                          : Color(0xff1C2A3A),
+                                      svgAsset:
+                                          'Assets/icons/profile-2user.svg',
+                                      numberText: '50+',
+                                      descriptionText: 'Patients',
+                                    ),
+                                    RoundedSVGContainer(
+                                      bgColor: AppColors.lightishBlueColorebf,
+                                      iconColor: ThemeUtil.isDarkMode(context)
+                                          ? Color(0xffC5D3E3)
+                                          : Color(0xff1C2A3A),
+                                      svgAsset: 'Assets/icons/medal.svg',
+                                      numberText: '10+',
+                                      descriptionText: 'experience',
+                                    ),
+                                    RoundedSVGContainer(
+                                      bgColor: AppColors.lightishBlueColorebf,
+                                      iconColor: ThemeUtil.isDarkMode(context)
+                                          ? Color(0xffC5D3E3)
+                                          : Color(0xff1C2A3A),
+                                      svgAsset: 'Assets/icons/star.svg',
+                                      numberText: '5',
+                                      descriptionText: 'rating',
+                                    ),
+                                    RoundedSVGContainer(
+                                      bgColor: AppColors.silverColor4f6,
+                                      iconColor: ThemeUtil.isDarkMode(context)
+                                          ? Color(0xffC5D3E3)
+                                          : Color(0xff1C2A3A),
+                                      svgAsset: 'Assets/icons/messages.svg',
+                                      numberText: '1872',
+                                      descriptionText: 'reviews',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 2.h,
+                              ),
+                              Row(
                                 children: [
-                                  RoundedSVGContainer(
-                                    bgColor: AppColors.lightishBlueColorebf,
-                                    iconColor: ThemeUtil.isDarkMode(context)
-                                        ? Color(0xffC5D3E3)
-                                        : Color(0xff1C2A3A),
-                                    svgAsset: 'Assets/icons/profile-2user.svg',
-                                    numberText: '50+',
-                                    descriptionText: 'Patients',
+                                  Text(
+                                    'About Blood Bank',
+                                    style:
+                                        CustomTextStyles.darkHeadingTextStyle(
+                                            size: 20,
+                                            color: ThemeUtil.isDarkMode(context)
+                                                ? Color(0xffC8D3E0)
+                                                : Color(0xff383D44)),
                                   ),
-                                  RoundedSVGContainer(
-                                    bgColor: AppColors.lightishBlueColorebf,
-                                    iconColor: ThemeUtil.isDarkMode(context)
-                                        ? Color(0xffC5D3E3)
-                                        : Color(0xff1C2A3A),
-                                    svgAsset: 'Assets/icons/medal.svg',
-                                    numberText: '10+',
-                                    descriptionText: 'experience',
-                                  ),
-                                  RoundedSVGContainer(
-                                    bgColor: AppColors.lightishBlueColorebf,
-                                    iconColor: ThemeUtil.isDarkMode(context)
-                                        ? Color(0xffC5D3E3)
-                                        : Color(0xff1C2A3A),
-                                    svgAsset: 'Assets/icons/star.svg',
-                                    numberText: '5',
-                                    descriptionText: 'rating',
-                                  ),
-                                  RoundedSVGContainer(
-                                    bgColor: AppColors.silverColor4f6,
-                                    iconColor: ThemeUtil.isDarkMode(context)
-                                        ? Color(0xffC5D3E3)
-                                        : Color(0xff1C2A3A),
-                                    svgAsset: 'Assets/icons/messages.svg',
-                                    numberText: '1872',
-                                    descriptionText: 'reviews',
+                                  Spacer(),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 16.0),
+                                    child: Text(
+                                      'Edit',
+                                      style:
+                                          CustomTextStyles.lightSmallTextStyle(
+                                              size: 14),
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'About Blood Bank',
-                                  style: CustomTextStyles.darkHeadingTextStyle(
-                                      size: 20,
-                                      color: ThemeUtil.isDarkMode(context)
-                                          ? Color(0xffC8D3E0)
-                                          : Color(0xff383D44)),
+                              SizedBox(height: 0.5.h),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: ReadMoreText(
+                                  "Allied Blood Bank is renowned blood bank working from last 12 years. It have all the modern machinery and all lab tests are available. It is view more",
+                                  trimMode: TrimMode.Line,
+                                  trimLines: 3,
+                                  colorClickableText: AppColors.blackColor,
+                                  trimCollapsedText: ' view more',
+                                  trimExpandedText: ' view less',
+                                  style:
+                                      CustomTextStyles.lightTextStyle(size: 14),
+                                  moreStyle: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                  lessStyle: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                Spacer(),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 16.0),
-                                  child: Text(
-                                    'Edit',
-                                    style: CustomTextStyles.lightSmallTextStyle(
-                                        size: 14),
+                              ),
+                              SizedBox(
+                                height: 1.h,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Blood Bank Timings',
+                                    style:
+                                        CustomTextStyles.darkHeadingTextStyle(
+                                            size: 20,
+                                            color: ThemeUtil.isDarkMode(context)
+                                                ? Color(0xffC8D3E0)
+                                                : Color(0xff383D44)),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 0.5.h),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: ReadMoreText(
-                                "Allied Blood Bank is renowned blood bank working from last 12 years. It have all the modern machinery and all lab tests are available. It is view more",
-                                trimMode: TrimMode.Line,
-                                trimLines: 3,
-                                colorClickableText: AppColors.blackColor,
-                                trimCollapsedText: ' view more',
-                                trimExpandedText: ' view less',
+                                  Spacer(),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 16.0),
+                                    child: Text(
+                                      'Edit',
+                                      style:
+                                          CustomTextStyles.lightSmallTextStyle(
+                                              size: 14),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 0.5.h),
+                              Text(
+                                'Monday - Sunday, 24 Hours',
                                 style:
                                     CustomTextStyles.lightTextStyle(size: 14),
-                                moreStyle: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold),
-                                lessStyle: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold),
                               ),
-                            ),
-                            SizedBox(
-                              height: 1.h,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Blood Bank Timings',
-                                  style: CustomTextStyles.darkHeadingTextStyle(
-                                      size: 20,
-                                      color: ThemeUtil.isDarkMode(context)
-                                          ? Color(0xffC8D3E0)
-                                          : Color(0xff383D44)),
-                                ),
-                                Spacer(),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 16.0),
-                                  child: Text(
-                                    'Edit',
-                                    style: CustomTextStyles.lightSmallTextStyle(
-                                        size: 14),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 0.5.h),
-                            Text(
-                              'Monday - Sunday, 24 Hours',
-                              style: CustomTextStyles.lightTextStyle(size: 14),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

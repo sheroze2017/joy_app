@@ -76,55 +76,62 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                   : Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 10),
-                      child: ListView.builder(
-                        itemCount: ordersController.pendingOrders.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              Get.to(
-                                  OrderDetailScreen(
-                                    orderDetail:
-                                        ordersController.pendingOrders[index],
-                                  ),
-                                  transition: Transition.native);
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 3.0),
-                              child: MeetingCallScheduler(
-                                onPressed: () {
-                                  ordersController.updateOrderStatus(
-                                      ordersController
-                                          .pendingOrders[index].orderId
-                                          .toString(),
-                                      'On the way',
-                                      context);
-                                },
-                                pharmacyButtonText: 'Marked as Shipped',
-                                isPharmacy: true,
-                                buttonColor: ThemeUtil.isDarkMode(context)
-                                    ? AppColors.lightGreenColoreb1
-                                    : AppColors.darkGreenColor,
-                                bgColor: AppColors.lightGreenColor,
-                                nextMeeting: true,
-                                imgPath: '',
-                                name: 'Order Id: ' +
-                                    ordersController
-                                        .pendingOrders[index].orderId
-                                        .toString(),
-                                time: '',
-                                location: ordersController
-                                    .pendingOrders[index].location
-                                    .toString(),
-                                category: ordersController
-                                        .pendingOrders[index].quantity
-                                        .toString() +
-                                    ' Tablets',
+                      child: ordersController.pendingOrders.length == 0
+                          ? Center(
+                              child: Text(
+                                "No pending orders found",
+                                style: CustomTextStyles.lightTextStyle(),
                               ),
+                            )
+                          : ListView.builder(
+                              itemCount: ordersController.pendingOrders.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(
+                                        OrderDetailScreen(
+                                          orderDetail: ordersController
+                                              .pendingOrders[index],
+                                        ),
+                                        transition: Transition.native);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 3.0),
+                                    child: MeetingCallScheduler(
+                                      onPressed: () {
+                                        ordersController.updateOrderStatus(
+                                            ordersController
+                                                .pendingOrders[index].orderId
+                                                .toString(),
+                                            'On the way',
+                                            context);
+                                      },
+                                      pharmacyButtonText: 'Marked as Shipped',
+                                      isPharmacy: true,
+                                      buttonColor: ThemeUtil.isDarkMode(context)
+                                          ? AppColors.lightGreenColoreb1
+                                          : AppColors.darkGreenColor,
+                                      bgColor: AppColors.lightGreenColor,
+                                      nextMeeting: true,
+                                      imgPath: '',
+                                      name: 'Order Id: ' +
+                                          ordersController
+                                              .pendingOrders[index].orderId
+                                              .toString(),
+                                      time: '',
+                                      location: ordersController
+                                          .pendingOrders[index].location
+                                          .toString(),
+                                      category: ordersController
+                                              .pendingOrders[index].quantity
+                                              .toString() +
+                                          ' Tablets',
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
 
               // On the way Tab
@@ -136,32 +143,93 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                   : Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 10),
-                      child: ListView.builder(
-                        itemCount: ordersController.onTheWayOrders.length,
+                      child: ordersController.onTheWayOrders.length == 0
+                          ? Center(
+                              child: Text(
+                                "No order on the way",
+                                style: CustomTextStyles.lightTextStyle(),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: ordersController.onTheWayOrders.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(
+                                        OrderDetailScreen(
+                                          orderDetail: ordersController
+                                              .onTheWayOrders[index],
+                                        ),
+                                        transition: Transition.native);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 3.0),
+                                    child: MeetingCallScheduler(
+                                      pharmacyButtonText: 'Marked as Deliverd',
+                                      onPressed: () {
+                                        ordersController.updateOrderStatus(
+                                            ordersController
+                                                .onTheWayOrders[index].orderId
+                                                .toString(),
+                                            'Delivered',
+                                            context);
+                                      },
+                                      isPharmacy: true,
+                                      buttonColor: ThemeUtil.isDarkMode(context)
+                                          ? AppColors.lightGreenColoreb1
+                                          : AppColors.darkGreenColor,
+                                      bgColor: AppColors.lightGreenColor,
+                                      nextMeeting: true,
+                                      imgPath: '',
+                                      name: 'Order Id: ' +
+                                          ordersController
+                                              .onTheWayOrders[index].orderId
+                                              .toString(),
+                                      time: '',
+                                      location: ordersController
+                                          .onTheWayOrders[index].location
+                                          .toString(),
+                                      category: ordersController
+                                              .onTheWayOrders[index].quantity
+                                              .toString() +
+                                          ' Tablets',
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+
+              // Delivered Tab
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                child: ordersController.deliveredOrders.length == 0
+                    ? Center(
+                        child: Text(
+                          "No order delivered yet",
+                          style: CustomTextStyles.lightTextStyle(),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: ordersController.deliveredOrders.length,
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
                               Get.to(
                                   OrderDetailScreen(
-                                    orderDetail:
-                                        ordersController.onTheWayOrders[index],
-                                  ),
+                                      orderDetail: ordersController
+                                          .deliveredOrders[index]),
                                   transition: Transition.native);
                             },
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 3.0),
                               child: MeetingCallScheduler(
-                                pharmacyButtonText: 'Marked as Deliverd',
-                                onPressed: () {
-                                  ordersController.updateOrderStatus(
-                                      ordersController
-                                          .onTheWayOrders[index].orderId
-                                          .toString(),
-                                      'Delivered',
-                                      context);
-                                },
+                                isDeliverd: true,
                                 isPharmacy: true,
+                                isActive: false,
                                 buttonColor: ThemeUtil.isDarkMode(context)
                                     ? AppColors.lightGreenColoreb1
                                     : AppColors.darkGreenColor,
@@ -170,14 +238,14 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                                 imgPath: '',
                                 name: 'Order Id: ' +
                                     ordersController
-                                        .onTheWayOrders[index].orderId
+                                        .deliveredOrders[index].orderId
                                         .toString(),
                                 time: '',
                                 location: ordersController
-                                    .onTheWayOrders[index].location
+                                    .deliveredOrders[index].location
                                     .toString(),
                                 category: ordersController
-                                        .onTheWayOrders[index].quantity
+                                        .deliveredOrders[index].quantity
                                         .toString() +
                                     ' Tablets',
                               ),
@@ -185,51 +253,6 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                           );
                         },
                       ),
-                    ),
-
-              // Delivered Tab
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                child: ListView.builder(
-                  itemCount: ordersController.deliveredOrders.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Get.to(
-                            OrderDetailScreen(
-                                orderDetail:
-                                    ordersController.deliveredOrders[index]),
-                            transition: Transition.native);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 3.0),
-                        child: MeetingCallScheduler(
-                          isDeliverd: true,
-                          isPharmacy: true,
-                          isActive: false,
-                          buttonColor: ThemeUtil.isDarkMode(context)
-                              ? AppColors.lightGreenColoreb1
-                              : AppColors.darkGreenColor,
-                          bgColor: AppColors.lightGreenColor,
-                          nextMeeting: true,
-                          imgPath: '',
-                          name: 'Order Id: ' +
-                              ordersController.deliveredOrders[index].orderId
-                                  .toString(),
-                          time: '',
-                          location: ordersController
-                              .deliveredOrders[index].location
-                              .toString(),
-                          category: ordersController
-                                  .deliveredOrders[index].quantity
-                                  .toString() +
-                              ' Tablets',
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ),
             ],
           ),

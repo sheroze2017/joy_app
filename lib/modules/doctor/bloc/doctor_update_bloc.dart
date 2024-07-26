@@ -32,25 +32,26 @@ class updateDotorController extends GetxController {
       String consultationFee,
       String qualifications,
       String document,
-      BuildContext context) async {
+      BuildContext context,
+      image) async {
     editLoader.value = true;
     try {
       bool response = await doctorApi.updateDoctor(
-        userId,
-        name,
-        email,
-        password,
-        location,
-        deviceToken,
-        gender,
-        userRole,
-        authType,
-        phone,
-        expertise,
-        consultationFee,
-        qualifications,
-        document,
-      );
+          userId,
+          name,
+          email,
+          password,
+          location,
+          deviceToken,
+          gender,
+          userRole,
+          authType,
+          phone,
+          expertise,
+          consultationFee,
+          qualifications,
+          document,
+          image);
 
       if (response == true) {
         editLoader.value = false;

@@ -33,21 +33,21 @@ class DoctorApi {
   }
 
   Future<bool> updateDoctor(
-    String userId,
-    String name,
-    String email,
-    String password,
-    String location,
-    String deviceToken,
-    String gender,
-    String userRole,
-    String authType,
-    String phone,
-    String expertise,
-    String consultationFee,
-    String qualifications,
-    String document,
-  ) async {
+      String userId,
+      String name,
+      String email,
+      String password,
+      String location,
+      String deviceToken,
+      String gender,
+      String userRole,
+      String authType,
+      String phone,
+      String expertise,
+      String consultationFee,
+      String qualifications,
+      String document,
+      String image) async {
     try {
       final result = await _dioClient.post(Endpoints.updateDoctor, data: {
         "user_id": userId,
@@ -63,7 +63,8 @@ class DoctorApi {
         "expertise": expertise,
         "consultation_fee": consultationFee,
         "qualifications": qualifications,
-        "document": document
+        "document": document,
+        "image": image
       });
       if (result['sucess'] == true) {
         return true;

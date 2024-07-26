@@ -270,15 +270,23 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                         ],
                                       )
                                     : Container(),
-                                Text(
-                                  _hospitalDetailController
-                                      .hospitald.value!.name
-                                      .toString(),
-                                  style: CustomTextStyles.darkHeadingTextStyle(
-                                      size: 30,
-                                      color: ThemeUtil.isDarkMode(context)
-                                          ? Color(0xffFFFFFF)
-                                          : Color(0xff383D44)),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        _hospitalDetailController
+                                            .hospitald.value!.name
+                                            .toString(),
+                                        style: CustomTextStyles
+                                            .darkHeadingTextStyle(
+                                                size: 30,
+                                                color: ThemeUtil.isDarkMode(
+                                                        context)
+                                                    ? Color(0xffFFFFFF)
+                                                    : Color(0xff383D44)),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 LocationWidget(
                                     location: _hospitalDetailController
@@ -334,11 +342,11 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 1.h),
+                                SizedBox(height: 2.h),
                                 Heading(
                                   title: 'About Hospital',
                                 ),
-                                SizedBox(height: 0.5.h),
+                                SizedBox(height: 1.h),
                                 ReadMoreText(
                                   _hospitalDetailController
                                       .hospitald.value!.about
@@ -357,15 +365,15 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(height: 1.h),
+                                SizedBox(height: 2.h),
                                 Heading(
                                   title: 'Hospital Timings',
                                 ),
-                                SizedBox(height: 0.5.h),
+                                SizedBox(height: 1.h),
                                 Text('Monday-Friday, 08.00 AM-18.00 pM',
                                     style: CustomTextStyles.lightTextStyle(
                                         color: Color(0xff4B5563), size: 14)),
-                                SizedBox(height: 1.5.h),
+                                SizedBox(height: 2.h),
                                 Heading(
                                   title: 'Check up Fee',
                                 ),

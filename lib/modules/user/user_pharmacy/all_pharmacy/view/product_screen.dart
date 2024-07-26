@@ -53,7 +53,10 @@ class _ProductScreenState extends State<ProductScreen> {
                   padding: const EdgeInsets.all(6.0),
                   child: InkWell(
                     onTap: () {
-                      Get.to(MyCartScreen(), transition: Transition.native);
+                      widget.isAdmin
+                          ? null
+                          : Get.to(MyCartScreen(),
+                              transition: Transition.native);
                     },
                     child: SvgPicture.asset(
                       'Assets/icons/cardreddot.svg',
@@ -133,9 +136,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 },
                                 btnText:
                                     widget.isAdmin ? "Edit" : "Add to Cart",
-                                imgUrl: data.image!.contains('http')
-                                    ? data.image.toString()
-                                    : "https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3",
+                                imgUrl: data.image.toString(),
                                 count: data.quantity.toString(),
                                 cost: data.price.toString(),
                                 name: data.name.toString(),

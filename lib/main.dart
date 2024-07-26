@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/common/notification/api/firebase_api.dart';
@@ -9,6 +10,7 @@ import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_hive_model.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
+import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/theme.dart';
 import 'package:joy_app/view/splash_screen.dart';
@@ -18,6 +20,10 @@ import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   await Firebase.initializeApp(
       options: FirebaseOptions(
     apiKey: 'AIzaSyD9VoJD6i_LQ6dFH3JQsZO_z4RlPYki4rk',
@@ -75,5 +81,6 @@ class YourBinding extends Bindings {
     Get.put(AuthController());
     Get.put(LocationController());
     Get.put(ChatController());
+    Get.put(FriendsSocialController());
   }
 }

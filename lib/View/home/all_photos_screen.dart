@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/widgets/custom_appbar.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:sizer/sizer.dart';
 
 class AllPhotoScreen extends StatelessWidget {
@@ -41,10 +43,21 @@ class AllPhotoScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(6),
-                      child: Image.network(
-                        height: 40.w,
-                        _friendsController.getAllProfileImagesUser()[index],
+                      child: CachedNetworkImage(
+                        height: 40.h,
                         fit: BoxFit.cover,
+                        imageUrl:
+                            _friendsController.getAllProfileImagesUser()[index],
+                        placeholder: (context, url) => Center(
+                            child: Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: LoadingWidget(),
+                        )),
+                        errorWidget: (context, url, error) => Center(
+                            child: Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: ErorWidget(),
+                        )),
                       ),
                     );
                   },

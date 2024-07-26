@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -17,6 +19,7 @@ import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/add_friend.dart';
 import 'package:joy_app/common/navbar/controller/navbar_controller.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/widgets/app_exit_dailog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../modules/user/user_pharmacy/all_pharmacy/view/home_screen.dart';
@@ -46,132 +49,120 @@ class _NavBarState extends State<NavBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<NavBarController>(builder: (context) {
-      return Scaffold(
-        body: widget.isDoctor == true
-            ? IndexedStack(
-                index: navbarController.tabIndex,
-                children: [
-                  DoctorHomeScreen(),
-                  AllAppointments(),
-                  NotificationScreen(),
-                  ProfileScreen(
-                    isDoctor: true,
-                  )
-                ],
-              )
-            : widget.isPharmacy == true
-                ? IndexedStack(
-                    index: navbarController.tabIndex,
-                    children: [
-                      PharmacyHomeScreen(),
-                      ProductScreen(
-                        isAdmin: true,
-                        userId: '3',
-                      ),
-                      NotificationScreen(),
-                      ProfileScreen(isPharmacy: true)
-                    ],
-                  )
-                : widget.isBloodBank == true
+    return WillPopScope(
+        onWillPop: () async {
+          return await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ExitAppDialog();
+            },
+          );
+        },
+        child: GetBuilder(
+            init: NavBarController(), // Initialize your controller here
+            builder: (context) {
+              return Scaffold(
+                body: widget.isDoctor == true
                     ? IndexedStack(
                         index: navbarController.tabIndex,
                         children: [
-                          BloodBankHomeScreen(),
-                          BloodDonationAppeal(
-                            isBloodDontate: true,
-                          ),
+                          DoctorHomeScreen(),
+                          AllAppointments(),
                           NotificationScreen(),
                           ProfileScreen(
-                            isBloodbank: true,
+                            isDoctor: true,
                           )
                         ],
                       )
-                    : widget.isHospital == true
+                    : widget.isPharmacy == true
                         ? IndexedStack(
                             index: navbarController.tabIndex,
                             children: [
-                              HospitalHomeScreen(
-                                isHospital: true,
-                                //      hospitalId: widget.hospitalDetailId,
+                              PharmacyHomeScreen(),
+                              ProductScreen(
+                                isAdmin: true,
+                                userId: '3',
                               ),
                               NotificationScreen(),
-                              ProfileScreen(
-                                isHospital: true,
-                              )
+                              ProfileScreen(isPharmacy: true)
                             ],
                           )
-                        : widget.isUser == true
+                        : widget.isBloodBank == true
                             ? IndexedStack(
                                 index: navbarController.tabIndex,
                                 children: [
-                                  UserBlogScreen(),
-                                  AddFriend(),
-                                  HomeScreen(),
+                                  BloodBankHomeScreen(),
+                                  BloodDonationAppeal(
+                                    isBloodDontate: true,
+                                  ),
                                   NotificationScreen(),
-                                  MyProfileScreen(
-                                    myProfile: false,
+                                  ProfileScreen(
+                                    isBloodbank: true,
                                   )
                                 ],
                               )
-                            : IndexedStack(
-                                index: navbarController.tabIndex,
-                                children: [],
-                              ),
-        bottomNavigationBar: BottomNavigationBar(
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          currentIndex: navbarController.tabIndex,
-          onTap: navbarController.changeTabIndex,
-          items: widget.isDoctor == true
-              ? [
-                  _bottomBarItem(
-                      'Assets/icons/home.svg', 'Assets/icons/homebold.svg'),
-                  _bottomBarItem('Assets/icons/calendar.svg',
-                      'Assets/icons/calendardark.svg'),
-                  _bottomBarItem('Assets/icons/notification.svg',
-                      'Assets/icons/notificationbold.svg'),
-                  _bottomBarItem(
-                      'Assets/icons/frame.svg', 'Assets/icons/profilebold.svg'),
-                ]
-              : widget.isPharmacy == true
-                  ? [
-                      _bottomBarItem(
-                          'Assets/icons/home.svg', 'Assets/icons/homebold.svg'),
-                      _bottomBarItem('Assets/icons/cartsilver.svg',
-                          'Assets/icons/cartdark.svg'),
-                      _bottomBarItem('Assets/icons/notification.svg',
-                          'Assets/icons/notificationbold.svg'),
-                      _bottomBarItem('Assets/icons/frame.svg',
-                          'Assets/icons/profilebold.svg'),
-                    ]
-                  : widget.isBloodBank == true
+                            : widget.isHospital == true
+                                ? IndexedStack(
+                                    index: navbarController.tabIndex,
+                                    children: [
+                                      HospitalHomeScreen(
+                                        isHospital: true,
+                                        //      hospitalId: widget.hospitalDetailId,
+                                      ),
+                                      NotificationScreen(),
+                                      ProfileScreen(
+                                        isHospital: true,
+                                      )
+                                    ],
+                                  )
+                                : widget.isUser == true
+                                    ? IndexedStack(
+                                        index: navbarController.tabIndex,
+                                        children: [
+                                          UserBlogScreen(),
+                                          AddFriend(),
+                                          HomeScreen(),
+                                          NotificationScreen(),
+                                          MyProfileScreen(
+                                            myProfile: false,
+                                          )
+                                        ],
+                                      )
+                                    : IndexedStack(
+                                        index: navbarController.tabIndex,
+                                        children: [],
+                                      ),
+                bottomNavigationBar: BottomNavigationBar(
+                  showSelectedLabels: false,
+                  showUnselectedLabels: false,
+                  currentIndex: navbarController.tabIndex,
+                  onTap: navbarController.changeTabIndex,
+                  items: widget.isDoctor == true
                       ? [
                           _bottomBarItem('Assets/icons/home.svg',
                               'Assets/icons/homebold.svg'),
-                          _bottomBarItem('Assets/icons/health-care.svg',
-                              'Assets/icons/healthbold.svg'),
+                          _bottomBarItem('Assets/icons/calendar.svg',
+                              'Assets/icons/calendardark.svg'),
                           _bottomBarItem('Assets/icons/notification.svg',
                               'Assets/icons/notificationbold.svg'),
                           _bottomBarItem('Assets/icons/frame.svg',
                               'Assets/icons/profilebold.svg'),
                         ]
-                      : widget.isHospital == true
+                      : widget.isPharmacy == true
                           ? [
-                              _bottomBarItem('Assets/icons/health-care.svg',
-                                  'Assets/icons/healthbold.svg'),
+                              _bottomBarItem('Assets/icons/home.svg',
+                                  'Assets/icons/homebold.svg'),
+                              _bottomBarItem('Assets/icons/cartsilver.svg',
+                                  'Assets/icons/cartdark.svg'),
                               _bottomBarItem('Assets/icons/notification.svg',
                                   'Assets/icons/notificationbold.svg'),
                               _bottomBarItem('Assets/icons/frame.svg',
                                   'Assets/icons/profilebold.svg'),
                             ]
-                          : widget.isUser == true
+                          : widget.isBloodBank == true
                               ? [
                                   _bottomBarItem('Assets/icons/home.svg',
                                       'Assets/icons/homebold.svg'),
-                                  _bottomBarItem(
-                                      'Assets/icons/profile-2light.svg',
-                                      'Assets/icons/profile-2user.svg'),
                                   _bottomBarItem('Assets/icons/health-care.svg',
                                       'Assets/icons/healthbold.svg'),
                                   _bottomBarItem(
@@ -180,10 +171,39 @@ class _NavBarState extends State<NavBarScreen> {
                                   _bottomBarItem('Assets/icons/frame.svg',
                                       'Assets/icons/profilebold.svg'),
                                 ]
-                              : [],
-        ),
-      );
-    });
+                              : widget.isHospital == true
+                                  ? [
+                                      _bottomBarItem(
+                                          'Assets/icons/health-care.svg',
+                                          'Assets/icons/healthbold.svg'),
+                                      _bottomBarItem(
+                                          'Assets/icons/notification.svg',
+                                          'Assets/icons/notificationbold.svg'),
+                                      _bottomBarItem('Assets/icons/frame.svg',
+                                          'Assets/icons/profilebold.svg'),
+                                    ]
+                                  : widget.isUser == true
+                                      ? [
+                                          _bottomBarItem(
+                                              'Assets/icons/home.svg',
+                                              'Assets/icons/homebold.svg'),
+                                          _bottomBarItem(
+                                              'Assets/icons/profile-2light.svg',
+                                              'Assets/icons/profile-2user.svg'),
+                                          _bottomBarItem(
+                                              'Assets/icons/health-care.svg',
+                                              'Assets/icons/healthbold.svg'),
+                                          _bottomBarItem(
+                                              'Assets/icons/notification.svg',
+                                              'Assets/icons/notificationbold.svg'),
+                                          _bottomBarItem(
+                                              'Assets/icons/frame.svg',
+                                              'Assets/icons/profilebold.svg'),
+                                        ]
+                                      : [],
+                ),
+              );
+            }));
   }
 
   _bottomBarItem(String asset, String activeSting) {

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +12,7 @@ import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../modules/user/user_doctor/bloc/user_doctor_bloc.dart';
@@ -131,19 +133,22 @@ class DoctorsCardWidget extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: imgUrl.contains('http')
-                    ? Image.network(
-                        imgUrl,
-                        width: 27.9.w,
-                        height: 27.9.w,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.network(
-                        'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
-                        width: 27.9.w,
-                        height: 27.9.w,
-                        fit: BoxFit.cover,
-                      ),
+                child: CachedNetworkImage(
+                  imageUrl: imgUrl,
+                  width: 27.9.w,
+                  height: 27.9.w,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: LoadingWidget(),
+                  )),
+                  errorWidget: (context, url, error) => Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: ErorWidget(),
+                  )),
+                ),
               ),
               SizedBox(
                 width: 2.w,

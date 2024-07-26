@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,6 +6,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:sizer/sizer.dart';
 
 // class ImagePage extends StatelessWidget {
@@ -452,11 +454,18 @@ class MedicineCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
-                      child: Image.network(
-                        imgUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: imgUrl,
                         width: 12.5.w,
                         height: 12.5.w,
                         fit: BoxFit.cover,
+                        placeholder: (context, url) => Center(
+                            child: Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: LoadingWidget(),
+                        )),
+                        errorWidget: (context, url, error) => Center(
+                            child: Icon(Icons.medical_services_outlined)),
                       ),
                     ),
                     SizedBox(

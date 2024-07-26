@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,6 +16,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/view/user_flow/bloodbank_user/blood_donation_appeal.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../modules/user/user_hospital/bloc/user_hospital_bloc.dart';
@@ -265,7 +267,9 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                     ? Color(0xffE2FFE3)
                                     : widget.isBloodBank
                                         ? Color(0xffFFECEC)
-                                        : Color(0xffEEF5FF),
+                                        : ThemeUtil.isDarkMode(context)
+                                            ? AppColors.purpleBlueColor
+                                            : Color(0xffEEF5FF),
                                 borderRadius: BorderRadius.circular(12)),
                             child: Padding(
                               padding: EdgeInsets.all(12.0),
@@ -273,40 +277,34 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12.0),
-                                    child: Image.network(
-                                      widget.isBloodBank
-                                          ? bloodBankController
-                                                  .searchResults[index].image
-                                                  .toString()
-                                                  .contains('http')
-                                              ? bloodBankController
-                                                  .searchResults[index].image
-                                                  .toString()
-                                              : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'
-                                          : widget.isPharmacy
-                                              ? pharmacyController
-                                                      .searchResults[index]
-                                                      .image
-                                                      .toString()
-                                                      .contains('http')
-                                                  ? pharmacyController
-                                                      .searchResults[index]
-                                                      .image
-                                                      .toString()
-                                                  : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'
-                                              : _userHospitalController
-                                                      .searchResults[index]
-                                                      .image
-                                                      .toString()
-                                                      .contains('http')
-                                                  ? _userHospitalController
-                                                      .searchResults[index]
-                                                      .image
-                                                      .toString()
-                                                  : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
+                                    child: CachedNetworkImage(
                                       width: 28.w,
                                       height: 28.w,
                                       fit: BoxFit.cover,
+                                      imageUrl: widget.isBloodBank
+                                          ? bloodBankController
+                                              .searchResults[index].image
+                                              .toString()
+                                          : widget.isPharmacy
+                                              ? pharmacyController
+                                                  .searchResults[index].image
+                                                  .toString()
+                                              : _userHospitalController
+                                                  .searchResults[index].image
+                                                  .toString(),
+                                      placeholder: (context, url) => Center(
+                                          child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 20.0),
+                                        child: LoadingWidget(),
+                                      )),
+                                      errorWidget: (context, url, error) =>
+                                          Center(
+                                              child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 20.0),
+                                        child: ErorWidget(),
+                                      )),
                                     ),
                                   ),
                                   SizedBox(
@@ -478,7 +476,7 @@ class HospitalName extends StatelessWidget {
       style: CustomTextStyles.darkHeadingTextStyle(
           size: 12.67,
           color: ThemeUtil.isDarkMode(context)
-              ? AppColors.whiteColor
+              ? Color(0xff222222)
               : Color(0xff4B5563)),
     );
   }
@@ -497,10 +495,12 @@ class LocationWidget extends StatelessWidget {
         SizedBox(
           width: 0.5.w,
         ),
-        Text(location ?? '123 Oak Street, CA 98765',
-            style: CustomTextStyles.lightTextStyle(
-                color: isBloodbank ? Color(0xff383D44) : Color(0xff6B7280),
-                size: 10.8))
+        Expanded(
+          child: Text(location ?? '123 Oak Street, CA 98765',
+              style: CustomTextStyles.lightTextStyle(
+                  color: isBloodbank ? Color(0xff383D44) : Color(0xff6B7280),
+                  size: 10.8)),
+        )
       ],
     );
   }

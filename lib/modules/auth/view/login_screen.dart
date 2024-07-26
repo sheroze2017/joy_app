@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _emailController.text,
                                     _passwordController.text,
                                     context,
-                                    "SOCIAL");
+                                    "EMAIL");
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)

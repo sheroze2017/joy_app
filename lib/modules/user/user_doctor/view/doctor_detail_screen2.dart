@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:sizer/sizer.dart';
 
 class DoctorDetailScreen2 extends StatefulWidget {
@@ -112,18 +114,28 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                           ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(12.0),
-                                            child: Image.network(
-                                              _doctorController.doctorDetail!
-                                                      .data!.image!
-                                                      .contains('http')
-                                                  ? _doctorController
-                                                      .doctorDetail!
-                                                      .data!
-                                                      .image!
-                                                  : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
-                                              width: 27.9.w,
+                                            child: CachedNetworkImage(
+                                              imageUrl: _doctorController
+                                                  .doctorDetail!.data!.image
+                                                  .toString(),
+                                              width: 27.9.w, 
                                               height: 27.9.w,
                                               fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  Center(
+                                                      child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 20.0),
+                                                child: LoadingWidget(),
+                                              )),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Center(
+                                                          child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 20.0),
+                                                child: ErorWidget(),
+                                              )),
                                             ),
                                           ),
                                           SizedBox(

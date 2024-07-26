@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 
 import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:sizer/sizer.dart';
 
 class HosipitalCardWidget extends StatelessWidget {
@@ -53,11 +55,21 @@ class HosipitalCardWidget extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-            child: Image.network(
-              getImageUrl(),
+            child: CachedNetworkImage(
               width: 59.4.w,
               height: 31.w,
               fit: BoxFit.cover,
+              imageUrl: getImageUrl(),
+              placeholder: (context, url) => Center(
+                  child: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: LoadingWidget(),
+              )),
+              errorWidget: (context, url, error) => Center(
+                  child: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: ErorWidget(),
+              )),
             ),
           ),
           SizedBox(
@@ -165,19 +177,13 @@ class HosipitalCardWidget extends StatelessWidget {
 
   String getImageUrl() {
     if (isPharmacy) {
-      return pharmacyData?.image?.contains('http') == true
-          ? pharmacyData!.image.toString()
-          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg';
+      return pharmacyData!.image.toString();
     } else if (isHospital) {
-      return hospitalData?.image?.contains('http') == true
-          ? hospitalData!.image.toString()
-          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg';
+      return hospitalData!.image.toString();
     } else if (isBloodBank) {
-      return bloodBankData?.image?.contains('http') == true
-          ? bloodBankData!.image.toString()
-          : 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg';
+      return bloodBankData!.image.toString();
     } else {
-      return 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hospital-de-Bellvitge.jpg/640px-Hospital-de-Bellvitge.jpg';
+      return '';
     }
   }
 }

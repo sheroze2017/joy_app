@@ -12,6 +12,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/doctor/view/patient_profile.dart';
 import 'package:joy_app/view/home/my_profile.dart';
+import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 
 class AllAppointments extends StatelessWidget {
@@ -54,13 +55,24 @@ class AllAppointments extends StatelessWidget {
                                     title: 'No pending appointments',
                                   ),
                                 ),
-                                RoundedButtonSmall(
+                                Obx(() => RoundedButtonSmall(
+                                    showLoader: _doctorController
+                                        .fetchAppointmentLoader.value,
                                     text: 'refresh',
                                     onPressed: () {
-                                      _doctorController.AllAppointments();
+                                      !_doctorController
+                                              .fetchAppointmentLoader.value
+                                          ? {
+                                              _doctorController
+                                                  .AllAppointments()
+                                            }
+                                          : {
+                                              showErrorMessage(context,
+                                                  'Request already in process')
+                                            };
                                     },
                                     backgroundColor: Colors.black,
-                                    textColor: Colors.white)
+                                    textColor: Colors.white))
                               ],
                             )
                           : ListView.builder(

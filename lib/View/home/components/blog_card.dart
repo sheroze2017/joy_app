@@ -1,12 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/network/utils/extra.dart';
+import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/widgets/loader.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/my_profile.dart';
@@ -122,14 +126,25 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
         SizedBox(height: 1.h),
         widget.showImg == true
             ? Container(
-                height: 200,
+                height: 20.h,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                    image: NetworkImage(widget.imgPath),
-                    fit: BoxFit.cover,
-                  ),
+                ),
+                clipBehavior: Clip.antiAlias, // Add this line
+                child: CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: widget.imgPath,
+                  placeholder: (context, url) => Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: LoadingWidget(),
+                  )),
+                  errorWidget: (context, url, error) => Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: ErorWidget(),
+                  )),
                 ),
               )
             : Container(),

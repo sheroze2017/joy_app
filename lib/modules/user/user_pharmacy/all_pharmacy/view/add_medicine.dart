@@ -73,13 +73,16 @@ class _AddMedicineState extends State<AddMedicine> {
       _priceController.setText(data.price!);
       _categoryController.setText(
           category[data.productId!.toInt() > 3 ? 1 : data.productId!.toInt()]);
+      _selectedImage = data.image.toString();
     }
 
     return Scaffold(
       appBar: CustomAppBar(
         title: widget.isEdit ? 'Edit Product' : 'Add Product',
         icon: Icons.arrow_back_sharp,
-        onPressed: () {},
+        onPressed: () {
+          Get.back();
+        },
       ),
       body: Form(
         key: _formKey,

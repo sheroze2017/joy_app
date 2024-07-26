@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
 import 'package:crypto/crypto.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
@@ -17,6 +20,7 @@ import 'package:joy_app/modules/auth/models/hospital_resgister_model.dart';
 import 'package:joy_app/modules/auth/models/user_register_model.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
+import 'package:joy_app/view/home/navbar.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../core/network/request.dart';
