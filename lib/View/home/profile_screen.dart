@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/theme/controller/theme_controller.dart';
+import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/auth/view/profileform_screen.dart';
@@ -67,33 +68,30 @@ class _FormScreenState extends State<ProfileScreen> {
               // ),
               Stack(
                 children: <Widget>[
-                  _profileController.image.contains('http')
-                      ? Center(
-                          child: Container(
-                            width: 43.w,
-                            height: 43.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle, // Add this line
-                              border: Border.all(
-                                  color: Colors.grey, width: 1), // Optional
-                            ),
-                            child: Center(
-                              child: ClipOval(
-                                // Add this widget
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  _profileController.image.toString(),
-                                  width: 41.w,
-                                  height: 41.w,
-                                ),
-                              ),
-                            ),
+                  Center(
+                    child: Container(
+                      width: 43.w,
+                      height: 43.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle, // Add this line
+                        border: Border.all(
+                            color: Colors.grey, width: 1), // Optional
+                      ),
+                      child: Center(
+                        child: ClipOval(
+                          // Add this widget
+                          child: Image.network(
+                            fit: BoxFit.cover,
+                            _profileController.image.toString().contains('http')
+                                ? _profileController.image.toString()
+                                : CustomConstant.nullUserImage,
+                            width: 41.w,
+                            height: 41.w,
                           ),
-                        )
-                      : Center(
-                          child: SvgPicture.asset(
-                              'Assets/images/profile-circle.svg'),
                         ),
+                      ),
+                    ),
+                  ),
                   Positioned(
                     bottom: 25,
                     right: 90,

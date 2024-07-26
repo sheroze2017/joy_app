@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -12,6 +14,10 @@ import '../../../../view/home/navbar.dart';
 import '../model/all_doctor_model.dart';
 import '../model/all_user_appointment.dart';
 import 'user_doctor_api.dart';
+import 'package:open_file/open_file.dart' as open_file;
+import 'package:path_provider/path_provider.dart' as path_provider;
+// ignore: depend_on_referenced_packages
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 class UserDoctorController extends GetxController {
   late DioClient dioClient;
@@ -28,6 +34,8 @@ class UserDoctorController extends GetxController {
   DoctorDetail? get doctorDetail => _doctorDetail.value;
 
   RxList<Doctor> doctorsList = <Doctor>[].obs;
+  RxList<Doctor> searchDoctorsList = <Doctor>[].obs;
+
   RxList<UserAppointment> userAppointment = <UserAppointment>[].obs;
 
   @override
@@ -50,7 +58,9 @@ class UserDoctorController extends GetxController {
       return response;
     } catch (error) {
       throw (error);
-    } finally {}
+    } finally {
+      searchDoctorsList.value = doctorsList;
+    }
   }
 
   Future<AllUserAppointment> getAllUserAppointment() async {
@@ -206,5 +216,15 @@ class UserDoctorController extends GetxController {
       val.value = val.value +
           (double.parse(element.rating!) / doctorDetail!.data!.reviews!.length);
     });
+  }
+
+  void searchByName(String docName) {
+    if (docName.isEmpty) {
+      searchDoctorsList.value = doctorsList;
+    }
+    searchDoctorsList.value = doctorsList
+        .where((doctor) =>
+            doctor.name!.toLowerCase().contains(docName.toLowerCase()))
+        .toList();
   }
 }

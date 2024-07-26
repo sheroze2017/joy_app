@@ -164,35 +164,43 @@ class UserBlogScreen extends StatelessWidget {
                   SizedBox(
                     height: 1.5.h,
                   ),
-                  Obx(() => ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: mediaController.allPost.length,
-                      itemBuilder: ((context, index) {
-                        final data = mediaController.allPost[index];
-                        return Column(
-                          children: [
-                            Obx(() => MyCustomWidget(
-                                  cm: mediaController.allPost[index].comments ??
-                                      [],
-                                  postIndex: index,
-                                  postId: data.postId.toString(),
-                                  postTime: data.createdAt.toString(),
-                                  id: data.createdBy.toString(),
-                                  imgPath: data.image.toString(),
-                                  isLiked: true,
-                                  isReply: false,
-                                  showImg: (data.image == null ||
-                                          data.image!.isEmpty)
-                                      ? false
-                                      : true,
-                                  postName: data.name.toString(),
-                                  text: data.description.toString(),
-                                  userImage: data.user_image.toString(),
-                                )),
-                          ],
-                        );
-                      }))),
+                  Obx(() => mediaController.allPost.isEmpty
+                      ? Center(
+                          child: Text(
+                            "No posts found",
+                            style: CustomTextStyles.lightTextStyle(),
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: mediaController.allPost.length,
+                          itemBuilder: ((context, index) {
+                            final data = mediaController.allPost[index];
+                            return Column(
+                              children: [
+                                Obx(() => MyCustomWidget(
+                                      cm: mediaController
+                                              .allPost[index].comments ??
+                                          [],
+                                      postIndex: index,
+                                      postId: data.postId.toString(),
+                                      postTime: data.createdAt.toString(),
+                                      id: data.createdBy.toString(),
+                                      imgPath: data.image.toString(),
+                                      isLiked: true,
+                                      isReply: false,
+                                      showImg: (data.image == null ||
+                                              data.image!.isEmpty)
+                                          ? false
+                                          : true,
+                                      postName: data.name.toString(),
+                                      text: data.description.toString(),
+                                      userImage: data.user_image.toString(),
+                                    )),
+                              ],
+                            );
+                          }))),
                 ],
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocationController extends GetxController {
   final RxDouble _latitude = 0.0.obs;
   final RxDouble _longitude = 0.0.obs;
+  var location = 'Select Location'.obs;
 
   RxDouble get latitude => _latitude;
   RxDouble get longitude => _longitude;
@@ -57,5 +58,11 @@ class LocationController extends GetxController {
     prefs.setDouble('longitude', _longitude.value);
 
     update();
+  }
+
+  Future<void> setLocation(lat, lng, loca) async {
+    _latitude.value = lat;
+    _longitude.value = lng;
+    location.value = loca;
   }
 }

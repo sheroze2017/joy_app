@@ -4,6 +4,13 @@ import 'package:flutter/widgets.dart';
 import 'package:joy_app/modules/user/user_doctor/model/all_user_appointment.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart' as open_file;
+import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
+
+//Local imports
 
 import 'package:pinput/pinput.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -16,6 +23,9 @@ import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:sizer/sizer.dart';
 
 class DoctorDaginosis extends StatefulWidget {
@@ -167,7 +177,7 @@ class _ManageAppointmentState extends State<DoctorDaginosis> {
                               isBold: true,
                               text: 'Download',
                               onPressed: () {
-                                downloadPDF(widget.details);
+                                generateInvoice(widget.details);
                               },
                               textColor: ThemeUtil.isDarkMode(context)
                                   ? Color(0xff00143D)
@@ -186,65 +196,84 @@ class _ManageAppointmentState extends State<DoctorDaginosis> {
         ));
   }
 
-  void downloadPDF(UserAppointment details) async {
-    await Permission.storage.request();
-    print(await Permission.storage.isGranted);
+  Future<void> generateInvoice(UserAppointment details) async {
     final PdfDocument document = PdfDocument();
-
-    // Add a page
     final PdfPage page = document.pages.add();
-
-    // Create a grid
-    final PdfGrid grid = PdfGrid();
-
-    // Add columns to the grid
-    grid.columns.add(count: 3);
-
-    // Add a header row to the grid
-    final PdfGridRow headerRow = grid.headers.add(1)[0];
-    headerRow.cells[0].value = 'Customer ID';
-    headerRow.cells[1].value = 'Contact Name';
-    headerRow.cells[2].value = 'Location';
-
-    // Set header row font
-    headerRow.style.font =
-        PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold);
-
-    // Add data rows to the grid
-    PdfGridRow row = grid.rows.add();
-    row.cells[0].value = details.patientUserId.toString();
-    row.cells[1].value = details.patientName;
-    row.cells[2].value = details.location;
-
-    // Draw the grid on the page
-    grid.style.cellPadding = PdfPaddings(left: 5, top: 5);
-    grid.draw(
-      page: page,
-      bounds: Rect.fromLTWH(
-        0,
-        0,
-        page.getClientSize().width,
-        page.getClientSize().height,
-      ),
-    );
-
-    // Save the document as bytes
-    final List<int> bytes = await document.save();
-
-    // Dispose the document
+    final Size pageSize = page.getClientSize();
+    page.graphics.drawRectangle(
+        bounds: Rect.fromLTWH(0, 0, pageSize.width, pageSize.height),
+        pen: PdfPen(PdfColor(142, 170, 219)));
+    final PdfGrid grid = getGrid();
+    final PdfLayoutResult result =
+        drawHeader(page, pageSize, grid, widget.details);
+    drawFooter(page, pageSize);
+    final List<int> bytes = document.saveSync();
     document.dispose();
+    await saveAndLaunchFile(bytes, 'Invoice.pdf');
+  }
 
-    // Get the directory for saving the file
-    final Directory? directory = await getDownloadsDirectory();
-    final String path = directory!.path;
+  PdfLayoutResult drawHeader(
+      PdfPage page, Size pageSize, PdfGrid grid, UserAppointment details) {
+    page.graphics.drawRectangle(
+        brush: PdfSolidBrush(PdfColor(91, 126, 215)),
+        bounds: Rect.fromLTWH(0, 0, pageSize.width - 115, 90));
+    page.graphics.drawString(
+        'JOY APP', PdfStandardFont(PdfFontFamily.helvetica, 30),
+        brush: PdfBrushes.white,
+        bounds: Rect.fromLTWH(25, 0, pageSize.width, 90),
+        format: PdfStringFormat(lineAlignment: PdfVerticalAlignment.middle));
 
-    // Create the file and write the bytes
-    final File file = File('$path/PDFTable.pdf');
-    await file.writeAsBytes(bytes);
-// Add a PDF page and draw text.
+    final PdfFont contentFont = PdfStandardFont(PdfFontFamily.helvetica, 9);
+    final DateFormat format = DateFormat.yMMMMd('en_US');
+    final String invoiceNumber =
+        'Appointment Number: ${details.appointmentId}\r\n\r\nDoctor Name: ${details.doctorDetails!.doctorName.toString()}\r\n\r\nDoctor Email: ${details.doctorDetails!.doctorEmail.toString()}\r\n\r\nDoctor Phone: ${details.doctorDetails!.doctorPhone.toString()}\r\n\r\nDate: ${details.date} ${details.time.toString()}';
+    final Size contentSize = contentFont.measureString(invoiceNumber);
+    String address =
+        '''Patient Name: \r\n\r\n${details.patientName.toString()}, 
+        \r\n\r\nLocation: ${details.location.toString()}, 
+        \r\n\r\nDaignosis: ${details.diagnosis}, \r\n\r\nMedication Prescribed: ${details.medications} ''';
 
-    // Show a message or handle further actions (e.g., open the file)
-    print('PDF saved to: $path/PDFTable.pdf');
+    PdfTextElement(text: invoiceNumber, font: contentFont).draw(
+        page: page,
+        bounds: Rect.fromLTWH(pageSize.width - (contentSize.width + 30), 120,
+            contentSize.width + 30, pageSize.height - 120));
+
+    return PdfTextElement(text: address, font: contentFont).draw(
+        page: page,
+        bounds: Rect.fromLTWH(30, 120,
+            pageSize.width - (contentSize.width + 30), pageSize.height - 120))!;
+  }
+
+  void drawFooter(PdfPage page, Size pageSize) {
+    final PdfPen linePen =
+        PdfPen(PdfColor(142, 170, 219), dashStyle: PdfDashStyle.custom);
+    linePen.dashPattern = <double>[3, 3];
+    page.graphics.drawLine(linePen, Offset(0, pageSize.height - 100),
+        Offset(pageSize.width, pageSize.height - 100));
+
+    const String footerContent = '''Any Questions? support@joy-app.com''';
+
+    page.graphics.drawString(
+        footerContent, PdfStandardFont(PdfFontFamily.helvetica, 9),
+        format: PdfStringFormat(alignment: PdfTextAlignment.right),
+        bounds: Rect.fromLTWH(pageSize.width - 30, pageSize.height - 70, 0, 0));
+  }
+
+  PdfGrid getGrid() {
+    final PdfGrid grid = PdfGrid();
+    grid.columns.add(count: 5);
+    final PdfGridRow headerRow = grid.headers.add(1)[0];
+    return grid;
+  }
+
+  void addProducts(String productId, String productName, double price,
+      int quantity, double total, PdfGrid grid) {
+    final PdfGridRow row = grid.rows.add();
+    row.cells[0].value = productId;
+    row.cells[1].value = productName;
+    row.cells[2].value = price.toString();
+    row.cells[3].value = quantity.toString();
+    row.cells[4].value = total.toString();
   }
 
   _makingPhoneCall(String phoneNo) async {
@@ -362,5 +391,33 @@ class _TimerWidgetState extends State<TimerWidget>
         ),
       ),
     );
+  }
+}
+
+Future<void> saveAndLaunchFile(List<int> bytes, String fileName) async {
+  String? path;
+  if (Platform.isAndroid ||
+      Platform.isIOS ||
+      Platform.isLinux ||
+      Platform.isWindows) {
+    final Directory directory =
+        await path_provider.getApplicationSupportDirectory();
+    path = directory.path;
+  } else {
+    path = await PathProviderPlatform.instance.getApplicationSupportPath();
+  }
+  final File file =
+      File(Platform.isWindows ? '$path\\$fileName' : '$path/$fileName');
+  await file.writeAsBytes(bytes, flush: true);
+  if (Platform.isAndroid || Platform.isIOS) {
+    //Launch the file (used open_file package)
+    await open_file.OpenFile.open('$path/$fileName');
+  } else if (Platform.isWindows) {
+    await Process.run('start', <String>['$path\\$fileName'], runInShell: true);
+  } else if (Platform.isMacOS) {
+    await Process.run('open', <String>['$path/$fileName'], runInShell: true);
+  } else if (Platform.isLinux) {
+    await Process.run('xdg-open', <String>['$path/$fileName'],
+        runInShell: true);
   }
 }

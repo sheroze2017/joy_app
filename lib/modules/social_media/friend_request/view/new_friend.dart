@@ -111,47 +111,54 @@ class _AddNewFriendState extends State<AddNewFriend> {
                                     ),
                                   );
                                 })))
-                        : Obx(() => _friendsController
-                                .filteredList.value.isEmpty
-                            ? Center(
-                                child: Text(
-                                  'No users found',
-                                  style: CustomTextStyles.lightTextStyle(),
-                                ),
-                              )
-                            : Obx(() => ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: _friendsController
-                                    .filteredList.value.length,
-                                itemBuilder: ((context, index) {
-                                  final data = _friendsController
-                                      .filteredList.value[index];
+                        : Obx(
+                            () => _friendsController.filteredList.value.isEmpty
+                                ? Center(
+                                    child: Text(
+                                      'No users found',
+                                      style: CustomTextStyles.lightTextStyle(),
+                                    ),
+                                  )
+                                : Obx(
+                                    () => ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: _friendsController
+                                          .filteredList.value.length,
+                                      itemBuilder: ((context, index) {
+                                        final data = _friendsController
+                                            .filteredList.value[index];
 
-                                  return Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10.0),
-                                      child: InkWell(
-                                        onTap: () {
-                                          Get.to(MyProfileScreen(
-                                            myProfile: true,
-                                            friendId: data.userId.toString(),
-                                          ));
-                                        },
-                                        child: NewFriendRequestWidget(
-                                            onAddFriend: () {
-                                              _friendsController.AddFriend(
-                                                  data.userId, context);
-                                            },
-                                            profileImage: data.image!
-                                                    .contains('http')
-                                                ? data.image.toString()
-                                                : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
-                                            userName: data.name.toString(),
-                                            mutualFriends: [],
-                                            mutualFriendsCount: 0),
-                                      ));
-                                })))),
+                                        return Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 10.0),
+                                            child: InkWell(
+                                              onTap: () {
+                                                Get.to(MyProfileScreen(
+                                                  myProfile: true,
+                                                  friendId:
+                                                      data.userId.toString(),
+                                                ));
+                                              },
+                                              child: NewFriendRequestWidget(
+                                                  onAddFriend: () {
+                                                    _friendsController
+                                                        .AddFriend(data.userId,
+                                                            context);
+                                                  },
+                                                  profileImage: data.image!
+                                                          .contains('http')
+                                                      ? data.image.toString()
+                                                      : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                                  userName:
+                                                      data.name.toString(),
+                                                  mutualFriends: [],
+                                                  mutualFriendsCount: 0),
+                                            ));
+                                      }),
+                                    ),
+                                  ),
+                          ),
                     SizedBox(
                       height: 1.h,
                     ),

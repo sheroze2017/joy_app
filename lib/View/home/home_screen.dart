@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/map/bloc/location_controller.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 import 'package:joy_app/modules/user/user_hospital/bloc/user_hospital_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
@@ -45,6 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final _userdoctorController = Get.find<UserDoctorController>();
   final _bloodBankController = Get.put(UserBloodBankController());
   final _userHospitalController = Get.put(UserHospitalController());
+  final locationController = Get.find<LocationController>();
+
   @override
   void initState() {
     super.initState();
@@ -86,18 +90,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 1.w),
                       Row(
                         children: [
-                          SvgPicture.asset(
-                            'Assets/icons/pindrop.svg',
-                            color: ThemeUtil.isDarkMode(context)
-                                ? Color(0xffC5D3E3)
-                                : Color(0xff1C2A3A),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MapScreen()),
+                              ).then((value) {
+                                if (value != null) {
+                                  locationController.setLocation(
+                                      value['latitude'],
+                                      value['longitude'],
+                                      value['searchValue']);
+                                }
+                              });
+                            },
+                            child: SvgPicture.asset(
+                              'Assets/icons/pindrop.svg',
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC5D3E3)
+                                  : Color(0xff1C2A3A),
+                            ),
                           ),
                           SizedBox(width: 1.w),
-                          Text(
-                            '',
-                            style: CustomTextStyles.w600TextStyle(
-                                size: 14, color: Color(0xff374151)),
-                          ),
+                          Obx(
+                            () => Text(
+                              locationController.location.value,
+                              style: CustomTextStyles.w600TextStyle(
+                                  size: 14, color: Color(0xff374151)),
+                            ),
+                          )
                         ],
                       ),
                       SizedBox(height: 1.h),

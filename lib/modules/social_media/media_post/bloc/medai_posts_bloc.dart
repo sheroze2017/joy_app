@@ -26,6 +26,7 @@ class MediaPostController extends GetxController {
   late MediaPosts mediaPosts;
   var profileUpload = false.obs;
   var commentLoad = false.obs;
+  var fetchPostLoader = false.obs;
 
   @override
   void onInit() {
@@ -36,6 +37,7 @@ class MediaPostController extends GetxController {
   }
 
   Future<MediaPostModel> getAllPost() async {
+    fetchPostLoader.value = true;
     try {
       allPost.clear();
       MediaPostModel response = await mediaPosts.getAllPosts();
@@ -44,10 +46,16 @@ class MediaPostController extends GetxController {
           allPost.add(element);
         });
       } else {}
+      fetchPostLoader.value = false;
+
       return response;
     } catch (error) {
+      fetchPostLoader.value = false;
+
       throw (error);
-    } finally {}
+    } finally {
+      fetchPostLoader.value = false;
+    }
   }
 
   Future<MediaPostModel> getAllPostById(

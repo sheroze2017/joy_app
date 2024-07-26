@@ -178,7 +178,7 @@ class _RequestBloodState extends State<RequestBlood> {
                                           context, 'Please select blood type');
                                     } else {
                                       _userBloodBankController.createDonorUser(
-                                          _nameController.text,
+                                          _fnameController.text,
                                           _bloodGroupController.text,
                                           _locationController.text,
                                           _genderController.text,

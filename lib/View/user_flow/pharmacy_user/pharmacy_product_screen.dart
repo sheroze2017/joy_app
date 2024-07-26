@@ -31,6 +31,13 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
   }
 
   @override
+  void dispose() {
+    pharmacyController.searchPharmacyProducts.value =
+        pharmacyController.pharmacyProducts.value;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
@@ -77,74 +84,85 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
             )
           ],
           showIcon: true),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            RoundedSearchTextField(
-                hintText: 'Search', controller: TextEditingController()),
-            SizedBox(
-              height: 2.h,
-            ),
-            Expanded(
-                child: Obx(
-              () => pharmacyController.allProductLoader.value
-                  ? Center(child: CircularProgressIndicator())
-                  : pharmacyController.pharmacyProducts.length == 0
-                      ? Center(
-                          child: Text(
-                            "No products found",
-                            style: CustomTextStyles.lightTextStyle(),
-                          ),
-                        )
-                      : GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 3.0,
-                            mainAxisSpacing: 3,
-                            childAspectRatio:
-                                0.75, // Set the aspect ratio of the children
-                          ),
-                          itemCount: pharmacyController.pharmacyProducts.length,
-                          itemBuilder: (context, index) {
-                            final data =
-                                pharmacyController.pharmacyProducts[index];
-                            return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: InkWell(
-                                      onTap: () {
-                                        Get.to(MedicineDetailScreen(
-                                          product: data,
-                                          isPharmacyAdmin: false,
-                                          productId: data.productId.toString(),
-                                        ));
-                                      },
-                                      child: MedicineCard(
-                                        categoryId: data.categoryId ?? 0,
-                                        isUserProductScreen: true,
-                                        onPressed: () {
-                                          pharmacyController.addToCart(
-                                              data, context);
+      body: RefreshIndicator(
+        onRefresh: () async {
+          pharmacyController.getPharmacyProduct(true, widget.userId);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              RoundedSearchTextField(
+                hintText: 'Search',
+                controller: TextEditingController(),
+                onChanged: pharmacyController.searchByProduct,
+              ),
+              SizedBox(
+                height: 2.h,
+              ),
+              Expanded(
+                  child: Obx(
+                () => pharmacyController.allProductLoader.value
+                    ? Center(child: CircularProgressIndicator())
+                    : pharmacyController.searchPharmacyProducts.length == 0
+                        ? Center(
+                            child: Text(
+                              "No products found",
+                              style: CustomTextStyles.lightTextStyle(),
+                            ),
+                          )
+                        : GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 3.0,
+                              mainAxisSpacing: 3,
+                              childAspectRatio:
+                                  0.75, // Set the aspect ratio of the children
+                            ),
+                            itemCount: pharmacyController
+                                .searchPharmacyProducts.length,
+                            itemBuilder: (context, index) {
+                              final data = pharmacyController
+                                  .searchPharmacyProducts[index];
+                              return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Get.to(MedicineDetailScreen(
+                                            product: data,
+                                            isPharmacyAdmin: false,
+                                            productId:
+                                                data.productId.toString(),
+                                          ));
                                         },
-                                        btnText: "Add to Cart",
-                                        imgUrl: data.image!.contains('http')
-                                            ? data.image.toString()
-                                            : 'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
-                                        count: data.quantity.toString(),
-                                        cost: data.price.toString(),
-                                        name: data.name.toString(),
+                                        child: MedicineCard(
+                                          categoryId: data.categoryId ?? 0,
+                                          isUserProductScreen: true,
+                                          onPressed: () {
+                                            pharmacyController.addToCart(
+                                                data, context);
+                                          },
+                                          btnText: "Add to Cart",
+                                          imgUrl: data.image!.contains('http')
+                                              ? data.image.toString()
+                                              : 'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
+                                          count: data.quantity.toString(),
+                                          cost: data.price.toString(),
+                                          name: data.name.toString(),
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                ]);
-                          }),
-            ))
-          ],
+                                    )
+                                  ]);
+                            }),
+              ))
+            ],
+          ),
         ),
       ),
     );

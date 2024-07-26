@@ -35,34 +35,43 @@ class _AllDonorScreenState extends State<AllDonorScreen> {
           leading: Icon(Icons.arrow_back),
           actions: [],
           showIcon: true),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            RoundedSearchTextField(
-                onChanged: _bloodBankController.searchByBloodGroup,
-                hintText: 'Search donors available',
-                controller: TextEditingController()),
-            SizedBox(
-              height: 2.h,
-            ),
-            Text(
-              '',
-              style: CustomTextStyles.darkHeadingTextStyle(
-                  color:
-                      ThemeUtil.isDarkMode(context) ? Color(0xffC8D3E0) : null),
-            ),
-            SizedBox(
-              height: 2.h,
-            ),
-            Expanded(
-                child: Obx(
-              () => _VerticalDonorsList(
-                donors: _bloodBankController.searchedDonors.value,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _bloodBankController.getallDonor();
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RoundedSearchTextField(
+                  onChanged: _bloodBankController.searchByBloodGroup,
+                  hintText: 'Search donors available',
+                  controller: TextEditingController()),
+              SizedBox(
+                height: 1.5.h,
               ),
-            )),
-          ],
+              Obx(
+                () => Text(
+                  _bloodBankController.searchedDonors.value.length.toString() +
+                      ' founds',
+                  style: CustomTextStyles.darkHeadingTextStyle(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffC8D3E0)
+                          : null),
+                ),
+              ),
+              SizedBox(
+                height: 1.5.h,
+              ),
+              Expanded(
+                  child: Obx(
+                () => _VerticalDonorsList(
+                  donors: _bloodBankController.searchedDonors.value,
+                ),
+              )),
+            ],
+          ),
         ),
       ),
     );
@@ -77,8 +86,8 @@ class _VerticalDonorsList extends StatelessWidget {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 10.0,
-        mainAxisSpacing: 10,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8,
         childAspectRatio: 0.75, // Set the aspect ratio of the children
       ),
       itemCount: donors.length,
@@ -88,8 +97,11 @@ class _VerticalDonorsList extends StatelessWidget {
           imgUrl: donors[index].image.toString(),
           docName: donors[index].name.toString(),
           Category: 'Blood ' + donors[index].bloodGroup.toString(),
-          loction: donors[index].location.toString(),
+          loction: donors[index].location.toString() +
+              ' ' +
+              donors[index].city.toString(),
           phoneNo: donors[index].phone.toString(),
+          donId: donors[index].userId ?? 0,
         );
       },
     );

@@ -19,7 +19,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 
-class AllDoctorsScreen extends StatelessWidget {
+class AllDoctorsScreen extends StatefulWidget {
   final bool isPharmacy;
   final bool isBloodBank;
   final bool isHospital;
@@ -31,13 +31,25 @@ class AllDoctorsScreen extends StatelessWidget {
       this.isHospital = false,
       required this.appBarText});
 
+  @override
+  State<AllDoctorsScreen> createState() => _AllDoctorsScreenState();
+}
+
+class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
   final _userdoctorController = Get.find<UserDoctorController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _userdoctorController.searchDoctorsList.value =
+        _userdoctorController.doctorsList.value;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
-          title: appBarText,
+          title: widget.appBarText,
           leading: Icon(Icons.arrow_back),
           actions: [],
           showIcon: true),
@@ -52,6 +64,7 @@ class AllDoctorsScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: RoundedSearchTextField(
+                    onChanged: _userdoctorController.searchByName,
                     hintText: 'Search doctor...',
                     controller: TextEditingController()),
               ),
@@ -59,22 +72,26 @@ class AllDoctorsScreen extends StatelessWidget {
                 height: 2.h,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  _userdoctorController.doctorsList.length.toString() +
-                      ' found',
-                  style: CustomTextStyles.darkHeadingTextStyle(
-                      color: ThemeUtil.isDarkMode(context)
-                          ? Color(0xffC8D3E0)
-                          : null),
-                ),
-              ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Obx(
+                    () => Text(
+                      _userdoctorController.searchDoctorsList.length
+                              .toString() +
+                          ' found',
+                      style: CustomTextStyles.darkHeadingTextStyle(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xffC8D3E0)
+                              : null),
+                    ),
+                  )),
               SizedBox(
                 height: 1.h,
               ),
-              VerticalDoctorsList(
-                doctorList: _userdoctorController.doctorsList,
-              ),
+              Obx(
+                () => VerticalDoctorsList(
+                  doctorList: _userdoctorController.searchDoctorsList.value,
+                ),
+              )
             ],
           ),
         ),

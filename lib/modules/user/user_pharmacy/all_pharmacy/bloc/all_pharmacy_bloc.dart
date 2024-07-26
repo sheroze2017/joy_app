@@ -17,6 +17,9 @@ class AllPharmacyController extends GetxController {
   RxList<PharmacyModelData> searchResults = <PharmacyModelData>[].obs;
 
   RxList<PharmacyProductData> pharmacyProducts = <PharmacyProductData>[].obs;
+  RxList<PharmacyProductData> searchPharmacyProducts =
+      <PharmacyProductData>[].obs;
+
   RxList<PharmacyProductData> productDetail = <PharmacyProductData>[].obs;
   RxList<PharmacyProductData> cartList = <PharmacyProductData>[].obs;
   final cartItems = RxList<PharmacyProductData>();
@@ -152,6 +155,7 @@ class AllPharmacyController extends GetxController {
       throw (error);
     } finally {
       allProductLoader.value = false;
+      searchPharmacyProducts.value = pharmacyProducts;
     }
   }
 
@@ -177,6 +181,16 @@ class AllPharmacyController extends GetxController {
     } finally {
       productDetailLoader.value = false;
     }
+  }
+
+  void searchByProduct(String query) {
+    if (query.isEmpty) {
+      searchPharmacyProducts.value = pharmacyProducts;
+    }
+    searchPharmacyProducts.value = pharmacyProducts
+        .where((product) =>
+            product.name!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   Future<ProductPurchaseModel> placeOrderPharmacy(context, grandTotal, status,

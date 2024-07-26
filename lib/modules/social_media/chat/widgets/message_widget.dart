@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -104,38 +105,6 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return user
         ? Row(
-            children: [
-              ClipOval(
-                child: Image.network(
-                  'https://via.placeholder.com/50',
-                  width: 5.h,
-                  height: 5.h,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              SizedBox(
-                width: 2.w,
-              ),
-              Container(
-                width: 56.4.w,
-                decoration: BoxDecoration(
-                    color: ThemeUtil.isDarkMode(context)
-                        ? Color(0xff151515)
-                        : Color.fromRGBO(0, 0, 0, 0.06),
-                    borderRadius: BorderRadius.circular(24)),
-                child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(msgText,
-                        style: CustomTextStyles.lightTextStyle(
-                            heigh: 1,
-                            color: ThemeUtil.isDarkMode(context)
-                                ? AppColors.whiteColor
-                                : Colors.black,
-                            size: 16))),
-              )
-            ],
-          )
-        : Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Spacer(),
@@ -164,6 +133,38 @@ class MessageBubble extends StatelessWidget {
                   'Assets/icons/read.png',
                 ),
                 color: ThemeUtil.isDarkMode(context) ? Color(0xffC5D3E3) : null,
+              )
+            ],
+          )
+        : Row(
+            children: [
+              ClipOval(
+                child: Image.network(
+                  CustomConstant.nullUserImage,
+                  width: 5.h,
+                  height: 5.h,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(
+                width: 2.w,
+              ),
+              Container(
+                width: 56.4.w,
+                decoration: BoxDecoration(
+                    color: ThemeUtil.isDarkMode(context)
+                        ? Color(0xff151515)
+                        : Color.fromRGBO(0, 0, 0, 0.06),
+                    borderRadius: BorderRadius.circular(24)),
+                child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(msgText,
+                        style: CustomTextStyles.lightTextStyle(
+                            heigh: 1,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.whiteColor
+                                : Colors.black,
+                            size: 16))),
               )
             ],
           );

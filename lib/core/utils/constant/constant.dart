@@ -13,4 +13,7 @@ class CustomConstant {
       'Connect with multiple pharmacies Online for discounted medicines';
   static const String onboardDesc3 =
       ' Explore and connect with patients just like you, and get to know how they are doing. ';
+
+  static const nullUserImage =
+      "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png";
 }

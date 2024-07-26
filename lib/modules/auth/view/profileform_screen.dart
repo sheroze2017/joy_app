@@ -95,7 +95,6 @@ class _FormScreenState extends State<FormScreen> {
   @override
   Widget build(BuildContext context) {
     List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
-    _nameController.setText(widget.name);
     return Scaffold(
       appBar: CustomAppBar(
         title: widget.isEdit ? 'Edit Profile' : 'Fill Your Profile',

@@ -72,4 +72,6 @@ class Endpoints {
   static String createBloodAppeal = '/bloodbank/createBloodRequest';
   static String editBloodBank = '/bloodbank/editBloodBank';
   static String getAllBloodBanks = '/bloodbank/getAllBloodBanks';
+
+  
 }

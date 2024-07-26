@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/modules/auth/view/profileform_screen.dart';
+import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -34,6 +35,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     _friendsController.getSearchUserProfileData(
         widget.myProfile, !widget.myProfile ? '' : widget.friendId, context);
   }
+
+  void dispose() {
+    _friendsController.getSearchUserProfileData(
+        false, !widget.myProfile ? '' : widget.friendId, context);
+    super.dispose();
+  }
+
+  final _chatController = Get.find<ChatController>();
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +281,19 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                   child: RoundedButtonSmall(
                                                       isSmall: true,
                                                       text: "Message",
-                                                      onPressed: () {},
+                                                      onPressed: () {
+                                                        _chatController.createConvo(
+                                                            _friendsController
+                                                                    .userProfileData
+                                                                    .value!
+                                                                    .userId ??
+                                                                0,
+                                                            _friendsController
+                                                                .userProfileData
+                                                                .value!
+                                                                .name
+                                                                .toString());
+                                                      },
                                                       backgroundColor: ThemeUtil
                                                               .isDarkMode(
                                                                   context)

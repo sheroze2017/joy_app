@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:joy_app/core/utils/constant/constant.dart';
+import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
@@ -14,15 +17,19 @@ class DonorsCardWidget extends StatelessWidget {
   final String loction;
   final Color color;
   final String phoneNo;
+  final int donId;
 
-  const DonorsCardWidget(
-      {super.key,
-      required this.imgUrl,
-      required this.Category,
-      required this.docName,
-      required this.loction,
-      required this.color,
-      required this.phoneNo});
+  DonorsCardWidget({
+    super.key,
+    required this.imgUrl,
+    required this.Category,
+    required this.docName,
+    required this.loction,
+    required this.color,
+    required this.phoneNo,
+    required this.donId,
+  });
+  final _chatController = Get.find<ChatController>();
 
   @override
   Widget build(BuildContext context) {
@@ -37,21 +44,15 @@ class DonorsCardWidget extends StatelessWidget {
           children: [
             Center(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: imgUrl.contains('http')
-                    ? Image.network(
-                        imgUrl,
-                        height: 26.w,
-                        width: 35.71.w,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.asset(
-                        'Assets/images/user_donor.jpg',
-                        height: 26.w,
-                        width: 35.71.w,
-                        fit: BoxFit.cover,
-                      ),
-              ),
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Image.network(
+                    imgUrl.contains('http')
+                        ? imgUrl
+                        : CustomConstant.nullUserImage,
+                    height: 26.w,
+                    width: 35.71.w,
+                    fit: BoxFit.cover,
+                  )),
             ),
             SizedBox(
               height: 1.h,
@@ -67,7 +68,9 @@ class DonorsCardWidget extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      _chatController.createConvo(donId, docName);
+                    },
                     child: SvgPicture.asset(
                       'Assets/images/sms-notification.svg',
                     )),

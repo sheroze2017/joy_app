@@ -14,6 +14,9 @@ class ProfileController extends GetxController {
   var phone = "".obs;
   var lastName = "".obs;
   var deviceToken = "".obs;
+  var location = "".obs;
+  var lat = "".obs;
+  var lng = "".obs;
 
   void onInit() {
     super.onInit();

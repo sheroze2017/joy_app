@@ -54,7 +54,7 @@ class FreindsApi {
     } finally {}
   }
 
-  Future<AllUserList> getAllUserList(userId) async {
+  Future<AllUserList> getAllUserList() async {
     try {
       final result = await _dioClient.get(Endpoints.getAllUser);
       return AllUserList.fromJson(result);

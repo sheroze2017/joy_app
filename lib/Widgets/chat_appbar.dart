@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
+import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String username;
   final String status;
+  final String userId;
 
   const ChatAppBar({
     Key? key,
     required this.username,
     required this.status,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -31,12 +35,20 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          ClipOval(
-            child: Image.network(
-              'https://via.placeholder.com/50',
-              width: 5.h,
-              height: 5.h,
-              fit: BoxFit.cover,
+          InkWell(
+            onTap: () {
+              Get.to(MyProfileScreen(
+                myProfile: true,
+                friendId: userId,
+              ));
+            },
+            child: ClipOval(
+              child: Image.network(
+                CustomConstant.nullUserImage,
+                width: 5.h,
+                height: 5.h,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           SizedBox(
@@ -53,34 +65,34 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ? AppColors.whiteColor
                         : Color(0xff374151)),
               ),
-              Text(status, style: CustomTextStyles.lightSmallTextStyle()),
+              Text('', style: CustomTextStyles.lightSmallTextStyle()),
             ],
           ),
         ],
       ),
       actions: [
-        InkWell(
-          onTap: () {},
-          child: Image(
-            color: ThemeUtil.isDarkMode(context) ? Color(0XFFC5D3E3) : null,
-            image: AssetImage(
-              'Assets/icons/call.png',
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 5.w,
-        ),
-        InkWell(
-          onTap: () {},
-          child: Image(
-            color: ThemeUtil.isDarkMode(context) ? Color(0XFFC5D3E3) : null,
-            image: AssetImage('Assets/icons/camera.png'),
-          ),
-        ),
-        SizedBox(
-          width: 3.w,
-        ),
+        // InkWell(
+        //   onTap: () {},
+        //   child: Image(
+        //     color: ThemeUtil.isDarkMode(context) ? Color(0XFFC5D3E3) : null,
+        //     image: AssetImage(
+        //       'Assets/icons/call.png',
+        //     ),
+        //   ),
+        // ),
+        // SizedBox(
+        //   width: 5.w,
+        // ),
+        // InkWell(
+        //   onTap: () {},
+        //   child: Image(
+        //     color: ThemeUtil.isDarkMode(context) ? Color(0XFFC5D3E3) : null,
+        //     image: AssetImage('Assets/icons/camera.png'),
+        //   ),
+        // ),
+        // SizedBox(
+        //   width: 3.w,
+        // ),
       ],
     );
   }

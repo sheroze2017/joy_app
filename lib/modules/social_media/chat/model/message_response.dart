@@ -4,6 +4,7 @@ class MessageResponse {
   int? senderId;
   int? receiverId;
   String? type;
+  String? text;
   String? url;
   bool? isRead;
   String? createdAt;
@@ -17,6 +18,7 @@ class MessageResponse {
       this.receiverId,
       this.type,
       this.url,
+      this.text,
       this.isRead,
       this.createdAt,
       this.updatedAt,
@@ -32,6 +34,7 @@ class MessageResponse {
     isRead = json['isRead'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    text = json['text'] ?? '';
     iV = json['__v'];
   }
 
@@ -45,6 +48,7 @@ class MessageResponse {
     data['url'] = this.url;
     data['isRead'] = this.isRead;
     data['createdAt'] = this.createdAt;
+    data['text'] = this.text;
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;
     return data;

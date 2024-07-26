@@ -1,19 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/chat_appbar.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
-import 'package:joy_app/core/network/utils/extra.dart';
-import 'package:joy_app/styles/colors.dart';
-import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
-import '../../../../common/profile/bloc/profile_bloc.dart';
 import '../model/message_response.dart';
 import '../widgets/message_widget.dart';
 
@@ -64,11 +59,18 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     socket.onConnect((_) async {
       print('connecting');
     });
+    print("Socket Connected: ${socket.connected}");
 
     //   await getConversationID();
     await getConversations();
+    print(widget.conversationId);
+    socket.emit('addUser', {
+      'conversationId': widget.conversationId,
+      'userId': widget.userId,
+    });
     socket.on('receiveMessageEvent', (data) {
       print("@@@@@@@@@@@@@@@@ $data @@@@@@@@@@@@@@");
+
       final msgBubble = MessageBubble(
         msgText: data,
         msgSender: widget.userName,
@@ -95,7 +97,11 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ChatAppBar(username: widget.userName, status: 'Offline'),
+      appBar: ChatAppBar(
+        username: widget.userName,
+        status: 'Offline',
+        userId: widget.friendId,
+      ),
       body: Column(
         children: [
           StreamBuilder(
@@ -110,7 +116,13 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                 messageWidgets.add(msgBubble);
               }
               return _isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? Expanded(
+                      child: Center(
+                          child: CircularProgressIndicator(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xffC5D3E3)
+                          : Color(0xff1C2A3A),
+                    )))
                   : Expanded(
                       child: ListView.builder(
                         reverse: true,
@@ -132,18 +144,19 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
-                  SvgPicture.asset('Assets/icons/camera-2.svg'),
-                  SizedBox(
-                    width: 2.w,
-                  ),
-                  SvgPicture.asset('Assets/icons/gallery.svg'),
-                  SizedBox(
-                    width: 2.w,
-                  ),
-                  SvgPicture.asset('Assets/icons/microphone-2.svg'),
-                  SizedBox(
-                    width: 2.w,
-                  ),
+                  // SvgPicture.asset('Assets/icons/camera-2.svg'),
+                  // SizedBox(
+                  //   width: 2.w,
+                  // ),
+                  // SvgPicture.asset('Assets/icons/gallery.svg'),
+                  // SizedBox(
+                  //   width: 2.w,
+                  // ),
+                  // SvgPicture.asset('Assets/icons/microphone-2.svg'),
+                  // SizedBox(
+                  //   width: 2.w,
+                  // ),
+
                   Expanded(
                       child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
@@ -158,28 +171,20 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                         Expanded(
                           child: TextField(
                             onSubmitted: (value) {
-                              dynamic obj = {
-                                "conversationId": widget.conversationId,
-                                "senderId": widget.userId,
-                                "receiverId": widget.friendId,
-                                "message": chatMsgTextController.text,
-                                "type": 'txt',
-                                "url": ''
-                              };
-                              print('Message : ${obj.toString()}');
                               setState(() {
                                 socket.emit('sendMessageEvent', {
                                   "conversationId": widget.conversationId,
                                   "senderId": widget.userId,
                                   "receiverId": widget.friendId,
-                                  "message": chatMsgTextController.text,
+                                  "text": chatMsgTextController.text,
                                   "type": 'txt',
-                                  "url": chatMsgTextController.text
+                                  "url": '',
+                                  "txt": chatMsgTextController.text,
                                 });
                                 final msgBubble = MessageBubble(
                                   msgText: chatMsgTextController.text,
                                   msgSender: "You",
-                                  user: false,
+                                  user: true,
                                   sending: true,
                                 );
                                 chatMsgTextController.clear();
@@ -208,28 +213,21 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                   SizedBox(width: 3.w),
                   InkWell(
                       onTap: () {
-                        dynamic obj = {
-                          "conversationId": widget.conversationId,
-                          "senderId": widget.userId,
-                          "receiverId": widget.friendId,
-                          "message": chatMsgTextController.text,
-                          "type": 'txt',
-                          "url": ''
-                        };
-                        print('Message : ${obj.toString()}');
                         setState(() {
                           socket.emit('sendMessageEvent', {
                             "conversationId": widget.conversationId,
                             "senderId": widget.userId,
                             "receiverId": widget.friendId,
                             "message": chatMsgTextController.text,
+                            "text": chatMsgTextController.text,
+                            "txt": chatMsgTextController.text,
                             "type": 'txt',
-                            "url": chatMsgTextController.text
+                            "url": ''
                           });
                           final msgBubble = MessageBubble(
                             msgText: chatMsgTextController.text,
                             msgSender: "You",
-                            user: false,
+                            user: true,
                             sending: true,
                           );
                           chatMsgTextController.clear();
@@ -293,11 +291,6 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   //       _receiverId = resp.conversationData?.customerId ?? 0;
   //       _date = resp.conversationData?.createdAt ?? "";
 
-  //       socket.emit('addUser', {
-  //         'conversationId': resp.conversationData?.sId,
-  //         'userId': resp.conversationData?.driverId,
-  //       });
-
   //       updateUserDeviceToken(_conversationId);
   //     }
   //   } on Exception catch (e) {
@@ -343,16 +336,15 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       );
       print('url ${url}');
       if (response.statusCode == 200) {
-        // final resp = MessageResponse.fromJson(jsonDecode(response.body));
         final resp = (jsonDecode(response.body) as List)
             .map((e) => MessageResponse.fromJson(e));
         print(resp);
         for (final message in resp) {
           final msgBubble = MessageBubble(
-              msgText: message.url ?? "",
+              msgText: message.text ?? "",
               msgSender:
                   message.senderId == widget.userId ? "You" : widget.userName,
-              user: message.senderId == widget.userId,
+              user: widget.userId == message.senderId.toString(),
               date: message.createdAt!);
           setState(() {
             messageWidgets.add(msgBubble);

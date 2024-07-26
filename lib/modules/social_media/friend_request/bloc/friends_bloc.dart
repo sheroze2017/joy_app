@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:joy_app/core/network/request.dart';
+import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_api.dart';
 import 'package:joy_app/modules/social_media/friend_request/model/all_friend_request_model.dart';
 import 'package:joy_app/modules/social_media/friend_request/model/all_user_list.dart';
@@ -32,6 +33,7 @@ class FriendsSocialController extends GetxController {
   var updateRequestLoader = false.obs;
   var profileUpload = false.obs;
   var profileScreenLoader = false.obs;
+  var showlist = false.obs;
 
   @override
   void onInit() {
@@ -136,7 +138,7 @@ class FriendsSocialController extends GetxController {
 
   Future<AllUserList> getAllUserList() async {
     try {
-      AllUserList response = await friendApi.getAllUserList(0);
+      AllUserList response = await friendApi.getAllUserList();
       if (response.data != null) {
         response.data!.forEach((element) {
           userList.add(element);
@@ -159,10 +161,20 @@ class FriendsSocialController extends GetxController {
         .toList();
   }
 
+  void searchChat(String query) {
+    if (query.isEmpty) {
+      showlist.value = false;
+    } else {
+      showlist.value = true;
+    }
+    filteredList.value = userList
+        .where((user) => user.name!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+  }
+
   List<String> getAllUserNames() {
     List<String> names = [];
 
-    // Check if userProfileData has a value and if data is not null
     if (userProfileData.value != null &&
         userProfileData.value!.allFriends!.isNotEmpty) {
       userProfileData.value!.allFriends!.forEach((user) {
@@ -200,8 +212,9 @@ class FriendsSocialController extends GetxController {
         userProfileData.value!.allFriends!.isNotEmpty) {
       userProfileData.value!.allFriends!.forEach((user) {
         if (user.status == 'Accepted') {
-          assets.add(user.friendDetails!.image.toString() ??
-              'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'); // Add each user's name to the list
+          assets.add(user.friendDetails!.image.toString().contains('http')
+              ? user.friendDetails!.image.toString()
+              : CustomConstant.nullUserImage.toString());
         }
       });
     }

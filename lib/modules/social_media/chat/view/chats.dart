@@ -6,6 +6,7 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../Widgets/custom_appbar.dart';
@@ -32,58 +33,128 @@ class AllChats extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
+          child: Stack(
             children: [
               RoundedSearchTextFieldLarge(
-                hintText: 'Search',
-                controller: TextEditingController(),
-                onChanged: (value) {
-                  print('Search text changed: $value');
-                },
+                  hintText: 'Search',
+                  controller: TextEditingController(),
+                  onChanged: _friendsController.searchChat),
+              Padding(
+                padding: const EdgeInsets.only(top: 40.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 2.h,
+                    ),
+                    StoryWidget(
+                      stories: [
+                        'https://via.placeholder.com/150',
+                        'https://via.placeholder.com/151',
+                        'https://via.placeholder.com/152',
+                        'https://via.placeholder.com/153',
+                        'https://via.placeholder.com/154',
+                        'https://via.placeholder.com/155',
+                      ],
+                    ),
+                    SizedBox(
+                      height: 1.h,
+                    ),
+                    Obx(() => ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: _friendsController.getAllUserNames().length,
+                        itemBuilder: (context, index) {
+                          final img =
+                              _friendsController.getAllUserAssets()[index];
+                          final name =
+                              _friendsController.getAllUserNames()[index];
+                          final id = _friendsController.getAllUserId()[index];
+                          return Column(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  _chatController.createConvo(id, name);
+                                },
+                                child: ChatBox(
+                                  profileImageUrl: img,
+                                  personName: name,
+                                  lastMessage: 'Hello there!',
+                                  dateTime: '2:30 PM',
+                                ),
+                              ),
+                              SizedBox(
+                                height: 2.h,
+                              ),
+                            ],
+                          );
+                        }))
+                  ],
+                ),
               ),
-              SizedBox(
-                height: 2.h,
-              ),
-              StoryWidget(
-                stories: [
-                  'https://via.placeholder.com/150',
-                  'https://via.placeholder.com/151',
-                  'https://via.placeholder.com/152',
-                  'https://via.placeholder.com/153',
-                  'https://via.placeholder.com/154',
-                  'https://via.placeholder.com/155',
-                ],
-              ),
-              SizedBox(
-                height: 1.h,
-              ),
-              ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: _friendsController.getAllUserNames().length,
-                  itemBuilder: (context, index) {
-                    final img = _friendsController.getAllUserAssets()[index];
-                    final name = _friendsController.getAllUserNames()[index];
-                    final id = _friendsController.getAllUserId()[index];
-                    return Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            _chatController.createConvo(id, name);
-                          },
-                          child: ChatBox(
-                            profileImageUrl: img,
-                            personName: name,
-                            lastMessage: 'Hello there!',
-                            dateTime: '2:30 PM',
+              Obx(() => _friendsController.showlist.value
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20)),
+                        constraints: BoxConstraints(maxHeight: 50.h),
+                        child: Obx(
+                          () => ListView.builder(
+                            //shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount:
+                                _friendsController.filteredList.value.length,
+                            itemBuilder: ((context, index) {
+                              final data =
+                                  _friendsController.filteredList.value[index];
+
+                              return Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: InkWell(
+                                      onTap: () {
+                                        _friendsController.showlist.value =
+                                            false;
+                                        _chatController.createConvo(
+                                            data.userId ?? 0,
+                                            data.name.toString());
+                                      },
+                                      child: Row(
+                                        children: [
+                                          ClipOval(
+                                            child: Image.network(
+                                              data.image!.contains('http')
+                                                  ? data.image.toString()
+                                                  : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                              width: 6.6.h,
+                                              height: 6.6.h,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 5.w,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              data.name.toString(),
+                                              style: CustomTextStyles
+                                                  .darkHeadingTextStyle(
+                                                      color: ThemeUtil
+                                                              .isDarkMode(
+                                                                  context)
+                                                          ? AppColors.whiteColor
+                                                          : Color(0xff19295C),
+                                                      size: 15),
+                                            ),
+                                          ),
+                                        ],
+                                      )));
+                            }),
                           ),
                         ),
-                        SizedBox(
-                          height: 2.h,
-                        ),
-                      ],
-                    );
-                  })
+                      ),
+                    )
+                  : Container()),
             ],
           ),
         ),
