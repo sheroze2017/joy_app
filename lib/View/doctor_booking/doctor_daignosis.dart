@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/widgets.dart';
 import 'package:joy_app/modules/user/user_doctor/model/all_user_appointment.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart' as open_file;
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -13,10 +10,7 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 //Local imports
 
 import 'package:pinput/pinput.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
@@ -25,7 +19,6 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:sizer/sizer.dart';
 
 class DoctorDaginosis extends StatefulWidget {

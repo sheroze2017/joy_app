@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
-import 'package:joy_app/view/user_flow/bloodbank_user/select_timing_screen.dart';
-import 'package:joy_app/view/user_flow/pharmacy_user/checkout/checkout_detail.dart';
 
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';

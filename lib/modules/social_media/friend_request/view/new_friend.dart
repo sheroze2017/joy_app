@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
@@ -86,10 +85,12 @@ class _AddNewFriendState extends State<AddNewFriend> {
                                         const EdgeInsets.only(bottom: 10.0),
                                     child: InkWell(
                                       onTap: () {
-                                        Get.to(MyProfileScreen(
-                                          myProfile: true,
-                                          friendId: data.userId.toString(),
-                                        ));
+                                        Get.to(
+                                            MyProfileScreen(
+                                              myProfile: true,
+                                              friendId: data.userId.toString(),
+                                            ),
+                                            transition: Transition.native);
                                       },
                                       child: FriendRequestWidget(
                                         profileImage: data.friendDetails!.image!
@@ -134,11 +135,14 @@ class _AddNewFriendState extends State<AddNewFriend> {
                                                 bottom: 10.0),
                                             child: InkWell(
                                               onTap: () {
-                                                Get.to(MyProfileScreen(
-                                                  myProfile: true,
-                                                  friendId:
-                                                      data.userId.toString(),
-                                                ));
+                                                Get.to(
+                                                    transition:
+                                                        Transition.native,
+                                                    MyProfileScreen(
+                                                      myProfile: true,
+                                                      friendId: data.userId
+                                                          .toString(),
+                                                    ));
                                               },
                                               child: NewFriendRequestWidget(
                                                   onAddFriend: () {

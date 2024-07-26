@@ -1,22 +1,12 @@
-import 'dart:convert';
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/common/map/model/place_model.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:joy_app/widgets/rounded_button.dart';
-import 'package:joy_app/widgets/single_select_dropdown.dart';
-import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
-import 'package:geocoding/geocoding.dart' as geocoding;
-
-import 'package:location/location.dart';
-import 'package:http/http.dart' as http;
 import 'package:geocoding/geocoding.dart';
 import 'package:pinput/pinput.dart';
 

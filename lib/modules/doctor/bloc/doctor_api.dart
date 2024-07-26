@@ -1,15 +1,8 @@
-import 'dart:typed_data';
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:intl/intl.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/doctor_register_model.dart';
 import 'package:joy_app/modules/doctor/models/doctor_appointment_model.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_model.dart';
-import 'package:joy_app/modules/pharmacy/models/all_category.dart';
-import 'package:joy_app/modules/pharmacy/models/all_orders.dart';
-import 'package:joy_app/modules/pharmacy/models/create_product_model.dart';
 
 class DoctorApi {
   final DioClient _dioClient;

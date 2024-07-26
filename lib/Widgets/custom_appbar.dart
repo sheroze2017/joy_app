@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:sizer/sizer.dart';
 
 import '../styles/custom_textstyle.dart';
 

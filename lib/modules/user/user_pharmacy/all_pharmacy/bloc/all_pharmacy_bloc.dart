@@ -29,6 +29,7 @@ class AllPharmacyController extends GetxController {
   var allProductLoader = false.obs;
   var placeOrderLoader = false.obs;
   RxString searchQuery = ''.obs;
+  var fetchPharmacyLoader = false.obs;
 
   @override
   void onInit() {
@@ -111,6 +112,7 @@ class AllPharmacyController extends GetxController {
   }
 
   Future<PharmacyModel> getAllPharmacy() async {
+    fetchPharmacyLoader.value = true;
     try {
       pharmacies.clear();
       PharmacyModel response = await pharmacyApi.getAllPharmacy();
@@ -122,10 +124,14 @@ class AllPharmacyController extends GetxController {
       } else {
         //showErrorMessage(context, response.message.toString());
       }
+      fetchPharmacyLoader.value = false;
       return response;
     } catch (error) {
+      fetchPharmacyLoader.value = false;
       throw (error);
-    } finally {}
+    } finally {
+      fetchPharmacyLoader.value = false;
+    }
   }
 
   Future<PharmacyProductModel> getPharmacyProduct(bool isUser, userId) async {

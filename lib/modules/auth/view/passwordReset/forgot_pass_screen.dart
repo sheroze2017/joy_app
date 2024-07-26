@@ -82,7 +82,8 @@ class ForgotPassScreen extends StatelessWidget {
                             onPressed: () {
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                Get.to(VerifyCodeScreen());
+                                Get.to(VerifyCodeScreen(),
+                                    transition: Transition.native);
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)

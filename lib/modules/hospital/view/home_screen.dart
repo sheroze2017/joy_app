@@ -1,11 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
-import 'package:joy_app/modules/hospital/model/hospital_detail_model.dart';
 import 'package:joy_app/modules/hospital/view/all_doc_pharmacy.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
@@ -178,7 +175,9 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                 child: Center(
                                                   child: InkWell(
                                                     onTap: () {
-                                                      Get.to(AllChats());
+                                                      Get.to(AllChats(),
+                                                          transition: Transition
+                                                              .native);
                                                     },
                                                     child: SvgPicture.asset(
                                                         'Assets/icons/sms.svg'),
@@ -390,12 +389,15 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                     Spacer(),
                                     InkWell(
                                       onTap: () {
-                                        Get.to(AllDocPharmacy(
-                                          dataList: _hospitalDetailController
-                                              .hospitalDoctors.value,
-                                          appBarText: 'Our Doctors',
-                                          isPharmacy: false,
-                                        ));
+                                        Get.to(
+                                            AllDocPharmacy(
+                                              dataList:
+                                                  _hospitalDetailController
+                                                      .hospitalDoctors.value,
+                                              appBarText: 'Our Doctors',
+                                              isPharmacy: false,
+                                            ),
+                                            transition: Transition.native);
                                       },
                                       child: Text(
                                         'See All',
@@ -434,16 +436,18 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                     onTap: () {
                                                       Get.to(
                                                           DoctorDetailScreen2(
-                                                        doctorId: data
-                                                            .pharmacyDetailId
-                                                            .toString(),
-                                                        docName:
-                                                            'Dr. David Patel',
-                                                        location:
-                                                            'Golden Cardiology Center',
-                                                        Category:
-                                                            'Cardiologist',
-                                                      ));
+                                                            doctorId: data
+                                                                .pharmacyDetailId
+                                                                .toString(),
+                                                            docName:
+                                                                'Dr. David Patel',
+                                                            location:
+                                                                'Golden Cardiology Center',
+                                                            Category:
+                                                                'Cardiologist',
+                                                          ),
+                                                          transition: Transition
+                                                              .native);
                                                     },
                                                     child: Container(
                                                       width: 57.5.w,
@@ -590,12 +594,15 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                     Spacer(),
                                     InkWell(
                                       onTap: () {
-                                        Get.to(AllDocPharmacy(
-                                          dataList: _hospitalDetailController
-                                              .hospitalPharmacies.value,
-                                          appBarText: 'Our Pharmacy',
-                                          isPharmacy: true,
-                                        ));
+                                        Get.to(
+                                            AllDocPharmacy(
+                                              dataList:
+                                                  _hospitalDetailController
+                                                      .hospitalPharmacies.value,
+                                              appBarText: 'Our Pharmacy',
+                                              isPharmacy: true,
+                                            ),
+                                            transition: Transition.native);
                                       },
                                       child: Text(
                                         'See All',
@@ -637,9 +644,11 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                     onTap: () {
                                                       Get.to(
                                                           PharmacyProductScreen(
-                                                        userId: data.userId
-                                                            .toString(),
-                                                      ));
+                                                            userId: data.userId
+                                                                .toString(),
+                                                          ),
+                                                          transition: Transition
+                                                              .native);
                                                     },
                                                     child: Container(
                                                       width: 50.5.w,
@@ -791,7 +800,9 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                           Spacer(),
                                           InkWell(
                                             onTap: () {
-                                              Get.to(DoctorAllPost());
+                                              Get.to(DoctorAllPost(),
+                                                  transition:
+                                                      Transition.native);
                                             },
                                             child: Text(
                                               'See All',

@@ -1,7 +1,6 @@
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
-import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 
 import '../model/comment_model.dart';
 import '../model/create_post_model.dart';

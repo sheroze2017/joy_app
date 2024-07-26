@@ -1,8 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:intl/intl.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/auth.model.dart';

@@ -237,14 +237,18 @@ class _HorizontalDoctorCategories extends StatelessWidget {
           onTap: () {
             if (isBloodBank) {
               index == 0
-                  ? Get.to(BloodDonationAppeal(
-                      isBloodDontate: true,
-                    ))
+                  ? Get.to(
+                      BloodDonationAppeal(
+                        isBloodDontate: true,
+                      ),
+                      transition: Transition.native)
                   : index == 1
-                      ? Get.to(BloodDonationAppeal(
-                          isPlasmaDonate: true,
-                        ))
-                      : Get.to(AllDonorScreen());
+                      ? Get.to(
+                          BloodDonationAppeal(
+                            isPlasmaDonate: true,
+                          ),
+                          transition: Transition.native)
+                      : Get.to(AllDonorScreen(), transition: Transition.native);
             }
           },
           child: DoctorCategory(

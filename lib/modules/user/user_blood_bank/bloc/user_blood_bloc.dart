@@ -22,6 +22,7 @@ class UserBloodBankController extends GetxController {
   RxList<BloodBank> bloodbank = <BloodBank>[].obs;
   RxList<BloodBank> searchResults = <BloodBank>[].obs;
   RxString searchQuery = ''.obs;
+  var fetchBloodBank = false.obs;
 
   @override
   void onInit() async {
@@ -116,6 +117,7 @@ class UserBloodBankController extends GetxController {
   }
 
   Future<AllBloodBank> getAllBloodBank() async {
+    fetchBloodBank.value = true;
     try {
       bloodbank.clear();
       AllBloodBank response = await userBloodBankApi.getAllBloodBank();
@@ -124,10 +126,14 @@ class UserBloodBankController extends GetxController {
           bloodbank.add(element);
         });
       } else {}
+      fetchBloodBank.value = false;
       return response;
     } catch (error) {
+      fetchBloodBank.value = false;
       throw (error);
-    } finally {}
+    } finally {
+      fetchBloodBank.value = false;
+    }
   }
 
   Future<AllBloodRequest> getAllBloodRequest() async {

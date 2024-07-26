@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/modules/blood_bank/bloc/blood_bank_bloc.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -57,13 +55,15 @@ class AddFriend extends StatelessWidget {
                                   style: CustomTextStyles.lightTextStyle(),
                                 ),
                               ),
-                              RoundedButtonSmall(
+                              Obx(() => RoundedButtonSmall(
+                                  showLoader: _friendsController
+                                      .fetchFriendRequest.value,
                                   text: 'refresh',
                                   onPressed: () {
                                     _friendsController.getAllFriendRequest();
                                   },
                                   backgroundColor: Colors.black,
-                                  textColor: Colors.white)
+                                  textColor: Colors.white))
                             ],
                           )
                         : ListView.builder(
@@ -78,10 +78,12 @@ class AddFriend extends StatelessWidget {
                                 padding: const EdgeInsets.only(bottom: 10.0),
                                 child: InkWell(
                                   onTap: () {
-                                    Get.to(MyProfileScreen(
-                                      myProfile: true,
-                                      friendId: data.userId.toString(),
-                                    ));
+                                    Get.to(
+                                        MyProfileScreen(
+                                          myProfile: true,
+                                          friendId: data.userId.toString(),
+                                        ),
+                                        transition: Transition.native);
                                   },
                                   child: FriendRequestWidget(
                                     profileImage: data.friendDetails!.image!
@@ -114,11 +116,25 @@ class AddFriend extends StatelessWidget {
                         height: 60.w,
                         child: Obx(
                           () => _friendsController.userList.length == 0
-                              ? Center(
-                                  child: Text(
-                                    'No user found',
-                                    style: CustomTextStyles.lightTextStyle(),
-                                  ),
+                              ? Column(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        'No user found',
+                                        style:
+                                            CustomTextStyles.lightTextStyle(),
+                                      ),
+                                    ),
+                                    Obx(() => RoundedButtonSmall(
+                                        showLoader: _friendsController
+                                            .fetchAllUser.value,
+                                        text: 'refresh',
+                                        onPressed: () {
+                                          _friendsController.getAllUserList();
+                                        },
+                                        backgroundColor: Colors.black,
+                                        textColor: Colors.white))
+                                  ],
                                 )
                               : ListView.builder(
                                   scrollDirection: Axis.horizontal,
@@ -131,10 +147,12 @@ class AddFriend extends StatelessWidget {
                                         _friendsController.userList[index];
                                     return InkWell(
                                       onTap: () {
-                                        Get.to(MyProfileScreen(
-                                          myProfile: true,
-                                          friendId: data.userId.toString(),
-                                        ));
+                                        Get.to(
+                                            MyProfileScreen(
+                                              myProfile: true,
+                                              friendId: data.userId.toString(),
+                                            ),
+                                            transition: Transition.native);
                                       },
                                       child: AddFriendWidget(
                                           profileImage: data.image!
@@ -211,9 +229,11 @@ class countRequest extends StatelessWidget {
         Spacer(),
         InkWell(
           onTap: () {
-            Get.to(AddNewFriend(
-              isRequests: isRequest,
-            ));
+            Get.to(
+                AddNewFriend(
+                  isRequests: isRequest,
+                ),
+                transition: Transition.native);
           },
           child: Text(
             'See all',

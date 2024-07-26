@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
@@ -14,10 +11,7 @@ import '../../../../view/home/navbar.dart';
 import '../model/all_doctor_model.dart';
 import '../model/all_user_appointment.dart';
 import 'user_doctor_api.dart';
-import 'package:open_file/open_file.dart' as open_file;
-import 'package:path_provider/path_provider.dart' as path_provider;
 // ignore: depend_on_referenced_packages
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 class UserDoctorController extends GetxController {
   late DioClient dioClient;

@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
-import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
@@ -11,12 +10,9 @@ import 'package:joy_app/modules/user/user_hospital/bloc/user_hospital_bloc.dart'
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/common/utils/file_selector.dart';
 import 'package:joy_app/view/home/components/blog_card.dart';
 import 'package:joy_app/modules/social_media/chat/view/chats.dart';
-import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import '../../modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 
@@ -62,7 +58,7 @@ class UserBlogScreen extends StatelessWidget {
               padding: const EdgeInsets.only(right: 22.56, left: 8),
               child: InkWell(
                 onTap: () {
-                  Get.to(AllChats());
+                  Get.to(AllChats(), transition: Transition.native);
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -164,43 +160,51 @@ class UserBlogScreen extends StatelessWidget {
                   SizedBox(
                     height: 1.5.h,
                   ),
-                  Obx(() => mediaController.allPost.isEmpty
-                      ? Center(
-                          child: Text(
-                            "No posts found",
-                            style: CustomTextStyles.lightTextStyle(),
-                          ),
-                        )
-                      : ListView.builder(
+                  Obx(() => mediaController.fetchPostLoader.value
+                      ? ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: mediaController.allPost.length,
+                          itemCount: 4,
                           itemBuilder: ((context, index) {
-                            final data = mediaController.allPost[index];
-                            return Column(
-                              children: [
-                                Obx(() => MyCustomWidget(
-                                      cm: mediaController
-                                              .allPost[index].comments ??
-                                          [],
-                                      postIndex: index,
-                                      postId: data.postId.toString(),
-                                      postTime: data.createdAt.toString(),
-                                      id: data.createdBy.toString(),
-                                      imgPath: data.image.toString(),
-                                      isLiked: true,
-                                      isReply: false,
-                                      showImg: (data.image == null ||
-                                              data.image!.isEmpty)
-                                          ? false
-                                          : true,
-                                      postName: data.name.toString(),
-                                      text: data.description.toString(),
-                                      userImage: data.user_image.toString(),
-                                    )),
-                              ],
-                            );
-                          }))),
+                            return ShimmerWidget();
+                          }))
+                      : mediaController.allPost.isEmpty
+                          ? Center(
+                              child: Text(
+                                "No posts found",
+                                style: CustomTextStyles.lightTextStyle(),
+                              ),
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: mediaController.allPost.length,
+                              itemBuilder: ((context, index) {
+                                final data = mediaController.allPost[index];
+                                return Column(
+                                  children: [
+                                    Obx(() => MyCustomWidget(
+                                          cm: mediaController
+                                                  .allPost[index].comments ??
+                                              [],
+                                          postIndex: index,
+                                          postId: data.postId.toString(),
+                                          postTime: data.createdAt.toString(),
+                                          id: data.createdBy.toString(),
+                                          imgPath: data.image.toString(),
+                                          isLiked: true,
+                                          isReply: false,
+                                          showImg: (data.image == null ||
+                                                  data.image!.isEmpty)
+                                              ? false
+                                              : true,
+                                          postName: data.name.toString(),
+                                          text: data.description.toString(),
+                                          userImage: data.user_image.toString(),
+                                        )),
+                                  ],
+                                );
+                              }))),
                 ],
               ),
             ),

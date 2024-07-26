@@ -37,10 +37,13 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           InkWell(
             onTap: () {
-              Get.to(MyProfileScreen(
-                myProfile: true,
-                friendId: userId,
-              ));
+              Get.to(
+                  MyProfileScreen(
+                    isFriend: true,
+                    myProfile: true,
+                    friendId: userId,
+                  ),
+                  transition: Transition.native);
             },
             child: ClipOval(
               child: Image.network(

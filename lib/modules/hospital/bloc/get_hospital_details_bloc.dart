@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_api.dart';
-import 'package:joy_app/modules/pharmacy/models/create_product_model.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
-import 'package:joy_app/view/home/navbar.dart';
 
 import '../../../core/network/request.dart';
 import '../../auth/utils/auth_hive_utils.dart';

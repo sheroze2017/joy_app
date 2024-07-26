@@ -3,10 +3,8 @@ import 'package:get/get.dart';
 import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/order_detail_screen.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:sizer/sizer.dart';
 
 import '../../../../doctor/view/home_screen.dart';
 
@@ -83,10 +81,12 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              Get.to(OrderDetailScreen(
-                                orderDetail:
-                                    ordersController.pendingOrders[index],
-                              ));
+                              Get.to(
+                                  OrderDetailScreen(
+                                    orderDetail:
+                                        ordersController.pendingOrders[index],
+                                  ),
+                                  transition: Transition.native);
                             },
                             child: Padding(
                               padding:
@@ -141,10 +141,12 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              Get.to(OrderDetailScreen(
-                                orderDetail:
-                                    ordersController.onTheWayOrders[index],
-                              ));
+                              Get.to(
+                                  OrderDetailScreen(
+                                    orderDetail:
+                                        ordersController.onTheWayOrders[index],
+                                  ),
+                                  transition: Transition.native);
                             },
                             child: Padding(
                               padding:
@@ -194,9 +196,11 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        Get.to(OrderDetailScreen(
-                            orderDetail:
-                                ordersController.deliveredOrders[index]));
+                        Get.to(
+                            OrderDetailScreen(
+                                orderDetail:
+                                    ordersController.deliveredOrders[index]),
+                            transition: Transition.native);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 3.0),

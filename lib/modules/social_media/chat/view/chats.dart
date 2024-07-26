@@ -4,18 +4,21 @@ import 'package:get/get.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../Widgets/custom_appbar.dart';
 import '../../friend_request/bloc/friends_bloc.dart';
-import '../../friend_request/view/add_friend.dart';
 import '../../friend_request/view/new_friend.dart';
 
-class AllChats extends StatelessWidget {
+class AllChats extends StatefulWidget {
   AllChats({super.key});
+
+  @override
+  State<AllChats> createState() => _AllChatsState();
+}
+
+class _AllChatsState extends State<AllChats> {
   FriendsSocialController _friendsController =
       Get.find<FriendsSocialController>();
 
@@ -30,38 +33,43 @@ class AllChats extends StatelessWidget {
         showIcon: false,
         actions: [],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Stack(
-            children: [
-              RoundedSearchTextFieldLarge(
-                  hintText: 'Search',
-                  controller: TextEditingController(),
-                  onChanged: _friendsController.searchChat),
-              Padding(
-                padding: const EdgeInsets.only(top: 40.0),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    StoryWidget(
-                      stories: [
-                        'https://via.placeholder.com/150',
-                        'https://via.placeholder.com/151',
-                        'https://via.placeholder.com/152',
-                        'https://via.placeholder.com/153',
-                        'https://via.placeholder.com/154',
-                        'https://via.placeholder.com/155',
-                      ],
-                    ),
-                    SizedBox(
-                      height: 1.h,
-                    ),
-                    Obx(() => ListView.builder(
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Stack(
+          children: [
+            RoundedSearchTextFieldLarge(
+                hintText: 'Search',
+                controller: TextEditingController(),
+                onChanged: _friendsController.searchChat),
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  // StoryWidget(
+                  //   stories: [
+                  //     'https://via.placeholder.com/150',
+                  //     'https://via.placeholder.com/151',
+                  //     'https://via.placeholder.com/152',
+                  //     'https://via.placeholder.com/153',
+                  //     'https://via.placeholder.com/154',
+                  //     'https://via.placeholder.com/155',
+                  //   ],
+                  // ),
+                  // SizedBox(
+                  //   height: 1.h,
+                  // ),
+                  RefreshIndicator(
+                    onRefresh: () async {
+                      await _friendsController.getSearchUserProfileData(
+                          false, '', context);
+                      setState(() {});
+                    },
+                    child: Obx(() => ListView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: AlwaysScrollableScrollPhysics(),
                         itemCount: _friendsController.getAllUserNames().length,
                         itemBuilder: (context, index) {
                           final img =
@@ -87,76 +95,74 @@ class AllChats extends StatelessWidget {
                               ),
                             ],
                           );
-                        }))
-                  ],
-                ),
+                        })),
+                  )
+                ],
               ),
-              Obx(() => _friendsController.showlist.value
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 30),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        constraints: BoxConstraints(maxHeight: 50.h),
-                        child: Obx(
-                          () => ListView.builder(
-                            //shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            itemCount:
-                                _friendsController.filteredList.value.length,
-                            itemBuilder: ((context, index) {
-                              final data =
-                                  _friendsController.filteredList.value[index];
+            ),
+            Obx(() => _friendsController.showlist.value
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      constraints: BoxConstraints(maxHeight: 50.h),
+                      child: Obx(
+                        () => ListView.builder(
+                          //shrinkWrap: true,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          itemCount:
+                              _friendsController.filteredList.value.length,
+                          itemBuilder: ((context, index) {
+                            final data =
+                                _friendsController.filteredList.value[index];
 
-                              return Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: InkWell(
-                                      onTap: () {
-                                        _friendsController.showlist.value =
-                                            false;
-                                        _chatController.createConvo(
-                                            data.userId ?? 0,
-                                            data.name.toString());
-                                      },
-                                      child: Row(
-                                        children: [
-                                          ClipOval(
-                                            child: Image.network(
-                                              data.image!.contains('http')
-                                                  ? data.image.toString()
-                                                  : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
-                                              width: 6.6.h,
-                                              height: 6.6.h,
-                                              fit: BoxFit.cover,
-                                            ),
+                            return Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: InkWell(
+                                    onTap: () {
+                                      _friendsController.showlist.value = false;
+                                      _chatController.createConvo(
+                                          data.userId ?? 0,
+                                          data.name.toString());
+                                    },
+                                    child: Row(
+                                      children: [
+                                        ClipOval(
+                                          child: Image.network(
+                                            data.image!.contains('http')
+                                                ? data.image.toString()
+                                                : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                            width: 6.6.h,
+                                            height: 6.6.h,
+                                            fit: BoxFit.cover,
                                           ),
-                                          SizedBox(
-                                            width: 5.w,
+                                        ),
+                                        SizedBox(
+                                          width: 5.w,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            data.name.toString(),
+                                            style: CustomTextStyles
+                                                .darkHeadingTextStyle(
+                                                    color: ThemeUtil.isDarkMode(
+                                                            context)
+                                                        ? AppColors.whiteColor
+                                                        : Color(0xff19295C),
+                                                    size: 15),
                                           ),
-                                          Expanded(
-                                            child: Text(
-                                              data.name.toString(),
-                                              style: CustomTextStyles
-                                                  .darkHeadingTextStyle(
-                                                      color: ThemeUtil
-                                                              .isDarkMode(
-                                                                  context)
-                                                          ? AppColors.whiteColor
-                                                          : Color(0xff19295C),
-                                                      size: 15),
-                                            ),
-                                          ),
-                                        ],
-                                      )));
-                            }),
-                          ),
+                                        ),
+                                      ],
+                                    )));
+                          }),
                         ),
                       ),
-                    )
-                  : Container()),
-            ],
-          ),
+                    ),
+                  )
+                : Container()),
+          ],
         ),
       ),
     );

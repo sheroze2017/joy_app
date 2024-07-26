@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
-import 'package:joy_app/modules/auth/bloc/auth_api.dart';
-import 'package:joy_app/modules/auth/models/auth.model.dart';
 import 'package:joy_app/modules/pharmacy/bloc/create_product_api.dart';
 import 'package:joy_app/modules/pharmacy/models/all_category.dart';
 import 'package:joy_app/modules/pharmacy/models/all_orders.dart';

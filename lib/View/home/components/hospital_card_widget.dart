@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/modules/user/user_blood_bank/model/all_bloodbank_model.dart';
 import 'package:joy_app/modules/user/user_hospital/model/all_hospital_model.dart';
-import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_api.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';

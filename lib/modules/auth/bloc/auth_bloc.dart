@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart';
 import 'package:crypto/crypto.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
@@ -19,7 +17,6 @@ import 'package:joy_app/modules/auth/models/hospital_resgister_model.dart';
 import 'package:joy_app/modules/auth/models/user_register_model.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
-import 'package:joy_app/view/home/navbar.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../core/network/request.dart';
@@ -105,7 +102,7 @@ class AuthController extends GetxController {
           email,
           password,
           location,
-          deviceToken,
+          fcmToken,
           dob,
           gender,
           phoneNo,
@@ -162,7 +159,7 @@ class AuthController extends GetxController {
           email,
           password,
           location,
-          deviceToken,
+          fcmToken,
           phoneNo,
           placeId,
           lat,
@@ -220,7 +217,7 @@ class AuthController extends GetxController {
           email,
           password,
           location,
-          await getToken(),
+          fcmToken,
           phoneNo,
           lat,
           long,
@@ -281,7 +278,7 @@ class AuthController extends GetxController {
           email,
           password,
           location,
-          await getToken(),
+          fcmToken,
           phoneNo,
           lat,
           long,
@@ -787,6 +784,30 @@ class AuthController extends GetxController {
       showErrorMessage(context, 'Error signing in with Apple');
       return Future.error(e);
     } finally {}
+  }
+
+  Future signInWithFacebook(context) async {
+    try {
+      final LoginResult loginResult = await FacebookAuth.instance.login();
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.tokenString);
+
+      UserCredential user = await FirebaseAuth.instance
+          .signInWithCredential(facebookAuthCredential);
+      login(user.user!.email.toString(), '', context, 'SOCIAL');
+    } catch (e) {
+      print('Error signing in with Google: $e');
+      return Future.error(e);
+    } finally {}
+  }
+
+  Future<UserCredential> registerWithFacebook() async {
+    final LoginResult loginResult = await FacebookAuth.instance.login();
+
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.tokenString);
+
+    return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
   Future<UserCredential> registerWithApple() async {

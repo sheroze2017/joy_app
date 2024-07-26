@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/modules/user/user_doctor/view/doctor_detail_screen2.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -88,27 +86,28 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
                         ),
                       )
                     : Expanded(
-                      child: ListView.builder(
-                          itemCount: _userdoctorController.userAppointment.length,
-                          itemBuilder: (context, index) {
-                            if (_userdoctorController
-                                    .userAppointment[index].status ==
-                                'Pending') {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: 1.h,
-                                  ),
-                                  AppointmentCardUser(
-                                    bookingDetail: _userdoctorController
-                                        .userAppointment[index],
-                                  ),
-                                ],
-                              );
-                            } else
-                              return Container();
-                          }),
-                    )),
+                        child: ListView.builder(
+                            itemCount:
+                                _userdoctorController.userAppointment.length,
+                            itemBuilder: (context, index) {
+                              if (_userdoctorController
+                                      .userAppointment[index].status ==
+                                  'Pending') {
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 1.h,
+                                    ),
+                                    AppointmentCardUser(
+                                      bookingDetail: _userdoctorController
+                                          .userAppointment[index],
+                                    ),
+                                  ],
+                                );
+                              } else
+                                return Container();
+                            }),
+                      )),
               ],
             ),
           ),
@@ -145,18 +144,22 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        Get.to(DoctorDaginosis(
-                                          details: _userdoctorController
-                                              .userAppointment[index],
-                                          prescription: _userdoctorController
-                                              .userAppointment[index]
-                                              .medications,
-                                          patName: _userdoctorController
-                                              .userAppointment[index]
-                                              .patientName,
-                                          daignosis: _userdoctorController
-                                              .userAppointment[index].diagnosis,
-                                        ));
+                                        Get.to(
+                                            DoctorDaginosis(
+                                              details: _userdoctorController
+                                                  .userAppointment[index],
+                                              prescription:
+                                                  _userdoctorController
+                                                      .userAppointment[index]
+                                                      .medications,
+                                              patName: _userdoctorController
+                                                  .userAppointment[index]
+                                                  .patientName,
+                                              daignosis: _userdoctorController
+                                                  .userAppointment[index]
+                                                  .diagnosis,
+                                            ),
+                                            transition: Transition.native);
                                       },
                                       child: AppointmentCardUser(
                                         bookingDetail: _userdoctorController
@@ -287,13 +290,15 @@ class AppointmentCardUser extends StatelessWidget {
                         text: isCompleted ? 'Re-Book' : 'Cancel',
                         onPressed: () {
                           isCompleted
-                              ? Get.to(DoctorDetailScreen2(
-                                  doctorId:
-                                      bookingDetail.doctorUserId.toString(),
-                                  docName: '',
-                                  location: '',
-                                  Category: '',
-                                ))
+                              ? Get.to(
+                                  DoctorDetailScreen2(
+                                    doctorId:
+                                        bookingDetail.doctorUserId.toString(),
+                                    docName: '',
+                                    location: '',
+                                    Category: '',
+                                  ),
+                                  transition: Transition.native)
                               : _userdoctorController.updateAppointment(
                                   bookingDetail.appointmentId.toString(),
                                   'CANCELLED',
@@ -318,10 +323,12 @@ class AppointmentCardUser extends StatelessWidget {
                       text: isCompleted ? 'Add Review' : 'Reschedule',
                       onPressed: () {
                         isCompleted
-                            ? Get.to(ReviewScreen(
-                                details: bookingDetail,
-                                buttonBgColor: Color(0xff033890),
-                              ))
+                            ? Get.to(
+                                ReviewScreen(
+                                  details: bookingDetail,
+                                  buttonBgColor: Color(0xff033890),
+                                ),
+                                transition: Transition.native)
                             : print('');
                       },
                       backgroundColor: ThemeUtil.isDarkMode(context)

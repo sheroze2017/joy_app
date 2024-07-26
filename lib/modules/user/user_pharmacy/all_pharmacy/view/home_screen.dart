@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/chat/view/chats.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
@@ -81,7 +80,7 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                   child: Center(
                       child: InkWell(
                     onTap: () {
-                      Get.to(AllChats());
+                      Get.to(AllChats(), transition: Transition.native);
                     },
                     child: SvgPicture.asset('Assets/icons/sms.svg'),
                   )),
@@ -161,7 +160,7 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Get.to(MyOrderScreen());
+                        Get.to(MyOrderScreen(), transition: Transition.native);
                       },
                       child: HeaderMenu(
                         bgColor: ThemeUtil.isDarkMode(context)
@@ -182,10 +181,12 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Get.to(ProductScreen(
-                          isAdmin: true,
-                          userId: '3',
-                        ));
+                        Get.to(
+                            ProductScreen(
+                              isAdmin: true,
+                              userId: '3',
+                            ),
+                            transition: Transition.native);
                       },
                       child: HeaderMenu(
                         bgColor: AppColors.lightGreenColor,
@@ -213,7 +214,7 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      Get.to(MyOrderScreen());
+                      Get.to(MyOrderScreen(), transition: Transition.native);
                     },
                     child: Text(
                       'See All',
@@ -237,10 +238,12 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              Get.to(OrderDetailScreen(
-                                orderDetail:
-                                    productsController.onTheWayOrders[index],
-                              ));
+                              Get.to(
+                                  OrderDetailScreen(
+                                    orderDetail: productsController
+                                        .onTheWayOrders[index],
+                                  ),
+                                  transition: Transition.native);
                             },
                             child: Padding(
                               padding:

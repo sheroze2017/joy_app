@@ -1,19 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
-import 'package:joy_app/modules/social_media/media_post/model/comment_model.dart';
 import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/my_profile.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
-import 'package:joy_app/widgets/custom_textfield.dart';
 import 'package:sizer/sizer.dart';
 
 class MyCustomWidget extends StatefulWidget {
@@ -69,10 +66,13 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
       children: [
         InkWell(
           onTap: () {
-            Get.to(MyProfileScreen(
-                myProfile:
-                    widget.id == _profileController.userId.value ? false : true,
-                friendId: widget.id));
+            Get.to(
+                MyProfileScreen(
+                    myProfile: widget.id == _profileController.userId.value
+                        ? false
+                        : true,
+                    friendId: widget.id),
+                transition: Transition.native);
           },
           child: Row(
             children: [
@@ -330,6 +330,63 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                 : Container(),
         SizedBox(height: 2.h),
       ],
+    );
+  }
+}
+
+class ShimmerWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey,
+      highlightColor: Color.fromARGB(137, 187, 181, 181),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+              radius: 15,
+              backgroundImage: NetworkImage(
+                "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+              )),
+          SizedBox(width: 2.w), // Adjust as needed
+          SizedBox(
+            height: 2.h,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 1.h,
+                width: 50.w,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey),
+              ),
+              SizedBox(
+                height: 2.h,
+              ),
+              Container(
+                height: 1.h,
+                width: 20.w,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey),
+              ),
+              SizedBox(
+                height: 2.h,
+              ),
+              Container(
+                height: 20.h,
+                width: 100.w,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey),
+              ),
+              SizedBox(height: 1.h),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

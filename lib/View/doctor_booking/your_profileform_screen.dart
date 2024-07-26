@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -290,16 +288,18 @@ class _FormScreenState extends State<ProfileFormScreen> {
                           if (_genderController.text.isEmpty) {
                             showErrorMessage(context, 'please select gender');
                           } else {}
-                          Get.to(BookAppointmentScreen(
-                            age: _ageController.text,
-                            doctorDetail: widget.doctorDetail,
-                            complain: _complainController.text,
-                            certificateUrl: mediaController.imgUrl.value,
-                            gender: _genderController.text,
-                            location: _locationController.text,
-                            patientName: _nameController.text,
-                            symptoms: _symptomsController.text,
-                          ));
+                          Get.to(
+                              BookAppointmentScreen(
+                                age: _ageController.text,
+                                doctorDetail: widget.doctorDetail,
+                                complain: _complainController.text,
+                                certificateUrl: mediaController.imgUrl.value,
+                                gender: _genderController.text,
+                                location: _locationController.text,
+                                patientName: _nameController.text,
+                                symptoms: _symptomsController.text,
+                              ),
+                              transition: Transition.native);
                         }
                       },
                       backgroundColor: AppColors.darkBlueColor,

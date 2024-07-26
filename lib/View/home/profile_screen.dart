@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/theme/controller/theme_controller.dart';
 import 'package:joy_app/core/utils/constant/constant.dart';
-import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/auth/view/profileform_screen.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -13,8 +12,6 @@ import 'package:joy_app/modules/blood_bank/view/profile_form.dart';
 import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/view/doctor_booking/manage_booking.dart';
 import 'package:joy_app/modules/doctor/view/all_appointment.dart';
-import 'package:joy_app/modules/doctor/view/manage_appointment.dart';
-import 'package:joy_app/view/home/editprofile_screen.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -120,36 +117,46 @@ class _FormScreenState extends State<ProfileScreen> {
               InkWell(
                 onTap: () {
                   widget.isDoctor == true
-                      ? Get.to(DoctorDetailScreen(
-                          docName: 'Dr David Patel',
-                          location: 'USA Cantucky',
-                          Category: 'Cardiologist',
-                          isDoctor: widget.isDoctor,
-                        ))
+                      ? Get.to(
+                          DoctorDetailScreen(
+                            docName: 'Dr David Patel',
+                            location: 'USA Cantucky',
+                            Category: 'Cardiologist',
+                            isDoctor: widget.isDoctor,
+                          ),
+                          transition: Transition.native)
                       : widget.isUser
-                          ? Get.to(FormScreen(
-                              isEdit: true,
-                              email: 'email',
-                              password: 'password',
-                              name: 'name'))
-                          : widget.isBloodbank
-                              ? Get.to(BloodBankFormScreen(
+                          ? Get.to(
+                              FormScreen(
                                   isEdit: true,
                                   email: 'email',
                                   password: 'password',
-                                  name: 'name'))
-                              : widget.isHospital
-                                  ? Get.to(HospitalFormScreen(
+                                  name: 'name'),
+                              transition: Transition.native)
+                          : widget.isBloodbank
+                              ? Get.to(
+                                  BloodBankFormScreen(
                                       isEdit: true,
                                       email: 'email',
                                       password: 'password',
-                                      name: 'name'))
-                                  : widget.isPharmacy
-                                      ? Get.to(PharmacyFormScreen(
+                                      name: 'name'),
+                                  transition: Transition.native)
+                              : widget.isHospital
+                                  ? Get.to(
+                                      HospitalFormScreen(
                                           isEdit: true,
                                           email: 'email',
                                           password: 'password',
-                                          name: 'name'))
+                                          name: 'name'),
+                                      transition: Transition.native)
+                                  : widget.isPharmacy
+                                      ? Get.to(
+                                          PharmacyFormScreen(
+                                              isEdit: true,
+                                              email: 'email',
+                                              password: 'password',
+                                              name: 'name'),
+                                          transition: Transition.native)
                                       : null;
                 },
                 child: Row(
@@ -186,7 +193,8 @@ class _FormScreenState extends State<ProfileScreen> {
               ),
               InkWell(
                 onTap: () {
-                  Get.to(NotificationScreen(showBackIcon: true));
+                  Get.to(NotificationScreen(showBackIcon: true),
+                      transition: Transition.native);
                 },
                 child: Row(
                   children: [
@@ -224,8 +232,10 @@ class _FormScreenState extends State<ProfileScreen> {
                   ? InkWell(
                       onTap: () {
                         widget.isDoctor
-                            ? Get.to(AllAppointments())
-                            : Get.to(ManageAllAppointmentUser());
+                            ? Get.to(AllAppointments(),
+                                transition: Transition.native)
+                            : Get.to(ManageAllAppointmentUser(),
+                                transition: Transition.native);
                       },
                       child: Row(
                         children: [

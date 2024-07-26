@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -8,9 +7,6 @@ import 'package:joy_app/modules/user/user_doctor/view/doctor_detail_screen2.dart
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/blood_bank/view/blood_appeal_screen.dart';
-import 'package:joy_app/modules/blood_bank/view/profile_form.dart';
-import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
-import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -399,14 +395,16 @@ class HorizontalDoctorCategories extends StatelessWidget {
           onTap: () {
             if (isBloodBank) {
               index == 0
-                  ? Get.to(BloodDonationAppeal(
-                      isBloodDontate: true,
-                    ))
+                  ? Get.to(
+                      BloodDonationAppeal(
+                        isBloodDontate: true,
+                      ),
+                      transition: Transition.native)
                   : index == 1
                       ? Get.to(BloodDonationAppeal(
                           isPlasmaDonate: true,
                         ))
-                      : Get.to(AllDonorScreen());
+                      : Get.to(AllDonorScreen(), transition: Transition.native);
             }
           },
           child: DoctorCategory(
@@ -446,12 +444,14 @@ class VerticalDoctorsList extends StatelessWidget {
           final doctorData = doctorList[index];
           return InkWell(
             onTap: () {
-              Get.to(DoctorDetailScreen2(
-                doctorId: doctorData.userId.toString(),
-                docName: 'Dr. David Patel',
-                location: 'Golden Cardiology Center',
-                Category: 'Cardiologist',
-              ));
+              Get.to(
+                  DoctorDetailScreen2(
+                    doctorId: doctorData.userId.toString(),
+                    docName: 'Dr. David Patel',
+                    location: 'Golden Cardiology Center',
+                    Category: 'Cardiologist',
+                  ),
+                  transition: Transition.native);
             },
             child: DoctorsCardWidget(
               imgUrl: doctorData.image.toString(),

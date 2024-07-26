@@ -383,24 +383,28 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                         _doctorController.doctorDetail == null
                             ? null
                             : widget.isDoctor
-                                ? Get.to(DoctorFormScreen(
-                                    email: _doctorController
-                                        .doctorDetail!.data!.email
-                                        .toString(),
-                                    password: _doctorController
-                                        .doctorDetail!.data!.password
-                                        .toString(),
-                                    name: _doctorController
-                                        .doctorDetail!.data!.name
-                                        .toString(),
-                                    details:
-                                        _doctorController.doctorDetail!.data,
-                                    isEdit: true,
-                                  ))
-                                : Get.to(ProfileFormScreen(
-                                    doctorDetail:
-                                        _doctorController.doctorDetail!,
-                                  ));
+                                ? Get.to(
+                                    DoctorFormScreen(
+                                      email: _doctorController
+                                          .doctorDetail!.data!.email
+                                          .toString(),
+                                      password: _doctorController
+                                          .doctorDetail!.data!.password
+                                          .toString(),
+                                      name: _doctorController
+                                          .doctorDetail!.data!.name
+                                          .toString(),
+                                      details:
+                                          _doctorController.doctorDetail!.data,
+                                      isEdit: true,
+                                    ),
+                                    transition: Transition.native)
+                                : Get.to(
+                                    ProfileFormScreen(
+                                      doctorDetail:
+                                          _doctorController.doctorDetail!,
+                                    ),
+                                    transition: Transition.native);
                       },
                       backgroundColor: AppColors.darkBlueColor,
                       textColor: AppColors.whiteColor),

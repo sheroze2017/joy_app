@@ -6,13 +6,10 @@ import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_api.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_model.dart';
-import 'package:joy_app/modules/doctor/view/all_appointment.dart';
-import 'package:joy_app/modules/doctor/view/home_screen.dart';
 import 'package:joy_app/view/home/navbar.dart';
 
 import '../../auth/models/user.dart';
 import '../models/doctor_appointment_model.dart';
-import '../models/doctor_detail_hive_model.dart';
 
 class DoctorController extends GetxController {
   late DioClient dioClient;

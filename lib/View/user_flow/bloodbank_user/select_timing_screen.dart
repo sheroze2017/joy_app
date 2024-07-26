@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:joy_app/Widgets/success_dailog.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/user_flow/pharmacy_user/checkout/checkout_detail.dart';
 import 'package:intl/intl.dart';
 
 import 'package:joy_app/Widgets/custom_appbar.dart';

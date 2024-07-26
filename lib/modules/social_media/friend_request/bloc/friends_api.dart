@@ -3,8 +3,6 @@ import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/social_media/friend_request/model/all_friend_request_model.dart';
 import 'package:joy_app/modules/social_media/friend_request/model/all_user_list.dart';
 import 'package:joy_app/modules/social_media/friend_request/model/search_user_profile_model.dart';
-import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
-import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 
 class FreindsApi {
   final DioClient _dioClient;

@@ -112,25 +112,32 @@ class CustomDialog extends StatelessWidget {
                               text: 'Done',
                               onPressed: () {
                                 isPharmacyCheckout == true
-                                    ? Get.to(ReviewScreen(
-                                        isPharmacy: true,
-                                        pharmacyId: pharmacyId,
-                                        buttonBgColor:
-                                            ThemeUtil.isDarkMode(context)
-                                                ? AppColors.lightGreenColoreb1
-                                                : AppColors.darkGreenColor,
-                                      ))
+                                    ? Get.to(
+                                        ReviewScreen(
+                                          isPharmacy: true,
+                                          pharmacyId: pharmacyId,
+                                          buttonBgColor:
+                                              ThemeUtil.isDarkMode(context)
+                                                  ? AppColors.lightGreenColoreb1
+                                                  : AppColors.darkGreenColor,
+                                        ),
+                                        transition: Transition.native)
                                     : isBloodRequest || isBookAppointment
-                                        ? Get.to(Get.offAll(NavBarScreen(
-                                            isUser: true,
-                                          )))
-                                        : Get.offAll(NavBarScreen(
-                                            hospitalDetailId: hospitalDetailId,
-                                            isBloodBank: isBloodBankForm,
-                                            isPharmacy: isPharmacyForm,
-                                            isDoctor: isDoctorForm,
-                                            isHospital: isHospitalForm,
-                                            isUser: isUser));
+                                        ? Get.offAll(
+                                            NavBarScreen(
+                                              isUser: true,
+                                            ),
+                                            transition: Transition.native)
+                                        : Get.offAll(
+                                            NavBarScreen(
+                                                hospitalDetailId:
+                                                    hospitalDetailId,
+                                                isBloodBank: isBloodBankForm,
+                                                isPharmacy: isPharmacyForm,
+                                                isDoctor: isDoctorForm,
+                                                isHospital: isHospitalForm,
+                                                isUser: isUser),
+                                            transition: Transition.native);
                               },
                               backgroundColor: buttonColor != null
                                   ? ThemeUtil.isDarkMode(context)

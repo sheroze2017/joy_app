@@ -49,14 +49,19 @@ class AllDocPharmacy extends StatelessWidget {
                       return InkWell(
                         onTap: () {
                           isPharmacy
-                              ? Get.to(PharmacyProductScreen(
-                                  userId: dataList[index].userId.toString()))
-                              : Get.to(DoctorDetailScreen2(
-                                  doctorId: dataList[index].userId.toString(),
-                                  docName: 'Dr. David Patel',
-                                  location: 'Golden Cardiology Center',
-                                  Category: 'Cardiologist',
-                                ));
+                              ? Get.to(
+                                  PharmacyProductScreen(
+                                      userId:
+                                          dataList[index].userId.toString()),
+                                  transition: Transition.native)
+                              : Get.to(
+                                  DoctorDetailScreen2(
+                                    doctorId: dataList[index].userId.toString(),
+                                    docName: 'Dr. David Patel',
+                                    location: 'Golden Cardiology Center',
+                                    Category: 'Cardiologist',
+                                  ),
+                                  transition: Transition.native);
                         },
                         child: Container(
                           decoration: BoxDecoration(

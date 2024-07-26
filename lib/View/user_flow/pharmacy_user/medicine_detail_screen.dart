@@ -56,7 +56,8 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                       children: [
                         InkWell(
                             onTap: () {
-                              Get.to(MyCartScreen());
+                              Get.to(MyCartScreen(),
+                                  transition: Transition.native);
                             },
                             child: SvgPicture.asset('Assets/icons/cart.svg')),
                         Positioned(
@@ -268,12 +269,15 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                           child: RoundedButtonSmall(
                                               text: "Edit Product",
                                               onPressed: () {
-                                                Get.to(AddMedicine(
-                                                  isEdit: true,
-                                                  productDetail:
-                                                      pharmacyController
-                                                          .productDetail[0],
-                                                ));
+                                                Get.to(
+                                                    AddMedicine(
+                                                      isEdit: true,
+                                                      productDetail:
+                                                          pharmacyController
+                                                              .productDetail[0],
+                                                    ),
+                                                    transition:
+                                                        Transition.native);
                                               },
                                               backgroundColor:
                                                   ThemeUtil.isDarkMode(context)
@@ -318,7 +322,9 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                               onPressed: () {
                                                 pharmacyController.addToCart(
                                                     widget.product, context);
-                                                Get.to(MyCartScreen());
+                                                Get.to(MyCartScreen(),
+                                                    transition:
+                                                        Transition.native);
                                               },
                                               backgroundColor:
                                                   ThemeUtil.isDarkMode(context)

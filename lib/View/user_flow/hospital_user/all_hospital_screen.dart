@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:joy_app/common/map/bloc/location_controller.dart';
-import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
-import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/product_screen.dart';
 import 'package:joy_app/view/doctor_booking/all_doctor_screen.dart';
 import 'package:joy_app/modules/hospital/view/home_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
@@ -23,11 +18,9 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../modules/user/user_hospital/bloc/user_hospital_bloc.dart';
-import '../../../modules/blood_bank/view/blood_appeal_screen.dart';
 import '../../home/components/hospital_card_widget.dart';
 import '../bloodbank_user/request_blood.dart';
 import '../pharmacy_user/pharmacy_product_screen.dart';
-import 'hospital_detail_screen.dart';
 
 class AllHospitalScreen extends StatefulWidget {
   bool isPharmacy;
@@ -104,10 +97,12 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              Get.to(BloodDonationAppealUser(
-                                isBloodDontate: true,
-                                isUser: true,
-                              ));
+                              Get.to(
+                                  BloodDonationAppealUser(
+                                    isBloodDontate: true,
+                                    isUser: true,
+                                  ),
+                                  transition: Transition.native);
                             },
                             child: DoctorCategory(
                               isUser: false,
@@ -126,10 +121,12 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              Get.to(BloodDonationAppealUser(
-                                isPlasmaDonate: true,
-                                isUser: true,
-                              ));
+                              Get.to(
+                                  BloodDonationAppealUser(
+                                    isPlasmaDonate: true,
+                                    isUser: true,
+                                  ),
+                                  transition: Transition.native);
                             },
                             child: DoctorCategory(
                               isUser: false,
@@ -162,7 +159,8 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                             child: RoundedButton(
                                 text: "All Donors",
                                 onPressed: () {
-                                  Get.to(AllDonorScreen());
+                                  Get.to(AllDonorScreen(),
+                                      transition: Transition.native);
                                 },
                                 backgroundColor: AppColors.redLightDarkColor,
                                 textColor: Colors.white),
@@ -179,7 +177,8 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                           child: RoundedButton(
                               text: "Request Blood",
                               onPressed: () {
-                                Get.to(RequestBlood());
+                                Get.to(RequestBlood(),
+                                    transition: Transition.native);
                               },
                               backgroundColor: AppColors.redLightDarkColor,
                               textColor: Colors.white),
@@ -191,9 +190,11 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                           child: RoundedButton(
                               text: "Register Donor",
                               onPressed: () {
-                                Get.to(RequestBlood(
-                                  isRegister: true,
-                                ));
+                                Get.to(
+                                    RequestBlood(
+                                      isRegister: true,
+                                    ),
+                                    transition: Transition.native);
                               },
                               backgroundColor: AppColors.redLightDarkColor,
                               textColor: Colors.white),
@@ -240,18 +241,22 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                         return InkWell(
                           onTap: () {
                             widget.isPharmacy
-                                ? Get.to(PharmacyProductScreen(
-                                    userId: pharmacyController
-                                        .searchResults[index].userId
-                                        .toString(),
-                                  ))
+                                ? Get.to(
+                                    PharmacyProductScreen(
+                                      userId: pharmacyController
+                                          .searchResults[index].userId
+                                          .toString(),
+                                    ),
+                                    transition: Transition.native)
                                 : widget.isHospital
-                                    ? Get.to(HospitalHomeScreen(
-                                        isUser: true,
-                                        hospitalId: _userHospitalController
-                                            .searchResults[index].userId
-                                            .toString(),
-                                      ))
+                                    ? Get.to(
+                                        HospitalHomeScreen(
+                                          isUser: true,
+                                          hospitalId: _userHospitalController
+                                              .searchResults[index].userId
+                                              .toString(),
+                                        ),
+                                        transition: Transition.native)
                                     : print('null');
                           },
                           child: Container(

@@ -108,9 +108,11 @@ class AppointmentSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(PatientProfileScreen(
-          details: details,
-        ));
+        Get.to(
+            PatientProfileScreen(
+              details: details,
+            ),
+            transition: Transition.native);
       },
       child: Container(
         decoration: BoxDecoration(

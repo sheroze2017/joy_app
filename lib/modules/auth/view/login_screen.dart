@@ -1,24 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
-import 'package:joy_app/modules/auth/bloc/auth_api.dart';
-import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/view/passwordReset/forgot_pass_screen.dart';
 import 'package:joy_app/modules/auth/view/signup_screen.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
-import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../common/theme/theme_controller.dart';
@@ -178,12 +171,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           imagePath: 'Assets/images/google.png',
                         ),
                       ),
-                      RoundedContainer(
-                        imagePath: 'Assets/images/facebook.png',
+                      InkWell(
+                        onTap: () {
+                          authController.signInWithFacebook(context);
+                        },
+                        child: RoundedContainer(
+                          imagePath: 'Assets/images/facebook.png',
+                        ),
                       ),
-                      RoundedContainer(
-                        imagePath: 'Assets/images/apple.png',
-                        isApple: true,
+                      InkWell(
+                        onTap: () {
+                          authController.signInWithApple(context);
+                        },
+                        child: RoundedContainer(
+                          imagePath: 'Assets/images/apple.png',
+                          isApple: true,
+                        ),
                       ),
                     ],
                   ),
@@ -200,7 +203,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Get.to(ForgotPassScreen());
+                              Get.to(ForgotPassScreen(),
+                                  transition: Transition.native);
                             },
                         ),
                       ],
@@ -226,7 +230,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Get.to(SignupScreen());
+                              Get.to(SignupScreen(),
+                                  transition: Transition.native);
                             },
                         ),
                       ],

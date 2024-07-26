@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/navbar.dart';
-import 'package:joy_app/view/home/profile_screen.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -97,7 +96,8 @@ class NewPassScreen extends StatelessWidget {
                               FocusScope.of(context).unfocus();
                               if (!_formKey.currentState!.validate()) {
                               } else {
-                                Get.to(NavBarScreen(isUser: true));
+                                Get.to(NavBarScreen(isUser: true),
+                                    transition: Transition.native);
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)

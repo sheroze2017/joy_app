@@ -95,7 +95,7 @@ class OnboardingScreen extends StatelessWidget {
               bottom: 15,
               child: InkWell(
                 onTap: () {
-                  Get.to(LoginScreen());
+                  Get.to(LoginScreen(), transition: Transition.native);
                 },
                 child: Center(
                     child:

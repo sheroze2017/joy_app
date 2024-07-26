@@ -86,7 +86,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                       child: RoundedButton(
                           text: "Verify",
                           onPressed: () {
-                            Get.to(NewPassScreen());
+                            Get.to(NewPassScreen(),
+                                transition: Transition.native);
                           },
                           backgroundColor: ThemeUtil.isDarkMode(context)
                               ? Color(0xffC5D3E3)

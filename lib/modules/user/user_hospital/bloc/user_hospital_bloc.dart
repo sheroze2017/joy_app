@@ -11,6 +11,7 @@ class UserHospitalController extends GetxController {
   RxList<Hospital> hospitalList = <Hospital>[].obs;
   RxList<Hospital> searchResults = <Hospital>[].obs;
   RxString searchQuery = ''.obs;
+  var fetchHospital = false.obs;
 
   @override
   void onInit() async {
@@ -27,6 +28,7 @@ class UserHospitalController extends GetxController {
   }
 
   Future<AllHospital> getAllHospitals() async {
+    fetchHospital.value = true;
     try {
       hospitalList.clear();
       AllHospital response = await userHospitalApi.getAllHospitals();
@@ -35,9 +37,14 @@ class UserHospitalController extends GetxController {
           hospitalList.add(element);
         });
       } else {}
+      fetchHospital.value = false;
       return response;
     } catch (error) {
+      fetchHospital.value = false;
+
       throw (error);
-    } finally {}
+    } finally {
+      fetchHospital.value = false;
+    }
   }
 }

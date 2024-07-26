@@ -15,7 +15,6 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 import '../bloc/doctor_bloc.dart';
-import 'all_appointment.dart';
 import 'patient_profile.dart';
 
 class ManageAppointment extends StatefulWidget {
@@ -117,9 +116,12 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                                         children: [
                                           InkWell(
                                             onTap: () {
-                                              Get.to(PatientProfileScreen(
-                                                details: data,
-                                              ));
+                                              Get.to(
+                                                  PatientProfileScreen(
+                                                    details: data,
+                                                  ),
+                                                  transition:
+                                                      Transition.native);
                                             },
                                             child: MeetingCallScheduler(
                                               buttonColor:

@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/doctor_booking/your_profileform_screen.dart';
 import 'package:joy_app/modules/doctor/view/profile_form.dart';
 import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
 import 'package:joy_app/view/home/my_profile.dart';
@@ -294,13 +291,15 @@ class DoctorDetailScreen extends StatelessWidget {
                       text: isDoctor ? 'Edit Profile' : "Book Appointment",
                       onPressed: () {
                         isDoctor
-                            ? Get.to(DoctorFormScreen(
-                                email: data.email.toString(),
-                                password: data.password.toString(),
-                                name: data.name.toString(),
-                                details: data,
-                                isEdit: true,
-                              ))
+                            ? Get.to(
+                                DoctorFormScreen(
+                                  email: data.email.toString(),
+                                  password: data.password.toString(),
+                                  name: data.name.toString(),
+                                  details: data,
+                                  isEdit: true,
+                                ),
+                                transition: Transition.native)
                             : null;
                       },
                       backgroundColor: AppColors.darkBlueColor,

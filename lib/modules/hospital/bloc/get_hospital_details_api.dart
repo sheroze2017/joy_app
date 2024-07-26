@@ -1,13 +1,6 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:intl/intl.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
-import 'package:joy_app/modules/auth/models/auth.model.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
-import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 
 import '../model/hospital_detail_model.dart';
 

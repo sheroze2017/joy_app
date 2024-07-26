@@ -1,13 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/user_flow/pharmacy_user/checkout/checkout_detail.dart';
-import 'package:joy_app/view/user_flow/pharmacy_user/medicine_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -278,11 +275,13 @@ class _MyCartScreenState extends State<MyCartScreen> {
                             isSmall: true,
                             text: 'Proceed to Check Out',
                             onPressed: () {
-                              Get.to(CheckoutForm(
-                                pharmacyId: pharmacyController
-                                    .cartItems[0].pharmacyId
-                                    .toString(),
-                              ));
+                              Get.to(
+                                  CheckoutForm(
+                                    pharmacyId: pharmacyController
+                                        .cartItems[0].pharmacyId
+                                        .toString(),
+                                  ),
+                                  transition: Transition.native);
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
                                 ? AppColors.lightGreenColoreb1

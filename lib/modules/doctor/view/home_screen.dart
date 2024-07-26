@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
@@ -63,7 +62,7 @@ class DoctorHomeScreen extends StatelessWidget {
                   child: Center(
                       child: InkWell(
                     onTap: () {
-                      Get.to(AllChats());
+                      Get.to(AllChats(), transition: Transition.native);
                     },
                     child: SvgPicture.asset('Assets/icons/sms.svg'),
                   )),
@@ -143,7 +142,8 @@ class DoctorHomeScreen extends StatelessWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Get.to(AllAppointments());
+                        Get.to(AllAppointments(),
+                            transition: Transition.native);
                       },
                       child: HeaderMenu(
                         bgColor: ThemeUtil.isDarkMode(context)
@@ -164,9 +164,11 @@ class DoctorHomeScreen extends StatelessWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Get.to(ManageAppointment(
-                          showPatientHistoryFromScreen: true,
-                        ));
+                        Get.to(
+                            ManageAppointment(
+                              showPatientHistoryFromScreen: true,
+                            ),
+                            transition: Transition.native);
                       },
                       child: HeaderMenu(
                         bgColor: AppColors.lightGreenColor,
@@ -199,7 +201,7 @@ class DoctorHomeScreen extends StatelessWidget {
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      Get.to(AllAppointments());
+                      Get.to(AllAppointments(), transition: Transition.native);
                     },
                     child: Text(
                       'See All',
@@ -244,11 +246,14 @@ class DoctorHomeScreen extends StatelessWidget {
                                 category: 'Dental',
                                 buttonColor: Color(0xff0443A9),
                                 onPressed: () {
-                                  Get.to(ManageAppointment(
-                                      phoneNo: data.userDetails!.phone,
-                                      appointmentId:
-                                          data.appointmentId.toString(),
-                                      doctorId: data.doctorUserId.toString()));
+                                  Get.to(
+                                      ManageAppointment(
+                                          phoneNo: data.userDetails!.phone,
+                                          appointmentId:
+                                              data.appointmentId.toString(),
+                                          doctorId:
+                                              data.doctorUserId.toString()),
+                                      transition: Transition.native);
                                 },
                               ),
                               SizedBox(

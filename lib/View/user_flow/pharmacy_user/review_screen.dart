@@ -7,7 +7,6 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 

@@ -53,7 +53,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   padding: const EdgeInsets.all(6.0),
                   child: InkWell(
                     onTap: () {
-                      Get.to(MyCartScreen());
+                      Get.to(MyCartScreen(), transition: Transition.native);
                     },
                     child: SvgPicture.asset(
                       'Assets/icons/cardreddot.svg',
@@ -64,7 +64,7 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
             InkWell(
               onTap: () {
-                Get.to(AddMedicine());
+                Get.to(AddMedicine(), transition: Transition.native);
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 24),
@@ -108,22 +108,27 @@ class _ProductScreenState extends State<ProductScreen> {
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: InkWell(
                               onTap: () {
-                                Get.to(MedicineDetailScreen(
-                                  product: data,
-                                  isPharmacyAdmin: widget.isAdmin,
-                                  productId: data.productId.toString(),
-                                ));
+                                Get.to(
+                                    MedicineDetailScreen(
+                                      product: data,
+                                      isPharmacyAdmin: widget.isAdmin,
+                                      productId: data.productId.toString(),
+                                    ),
+                                    transition: Transition.native);
                               },
                               child: MedicineCard(
                                 categoryId: data.categoryId!.toInt(),
                                 isUserProductScreen: true,
                                 onPressed: () {
                                   widget.isAdmin
-                                      ? Get.to(MedicineDetailScreen(
-                                          product: data,
-                                          isPharmacyAdmin: widget.isAdmin,
-                                          productId: data.productId.toString(),
-                                        ))
+                                      ? Get.to(
+                                          MedicineDetailScreen(
+                                            product: data,
+                                            isPharmacyAdmin: widget.isAdmin,
+                                            productId:
+                                                data.productId.toString(),
+                                          ),
+                                          transition: Transition.native)
                                       : print('');
                                 },
                                 btnText:

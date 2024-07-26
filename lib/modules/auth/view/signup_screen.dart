@@ -10,7 +10,6 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/modules/doctor/view/profile_form.dart';
-import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/home_screen.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
@@ -20,7 +19,6 @@ import 'package:joy_app/Widgets/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../user/user_pharmacy/all_pharmacy/view/profile_form.dart';
-import '../../blood_bank/view/home_screen.dart';
 import '../../blood_bank/view/profile_form.dart';
 import 'profileform_screen.dart';
 
@@ -190,44 +188,59 @@ class _SignupScreenState extends State<SignupScreen> {
                                 } else if (await authController.isValidMail(
                                     _emailController.text, context)) {
                                   if (selectedButton == 'User') {
-                                    Get.to(FormScreen(
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                      name: _nameController.text,
-                                    ));
+                                    Get.to(
+                                        FormScreen(
+                                          email: _emailController.text,
+                                          password: _passwordController.text,
+                                          name: _nameController.text,
+                                        ),
+                                        transition: Transition.native);
                                   } else if (selectedButton == 'Professional') {
                                     selectedFieldValue == 1
-                                        ? Get.to(DoctorFormScreen(
-                                            email: _emailController.text,
-                                            password: _passwordController.text,
-                                            name: _nameController.text,
-                                          ))
+                                        ? Get.to(
+                                            DoctorFormScreen(
+                                              email: _emailController.text,
+                                              password:
+                                                  _passwordController.text,
+                                              name: _nameController.text,
+                                            ),
+                                            transition: Transition.native)
                                         : selectedFieldValue == 2
-                                            ? Get.to(PharmacyFormScreen(
-                                                email: _emailController.text,
-                                                password:
-                                                    _passwordController.text,
-                                                name: _nameController.text,
-                                              ))
+                                            ? Get.to(
+                                                PharmacyFormScreen(
+                                                  email: _emailController.text,
+                                                  password:
+                                                      _passwordController.text,
+                                                  name: _nameController.text,
+                                                ),
+                                                transition: Transition.native)
                                             : selectedFieldValue == 3
-                                                ? Get.to(BloodBankFormScreen(
-                                                    email:
-                                                        _emailController.text,
-                                                    password:
-                                                        _passwordController
-                                                            .text,
-                                                    name: _nameController.text,
-                                                  ))
+                                                ? Get.to(
+                                                    BloodBankFormScreen(
+                                                      email:
+                                                          _emailController.text,
+                                                      password:
+                                                          _passwordController
+                                                              .text,
+                                                      name:
+                                                          _nameController.text,
+                                                    ),
+                                                    transition:
+                                                        Transition.native)
                                                 : selectedFieldValue == 4
-                                                    ? Get.to(HospitalFormScreen(
-                                                        email: _emailController
-                                                            .text,
-                                                        password:
-                                                            _passwordController
-                                                                .text,
-                                                        name: _nameController
-                                                            .text,
-                                                      ))
+                                                    ? Get.to(
+                                                        HospitalFormScreen(
+                                                          email:
+                                                              _emailController
+                                                                  .text,
+                                                          password:
+                                                              _passwordController
+                                                                  .text,
+                                                          name: _nameController
+                                                              .text,
+                                                        ),
+                                                        transition:
+                                                            Transition.native)
                                                     : print(selectedFieldValue);
                                   }
                                 } else {}
@@ -274,12 +287,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (await authController.isValidMail(
                                 user.user!.email.toString(), context)) {
                               if (selectedButton == 'User') {
-                                Get.to(FormScreen(
-                                  isSocial: true,
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
-                                  name: _nameController.text,
-                                ));
+                                Get.to(
+                                    FormScreen(
+                                      isSocial: true,
+                                      email: _emailController.text,
+                                      password: _passwordController.text,
+                                      name: _nameController.text,
+                                    ),
+                                    transition: Transition.native);
                               } else if (selectedButton == 'Professional') {
                                 navigateToFormScreen(
                                   context: context,
@@ -297,8 +312,45 @@ class _SignupScreenState extends State<SignupScreen> {
                           imagePath: 'Assets/images/google.png',
                         ),
                       ),
-                      RoundedContainer(
-                        imagePath: 'Assets/images/facebook.png',
+                      InkWell(
+                        onTap: () async {
+                          if (selectedButton.isEmpty) {
+                            showErrorMessage(
+                                context, 'Please select profile type');
+                          } else if (selectedButton == 'Professional' &&
+                              selectedFieldValue == null) {
+                            showErrorMessage(
+                                context, 'Please select professional category');
+                          } else {
+                            UserCredential user =
+                                await authController.registerWithFacebook();
+                            if (await authController.isValidMail(
+                                user.user!.email.toString(), context)) {
+                              if (selectedButton == 'User') {
+                                Get.to(
+                                    FormScreen(
+                                      isSocial: true,
+                                      email: _emailController.text,
+                                      password: _passwordController.text,
+                                      name: _nameController.text,
+                                    ),
+                                    transition: Transition.native);
+                              } else if (selectedButton == 'Professional') {
+                                navigateToFormScreen(
+                                  context: context,
+                                  selectedFieldValue:
+                                      selectedFieldValue!.toInt(),
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                  name: _nameController.text,
+                                );
+                              }
+                            } else {}
+                          }
+                        },
+                        child: RoundedContainer(
+                          imagePath: 'Assets/images/facebook.png',
+                        ),
                       ),
                       InkWell(
                         onTap: () async {
@@ -315,12 +367,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (await authController.isValidMail(
                                 user.user!.email.toString(), context)) {
                               if (selectedButton == 'User') {
-                                Get.to(FormScreen(
-                                  isSocial: true,
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
-                                  name: _nameController.text,
-                                ));
+                                Get.to(
+                                    FormScreen(
+                                      isSocial: true,
+                                      email: _emailController.text,
+                                      password: _passwordController.text,
+                                      name: _nameController.text,
+                                    ),
+                                    transition: Transition.native);
                               } else if (selectedButton == 'Professional') {
                                 navigateToFormScreen(
                                   context: context,

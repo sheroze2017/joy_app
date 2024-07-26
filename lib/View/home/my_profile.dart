@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -16,12 +15,13 @@ import 'package:sizer/sizer.dart';
 import '../../Widgets/rounded_button.dart';
 import 'all_photos_screen.dart';
 import 'all_posts_screen.dart';
-import 'editprofile_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
   bool myProfile;
   String? friendId;
-  MyProfileScreen({required this.myProfile, this.friendId});
+  bool isFriend;
+  MyProfileScreen(
+      {required this.myProfile, this.friendId, this.isFriend = false});
 
   @override
   State<MyProfileScreen> createState() => _MyProfileScreenState();
@@ -55,11 +55,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ? Container()
                 : InkWell(
                     onTap: () {
-                      Get.to(FormScreen(
-                          isEdit: true,
-                          email: 'email',
-                          password: 'password',
-                          name: 'name'));
+                      Get.to(
+                          FormScreen(
+                              isEdit: true,
+                              email: 'email',
+                              password: 'password',
+                              name: 'name'),
+                          transition: Transition.native);
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(right: 12.0),
@@ -70,9 +72,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ? Container()
                 : InkWell(
                     onTap: () {
-                      Get.to(ProfileScreen(
-                        isUser: true,
-                      ));
+                      Get.to(
+                          ProfileScreen(
+                            isUser: true,
+                          ),
+                          transition: Transition.native);
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(right: 16.0),
@@ -311,12 +315,17 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                 Expanded(
                                                   child: RoundedButtonSmall(
                                                       isSmall: true,
-                                                      text: "Add Friend",
+                                                      text: widget.isFriend
+                                                          ? 'Friend'
+                                                          : "Add Friend",
                                                       onPressed: () {
-                                                        _friendsController
-                                                            .AddFriend(
-                                                                widget.friendId,
-                                                                context);
+                                                        widget.isFriend
+                                                            ? print('')
+                                                            : _friendsController
+                                                                .AddFriend(
+                                                                    widget
+                                                                        .friendId,
+                                                                    context);
                                                       },
                                                       backgroundColor: ThemeUtil
                                                               .isDarkMode(
@@ -357,10 +366,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     ),
                                     SizedBox(height: 1.h),
                                     UserSlider(
-                                        userNames: _friendsController
-                                            .getAllUserNames(),
-                                        userAssets: _friendsController
-                                            .getAllUserAssets()),
+                                      userNames:
+                                          _friendsController.getAllUserNames(),
+                                      userAssets:
+                                          _friendsController.getAllUserAssets(),
+                                      userIds:
+                                          _friendsController.getAllUserId(),
+                                    ),
                                     Row(
                                       children: [
                                         Text(
@@ -377,7 +389,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                         Spacer(),
                                         InkWell(
                                           onTap: () {
-                                            Get.to(AllPhotoScreen());
+                                            Get.to(AllPhotoScreen(),
+                                                transition: Transition.native);
                                           },
                                           child: Text(
                                             'See All',
@@ -411,7 +424,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                         Spacer(),
                                         InkWell(
                                           onTap: () {
-                                            Get.to(AllPostScreen());
+                                            Get.to(AllPostScreen(),
+                                                transition: Transition.native);
                                           },
                                           child: Text(
                                             'See All',
@@ -724,11 +738,13 @@ class NotificationWidget extends StatelessWidget {
 class UserSlider extends StatelessWidget {
   final List<String> userNames;
   final List<String> userAssets;
+  final List<int> userIds;
 
   const UserSlider({
     Key? key,
     required this.userNames,
     required this.userAssets,
+    required this.userIds,
   }) : super(key: key);
 
   @override
@@ -748,20 +764,31 @@ class UserSlider extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(right: 8.0),
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundImage: NetworkImage(userAssets[index]
-                                .contains('http')
-                            ? userAssets[index]
-                            : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'),
-                      ),
-                      SizedBox(height: 1.h),
-                      Text(userNames[index],
-                          style: CustomTextStyles.lightSmallTextStyle(
-                              size: 9.4, color: Color(0xff99A1BE))),
-                    ],
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(
+                          MyProfileScreen(
+                            isFriend: true,
+                            myProfile: true,
+                            friendId: userIds[index].toString(),
+                          ),
+                          transition: Transition.native);
+                    },
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundImage: NetworkImage(userAssets[index]
+                                  .contains('http')
+                              ? userAssets[index]
+                              : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'),
+                        ),
+                        SizedBox(height: 1.h),
+                        Text(userNames[index],
+                            style: CustomTextStyles.lightSmallTextStyle(
+                                size: 9.4, color: Color(0xff99A1BE))),
+                      ],
+                    ),
                   ),
                 );
               },

@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
-import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../home/my_profile.dart';
 
 // class ImagePage extends StatelessWidget {
 //   @override

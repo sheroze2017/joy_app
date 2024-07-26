@@ -3,12 +3,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
-import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:sizer/sizer.dart';
-
 import '../hospital_user/hospital_detail_screen.dart';
 import 'medicine_detail_screen.dart';
 import 'mycart_screen.dart';
@@ -53,7 +50,7 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
           actions: [
             InkWell(
               onTap: () {
-                Get.to(MyCartScreen());
+                Get.to(MyCartScreen(), transition: Transition.native);
               },
               child: Padding(
                 padding: EdgeInsets.only(right: 16),
@@ -134,12 +131,14 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
                                           const EdgeInsets.only(bottom: 8.0),
                                       child: InkWell(
                                         onTap: () {
-                                          Get.to(MedicineDetailScreen(
-                                            product: data,
-                                            isPharmacyAdmin: false,
-                                            productId:
-                                                data.productId.toString(),
-                                          ));
+                                          Get.to(
+                                              MedicineDetailScreen(
+                                                product: data,
+                                                isPharmacyAdmin: false,
+                                                productId:
+                                                    data.productId.toString(),
+                                              ),
+                                              transition: Transition.native);
                                         },
                                         child: MedicineCard(
                                           categoryId: data.categoryId ?? 0,
