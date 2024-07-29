@@ -8,14 +8,14 @@ import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.d
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/doctor/view/all_appointment.dart';
 import 'package:joy_app/modules/doctor/view/manage_appointment.dart';
-import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
+import 'package:joy_app/modules/user/user_hospital/view/hospital_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../view/home/my_profile.dart';
+import '../../../common/profile/view/my_profile.dart';
 
 class DoctorHomeScreen extends StatelessWidget {
   DoctorHomeScreen({super.key});

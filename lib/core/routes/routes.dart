@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
 import 'package:joy_app/modules/auth/view/signup_screen.dart';
-import 'package:joy_app/view/home/navbar.dart';
+import 'package:joy_app/common/navbar/view/navbar.dart';
 import 'package:joy_app/view/home/notification_screen.dart';
 
 class AppPage {

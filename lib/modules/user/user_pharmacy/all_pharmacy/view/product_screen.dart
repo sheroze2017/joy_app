@@ -5,12 +5,12 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/user_flow/pharmacy_user/mycart_screen.dart';
+import 'package:joy_app/modules/pharmacy/view/checkout/mycart_screen.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../social_media/friend_request/view/new_friend.dart';
-import '../../../../../view/user_flow/hospital_user/hospital_detail_screen.dart';
-import '../../../../../view/user_flow/pharmacy_user/medicine_detail_screen.dart';
+import '../../../user_hospital/view/hospital_detail_screen.dart';
+import '../../../../pharmacy/view/medicine_detail_screen.dart';
 import 'add_medicine.dart';
 
 class ProductScreen extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
+import 'package:joy_app/modules/blood_bank/view/donor_detail_screen.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
@@ -92,16 +93,21 @@ class _VerticalDonorsList extends StatelessWidget {
       ),
       itemCount: donors.length,
       itemBuilder: (context, index) {
-        return DonorsCardWidget(
-          color: donors[index].type == 'Plasma' ? bgColors[1] : bgColors[0],
-          imgUrl: donors[index].image.toString(),
-          docName: donors[index].name.toString(),
-          Category: 'Blood ' + donors[index].bloodGroup.toString(),
-          loction: donors[index].location.toString() +
-              ' ' +
-              donors[index].city.toString(),
-          phoneNo: donors[index].phone.toString(),
-          donId: donors[index].userId ?? 0,
+        return InkWell(
+          onTap: () {
+            Get.to(DonorDetailScreen(donor: donors[index]));
+          },
+          child: DonorsCardWidget(
+            color: donors[index].type == 'Plasma' ? bgColors[1] : bgColors[0],
+            imgUrl: donors[index].image.toString(),
+            docName: donors[index].name.toString(),
+            Category: 'Blood ' + donors[index].bloodGroup.toString(),
+            loction: donors[index].location.toString() +
+                ' ' +
+                donors[index].city.toString(),
+            phoneNo: donors[index].phone.toString(),
+            donId: donors[index].userId ?? 0,
+          ),
         );
       },
     );

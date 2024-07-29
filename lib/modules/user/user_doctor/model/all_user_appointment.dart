@@ -122,6 +122,7 @@ class UserAppointment {
 class DoctorDetails {
   int? doctorId;
   String? doctorName;
+  String? doctorImage;
   String? doctorEmail;
   String? doctorPhone;
   DoctorDetails2? doctorDetails;
@@ -129,6 +130,7 @@ class DoctorDetails {
   DoctorDetails(
       {this.doctorId,
       this.doctorName,
+      this.doctorImage,
       this.doctorEmail,
       this.doctorPhone,
       this.doctorDetails});
@@ -136,6 +138,7 @@ class DoctorDetails {
   DoctorDetails.fromJson(Map<String, dynamic> json) {
     doctorId = json['doctor_id'] ?? 0;
     doctorName = json['doctor_name'];
+    doctorImage = json['doctor_image'] ?? '';
     doctorEmail = json['doctor_email'];
     doctorPhone = json['doctor_phone'];
     doctorDetails = json['doctor_details'] != null

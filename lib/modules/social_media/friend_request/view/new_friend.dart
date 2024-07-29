@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/home/my_profile.dart';
+import 'package:joy_app/common/profile/view/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../Widgets/custom_appbar.dart';

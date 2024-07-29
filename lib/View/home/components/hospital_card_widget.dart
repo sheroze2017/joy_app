@@ -11,7 +11,7 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharm
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 
-import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
+import 'package:joy_app/modules/user/user_hospital/view/all_hospital_screen.dart';
 import 'package:joy_app/widgets/loader.dart';
 import 'package:sizer/sizer.dart';
 

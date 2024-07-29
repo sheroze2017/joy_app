@@ -14,13 +14,12 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/home/components/blog_card.dart';
-import 'package:joy_app/view/user_flow/hospital_user/all_hospital_screen.dart';
-import 'package:joy_app/view/user_flow/pharmacy_user/pharmacy_product_screen.dart';
+import 'package:joy_app/modules/user/user_hospital/view/all_hospital_screen.dart';
+import 'package:joy_app/modules/pharmacy/view/pharmacy_product_screen.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../../view/home/my_profile.dart';
-import '../../../view/user_flow/hospital_user/hospital_detail_screen.dart';
+import '../../../common/profile/view/my_profile.dart';
+import '../../user/user_hospital/view/hospital_detail_screen.dart';
 import '../../social_media/chat/view/chats.dart';
 import 'doctor_all_post.dart';
 

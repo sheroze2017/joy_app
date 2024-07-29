@@ -8,8 +8,8 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../view/user_flow/hospital_user/all_hospital_screen.dart';
-import '../../../view/user_flow/pharmacy_user/pharmacy_product_screen.dart';
+import '../../user/user_hospital/view/all_hospital_screen.dart';
+import '../../pharmacy/view/pharmacy_product_screen.dart';
 
 class AllDocPharmacy extends StatelessWidget {
   String appBarText;

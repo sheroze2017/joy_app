@@ -11,7 +11,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
-import 'package:joy_app/view/doctor_booking/book_appointment_screen.dart';
+import 'package:joy_app/modules/user/user_doctor/view/book_appointment_screen.dart';
 import 'package:joy_app/widgets/flutter_toast_message.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';

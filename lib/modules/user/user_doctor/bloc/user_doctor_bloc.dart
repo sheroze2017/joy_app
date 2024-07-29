@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/common/navbar/view/navbar.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_api.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_model.dart';
 import '../../../../Widgets/success_dailog.dart';
-import '../../../../view/home/navbar.dart';
 import '../model/all_doctor_model.dart';
 import '../model/all_user_appointment.dart';
 import 'user_doctor_api.dart';

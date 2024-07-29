@@ -19,6 +19,7 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/view/common/utils/file_selector.dart';
+import 'package:joy_app/widgets/doctor_availability_dailog.dart';
 import 'package:joy_app/widgets/single_select_dropdown.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
@@ -414,25 +415,19 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return MultiTimeSelector(
-                            times: [
-                              '09:00 AM',
-                              '10:00 AM',
-                              '11:00 AM',
-                              '12:00 PM',
-                              '01:00 PM',
-                              '02:00 PM',
-                              '03:00 PM',
-                              '04:00 PM',
-                              '05:00 PM',
-                              '06:00 PM',
-                              '07:00 PM',
-                              '08:00 PM',
-                            ],
-                            onConfirm: (List<String> selectedTimes) {
-                              _availabilityController
-                                  .setText(selectedTimes.join(' '));
-                              print("Selected times: $selectedTimes");
+                          return DoctorAvailDailog(
+                            onConfirm: (List<Set<String>> selectedTimes) async {
+                              String result = await generateFormattedString(
+                                  selectedTimes, [
+                                'Monday',
+                                'Tuesday',
+                                'Wednesday',
+                                'Thursday',
+                                'Friday',
+                                'Saturday',
+                                'Sunday'
+                              ]);
+                              _availabilityController.setText(result);
                             },
                           );
                         },
@@ -552,4 +547,18 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
       ),
     );
   }
+}
+
+String generateFormattedString(
+    List<Set<String>> selectedTimesPerDay, List<String> daysOfWeek) {
+  String formattedString = '';
+  for (int i = 0; i < daysOfWeek.length; i++) {
+    formattedString += daysOfWeek[i] + '\n';
+    if (selectedTimesPerDay[i].isNotEmpty) {
+      formattedString += selectedTimesPerDay[i].join(' ') + '\n\n';
+    } else {
+      formattedString += '\n';
+    }
+  }
+  return formattedString;
 }

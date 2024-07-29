@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
+import 'package:joy_app/common/navbar/view/navbar.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_api.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
-import 'package:joy_app/view/home/navbar.dart';
 import 'package:joy_app/widgets/flutter_toast_message.dart';
 
 import '../models/product_purchase_model.dart';

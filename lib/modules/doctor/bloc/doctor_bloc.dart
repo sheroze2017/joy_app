@@ -8,7 +8,7 @@ import 'package:joy_app/modules/doctor/bloc/doctor_api.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_model.dart';
 import 'package:joy_app/modules/doctor/view/all_appointment.dart';
 import 'package:joy_app/modules/doctor/view/home_screen.dart';
-import 'package:joy_app/view/home/navbar.dart';
+import 'package:joy_app/common/navbar/view/navbar.dart';
 
 import '../../auth/models/user.dart';
 import '../models/doctor_appointment_model.dart';

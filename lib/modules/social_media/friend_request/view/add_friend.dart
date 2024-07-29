@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/view/my_profile.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -9,7 +10,6 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../Widgets/custom_appbar.dart';
-import '../../../../view/home/my_profile.dart';
 
 class AddFriend extends StatelessWidget {
   AddFriend({super.key});

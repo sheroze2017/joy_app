@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/modules/auth/view/passwordReset/forgot_pass_screen.dart';
+import 'package:joy_app/modules/auth/view/password_reset/forgot_pass_screen.dart';
 import 'package:joy_app/modules/auth/view/signup_screen.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _emailController.text,
                                     _passwordController.text,
                                     context,
-                                    "EMAIL");
+                                    "SOCIAL");
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)

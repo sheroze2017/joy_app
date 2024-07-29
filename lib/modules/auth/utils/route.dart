@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:joy_app/view/home/navbar.dart';
+import 'package:joy_app/common/navbar/view/navbar.dart';
 
 void handleUserRoleNavigation(String userRole) {
   switch (userRole) {

@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/common/navbar/view/navbar.dart';
+import 'package:joy_app/modules/pharmacy/view/review_screen.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/home/navbar.dart';
-import 'package:joy_app/view/user_flow/pharmacy_user/review_screen.dart';
-import 'package:joy_app/widgets/rounded_button.dart';
 
 import 'package:sizer/sizer.dart';
 

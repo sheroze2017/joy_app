@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/view/my_profile.dart';
 import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/home/my_profile.dart';
 import 'package:sizer/sizer.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {

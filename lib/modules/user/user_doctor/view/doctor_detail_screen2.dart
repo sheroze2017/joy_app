@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/view/my_profile.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/view/doctor_booking/your_profileform_screen.dart';
 import 'package:joy_app/modules/doctor/view/profile_form.dart';
-import 'package:joy_app/view/user_flow/hospital_user/hospital_detail_screen.dart';
-import 'package:joy_app/view/home/my_profile.dart';
+import 'package:joy_app/modules/user/user_hospital/view/hospital_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -118,7 +118,7 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                               imageUrl: _doctorController
                                                   .doctorDetail!.data!.image
                                                   .toString(),
-                                              width: 27.9.w, 
+                                              width: 27.9.w,
                                               height: 27.9.w,
                                               fit: BoxFit.cover,
                                               placeholder: (context, url) =>

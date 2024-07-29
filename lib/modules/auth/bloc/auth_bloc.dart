@@ -20,7 +20,7 @@ import 'package:joy_app/modules/auth/models/hospital_resgister_model.dart';
 import 'package:joy_app/modules/auth/models/user_register_model.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
-import 'package:joy_app/view/home/navbar.dart';
+import 'package:joy_app/common/navbar/view/navbar.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../core/network/request.dart';

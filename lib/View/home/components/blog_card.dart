@@ -13,7 +13,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/widgets/loader.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/home/my_profile.dart';
+import 'package:joy_app/common/profile/view/my_profile.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:sizer/sizer.dart';
 
