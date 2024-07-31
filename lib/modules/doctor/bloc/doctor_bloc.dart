@@ -106,6 +106,23 @@ class DoctorController extends GetxController {
     }).join('\n\n');
   }
 
+  List<List<String>> storeAvailabilityTimes() {
+    List<List<String>> availabilityTimes = [];
+
+    _doctorDetail.value!.data!.availability!.forEach((availability) {
+      if (availability.times!.isNotEmpty) {
+        List<String> timesList =
+            availability.times!.split(',').map((time) => time.trim()).toList();
+        availabilityTimes.add(timesList);
+      } else {
+        availabilityTimes
+            .add([]); // add an empty list for days with no available times
+      }
+    });
+    return availabilityTimes;
+  }
+
+
 
   updateDoctor(
       String userId,

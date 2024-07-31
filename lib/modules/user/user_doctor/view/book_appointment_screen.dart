@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 
 import 'package:joy_app/Widgets/custom_appbar.dart';
@@ -40,24 +41,31 @@ class BookAppointmentScreen extends StatefulWidget {
 
 class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   String _date = '';
+  DateTime? selectedDate;
   String? timeSelection;
+
   List<DateTime> _availableDates = [];
   List<DateTime> _blackoutDates = [];
-
+  List<List<String>> availabilityTimes = [];
   void selectionChanged(DateRangePickerSelectionChangedArgs args) {
     SchedulerBinding.instance!.addPostFrameCallback((duration) {
       setState(() {
         _date = DateFormat('MMMM dd, yyyy').format(args.value).toString();
+        selectedDate = args.value;
       });
     });
   }
 
   UserDoctorController _doctorController = Get.find<UserDoctorController>();
-
   @override
   void initState() {
     super.initState();
     _initializeDates();
+    setTime();
+  }
+
+  void setTime() async {
+    availabilityTimes = await _doctorController.storeAvailabilityTimes();
   }
 
   void _initializeDates() async {
@@ -256,21 +264,26 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                             showErrorMessage(
                                 context, 'Please select date and time');
                           } else {
-                            _doctorController.createAppoinemntWithDoctor(
-                                '',
-                                widget.doctorDetail.data!.userId.toString(),
-                                _date,
-                                timeSelection,
-                                widget.complain,
-                                widget.symptoms,
-                                widget.location,
-                                'Pending',
-                                widget.age,
-                                widget.gender,
-                                widget.patientName,
-                                widget.certificateUrl,
-                                widget.doctorDetail.data!.name.toString(),
-                                context);
+                            if (availabilityTimes[selectedDate!.weekday - 1]
+                                .contains(timeSelection)) {
+                              _doctorController.createAppoinemntWithDoctor(
+                                  '',
+                                  widget.doctorDetail.data!.userId.toString(),
+                                  _date,
+                                  timeSelection,
+                                  widget.complain,
+                                  widget.symptoms,
+                                  widget.location,
+                                  'Pending',
+                                  widget.age,
+                                  widget.gender,
+                                  widget.patientName,
+                                  widget.certificateUrl,
+                                  widget.doctorDetail.data!.name.toString(),
+                                  context);
+                            } else {
+                              showErrorMessage(context, 'Doctor not available');
+                            }
                           }
 
                           // // showPaymentBottomSheet(context, true, false);
