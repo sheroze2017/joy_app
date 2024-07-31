@@ -41,6 +41,8 @@ class BookAppointmentScreen extends StatefulWidget {
 class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   String _date = '';
   String? timeSelection;
+  List<DateTime> _availableDates = [];
+  List<DateTime> _blackoutDates = [];
 
   void selectionChanged(DateRangePickerSelectionChangedArgs args) {
     SchedulerBinding.instance!.addPostFrameCallback((duration) {
@@ -51,6 +53,86 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   }
 
   UserDoctorController _doctorController = Get.find<UserDoctorController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeDates();
+  }
+
+  void _initializeDates() async {
+    List<DateTime> allDates = await _getAllDates();
+    _availableDates = await _getAvailableDates();
+    setState(() {
+      _blackoutDates = allDates
+          .where((date) => !_availableDates
+              .any((availableDate) => date.day == availableDate.day))
+          .toList();
+    });
+  }
+
+  List<DateTime> _getAllDates() {
+    DateTime now = DateTime.now();
+    DateTime endDate = DateTime(
+        now.year, now.month + 12, now.day); // Example range: current month
+    List<DateTime> dates = [];
+    for (DateTime date = now;
+        date.isBefore(endDate);
+        date = date.add(Duration(days: 1))) {
+      dates.add(date);
+    }
+    return dates;
+  }
+
+  List<DateTime> _getAvailableDates() {
+    List<DateTime> availableDates = [];
+    for (var availability in widget.doctorDetail.data!.availability!.toList()) {
+      if (availability.times.toString().contains('AM') ||
+          availability.times.toString().contains('PM')) {
+        print('dd');
+        availableDates.addAll(_parseDates(availability.day.toString()));
+      } else {}
+    }
+    return availableDates;
+  }
+
+  List<DateTime> _parseDates(String day) {
+    List<DateTime> dates = [];
+    DateTime now = DateTime.now();
+    DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    int dayOffset = _getDayOffset(day);
+
+    for (int i = 0; i < 4; i++) {
+      // Example range: 4 weeks
+      dates.add(startOfWeek.add(Duration(days: dayOffset + (i * 7))));
+    }
+    return dates;
+  }
+
+  int _getDayOffset(String day) {
+    switch (day) {
+      case 'Monday':
+        return 0;
+      case 'Tuesday':
+        return 1;
+      case 'Wednesday':
+        return 2;
+      case 'Thursday':
+        return 3;
+      case 'Friday':
+        return 4;
+      case 'Saturday':
+        return 5;
+      case 'Sunday':
+        return 6;
+      default:
+        return 0;
+    }
+  }
+
+  // void selectionChanged(DateRangePickerSelectionChangedArgs args) {
+  //   // Handle selection change
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +156,11 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                 height: 2.h,
               ),
               SfDateRangePicker(
+                minDate: DateTime(DateTime.now().year, DateTime.now().month,
+                    DateTime.now().day),
+                maxDate: DateTime(DateTime.now().year, DateTime.now().month + 1,
+                    DateTime.now().day),
+                enablePastDates: false,
                 onSelectionChanged: selectionChanged,
                 showNavigationArrow: true,
                 backgroundColor: AppColors.lightishBlueColorebf,
@@ -84,6 +171,9 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                       letterSpacing: 0,
                       fontWeight: FontWeight.w600,
                       color: Color(0xff4B5563)),
+                  blackoutDateTextStyle: TextStyle(
+                      color: AppColors.redLightColor,
+                      decoration: TextDecoration.lineThrough),
 
                   textStyle: TextStyle(
                       fontSize: 12,
@@ -92,6 +182,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                       color: Color(0xff4B5563)), // Style for the day numbers
                 ),
                 monthViewSettings: DateRangePickerMonthViewSettings(
+                  blackoutDates: _blackoutDates,
                   dayFormat: 'EEE',
                   viewHeaderStyle: DateRangePickerViewHeaderStyle(
                       textStyle: TextStyle(

@@ -79,7 +79,6 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
 
   TextEditingController controller = TextEditingController();
   final authController = Get.find<AuthController>();
-
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
@@ -128,6 +127,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
 
   updateDotorController _doctorUpdateController =
       Get.put(updateDotorController());
+  List<Set<String>> dateAvailability = [];
 
   @override
   Widget build(BuildContext context) {
@@ -417,6 +417,8 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                         builder: (BuildContext context) {
                           return DoctorAvailDailog(
                             onConfirm: (List<Set<String>> selectedTimes) async {
+                              dateAvailability = selectedTimes;
+                              setState(() {});
                               String result = await generateFormattedString(
                                   selectedTimes, [
                                 'Monday',
@@ -469,6 +471,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                   if (widget.details == null) {
                                     bool result =
                                         await authController.doctorRegister(
+                                          dateAvailability,
                                             widget.name,
                                             _locationController.text,
                                             _phoneController.text,

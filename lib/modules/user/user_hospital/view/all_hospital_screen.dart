@@ -7,6 +7,7 @@ import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
+import 'package:joy_app/modules/user/user_blood_bank/view/my_appeals.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -119,11 +120,16 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                     SizedBox(
                       height: 5.h,
                     ),
-                    DrawerItem(
-                      isBloodBank: true,
-                      isBooking: true,
-                      bookingText: 'My Appeals',
-                      bookingAsset: 'Assets/icons/blood.svg',
+                    InkWell(
+                      onTap: () {
+                        Get.to(MyBloodAppeals());
+                      },
+                      child: DrawerItem(
+                        isBloodBank: true,
+                        isBooking: true,
+                        bookingText: 'My Appeals',
+                        bookingAsset: 'Assets/icons/blood.svg',
+                      ),
                     ),
                     SizedBox(
                       height: 3.h,

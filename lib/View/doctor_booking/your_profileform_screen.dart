@@ -58,6 +58,14 @@ class _FormScreenState extends State<ProfileFormScreen> {
   UserDoctorController _doctorController = Get.find<UserDoctorController>();
 
   @override
+  void initState() {
+    super.initState();
+    _nameController.setText(_pfc.firstName.value);
+    _locationController.setText(_pfc.location.toString());
+    
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(

@@ -17,6 +17,7 @@ class UserBloodBankController extends GetxController {
   late BloodBankApi bloodBankApi;
   RxList<BloodRequest> allBloodRequest = <BloodRequest>[].obs;
   RxList<BloodRequest> allPlasmaRequest = <BloodRequest>[].obs;
+  RxList<BloodRequest> allMyRequest = <BloodRequest>[].obs;
 
   var showLoader = false.obs;
   RxList<BloodBank> bloodbank = <BloodBank>[].obs;
@@ -137,12 +138,18 @@ class UserBloodBankController extends GetxController {
   }
 
   Future<AllBloodRequest> getAllBloodRequest() async {
+    UserHive? currentUser = await getCurrentUser();
+
     allBloodRequest.clear();
     allPlasmaRequest.clear();
+    allMyRequest.clear();
     try {
       AllBloodRequest response = await bloodBankApi.getAllBloodRequest();
       if (response.data != null) {
         response.data!.forEach((element) {
+          if (currentUser!.userId.toString() == element.userId.toString()) {
+            allMyRequest.add(element);
+          }
           if (element.type == 'Plasma') {
             allPlasmaRequest.add(element);
           } else {

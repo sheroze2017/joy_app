@@ -314,10 +314,12 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                         title: 'Working Time',
                                       ),
                                       SizedBox(height: 1.h),
-                                      Text('Monday-Friday, 08:00 AM - 10:00 PM',
+                                      Obx(() => Text(
+                                          _doctorController
+                                              .doctorAvailabilityText.value,
                                           style:
                                               CustomTextStyles.lightTextStyle(
-                                                  size: 14)),
+                                                  size: 14))),
                                       SizedBox(height: 1.5.h),
                                       Heading(
                                         title: 'Appointment Cost',

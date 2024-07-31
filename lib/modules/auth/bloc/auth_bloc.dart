@@ -430,6 +430,7 @@ class AuthController extends GetxController {
   }
 
   Future<bool> doctorRegister(
+      dateAvail,
       firstName,
       location,
       phoneNo,
@@ -463,7 +464,7 @@ class AuthController extends GetxController {
           documentUrl,
           image);
       if (response.data != null) {
-        saveUserDetailInLocal(
+        await saveUserDetailInLocal(
             response.data!.userId!,
             response.data!.name!.toString(),
             email,
@@ -474,14 +475,23 @@ class AuthController extends GetxController {
             response.data!.phone.toString(),
             '',
             response.data!.deviceToken.toString());
+
+        List<String> monday = dateAvail[0].toList();
+        List<String> tuesday = dateAvail[1].toList();
+        List<String> wednesday = dateAvail[2].toList();
+        List<String> thursday = dateAvail[3].toList();
+        List<String> friday = dateAvail[4].toList();
+        List<String> saturday = dateAvail[5].toList();
+        List<String> sunday = dateAvail[6].toList();
+
+        await authApi.AddDoctorAvailability(response.data!.userId.toString(),
+            monday, tuesday, wednesday, thursday, friday, saturday, sunday);
         showSuccessMessage(context, 'Register Successfully');
         return true;
       } else {
         showErrorMessage(context, response.message.toString());
         return false;
       }
-
-      // return response;
     } catch (error) {
       registerLoader.value = false;
 

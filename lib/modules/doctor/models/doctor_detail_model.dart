@@ -44,6 +44,7 @@ class DoctorDetailsMap {
   String? consultationFee;
   String? qualifications;
   List<Reviews>? reviews;
+  List<Availability>? availability;
 
   DoctorDetailsMap(
       {this.userId,
@@ -61,7 +62,8 @@ class DoctorDetailsMap {
       this.location,
       this.consultationFee,
       this.qualifications,
-      this.reviews});
+      this.reviews,
+      this.availability});
 
   DoctorDetailsMap.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -87,6 +89,14 @@ class DoctorDetailsMap {
     } else {
       reviews = [];
     }
+    if (json['availability'] != null) {
+      availability = <Availability>[];
+      json['availability'].forEach((v) {
+        availability!.add(new Availability.fromJson(v));
+      });
+    } else {
+      availability = [];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +118,9 @@ class DoctorDetailsMap {
     data['qualifications'] = this.qualifications;
     if (this.reviews != null) {
       data['reviews'] = this.reviews!.map((v) => v.toJson()).toList();
+    }
+    if (this.availability != null) {
+      data['availability'] = this.availability!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -168,6 +181,25 @@ class GiveBy {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['image'] = this.image;
+    return data;
+  }
+}
+
+class Availability {
+  String? day;
+  String? times;
+
+  Availability({this.day, this.times});
+
+  Availability.fromJson(Map<String, dynamic> json) {
+    day = json['day'];
+    times = json['times'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['day'] = this.day;
+    data['times'] = this.times;
     return data;
   }
 }

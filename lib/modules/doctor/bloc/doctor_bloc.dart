@@ -23,7 +23,7 @@ class DoctorController extends GetxController {
   var editLoader = false.obs;
   var fetchAppointmentLoader = false.obs;
   var val = 0.0.obs;
-
+  var doctorAvailabilityText = ''.obs;
   DoctorDetail? get doctorDetail => _doctorDetail.value;
 
   @override
@@ -82,6 +82,7 @@ class DoctorController extends GetxController {
         // await box.clear();
         // box.add(response);
         _doctorDetail.value = response;
+        _setAvailabilityText();
       } else {
         //   Box<DoctorDetail> box = Hive.box<DoctorDetail>('doctor_details');
         // _doctorDetail.value = box.get(0);
@@ -93,6 +94,18 @@ class DoctorController extends GetxController {
       avgrating();
     }
   }
+
+  void _setAvailabilityText() {
+    doctorAvailabilityText.value =
+        _doctorDetail.value!.data!.availability!.map((availability) {
+      if (availability.times!.isEmpty) {
+        return '${availability.day}:\nNo available times';
+      } else {
+        return '${availability.day}:\n${availability.times!.replaceAll(',', ', ')}';
+      }
+    }).join('\n\n');
+  }
+
 
   updateDoctor(
       String userId,

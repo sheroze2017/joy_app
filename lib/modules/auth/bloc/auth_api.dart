@@ -250,6 +250,36 @@ class AuthApi {
     }
   }
 
+  Future AddDoctorAvailability(
+    String userId,
+    List<String> monday,
+    List<String> tuesday,
+    List<String> wednesday,
+    List<String> thursday,
+    List<String> friday,
+    List<String> saturday,
+    List<String> sunday,
+  ) async {
+    try {
+      final result =
+          await _dioClient.post(Endpoints.addDoctorAvailability, data: {
+        "availability": [
+          {"day": "Monday", "times": monday},
+          {"day": "Tuesday", "times": tuesday},
+          {"day": "Wednesday", "times": wednesday},
+          {"day": "Thursday", "times": thursday},
+          {"day": "Friday", "times": friday},
+          {"day": "Saturday", "times": saturday},
+          {"day": "Sunday", "times": sunday}
+        ],
+        "user_id": userId
+      });
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    } finally {}
+  }
+
   Future<BloodBankRegisterModel> bloodBankRegister(
       String name,
       String email,

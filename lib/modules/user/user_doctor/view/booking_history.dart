@@ -97,7 +97,7 @@ class _ManageAllAppointmentUserState extends State<UserBookingHistory>
                                 docName: doctorData.doctorDetails!.doctorName
                                     .toString(),
                                 Category: '',
-                                loction: 'Location',
+                                loction: doctorData.doctorDetails!.doctorLocation.toString(),
                                 rating: '5',
                               ),
                             );

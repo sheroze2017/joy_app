@@ -26,10 +26,9 @@ class UserDoctorController extends GetxController {
   var val = 0.0.obs;
 
   DoctorDetail? get doctorDetail => _doctorDetail.value;
-
   RxList<Doctor> doctorsList = <Doctor>[].obs;
   RxList<Doctor> searchDoctorsList = <Doctor>[].obs;
-
+  var doctorAvailabilityText = 'No dates available'.obs;
   RxList<UserAppointment> userAppointment = <UserAppointment>[].obs;
 
   @override
@@ -38,6 +37,17 @@ class UserDoctorController extends GetxController {
     dioClient = DioClient.getInstance();
     userDoctorApi = UserDoctorApi(dioClient);
     doctorApi = DoctorApi(dioClient);
+  }
+
+  void _setAvailabilityText() {
+    doctorAvailabilityText.value =
+        _doctorDetail.value!.data!.availability!.map((availability) {
+      if (availability.times!.isEmpty) {
+        return '${availability.day}:\nNo available times';
+      } else {
+        return '${availability.day}:\n${availability.times!.replaceAll(',', ', ')}';
+      }
+    }).join('\n\n');
   }
 
   Future<AllDoctor> getAllDoctors() async {
@@ -129,6 +139,7 @@ class UserDoctorController extends GetxController {
 
       if (response.data != null) {
         _doctorDetail.value = response;
+        _setAvailabilityText();
         detailLoader.value = false;
       } else {
         //   Box<DoctorDetail> box = Hive.box<DoctorDetail>('doctor_details');

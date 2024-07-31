@@ -125,6 +125,7 @@ class DoctorDetails {
   String? doctorImage;
   String? doctorEmail;
   String? doctorPhone;
+  String? doctorLocation;
   DoctorDetails2? doctorDetails;
 
   DoctorDetails(
@@ -133,14 +134,16 @@ class DoctorDetails {
       this.doctorImage,
       this.doctorEmail,
       this.doctorPhone,
+      this.doctorLocation,
       this.doctorDetails});
 
   DoctorDetails.fromJson(Map<String, dynamic> json) {
     doctorId = json['doctor_id'] ?? 0;
-    doctorName = json['doctor_name'];
+    doctorName = json['doctor_name'] ?? '';
     doctorImage = json['doctor_image'] ?? '';
-    doctorEmail = json['doctor_email'];
-    doctorPhone = json['doctor_phone'];
+    doctorLocation = json['doctor_location'] ?? '';
+    doctorEmail = json['doctor_email'] ?? '';
+    doctorPhone = json['doctor_phone'] ?? '';
     doctorDetails = json['doctor_details'] != null
         ? new DoctorDetails2.fromJson(json['doctor_details'])
         : null;

@@ -154,7 +154,7 @@ class DonationApproval extends StatelessWidget {
                       text: isUser
                           ? 'Share'
                           : isOld
-                              ? 'Repost'
+                              ? 'Re-post'
                               : 'Contact',
                       onPressed: () {
                         isOld
