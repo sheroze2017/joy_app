@@ -66,116 +66,130 @@ class _ManageAllAppointmentUserState extends State<ManageAllAppointmentUser>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                Obx(() => _userdoctorController.userAppointment.isEmpty ||
-                        _userdoctorController.userAppointment
-                            .where((element) => element.status == 'Pending')
-                            .isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 40.0),
-                        child: Center(
-                          child: SubHeading(
-                            title: 'No upcoming appointments',
-                          ),
-                        ),
-                      )
-                    : Expanded(
-                        child: ListView.builder(
-                            itemCount:
-                                _userdoctorController.userAppointment.length,
-                            itemBuilder: (context, index) {
-                              if (_userdoctorController
-                                      .userAppointment[index].status ==
-                                  'Pending') {
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 1.h,
-                                    ),
-                                    AppointmentCardUser(
-                                      bookingDetail: _userdoctorController
-                                          .userAppointment[index],
-                                    ),
-                                  ],
-                                );
-                              } else
-                                return Container();
-                            }),
-                      )),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                Obx(() => _userdoctorController.userAppointment.isEmpty ||
-                        _userdoctorController.userAppointment
-                            .where((element) =>
-                                element.status!.toLowerCase() == 'completed')
-                            .isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 40.0),
-                        child: Center(
-                          child: SubHeading(
-                            title: 'No appointments yet completed',
-                          ),
-                        ),
-                      )
-                    : Expanded(
-                        child: ListView.builder(
-                            itemCount:
-                                _userdoctorController.userAppointment.length,
-                            itemBuilder: (context, index) {
-                              if (_userdoctorController
-                                      .userAppointment[index].status!
-                                      .toLowerCase() ==
-                                  'completed') {
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 1.h,
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Get.to(
-                                            DoctorDaginosis(
-                                              details: _userdoctorController
-                                                  .userAppointment[index],
-                                              prescription:
-                                                  _userdoctorController
+          TabBarView(
+            controller: _tabController,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Obx(() => _userdoctorController.userAppointment.isEmpty ||
+                            _userdoctorController.userAppointment
+                                .where((element) => element.status == 'Pending')
+                                .isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 40.0),
+                            child: Center(
+                              child: SubHeading(
+                                title: 'No upcoming appointments',
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                                itemCount: _userdoctorController
+                                    .userAppointment.length,
+                                itemBuilder: (context, index) {
+                                  if (_userdoctorController
+                                          .userAppointment[index].status ==
+                                      'Pending') {
+                                    return Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 1.h,
+                                        ),
+                                        AppointmentCardUser(
+                                          bookingDetail: _userdoctorController
+                                              .userAppointment[index],
+                                        ),
+                                      ],
+                                    );
+                                  } else
+                                    return Container();
+                                }),
+                          )),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Obx(() => _userdoctorController.userAppointment.isEmpty ||
+                            _userdoctorController.userAppointment
+                                .where((element) =>
+                                    element.status!.toLowerCase() ==
+                                    'completed')
+                                .isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 40.0),
+                            child: Center(
+                              child: SubHeading(
+                                title: 'No appointments yet completed',
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                                itemCount: _userdoctorController
+                                    .userAppointment.length,
+                                itemBuilder: (context, index) {
+                                  if (_userdoctorController
+                                          .userAppointment[index].status!
+                                          .toLowerCase() ==
+                                      'completed') {
+                                    return Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 1.h,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            Get.to(
+                                                DoctorDaginosis(
+                                                  details: _userdoctorController
+                                                      .userAppointment[index],
+                                                  prescription:
+                                                      _userdoctorController
+                                                          .userAppointment[
+                                                              index]
+                                                          .medications,
+                                                  patName: _userdoctorController
                                                       .userAppointment[index]
-                                                      .medications,
-                                              patName: _userdoctorController
-                                                  .userAppointment[index]
-                                                  .patientName,
-                                              daignosis: _userdoctorController
-                                                  .userAppointment[index]
-                                                  .diagnosis,
-                                            ),
-                                            transition: Transition.native);
-                                      },
-                                      child: AppointmentCardUser(
-                                        bookingDetail: _userdoctorController
-                                            .userAppointment[index],
-                                        isCompleted: true,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              } else
-                                return Container();
-                            }),
-                      )),
-              ],
-            ),
+                                                      .patientName,
+                                                  daignosis:
+                                                      _userdoctorController
+                                                          .userAppointment[
+                                                              index]
+                                                          .diagnosis,
+                                                ),
+                                                transition: Transition.native);
+                                          },
+                                          child: AppointmentCardUser(
+                                            bookingDetail: _userdoctorController
+                                                .userAppointment[index],
+                                            isCompleted: true,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  } else
+                                    return Container();
+                                }),
+                          )),
+                  ],
+                ),
+              ),
+            ],
           ),
+          Obx(() => _userdoctorController.appointmentLoader.value
+              ? Center(
+                  child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ))
+              : Container())
         ],
       ),
     );
@@ -281,39 +295,35 @@ class AppointmentCardUser extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Obx(
-                    () => RoundedButtonSmall(
-                        showLoader:
-                            _userdoctorController.appointmentLoader.value,
-                        isSmall: true,
-                        isBold: true,
-                        text: isCompleted ? 'Re-Book' : 'Cancel',
-                        onPressed: () {
-                          isCompleted
-                              ? Get.to(
-                                  DoctorDetailScreen2(
-                                    doctorId:
-                                        bookingDetail.doctorUserId.toString(),
-                                    docName: '',
-                                    location: '',
-                                    Category: '',
-                                  ),
-                                  transition: Transition.native)
-                              : _userdoctorController.updateAppointment(
-                                  bookingDetail.appointmentId.toString(),
-                                  'CANCELLED',
-                                  '',
-                                  context,
-                                  bookingDetail.doctorUserId.toString());
-                          //      showPaymentBottomSheet(context, true);
-                        },
-                        backgroundColor: ThemeUtil.isDarkMode(context)
-                            ? Color(0xff00143D)
-                            : AppColors.lightGreyColor,
-                        textColor: ThemeUtil.isDarkMode(context)
-                            ? AppColors.whiteColor
-                            : Color(0xff033890)),
-                  ),
+                  child: RoundedButtonSmall(
+                      isSmall: true,
+                      isBold: true,
+                      text: isCompleted ? 'Re-Book' : 'Cancel',
+                      onPressed: () {
+                        isCompleted
+                            ? Get.to(
+                                DoctorDetailScreen2(
+                                  doctorId:
+                                      bookingDetail.doctorUserId.toString(),
+                                  docName: '',
+                                  location: '',
+                                  Category: '',
+                                ),
+                                transition: Transition.native)
+                            : _userdoctorController.updateAppointment(
+                                bookingDetail.appointmentId.toString(),
+                                'CANCELLED',
+                                '',
+                                context,
+                                bookingDetail.doctorUserId.toString());
+                        //      showPaymentBottomSheet(context, true);
+                      },
+                      backgroundColor: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff00143D)
+                          : AppColors.lightGreyColor,
+                      textColor: ThemeUtil.isDarkMode(context)
+                          ? AppColors.whiteColor
+                          : Color(0xff033890)),
                 ),
                 SizedBox(
                   width: 2.w,

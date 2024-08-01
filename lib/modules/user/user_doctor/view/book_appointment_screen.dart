@@ -44,7 +44,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   DateTime? selectedDate;
   String? timeSelection;
 
-  List<DateTime> _availableDates = [];
+  //List<DateTime> _availableDates = [];
   List<DateTime> _blackoutDates = [];
   List<List<String>> availabilityTimes = [];
   void selectionChanged(DateRangePickerSelectionChangedArgs args) {
@@ -70,19 +70,27 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
 
   void _initializeDates() async {
     List<DateTime> allDates = await _getAllDates();
-    _availableDates = await _getAvailableDates();
-    setState(() {
-      _blackoutDates = allDates
-          .where((date) => !_availableDates
-              .any((availableDate) => date.day == availableDate.day))
-          .toList();
+    List<DateTime> _availableDates = await _getAvailableDates();
+    List<DateTime> allDateOnly =
+        allDates.map((dt) => DateTime(dt.year, dt.month, dt.day)).toList();
+    List<DateTime> allavailableDate = _availableDates
+        .map((dt) => DateTime(dt.year, dt.month, dt.day))
+        .toList();
+    List<DateTime> difference =
+        await allDateOnly.toSet().difference(allavailableDate.toSet()).toList();
+    difference.forEach((element) {
+      print(element);
     });
+    setState(() {
+      _blackoutDates = difference;
+    });
+    setState(() {});
   }
 
   List<DateTime> _getAllDates() {
     DateTime now = DateTime.now();
     DateTime endDate = DateTime(
-        now.year, now.month + 12, now.day); // Example range: current month
+        now.year, now.month + 6, now.day); // Example range: current month
     List<DateTime> dates = [];
     for (DateTime date = now;
         date.isBefore(endDate);
@@ -110,8 +118,13 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
     DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
     int dayOffset = _getDayOffset(day);
 
-    for (int i = 0; i < 4; i++) {
-      // Example range: 4 weeks
+    int weeksInSixMonths = (DateTime.now()
+                .add(Duration(days: 183))
+                .difference(DateTime.now())
+                .inDays /
+            7)
+        .ceil();
+    for (int i = 0; i < weeksInSixMonths; i++) {
       dates.add(startOfWeek.add(Duration(days: dayOffset + (i * 7))));
     }
     return dates;
@@ -166,7 +179,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
               SfDateRangePicker(
                 minDate: DateTime(DateTime.now().year, DateTime.now().month,
                     DateTime.now().day),
-                maxDate: DateTime(DateTime.now().year, DateTime.now().month + 1,
+                maxDate: DateTime(DateTime.now().year, DateTime.now().month + 4,
                     DateTime.now().day),
                 enablePastDates: false,
                 onSelectionChanged: selectionChanged,
