@@ -65,11 +65,21 @@ class HosipitalCardWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 20.0),
                 child: LoadingWidget(),
               )),
-              errorWidget: (context, url, error) => Center(
-                  child: Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: ErorWidget(),
-              )),
+              errorWidget: (context, url, error) => url.contains('http')
+                  ? Center(
+                      child: Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: ErorWidget(),
+                    ))
+                  : Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 15),
+                        child: Image(
+                          image: AssetImage('Assets/images/app-icon.png'),
+                        ),
+                      ),
+                    ),
             ),
           ),
           SizedBox(

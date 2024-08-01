@@ -472,7 +472,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                   .userProfileData.value!.name
                                                   .toString(),
                                               text: data.description.toString(),
-                                              postTime: '',
+                                              postTime: data.title.toString(),
                                               id: data.createdBy.toString(),
                                             ),
                                           );

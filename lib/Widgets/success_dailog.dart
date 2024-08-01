@@ -123,11 +123,12 @@ class CustomDialog extends StatelessWidget {
                                         ),
                                         transition: Transition.native)
                                     : isBloodRequest || isBookAppointment
-                                        ? Get.offAll(
-                                            NavBarScreen(
-                                              isUser: true,
-                                            ),
-                                            transition: Transition.native)
+                                        ? {
+                                            Get.back(),
+                                            Get.back(),
+                                            Get.back(),
+                                            Get.back()
+                                          }
                                         : Get.offAll(
                                             NavBarScreen(
                                                 hospitalDetailId:

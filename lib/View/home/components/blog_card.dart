@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,12 +7,15 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/network/utils/extra.dart';
-import 'package:joy_app/core/utils/constant/constant.dart';
+import 'package:http/http.dart' as http;
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/widgets/loader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/common/profile/view/my_profile.dart';
@@ -194,12 +199,41 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
             // ),
 
             SizedBox(width: 10),
-            CircleButton(
-              isLikeButton: false,
-              img: 'Assets/images/send.png',
-              color: ThemeUtil.isDarkMode(context)
-                  ? Color(0xff121212)
-                  : AppColors.whiteColorf9f,
+            InkWell(
+              onTap: () async {
+                if (widget.showImg == true) {
+                  final url = await Uri.parse(widget.imgPath);
+                  final response = await http.get(url);
+                  final bytes = await response.bodyBytes;
+                  final temp = await getTemporaryDirectory();
+                  final path = '${temp.path}/image.jpg';
+                  File(path).writeAsBytesSync(bytes);
+                  await Share.shareXFiles([XFile('${temp.path}/image.jpg')],
+                      text: widget.text.toString() +
+                          '\n\n posted by ${widget.postName} on Joy App \n\n Download App to see the latest post available on Apple Store and Google Play Store');
+                } else {
+                  final byteData =
+                      await rootBundle.load('Assets/images/app-icon.png');
+                  final bytes = byteData.buffer.asUint8List();
+                  final temp = await getTemporaryDirectory();
+                  final path = '${temp.path}/local_image.jpg';
+                  File(path).writeAsBytesSync(bytes);
+                  await Share.shareXFiles(
+                      [XFile('${temp.path}/local_image.jpg')],
+                      text: widget.text.toString() +
+                          '\n\n posted by ${widget.postName} on Joy App \n\n Download App to see the latest post available on Apple Store and Google Play Store');
+
+                  //await Share.share(widget.text.toString() +
+                  //  '\n\n posted by ${widget.postName} on Joy App \n\n Download App to see the latest post available on Apple Store and Google Play Store');
+                }
+              },
+              child: CircleButton(
+                isLikeButton: false,
+                img: 'Assets/images/send.png',
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff121212)
+                    : AppColors.whiteColorf9f,
+              ),
             ),
             Spacer(),
             // LikeCount(

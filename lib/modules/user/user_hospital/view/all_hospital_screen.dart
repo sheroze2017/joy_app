@@ -380,13 +380,24 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                             const EdgeInsets.only(top: 20.0),
                                         child: LoadingWidget(),
                                       )),
-                                      errorWidget: (context, url, error) =>
-                                          Center(
+                                      errorWidget: (context, url, error) => url
+                                              .contains('http')
+                                          ? Center(
                                               child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 20.0),
-                                        child: ErorWidget(),
-                                      )),
+                                              padding: const EdgeInsets.only(
+                                                  top: 20.0),
+                                              child: ErorWidget(),
+                                            ))
+                                          : Center(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(12.0),
+                                                child: Image(
+                                                  image: AssetImage(
+                                                      'Assets/images/app-icon.png'),
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   ),
                                   SizedBox(

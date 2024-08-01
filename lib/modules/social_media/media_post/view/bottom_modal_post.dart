@@ -36,7 +36,7 @@ class _CreatePostModalState extends State<CreatePostModal> {
           child: Column(
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: TextFormField(
@@ -64,6 +64,18 @@ class _CreatePostModalState extends State<CreatePostModal> {
                         hintStyle: CustomTextStyles.lightTextStyle(
                             color: AppColors.borderColor),
                       ),
+                    ),
+                  ),
+                  SizedBox(width: 2.w),
+                  InkWell(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      _descController.clear();
+                    },
+                    child: Icon(
+                      Icons.clear,
+                      size: 15,
+                      color: Colors.grey,
                     ),
                   ),
                   SizedBox(width: 2.w),
@@ -121,28 +133,29 @@ class _CreatePostModalState extends State<CreatePostModal> {
                         ),
                       ),
                     )),
-              Align(
-                  alignment: Alignment.topRight,
-                  child: Obx(
-                    () => RoundedButton(
-                        showLoader: mediaController.postUpload.value,
-                        text: 'Post',
-                        onPressed: () async {
-                          FocusScope.of(context).unfocus();
-                          if (!_formKey.currentState!.validate()) {
-                          } else {
-                            await mediaController.createPostByUser(
-                                _descController.text,
-                                _profileController.userId.value,
-                                _selectedImage,
-                                context);
-                          }
-                        },
-                        backgroundColor: ThemeUtil.isDarkMode(context)
-                            ? AppColors.lightBlueColor3e3
-                            : Color(0xff1C2A3A),
-                        textColor: AppColors.whiteColor),
-                  ))
+              SizedBox(
+                height: 2.h,
+              ),
+              Obx(
+                () => RoundedButton(
+                    showLoader: mediaController.postUpload.value,
+                    text: 'Post',
+                    onPressed: () async {
+                      FocusScope.of(context).unfocus();
+                      if (!_formKey.currentState!.validate()) {
+                      } else {
+                        await mediaController.createPostByUser(
+                            _descController.text,
+                            _profileController.userId.value,
+                            _selectedImage,
+                            context);
+                      }
+                    },
+                    backgroundColor: ThemeUtil.isDarkMode(context)
+                        ? AppColors.lightBlueColor3e3
+                        : Color(0xff1C2A3A),
+                    textColor: AppColors.whiteColor),
+              )
             ],
           ),
         ),
