@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
       return Obx(
         () => GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Joy App',
+          title: 'Joy',
           theme: MyAppThemes.lightTheme,
           darkTheme: MyAppThemes.darkTheme,
           themeMode:

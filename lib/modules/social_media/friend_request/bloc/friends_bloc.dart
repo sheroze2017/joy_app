@@ -12,11 +12,13 @@ import 'package:joy_app/modules/social_media/friend_request/model/search_user_pr
 
 import '../../../auth/models/user.dart';
 import '../../../auth/utils/auth_hive_utils.dart';
+import '../model/all_post_id.dart';
 
 class FriendsSocialController extends GetxController {
   RxList<FriendRequest> friendRequest = <FriendRequest>[].obs;
   RxList<UserList> userList = <UserList>[].obs;
   RxList<UserList> filteredList = <UserList>[].obs;
+  RxList<Post> userPostById = <Post>[].obs;
 
   final userProfileData = Rxn<UserProfileData>();
 
@@ -96,6 +98,7 @@ class FriendsSocialController extends GetxController {
           await friendApi.getSearchUserProfileData(
               !myProfile ? currentUser!.userId.toString() : friendId.toString(),
               currentUser!.userId.toString());
+      await getAllPostById(myProfile, friendId);
       if (response.data != null) {
         userProfileData.value = response.data!.first;
         profileScreenLoader.value = false;
@@ -107,6 +110,33 @@ class FriendsSocialController extends GetxController {
     } catch (error) {
       profileScreenLoader.value = false;
       userProfileData.value = null;
+
+      throw (error);
+    } finally {
+      profileScreenLoader.value = false;
+    }
+  }
+
+  Future<AllUserPostModel> getAllPostById(bool myProfile, friendId) async {
+    UserHive? currentUser = await getCurrentUser();
+    // userProfileData.value = null;
+    try {
+      profileScreenLoader.value = true;
+      userPostById.value = await [];
+
+      AllUserPostModel response = await friendApi.getAllPostById(
+        !myProfile ? currentUser!.userId.toString() : friendId.toString(),
+      );
+      if (response.data != null) {
+        response.data!.forEach((element) {
+          userPostById.add(element);
+        });
+      } else {
+        profileScreenLoader.value = false;
+      }
+      return response;
+    } catch (error) {
+      profileScreenLoader.value = false;
 
       throw (error);
     } finally {

@@ -6,6 +6,8 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/modules/auth/view/profileform_screen.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
+import 'package:joy_app/modules/social_media/friend_request/model/all_post_id.dart';
+import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -155,9 +157,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                       children: [
                                                         Text(
                                                           _friendsController
-                                                              .userProfileData!
-                                                              .value!
-                                                              .posts!
+                                                              .userPostById
                                                               .length
                                                               .toString(),
                                                           style: CustomTextStyles.darkHeadingTextStyle(
@@ -444,20 +444,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
                                         itemCount: _friendsController
-                                            .userProfileData
-                                            .value!
-                                            .posts!
-                                            .length,
+                                            .userPostById.value.length,
                                         itemBuilder: ((context, index) {
                                           final data = _friendsController
-                                              .userProfileData
-                                              .value!
-                                              .posts![index];
+                                              .userPostById.value[index];
                                           return Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 12.0),
+                                            padding: EdgeInsets.only(top: 12.0),
                                             child: MyCustomWidget(
-                                              userImage: data.image.toString(),
+                                              userImage:
+                                                  data.userImage.toString(),
                                               cm: [],
                                               postIndex: index,
                                               postId: data.postId.toString(),
@@ -472,7 +467,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                   .userProfileData.value!.name
                                                   .toString(),
                                               text: data.description.toString(),
-                                              postTime: data.title.toString(),
+                                              postTime:
+                                                  data.createdAt.toString(),
                                               id: data.createdBy.toString(),
                                             ),
                                           );

@@ -211,7 +211,7 @@ class _ManageAppointmentState extends State<DoctorDaginosis> {
         brush: PdfSolidBrush(PdfColor(91, 126, 215)),
         bounds: Rect.fromLTWH(0, 0, pageSize.width - 115, 90));
     page.graphics.drawString(
-        'JOY APP', PdfStandardFont(PdfFontFamily.helvetica, 30),
+        'JOY', PdfStandardFont(PdfFontFamily.helvetica, 30),
         brush: PdfBrushes.white,
         bounds: Rect.fromLTWH(25, 0, pageSize.width, 90),
         format: PdfStringFormat(lineAlignment: PdfVerticalAlignment.middle));
