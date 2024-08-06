@@ -53,6 +53,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
         _date = DateFormat('MMMM dd, yyyy').format(args.value).toString();
         selectedDate = args.value;
       });
+      setState(() {});
     });
   }
 
@@ -233,21 +234,10 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                 height: 2.h,
               ),
               TimeSelector(
-                times: [
-                  '08:00 AM',
-                  '09:00 AM',
-                  '10:00 AM',
-                  '11:00 AM',
-                  '12:00 PM',
-                  '01:00 PM',
-                  '02:00 PM',
-                  '03:00 PM',
-                  '04:00 PM',
-                  '05:00 PM',
-                  '06:00 PM',
-                  '07:00 PM',
-                  '08:00 PM',
-                ],
+                times: selectedDate == null
+                    ? []
+                    : _doctorController
+                        .daysAvailable.value[selectedDate!.weekday - 1],
                 onTimeSelected: (value) {
                   setState(() {
                     timeSelection = value;
@@ -332,7 +322,7 @@ class _TimeSelectorState extends State<TimeSelector> {
   @override
   void initState() {
     super.initState();
-    _selectedTime = widget.times.first;
+    _selectedTime = '';
   }
 
   @override

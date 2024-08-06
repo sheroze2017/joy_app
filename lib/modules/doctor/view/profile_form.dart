@@ -410,48 +410,52 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return DoctorAvailDailog(
-                            onConfirm: (List<Set<String>> selectedTimes) async {
-                              dateAvailability = selectedTimes;
-                              setState(() {});
-                              String result = await generateFormattedString(
-                                  selectedTimes, [
-                                'Monday',
-                                'Tuesday',
-                                'Wednesday',
-                                'Thursday',
-                                'Friday',
-                                'Saturday',
-                                'Sunday'
-                              ]);
-                              _availabilityController.setText(result);
+                  widget.details == null
+                      ? InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return DoctorAvailDailog(
+                                  onConfirm:
+                                      (List<Set<String>> selectedTimes) async {
+                                    dateAvailability = selectedTimes;
+                                    setState(() {});
+                                    String result =
+                                        await generateFormattedString(
+                                            selectedTimes, [
+                                      'Monday',
+                                      'Tuesday',
+                                      'Wednesday',
+                                      'Thursday',
+                                      'Friday',
+                                      'Saturday',
+                                      'Sunday'
+                                    ]);
+                                    _availabilityController.setText(result);
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: RoundedBorderTextField(
+                            maxlines: true,
+                            focusNode: _focusNode10,
+                            nextFocusNode: _focusNode11,
+                            isenable: false,
+                            controller: _availabilityController,
+                            hintText: 'Availability',
+                            icon: '',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter availability';
+                              } else {
+                                return null;
+                              }
                             },
-                          );
-                        },
-                      );
-                    },
-                    child: RoundedBorderTextField(
-                      maxlines: true,
-                      focusNode: _focusNode10,
-                      nextFocusNode: _focusNode11,
-                      isenable: false,
-                      controller: _availabilityController,
-                      hintText: 'Availability',
-                      icon: '',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter availability';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                  ),
+                          ),
+                        )
+                      : Container(),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -471,7 +475,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                   if (widget.details == null) {
                                     bool result =
                                         await authController.doctorRegister(
-                                          dateAvailability,
+                                            dateAvailability,
                                             widget.name,
                                             _locationController.text,
                                             _phoneController.text,

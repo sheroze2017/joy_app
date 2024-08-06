@@ -9,6 +9,8 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/blood_bank/view/component/donors_card.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../../core/utils/fucntions/utils.dart';
+
 class DonationApproval extends StatelessWidget {
   bool isBloodDonate;
   bool isPlasmaDonate;
@@ -56,7 +58,7 @@ class DonationApproval extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              date + ' ' + time,
+              date + ' ' + convertTimeFormat(time),
               style: CustomTextStyles.darkHeadingTextStyle(size: 14),
             ),
             Divider(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/flutter_toast_message.dart';
@@ -28,6 +30,8 @@ class UserDoctorController extends GetxController {
   DoctorDetail? get doctorDetail => _doctorDetail.value;
   RxList<Doctor> doctorsList = <Doctor>[].obs;
   RxList<Doctor> searchDoctorsList = <Doctor>[].obs;
+  final Rx<List<List<String>>> daysAvailable = Rx<List<List<String>>>([]);
+
   var doctorAvailabilityText = 'No dates available'.obs;
   RxList<UserAppointment> userAppointment = <UserAppointment>[].obs;
 
@@ -51,19 +55,20 @@ class UserDoctorController extends GetxController {
   }
 
   List<List<String>> storeAvailabilityTimes() {
+    daysAvailable.value = [];
     List<List<String>> availabilityTimes = [];
 
     _doctorDetail.value!.data!.availability!.forEach((availability) {
       if (availability.times!.isNotEmpty) {
         List<String> timesList =
             availability.times!.split(',').map((time) => time.trim()).toList();
-        availabilityTimes.add(timesList);
+        daysAvailable.value.add(timesList);
       } else {
-        availabilityTimes
+        daysAvailable.value
             .add([]); // add an empty list for days with no available times
       }
     });
-    return availabilityTimes;
+    return daysAvailable.value;
   }
 
   Future<AllDoctor> getAllDoctors() async {
