@@ -10,9 +10,9 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/widgets/loader.dart';
+import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
-import '../../modules/doctor/bloc/doctor_bloc.dart';
+import '../bloc/doctor_bloc.dart';
 
 class DoctorDetailScreen extends StatelessWidget {
   final String docName;

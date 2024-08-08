@@ -10,14 +10,14 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/user/user_doctor/view/all_doctor_screen.dart';
-import 'package:joy_app/view/home/components/hospital_card_shimmer.dart';
-import 'package:joy_app/view/home/components/hospital_card_widget.dart';
+import 'package:joy_app/modules/home/components/hospital_card_shimmer.dart';
+import 'package:joy_app/modules/home/components/hospital_card_widget.dart';
 import 'package:joy_app/modules/hospital/view/home_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:joy_app/modules/user/user_hospital/view/all_hospital_screen.dart';
 import 'package:joy_app/modules/pharmacy/view/pharmacy_product_screen.dart';
-import 'package:joy_app/widgets/location_appbar.dart';
+import 'package:joy_app/widgets/appbar/location_appbar.dart';
 import 'package:sizer/sizer.dart';
 import '../../user_blood_bank/bloc/user_blood_bloc.dart';
 

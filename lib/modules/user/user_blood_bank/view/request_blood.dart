@@ -7,7 +7,7 @@ import 'package:joy_app/modules/user/user_blood_bank/view/select_timing_screen.d
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/custom_textfield.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:joy_app/widgets/single_select_dropdown.dart';
+import 'package:joy_app/widgets/textfield/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 

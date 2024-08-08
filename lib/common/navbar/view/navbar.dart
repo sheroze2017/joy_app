@@ -13,13 +13,13 @@ import 'package:joy_app/modules/doctor/view/home_screen.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/product_screen.dart';
 import 'package:joy_app/modules/user/user_home/view/blog_screen.dart';
 import 'package:joy_app/modules/user/user_home/view/home_screen.dart';
-import 'package:joy_app/view/home/notification_screen.dart';
-import 'package:joy_app/view/doctor_booking/profile_screen.dart';
+import 'package:joy_app/modules/home/notification_screen.dart';
+import 'package:joy_app/modules/doctor/view/profile_screen.dart';
 import 'package:joy_app/modules/hospital/view/home_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/add_friend.dart';
 import 'package:joy_app/common/navbar/controller/navbar_controller.dart';
 import 'package:joy_app/styles/colors.dart';
-import 'package:joy_app/widgets/app_exit_dailog.dart';
+import 'package:joy_app/widgets/dailog/app_exit_dailog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../modules/user/user_pharmacy/all_pharmacy/view/home_screen.dart';

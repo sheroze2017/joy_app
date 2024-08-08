@@ -11,14 +11,14 @@ import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/home/components/blog_card.dart';
-import 'package:joy_app/view/doctor_booking/profile_screen.dart';
-import 'package:joy_app/widgets/loader.dart';
+import 'package:joy_app/modules/home/components/blog_card.dart';
+import 'package:joy_app/modules/doctor/view/profile_screen.dart';
+import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../Widgets/rounded_button.dart';
-import '../../../view/home/all_photos_screen.dart';
-import '../../../view/home/all_posts_screen.dart';
+import '../../../modules/home/all_photos_screen.dart';
+import '../../../modules/home/all_posts_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
   bool myProfile;

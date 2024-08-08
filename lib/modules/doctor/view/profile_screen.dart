@@ -9,10 +9,10 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
 import 'package:joy_app/modules/blood_bank/view/profile_form.dart';
-import 'package:joy_app/view/doctor_booking/doctor_detail_screen.dart';
+import 'package:joy_app/modules/doctor/view/doctor_detail_screen.dart';
 import 'package:joy_app/modules/user/user_doctor/view/manage_booking.dart';
 import 'package:joy_app/modules/doctor/view/all_appointment.dart';
-import 'package:joy_app/view/home/notification_screen.dart';
+import 'package:joy_app/modules/home/notification_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -20,7 +20,7 @@ import 'package:joy_app/modules/hospital/view/profile_form.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/profile_form.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../common/profile/bloc/profile_bloc.dart';
+import '../../../common/profile/bloc/profile_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   bool isDoctor;

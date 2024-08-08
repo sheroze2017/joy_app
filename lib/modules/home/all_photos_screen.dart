@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
-import 'package:joy_app/widgets/custom_appbar.dart';
-import 'package:joy_app/widgets/loader.dart';
+import 'package:joy_app/widgets/appbar/custom_appbar.dart';
+import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
 class AllPhotoScreen extends StatelessWidget {

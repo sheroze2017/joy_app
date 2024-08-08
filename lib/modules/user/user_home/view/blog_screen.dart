@@ -10,7 +10,7 @@ import 'package:joy_app/modules/user/user_hospital/bloc/user_hospital_bloc.dart'
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/home/components/blog_card.dart';
+import 'package:joy_app/modules/home/components/blog_card.dart';
 import 'package:joy_app/modules/social_media/chat/view/chats.dart';
 import 'package:sizer/sizer.dart';
 import '../../../social_media/media_post/bloc/medai_posts_bloc.dart';

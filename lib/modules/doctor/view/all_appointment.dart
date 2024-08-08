@@ -12,7 +12,7 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/doctor/view/patient_profile.dart';
 import 'package:joy_app/common/profile/view/my_profile.dart';
-import 'package:joy_app/widgets/flutter_toast_message.dart';
+import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 
 class AllAppointments extends StatelessWidget {

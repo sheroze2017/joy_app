@@ -9,11 +9,12 @@ import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.d
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 import 'package:joy_app/modules/user/user_doctor/view/doctor_detail_screen2.dart';
 import 'package:joy_app/modules/user/user_hospital/model/all_hospital_model.dart';
+import 'package:joy_app/modules/user/user_hospital/view/widgets/location_widget.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/home/components/blog_card.dart';
+import 'package:joy_app/modules/home/components/blog_card.dart';
 import 'package:joy_app/modules/user/user_hospital/view/all_hospital_screen.dart';
 import 'package:joy_app/modules/pharmacy/view/pharmacy_product_screen.dart';
 import 'package:readmore/readmore.dart';

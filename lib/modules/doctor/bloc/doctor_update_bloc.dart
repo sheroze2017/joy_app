@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_api.dart';
-import 'package:joy_app/widgets/flutter_toast_message.dart';
+import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
 
 class updateDotorController extends GetxController {
   late DioClient dioClient;

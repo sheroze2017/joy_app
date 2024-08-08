@@ -6,7 +6,7 @@ import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/widgets/loader.dart';
+import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
 // class ImagePage extends StatelessWidget {

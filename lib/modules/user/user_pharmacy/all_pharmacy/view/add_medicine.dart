@@ -10,8 +10,8 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
-import 'package:joy_app/view/common/utils/file_selector.dart';
-import 'package:joy_app/widgets/single_select_dropdown.dart';
+import 'package:joy_app/common/utils/file_selector.dart';
+import 'package:joy_app/widgets/textfield/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
 
 import 'package:sizer/sizer.dart';

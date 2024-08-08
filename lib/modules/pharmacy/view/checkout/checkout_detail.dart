@@ -10,7 +10,7 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmac
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/widgets/flutter_toast_message.dart';
+import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 

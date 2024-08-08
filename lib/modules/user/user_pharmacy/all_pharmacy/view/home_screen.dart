@@ -16,7 +16,7 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/order_scree
 import 'package:joy_app/modules/user/user_hospital/view/hospital_detail_screen.dart';
 import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/widgets/rounded_button.dart';
+import 'package:joy_app/widgets/button/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../pharmacy/bloc/create_prodcut_bloc.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/view/home/components/blog_card.dart';
-import 'package:joy_app/widgets/custom_appbar.dart';
+import 'package:joy_app/modules/home/components/blog_card.dart';
+import 'package:joy_app/widgets/appbar/custom_appbar.dart';
 
 import '../../social_media/media_post/bloc/medai_posts_bloc.dart';
 

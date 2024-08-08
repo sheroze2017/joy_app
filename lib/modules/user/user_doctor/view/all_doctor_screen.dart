@@ -14,7 +14,7 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/modules/user/user_doctor/view/manage_booking.dart';
-import 'package:joy_app/widgets/loader.dart';
+import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
 import '../bloc/user_doctor_bloc.dart';

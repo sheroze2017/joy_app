@@ -5,8 +5,8 @@ import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/view/common/utils/file_selector.dart';
-import 'package:joy_app/widgets/rounded_button.dart';
+import 'package:joy_app/common/utils/file_selector.dart';
+import 'package:joy_app/widgets/button/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../bloc/medai_posts_bloc.dart';

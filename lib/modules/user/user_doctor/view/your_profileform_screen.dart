@@ -10,14 +10,14 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
-import 'package:joy_app/view/common/utils/file_selector.dart';
+import 'package:joy_app/common/utils/file_selector.dart';
 import 'package:joy_app/modules/user/user_doctor/view/book_appointment_screen.dart';
-import 'package:joy_app/widgets/flutter_toast_message.dart';
+import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../modules/doctor/models/doctor_detail_model.dart';
-import '../../widgets/single_select_dropdown.dart';
+import '../../../doctor/models/doctor_detail_model.dart';
+import '../../../../widgets/textfield/single_select_dropdown.dart';
 
 class ProfileFormScreen extends StatefulWidget {
   DoctorDetail doctorDetail;

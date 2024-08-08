@@ -13,7 +13,7 @@ import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/widgets/loader.dart';
+import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';

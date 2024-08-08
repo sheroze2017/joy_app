@@ -8,6 +8,8 @@ import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/my_appeals.dart';
+import 'package:joy_app/modules/user/user_hospital/view/widgets/location_widget.dart';
+import 'package:joy_app/modules/user/user_hospital/view/widgets/reviewbar_widget.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
@@ -18,11 +20,11 @@ import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/blood_donation_appeal.dart';
 import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:joy_app/widgets/loader.dart';
+import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
 import '../bloc/user_hospital_bloc.dart';
-import '../../../../view/home/components/hospital_card_widget.dart';
+import '../../../home/components/hospital_card_widget.dart';
 import '../../user_blood_bank/view/request_blood.dart';
 import '../../../pharmacy/view/pharmacy_product_screen.dart';
 
@@ -571,72 +573,6 @@ class HospitalName extends StatelessWidget {
           color: ThemeUtil.isDarkMode(context)
               ? Color(0xff222222)
               : Color(0xff4B5563)),
-    );
-  }
-}
-
-class LocationWidget extends StatelessWidget {
-  bool isBloodbank;
-  String? location;
-  LocationWidget({this.isBloodbank = false, this.location});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SvgPicture.asset('Assets/icons/location.svg'),
-        SizedBox(
-          width: 0.5.w,
-        ),
-        Expanded(
-          child: Text(location ?? '123 Oak Street, CA 98765',
-              style: CustomTextStyles.lightTextStyle(
-                  color: isBloodbank ? Color(0xff383D44) : Color(0xff6B7280),
-                  size: 10.8)),
-        )
-      ],
-    );
-  }
-}
-
-class ReviewBar extends StatelessWidget {
-  int count;
-  String rating;
-  ReviewBar({super.key, required this.count, required this.rating});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(rating,
-            style: CustomTextStyles.w600TextStyle(
-                color: Color(0xff6B7280), size: 10.8)),
-        RatingBar.builder(
-          itemSize: 15,
-          initialRating: double.parse(rating),
-          minRating: 1,
-          direction: Axis.horizontal,
-          allowHalfRating: true,
-          ignoreGestures: true,
-          tapOnlyMode: true,
-          itemCount: 5,
-          updateOnDrag: true,
-          itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
-          itemBuilder: (context, _) => Icon(
-            Icons.star,
-            color: Colors.amber,
-          ),
-          onRatingUpdate: (rating) {
-            print(rating);
-          },
-        ),
-        SizedBox(
-          width: 0.5.w,
-        ),
-        Text('(${count} Reviews)',
-            style: CustomTextStyles.lightTextStyle(
-                color: Color(0xff6B7280), size: 10.8)),
-      ],
     );
   }
 }
