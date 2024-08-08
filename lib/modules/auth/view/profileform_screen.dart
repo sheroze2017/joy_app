@@ -359,38 +359,38 @@ class _FormScreenState extends State<FormScreen> {
                       )),
                     ],
                   ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  widget.isEdit
-                      ? Row(
-                          children: [
-                            Expanded(
-                              child: RoundedButton(
-                                  text: 'Change Password',
-                                  onPressed: () {
-                                    // showDialog(
-                                    //   context: context,
-                                    //   builder: (BuildContext context) {
-                                    //     return CustomDialog(
+                  // SizedBox(
+                  //   height: 2.h,
+                  // ),
+                  // widget.isEdit
+                  //     ? Row(
+                  //         children: [
+                  //           Expanded(
+                  //             child: RoundedButton(
+                  //                 text: 'Change Password',
+                  //                 onPressed: () {
+                  //                   // showDialog(
+                  //                   //   context: context,
+                  //                   //   builder: (BuildContext context) {
+                  //                   //     return CustomDialog(
 
-                                    //       title: 'Congratulations!',
-                                    //       content:
-                                    //           'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                    //     );
-                                    //   },
-                                    // );
-                                  },
-                                  backgroundColor: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xffC5D3E3)
-                                      : Color(0xff1C2A3A),
-                                  textColor: ThemeUtil.isDarkMode(context)
-                                      ? AppColors.blackColor
-                                      : Color(0xffFFFFFF)),
-                            ),
-                          ],
-                        )
-                      : Container(),
+                  //                   //       title: 'Congratulations!',
+                  //                   //       content:
+                  //                   //           'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                  //                   //     );
+                  //                   //   },
+                  //                   // );
+                  //                 },
+                  //                 backgroundColor: ThemeUtil.isDarkMode(context)
+                  //                     ? Color(0xffC5D3E3)
+                  //                     : Color(0xff1C2A3A),
+                  //                 textColor: ThemeUtil.isDarkMode(context)
+                  //                     ? AppColors.blackColor
+                  //                     : Color(0xffFFFFFF)),
+                  //           ),
+                  //         ],
+                  //       )
+                  //     : Container(),
                   SizedBox(
                     height: 4.h,
                   ),
