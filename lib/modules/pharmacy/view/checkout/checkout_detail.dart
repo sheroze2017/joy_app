@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
+import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
+import 'package:joy_app/Widgets/dailog/success_dailog.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';

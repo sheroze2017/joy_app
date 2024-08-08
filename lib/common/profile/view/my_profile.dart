@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
 import 'package:joy_app/modules/auth/view/profileform_screen.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
@@ -13,12 +12,13 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/home/components/blog_card.dart';
 import 'package:joy_app/modules/doctor/view/profile_screen.dart';
+import 'package:joy_app/widgets/button/rounded_button.dart';
 import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../Widgets/rounded_button.dart';
 import '../../../modules/home/all_photos_screen.dart';
 import '../../../modules/home/all_posts_screen.dart';
+import '../../../widgets/appbar/custom_appbar.dart';
 
 class MyProfileScreen extends StatefulWidget {
   bool myProfile;

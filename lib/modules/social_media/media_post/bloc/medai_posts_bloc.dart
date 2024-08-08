@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/media_posts_api.dart';

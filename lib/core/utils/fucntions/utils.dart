@@ -16,3 +16,16 @@ String convertTimeFormat(String input) {
     return input;
   }
 }
+
+String formatDateTime(String dateTimeString, bool isblood) {
+  try {
+    final dateTime = DateTime.parse(dateTimeString);
+
+    final formatter = (isblood != null && isblood == true)
+        ? DateFormat.yMMMMd('en_US')
+        : DateFormat.yMMMMd('en_US').add_Hm();
+    return formatter.format(dateTime);
+  } catch (e) {
+    return dateTimeString;
+  }
+}

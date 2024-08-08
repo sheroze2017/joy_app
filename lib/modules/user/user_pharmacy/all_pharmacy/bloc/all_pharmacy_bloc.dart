@@ -206,6 +206,7 @@ class AllPharmacyController extends GetxController {
       UserHive? currentUser = await getCurrentUser();
       List<Map<String, dynamic>> cartlist = await cartItemsToJson();
       print(cartlist);
+
       ProductPurchaseModel response = await pharmacyApi.placeOrder(
           currentUser!.userId.toString(),
           grandTotal.toString(),

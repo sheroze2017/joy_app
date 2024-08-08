@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
+import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
 import 'package:joy_app/modules/pharmacy/models/all_orders.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';

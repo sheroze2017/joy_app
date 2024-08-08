@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/appbar.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/appbar/appbar.dart';
+import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/modules/pharmacy/bloc/create_prodcut_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';

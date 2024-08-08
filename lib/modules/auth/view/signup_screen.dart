@@ -11,11 +11,11 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/modules/doctor/view/profile_form.dart';
 import 'package:joy_app/modules/auth/view/login_screen.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/modules/hospital/view/profile_form.dart';
-import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../user/user_pharmacy/all_pharmacy/view/profile_form.dart';

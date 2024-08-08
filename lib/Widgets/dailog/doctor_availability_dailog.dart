@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';

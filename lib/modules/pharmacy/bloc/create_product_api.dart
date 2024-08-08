@@ -74,7 +74,7 @@ class CreateProductApi {
   Future<AllOrders> getAllOrders(userId) async {
     try {
       final result =
-          await _dioClient.get(Endpoints.getAllOrders + '?user_id=15');
+          await _dioClient.get(Endpoints.getAllOrders + '?user_id=${userId}');
       return AllOrders.fromJson(result);
     } catch (e) {
       print(e.toString());

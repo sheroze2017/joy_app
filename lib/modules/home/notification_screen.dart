@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:joy_app/Widgets/notification_item.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
-
-import '../../Widgets/custom_appbar.dart';
+import 'package:joy_app/widgets/appbar/custom_appbar.dart';
+import 'package:joy_app/widgets/custom_message/notification_item.dart';
 
 class NotificationScreen extends StatelessWidget {
   bool showBackIcon;

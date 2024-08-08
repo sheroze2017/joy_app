@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';

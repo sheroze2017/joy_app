@@ -10,7 +10,7 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/blood_bank/view/blood_appeal_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/modules/user/user_doctor/view/manage_booking.dart';

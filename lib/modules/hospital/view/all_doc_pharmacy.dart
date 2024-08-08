@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/modules/user/user_doctor/view/doctor_detail_screen2.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/location_widget.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/reviewbar_widget.dart';

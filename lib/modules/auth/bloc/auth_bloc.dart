@@ -9,7 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:crypto/crypto.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
-import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/modules/auth/bloc/auth_api.dart';

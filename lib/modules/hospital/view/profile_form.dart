@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/dropdown_button.dart';
-import 'package:joy_app/Widgets/multi_time_selector.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
+import 'package:joy_app/Widgets/button/dropdown_button.dart';
+import 'package:joy_app/Widgets/dailog/multi_time_selector.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
+import 'package:joy_app/Widgets/dailog/success_dailog.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
@@ -14,11 +14,11 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/common/utils/file_selector.dart';
+import 'package:joy_app/widgets/appbar/appbar.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../Widgets/appbar.dart';
 import '../../auth/bloc/auth_bloc.dart';
 
 class HospitalFormScreen extends StatefulWidget {

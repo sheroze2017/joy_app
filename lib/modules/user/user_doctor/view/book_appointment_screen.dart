@@ -4,14 +4,14 @@ import 'package:get/get.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 
-import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/widgets/button/rounded_button.dart';
 import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
-import '../../../../Widgets/rounded_button.dart';
 import '../../../doctor/models/doctor_detail_model.dart';
 
 class BookAppointmentScreen extends StatefulWidget {

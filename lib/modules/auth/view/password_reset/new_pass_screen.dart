@@ -3,12 +3,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/navbar/view/navbar.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/widgets/appbar/appbar.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../Widgets/appbar.dart';
 import '../../utils/auth_utils.dart';
 
 class NewPassScreen extends StatelessWidget {

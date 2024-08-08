@@ -5,10 +5,10 @@ import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.da
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/common/profile/view/my_profile.dart';
+import 'package:joy_app/widgets/appbar/custom_appbar.dart';
+import 'package:joy_app/widgets/button/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../../Widgets/custom_appbar.dart';
-import '../../../../Widgets/rounded_button.dart';
 import '../../../../styles/custom_textstyle.dart';
 import 'add_friend.dart';
 

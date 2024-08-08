@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/appbar.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
+import 'package:joy_app/widgets/appbar/appbar.dart';
+import 'package:joy_app/widgets/button/rounded_button.dart';
+import 'package:joy_app/widgets/textfield/custom_textfield.dart';
 import 'package:sizer/sizer.dart';
 import 'verify_code_screen.dart';
-
 
 class ForgotPassScreen extends StatelessWidget {
   ForgotPassScreen({super.key});

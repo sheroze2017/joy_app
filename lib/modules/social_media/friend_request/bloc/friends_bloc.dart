@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_api.dart';

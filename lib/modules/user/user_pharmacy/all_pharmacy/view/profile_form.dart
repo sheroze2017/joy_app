@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/appbar.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/multi_time_selector.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
-import 'package:joy_app/Widgets/success_dailog.dart';
+import 'package:joy_app/Widgets/appbar/appbar.dart';
+import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
+import 'package:joy_app/Widgets/dailog/multi_time_selector.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
+import 'package:joy_app/Widgets/dailog/success_dailog.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';

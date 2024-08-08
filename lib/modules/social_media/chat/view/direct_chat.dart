@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:joy_app/Widgets/chat_appbar.dart';
+import 'package:joy_app/Widgets/appbar/chat_appbar.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';

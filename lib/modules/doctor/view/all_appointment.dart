@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
+import 'package:joy_app/core/utils/fucntions/utils.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -252,18 +253,5 @@ class AppointmentSelector extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-String formatDateTime(String dateTimeString, bool isblood) {
-  try {
-    final dateTime = DateTime.parse(dateTimeString);
-
-    final formatter = (isblood != null && isblood == true)
-        ? DateFormat.yMMMMd('en_US')
-        : DateFormat.yMMMMd('en_US').add_Hm();
-    return formatter.format(dateTime);
-  } catch (e) {
-    return dateTimeString;
   }
 }

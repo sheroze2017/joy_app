@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/blood_bank/model/all_blood_request_model.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_api.dart';
 import 'package:joy_app/modules/user/user_blood_bank/model/all_bloodbank_model.dart';
+import 'package:joy_app/widgets/dailog/success_dailog.dart';
 
-import '../../../../Widgets/success_dailog.dart';
 import '../../../blood_bank/bloc/blood_bank_api.dart';
 
 class UserBloodBankController extends GetxController {

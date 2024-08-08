@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/modules/pharmacy/view/review_screen.dart';
 import 'package:joy_app/modules/user/user_doctor/view/doctor_detail_screen2.dart';
 import 'package:joy_app/styles/colors.dart';

@@ -5,7 +5,7 @@ import 'package:joy_app/modules/blood_bank/view/donor_detail_screen.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
 
 import '../bloc/blood_bank_bloc.dart';

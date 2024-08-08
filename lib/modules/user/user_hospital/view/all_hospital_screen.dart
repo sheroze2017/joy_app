@@ -16,10 +16,10 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/user/user_doctor/view/all_doctor_screen.dart';
 import 'package:joy_app/modules/hospital/view/home_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/blood_donation_appeal.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 

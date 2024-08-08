@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/Widgets/flutter_toast_message.dart';
+import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/select_timing_screen.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
-import 'package:joy_app/Widgets/custom_textfield.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/widgets/appbar/custom_appbar.dart';
+import 'package:joy_app/widgets/button/rounded_button.dart';
+import 'package:joy_app/widgets/textfield/custom_textfield.dart';
 import 'package:joy_app/widgets/textfield/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';

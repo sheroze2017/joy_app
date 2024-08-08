@@ -5,8 +5,8 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmac
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/pharmacy/view/checkout/checkout_detail.dart';
-import 'package:joy_app/Widgets/custom_appbar.dart';
-import 'package:joy_app/Widgets/rounded_button.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
