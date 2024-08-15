@@ -5,7 +5,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/navbar/view/navbar.dart';
+import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/pharmacy/view/review_screen.dart';
+import 'package:joy_app/modules/user/user_blood_bank/model/all_bloodbank_model.dart';
+import 'package:joy_app/modules/user/user_blood_bank/view/blood_donation_appeal.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -29,6 +32,7 @@ class CustomDialog extends StatelessWidget {
   bool? isHospitalForm;
   bool isBloodRequest;
   bool isUser;
+  bool isRegisterDonor;
   String? pharmacyId;
   CustomDialog(
       {super.key,
@@ -46,6 +50,7 @@ class CustomDialog extends StatelessWidget {
       this.isPharmacyForm = false,
       this.isHospitalForm = false,
       this.isUser = false,
+      this.isRegisterDonor = false,
       this.isBloodRequest = false});
   @override
   Widget build(BuildContext context) {
@@ -92,7 +97,9 @@ class CustomDialog extends StatelessWidget {
               SizedBox(height: 2.h),
               Text(title,
                   style: CustomTextStyles.darkTextStyle(
-                      color: isBloodRequest ? AppColors.redColor : null)),
+                      color: (isBloodRequest || isRegisterDonor)
+                          ? AppColors.redColor
+                          : null)),
               SizedBox(height: 2.h),
               Text(
                 content,
@@ -122,23 +129,43 @@ class CustomDialog extends StatelessWidget {
                                                   : AppColors.darkGreenColor,
                                         ),
                                         transition: Transition.native)
-                                    : isBloodRequest || isBookAppointment
+                                    : isBloodRequest
                                         ? {
                                             Get.back(),
-                                            Get.back(),
-                                            Get.back(),
-                                            Get.back()
+                                            Get.off(AllDonorScreen())
                                           }
-                                        : Get.offAll(
-                                            NavBarScreen(
-                                                hospitalDetailId:
-                                                    hospitalDetailId,
-                                                isBloodBank: isBloodBankForm,
-                                                isPharmacy: isPharmacyForm,
-                                                isDoctor: isDoctorForm,
-                                                isHospital: isHospitalForm,
-                                                isUser: isUser),
-                                            transition: Transition.native);
+                                        : isRegisterDonor
+                                            ? {
+                                                Get.back(),
+                                                Get.off(
+                                                    BloodDonationAppealUser(
+                                                      isBloodDontate: true,
+                                                      isUser: true,
+                                                    ),
+                                                    transition:
+                                                        Transition.native)
+                                              }
+                                            : isBookAppointment
+                                                ? {
+                                                    Get.back(),
+                                                    Get.back(),
+                                                    Get.back(),
+                                                    Get.back()
+                                                  }
+                                                : Get.offAll(
+                                                    NavBarScreen(
+                                                        hospitalDetailId:
+                                                            hospitalDetailId,
+                                                        isBloodBank:
+                                                            isBloodBankForm,
+                                                        isPharmacy:
+                                                            isPharmacyForm,
+                                                        isDoctor: isDoctorForm,
+                                                        isHospital:
+                                                            isHospitalForm,
+                                                        isUser: isUser),
+                                                    transition:
+                                                        Transition.native);
                               },
                               backgroundColor: buttonColor != null
                                   ? ThemeUtil.isDarkMode(context)
@@ -146,7 +173,7 @@ class CustomDialog extends StatelessWidget {
                                       : Color(0xff1C2A3A)
                                   : isBookAppointment
                                       ? AppColors.darkBlueColor
-                                      : isBloodRequest
+                                      : (isBloodRequest || isRegisterDonor)
                                           ? AppColors.redColor
                                           : AppColors.darkGreenColor,
                               textColor: ThemeUtil.isDarkMode(context)

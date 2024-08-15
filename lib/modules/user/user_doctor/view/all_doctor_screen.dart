@@ -14,6 +14,7 @@ import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/modules/user/user_doctor/view/manage_booking.dart';
+import 'package:joy_app/widgets/dailog/confirmation_dailog.dart';
 import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
@@ -25,11 +26,13 @@ class AllDoctorsScreen extends StatefulWidget {
   final bool isBloodBank;
   final bool isHospital;
   final String appBarText;
+  bool isSelectable;
   AllDoctorsScreen(
       {super.key,
       this.isPharmacy = false,
       this.isBloodBank = false,
       this.isHospital = false,
+      this.isSelectable = false,
       required this.appBarText});
 
   @override
@@ -50,90 +53,97 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        backgroundColor: AppColors.darkBlueColor,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(50.0),
-                    child: Image.network(
-                      _profileController.image.contains('http')
-                          ? _profileController.image.toString()
-                          : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
-                      width: 12.8.w,
-                      height: 12.8.w,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 3.w,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      drawer: widget.isSelectable
+          ? Container()
+          : Drawer(
+              backgroundColor: AppColors.darkBlueColor,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    Row(
                       children: [
-                        Text(
-                          _profileController.firstName.toString(),
-                          style: CustomTextStyles.w600TextStyle(
-                            size: 15.59,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          _profileController.email.toString(),
-                          style: CustomTextStyles.lightSmallTextStyle(
-                            color: Color(0xffF4D9E5),
-                            size: 12.47,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(50.0),
+                          child: Image.network(
+                            _profileController.image.contains('http')
+                                ? _profileController.image.toString()
+                                : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
+                            width: 12.8.w,
+                            height: 12.8.w,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         SizedBox(
-                          width: 0.5.w,
+                          width: 3.w,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _profileController.firstName.toString(),
+                                style: CustomTextStyles.w600TextStyle(
+                                  size: 15.59,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                _profileController.email.toString(),
+                                style: CustomTextStyles.lightSmallTextStyle(
+                                  color: Color(0xffF4D9E5),
+                                  size: 12.47,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 0.5.w,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 5.h,
-              ),
-              InkWell(
-                onTap: () {
-                  Get.to(ManageAllAppointmentUser());
-                },
-                child: DrawerItem(
-                  isBloodBank: false,
-                  isBooking: true,
-                  bookingText: 'My Booking',
-                  bookingAsset: 'Assets/icons/booking.svg',
+                    SizedBox(
+                      height: 5.h,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.to(ManageAllAppointmentUser());
+                      },
+                      child: DrawerItem(
+                        isBloodBank: false,
+                        isBooking: true,
+                        bookingText: 'My Booking',
+                        bookingAsset: 'Assets/icons/booking.svg',
+                      ),
+                    ),
+                    SizedBox(
+                      height: 3.h,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.to(UserBookingHistory());
+                      },
+                      child: DrawerItem(
+                        isBloodBank: false,
+                        isBooking: false,
+                        bookingText: 'Medical History',
+                        bookingAsset: 'Assets/icons/bookingplus.svg',
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                height: 3.h,
-              ),
-              InkWell(
-                onTap: () {
-                  Get.to(UserBookingHistory());
-                },
-                child: DrawerItem(
-                  isBloodBank: false,
-                  isBooking: false,
-                  bookingText: 'Medical History',
-                  bookingAsset: 'Assets/icons/bookingplus.svg',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
       appBar: HomeAppBar(
           title: widget.appBarText,
-          leading: Icon(Icons.arrow_back),
+          leading: InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: Icon(Icons.arrow_back)),
           actions: [],
           showIcon: true),
       body: SingleChildScrollView(
@@ -172,6 +182,7 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
               ),
               Obx(
                 () => VerticalDoctorsList(
+                  isSelectable: widget.isSelectable,
                   doctorList: _userdoctorController.searchDoctorsList.value,
                 ),
               )
@@ -505,20 +516,20 @@ class DoctorCategory extends StatelessWidget {
   }
 }
 
-class HospitalName extends StatelessWidget {
-  const HospitalName({
-    super.key,
-  });
+// class HospitalName extends StatelessWidget {
+//   const HospitalName({
+//     super.key,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Sunrise Health Clinic',
-      style: CustomTextStyles.darkHeadingTextStyle(
-          size: 12.67, color: Color(0xff4B5563)),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text(
+//       'Sunrise Health Clinic',
+//       style: CustomTextStyles.darkHeadingTextStyle(
+//           size: 12.67, color: Color(0xff4B5563)),
+//     );
+//   }
+// }
 
 class HorizontalDoctorCategories extends StatelessWidget {
   bool isBloodBank;
@@ -569,8 +580,9 @@ class HorizontalDoctorCategories extends StatelessWidget {
 }
 
 class VerticalDoctorsList extends StatelessWidget {
+  bool isSelectable;
   List<Doctor> doctorList;
-  VerticalDoctorsList({required this.doctorList});
+  VerticalDoctorsList({required this.doctorList, required this.isSelectable});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -583,14 +595,21 @@ class VerticalDoctorsList extends StatelessWidget {
           final doctorData = doctorList[index];
           return InkWell(
             onTap: () {
-              Get.to(
-                  DoctorDetailScreen2(
-                    doctorId: doctorData.userId.toString(),
-                    docName: 'Dr. David Patel',
-                    location: 'Golden Cardiology Center',
-                    Category: 'Cardiologist',
-                  ),
-                  transition: Transition.native);
+              isSelectable
+                  ? showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ConfirmationDailog();
+                      },
+                    )
+                  : Get.to(
+                      DoctorDetailScreen2(
+                        doctorId: doctorData.userId.toString(),
+                        docName: 'Dr. David Patel',
+                        location: 'Golden Cardiology Center',
+                        Category: 'Cardiologist',
+                      ),
+                      transition: Transition.native);
             },
             child: DoctorsCardWidget(
               imgUrl: doctorData.image.toString(),

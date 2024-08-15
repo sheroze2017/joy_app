@@ -55,7 +55,7 @@ class UserBloodBankController extends GetxController {
           context: context,
           builder: (BuildContext context) {
             return CustomDialog(
-              isBloodRequest: true,
+              isRegisterDonor: true,
               title: 'Congratulations!',
               content: 'Yor are successfully register as a donor',
               showButton: true,

@@ -48,10 +48,7 @@ class DonationApproval extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: isBloodDonate
-              ? AppColors.redLightColor
-              : AppColors.yellowLightColor),
+          borderRadius: BorderRadius.circular(12), color: Color(0xffF4F4F4)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -146,7 +143,8 @@ class DonationApproval extends StatelessWidget {
                       backgroundColor: isBloodDonate
                           ? AppColors.redColor
                           : AppColors.yellowColor,
-                      textColor: AppColors.whiteColor),
+                      textColor:
+                          isBloodDonate ? AppColors.whiteColor : Colors.black),
                 ),
                 SizedBox(
                   width: 2.w,

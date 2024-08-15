@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:joy_app/common/theme/controller/theme_controller.dart';
 import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
@@ -360,7 +362,9 @@ class _FormScreenState extends State<ProfileScreen> {
                                   Expanded(
                                     child: RoundedButton(
                                         text: "Yes, Logout",
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          await FirebaseAuth.instance.signOut();
+                                          await GoogleSignIn().signOut();
                                           clearUserInformation();
                                           Get.offAll(LoginScreen());
                                         },

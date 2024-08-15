@@ -136,11 +136,19 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                     SizedBox(
                       height: 3.h,
                     ),
-                    DrawerItem(
-                      isBloodBank: true,
-                      isBooking: false,
-                      bookingText: 'blood bank',
-                      bookingAsset: 'Assets/icons/bookingplus.svg',
+                    InkWell(
+                      onTap: () {
+                        Get.to(AllHospitalScreen(
+                          isBloodBank: true,
+                          appBarText: 'All Blood Banks',
+                        ));
+                      },
+                      child: DrawerItem(
+                        isBloodBank: true,
+                        isBooking: false,
+                        bookingText: 'blood bank',
+                        bookingAsset: 'Assets/icons/bookingplus.svg',
+                      ),
                     ),
                   ],
                 ),
@@ -350,7 +358,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                 color: widget.isPharmacy
                                     ? Color(0xffE2FFE3)
                                     : widget.isBloodBank
-                                        ? Color(0xffFFECEC)
+                                        ? Color(0XFFF4F4F4)
                                         : ThemeUtil.isDarkMode(context)
                                             ? AppColors.purpleBlueColor
                                             : Color(0xffEEF5FF),

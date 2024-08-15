@@ -45,7 +45,7 @@ class PharmacyModelData {
   String? lat;
   String? lng;
   String? location;
-  List<Reviews>? reviews;
+  List<PharReviews>? reviews;
 
   PharmacyModelData(
       {this.userId,
@@ -80,9 +80,9 @@ class PharmacyModelData {
     lng = json['lng'] ?? '';
     location = json['location'];
     if (json['reviews'] != null) {
-      reviews = <Reviews>[];
+      reviews = <PharReviews>[];
       json['reviews'].forEach((v) {
-        reviews!.add(new Reviews.fromJson(v));
+        reviews!.add(new PharReviews.fromJson(v));
       });
     } else {
       reviews = [];
@@ -110,7 +110,7 @@ class PharmacyModelData {
   }
 }
 
-class Reviews {
+class PharReviews {
   String? rating;
   String? review;
   String? status;
@@ -118,7 +118,7 @@ class Reviews {
   int? reviewId;
   String? createdAt;
 
-  Reviews(
+  PharReviews(
       {this.rating,
       this.review,
       this.status,
@@ -126,7 +126,7 @@ class Reviews {
       this.reviewId,
       this.createdAt});
 
-  Reviews.fromJson(Map<String, dynamic> json) {
+  PharReviews.fromJson(Map<String, dynamic> json) {
     rating = json['rating'];
     review = json['review'];
     status = json['status'];
@@ -147,6 +147,20 @@ class Reviews {
     data['review_id'] = this.reviewId;
     data['created_at'] = this.createdAt;
     return data;
+  }
+
+  double get ratingAsDouble {
+    return double.tryParse(rating ?? '0') ?? 0.0;
+  }
+
+  static double calculateAverageRating(List<PharReviews> reviewsList) {
+    if (reviewsList.isEmpty) return 0.0;
+
+    double totalRating = reviewsList.fold(0.0, (sum, review) {
+      return sum + review.ratingAsDouble;
+    });
+
+    return totalRating / reviewsList.length;
   }
 }
 

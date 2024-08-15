@@ -12,7 +12,8 @@ import 'checkout/mycart_screen.dart';
 
 class PharmacyProductScreen extends StatefulWidget {
   final String userId;
-  PharmacyProductScreen({required this.userId});
+  bool isHospital;
+  PharmacyProductScreen({required this.userId, this.isHospital = false});
 
   @override
   State<PharmacyProductScreen> createState() => _PharmacyProductScreenState();
