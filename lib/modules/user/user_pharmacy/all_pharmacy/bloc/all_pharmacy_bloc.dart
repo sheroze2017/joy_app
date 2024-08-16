@@ -200,7 +200,7 @@ class AllPharmacyController extends GetxController {
   }
 
   Future<ProductPurchaseModel> placeOrderPharmacy(context, grandTotal, status,
-      quantity, location, lat, lng, placeId, cart) async {
+      quantity, location, lat, lng, placeId, cart, pharmacyId) async {
     placeOrderLoader.value = true;
     try {
       UserHive? currentUser = await getCurrentUser();
@@ -216,7 +216,8 @@ class AllPharmacyController extends GetxController {
           lat.toString(),
           lng.toString(),
           placeId.toString(),
-          cartlist);
+          cartlist,
+          pharmacyId);
       if (response.data != null) {
         showSuccessMessage(context, response.message.toString());
 

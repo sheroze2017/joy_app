@@ -53,7 +53,7 @@ class PharmacyApi {
       String lat,
       String lng,
       String placeId,
-      List<Map<String, dynamic>> cart) async {
+      List<Map<String, dynamic>> cart,String pharmacyId) async {
     try {
       final result = await _dioClient.post(Endpoints.placeOrder, data: {
         "user_id": userId,
@@ -64,6 +64,7 @@ class PharmacyApi {
         "lat": lat,
         "lng": lng,
         "place_id": placeId,
+        "pharmacy_id": pharmacyId,
         "cart": cart
       });
       return ProductPurchaseModel.fromJson(result);
