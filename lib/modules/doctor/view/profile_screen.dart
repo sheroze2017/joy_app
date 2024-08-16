@@ -14,7 +14,7 @@ import 'package:joy_app/modules/blood_bank/view/profile_form.dart';
 import 'package:joy_app/modules/doctor/view/doctor_detail_screen.dart';
 import 'package:joy_app/modules/user/user_doctor/view/manage_booking.dart';
 import 'package:joy_app/modules/doctor/view/all_appointment.dart';
-import 'package:joy_app/modules/home/notification_screen.dart';
+import 'package:joy_app/modules/notification/notification_screen.dart';
 import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';

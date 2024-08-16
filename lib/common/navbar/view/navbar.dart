@@ -13,7 +13,7 @@ import 'package:joy_app/modules/doctor/view/home_screen.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/product_screen.dart';
 import 'package:joy_app/modules/user/user_home/view/blog_screen.dart';
 import 'package:joy_app/modules/user/user_home/view/home_screen.dart';
-import 'package:joy_app/modules/home/notification_screen.dart';
+import 'package:joy_app/modules/notification/notification_screen.dart';
 import 'package:joy_app/modules/doctor/view/profile_screen.dart';
 import 'package:joy_app/modules/hospital/view/home_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/add_friend.dart';
