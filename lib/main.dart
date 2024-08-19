@@ -5,6 +5,7 @@ import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/common/notification/api/firebase_api.dart';
 import 'package:joy_app/common/theme/controller/theme_controller.dart';
 import 'package:joy_app/common/theme/theme_controller.dart';
+import 'package:joy_app/core/routes/routes.dart';
 import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/doctor/models/doctor_detail_hive_model.dart';
@@ -63,8 +64,8 @@ class MyApp extends StatelessWidget {
           // theme: ThemeData(
           //   useMaterial3: true,
           // ),
-          // initialRoute: AppPage.getNavbar(),
-          //getPages: AppPage.routes,
+          // initialRoute: AppPage.splash,
+          // getPages: AppPage.routes,
           home: SplashScreen(),
           initialBinding: YourBinding(),
         ),
