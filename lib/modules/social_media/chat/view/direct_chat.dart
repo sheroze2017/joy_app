@@ -334,7 +334,6 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
         Uri.parse(url),
         headers: {"Content-Type": "application/json"},
       );
-      print('url ${url}');
       if (response.statusCode == 200) {
         final resp = (jsonDecode(response.body) as List)
             .map((e) => MessageResponse.fromJson(e));
