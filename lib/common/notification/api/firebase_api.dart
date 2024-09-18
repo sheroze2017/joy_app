@@ -30,8 +30,8 @@ class FirebaseApi {
     final fcmToken = await _firebaseMessaging.getToken();
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     setToken(fcmToken.toString());
-    initPushNotification();
     initLocalNotification();
+    initPushNotification();
     print('fcmtoken ${fcmToken}');
   }
 }
