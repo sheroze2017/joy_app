@@ -208,16 +208,17 @@ class AllPharmacyController extends GetxController {
       print(cartlist);
 
       ProductPurchaseModel response = await pharmacyApi.placeOrder(
-          currentUser!.userId.toString(),
-          grandTotal.toString(),
-          status.toString(),
-          quantity.toString(),
-          location.toString(),
-          lat.toString(),
-          lng.toString(),
-          placeId.toString(),
-          cartlist,
-          pharmacyId);
+        currentUser!.userId.toString(),
+        grandTotal.toString(),
+        status.toString(),
+        quantity.toString(),
+        location.toString(),
+        lat.toString(),
+        lng.toString(),
+        placeId.toString(),
+        cartlist,
+        pharmacyId.toString(),
+      );
       if (response.data != null) {
         showSuccessMessage(context, response.message.toString());
 

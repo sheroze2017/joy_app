@@ -126,14 +126,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             showLoader: authController.loginLoader.value,
                             text: "Sign In",
                             onPressed: () async {
-                              FocusScope.of(context).unfocus();
-                              if (!_formKey.currentState!.validate()) {
+                              if (authController.loginLoader.value) {
                               } else {
-                                await authController.login(
-                                    _emailController.text,
-                                    _passwordController.text,
-                                    context,
-                                    "SOCIAL");
+                                FocusScope.of(context).unfocus();
+                                if (!_formKey.currentState!.validate()) {
+                                } else {
+                                  await authController.login(
+                                      _emailController.text,
+                                      _passwordController.text,
+                                      context,
+                                      "EMAIL");
+                                }
                               }
                             },
                             backgroundColor: ThemeUtil.isDarkMode(context)
