@@ -20,11 +20,13 @@ class AllDocPharmacy extends StatefulWidget {
   String appBarText;
   bool isPharmacy;
   List<PharmacyModelData> dataList;
+  bool isFromHosipital;
   AllDocPharmacy(
       {super.key,
       required this.appBarText,
       this.isSelectable = false,
       required this.dataList,
+      required this.isFromHosipital,
       required this.isPharmacy});
 
   @override
@@ -100,12 +102,14 @@ class _AllDocPharmacyState extends State<AllDocPharmacy> {
                               : widget.isPharmacy
                                   ? Get.to(
                                       PharmacyProductScreen(
+                                        isHospital: widget.isFromHosipital,
                                           userId: filteredList[index]
                                               .userId
                                               .toString()),
                                       transition: Transition.native)
                                   : Get.to(
                                       DoctorDetailScreen2(
+                                        isFromHospital: widget.isFromHosipital,
                                         doctorId: filteredList[index]
                                             .userId
                                             .toString(),

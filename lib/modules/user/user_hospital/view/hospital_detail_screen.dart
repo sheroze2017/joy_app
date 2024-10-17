@@ -425,6 +425,7 @@ class MedicineCard extends StatelessWidget {
   final VoidCallback onPressed;
   bool isUserProductScreen;
   int categoryId;
+  final bool isFromHospital;
 
   MedicineCard(
       {super.key,
@@ -435,6 +436,7 @@ class MedicineCard extends StatelessWidget {
       required this.btnText,
       this.isUserProductScreen = false,
       this.categoryId = 1,
+      required this.isFromHospital,
       required this.onPressed});
 
   @override
@@ -476,11 +478,11 @@ class MedicineCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            name ?? 'Panadol',
+                            name,
                             style: CustomTextStyles.darkHeadingTextStyle(),
                           ),
                           Text(
-                            '${count} ${category[categoryId - 1]} for ${cost}\$',
+                            '${count} ${category[categoryId - 1]} for ${cost}\Rs',
                             style: CustomTextStyles.w600TextStyle(
                                 size: 13, color: Color(0xff4B5563)),
                           ),
@@ -489,33 +491,39 @@ class MedicineCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 2.w,
-                ),
-                Divider(
-                  color: Color(0xff6B7280),
-                  thickness: 0.05.h,
-                ),
+                isFromHospital
+                    ? Container()
+                    : SizedBox(
+                        width: 2.w,
+                      ),
+                isFromHospital
+                    ? Container()
+                    : Divider(
+                        color: Color(0xff6B7280),
+                        thickness: 0.05.h,
+                      ),
               ],
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: RoundedButtonSmall(
-                      isSmall: true,
-                      text: btnText,
-                      onPressed: onPressed,
-                      backgroundColor: ThemeUtil.isDarkMode(context)
-                          ? isUserProductScreen
-                              ? Color(0xff1DAA61)
-                              : AppColors.lightGreenColoreb1
-                          : AppColors.darkGreenColor,
-                      textColor: ThemeUtil.isDarkMode(context)
-                          ? AppColors.blackColor
-                          : AppColors.whiteColor),
-                )
-              ],
-            )
+            isFromHospital
+                ? Container()
+                : Row(
+                    children: [
+                      Expanded(
+                        child: RoundedButtonSmall(
+                            isSmall: true,
+                            text: btnText,
+                            onPressed: onPressed,
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? isUserProductScreen
+                                    ? Color(0xff1DAA61)
+                                    : AppColors.lightGreenColoreb1
+                                : AppColors.darkGreenColor,
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? AppColors.blackColor
+                                : AppColors.whiteColor),
+                      )
+                    ],
+                  )
           ],
         ),
       ),

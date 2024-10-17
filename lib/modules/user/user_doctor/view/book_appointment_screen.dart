@@ -194,7 +194,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                       fontWeight: FontWeight.w600,
                       color: Color(0xff4B5563)),
                   blackoutDateTextStyle: TextStyle(
-                      color: AppColors.redLightColor,
+                      color: AppColors.redColor,
                       decoration: TextDecoration.lineThrough),
 
                   textStyle: TextStyle(
@@ -214,6 +214,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                           color: Color(0xff4B5563))),
                 ),
                 selectionColor: AppColors.darkBlueColor,
+                selectionTextStyle: TextStyle(color: Colors.white),
                 selectionShape: DateRangePickerSelectionShape.rectangle,
                 headerStyle: DateRangePickerHeaderStyle(
                   textAlign: TextAlign.left,
@@ -328,40 +329,49 @@ class _TimeSelectorState extends State<TimeSelector> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        child: Wrap(
-          spacing: 20,
-          runSpacing: 15,
-          children: List.generate(widget.times.length, (index) {
-            String time = widget.times[index];
-            bool isSelected = _selectedTime == time;
-
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedTime = time;
-                });
-                widget.onTimeSelected(time); // Notify parent of selected time
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.darkBlueColor
-                      : AppColors.whiteColorf9f,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(time,
-                    style: CustomTextStyles.w600TextStyle(
-                        size: 14,
-                        color: isSelected
-                            ? AppColors.whiteColor
-                            : Color(0xff6b7280))),
+      child: widget.times.isEmpty
+          ? Container(
+              child: Text(
+                'No Times Available',
+                style: CustomTextStyles.darkTextStyle(color: Colors.white),
               ),
-            );
-          }),
-        ),
-      ),
+            )
+          : Container(
+              child: Wrap(
+                spacing: 20,
+                runSpacing: 15,
+                children: List.generate(widget.times.length, (index) {
+                  String time = widget.times[index];
+                  bool isSelected = _selectedTime == time;
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedTime = time;
+                      });
+                      widget.onTimeSelected(
+                          time); // Notify parent of selected time
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14.0, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.darkBlueColor
+                            : AppColors.whiteColorf9f,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(time,
+                          style: CustomTextStyles.w600TextStyle(
+                              size: 14,
+                              color: isSelected
+                                  ? AppColors.whiteColor
+                                  : Color(0xff6b7280))),
+                    ),
+                  );
+                }),
+              ),
+            ),
     );
   }
 }

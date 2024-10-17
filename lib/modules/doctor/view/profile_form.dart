@@ -60,8 +60,8 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
   final TextEditingController _availabilityController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
 
-  final TextEditingController _medicalCertificateController =
-      TextEditingController();
+  // final TextEditingController _medicalCertificateController =
+  //     TextEditingController();
 
   final mediaController = Get.find<MediaPostController>();
 
@@ -351,27 +351,30 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                         pickSingleFile().then((filePaths) {
                           if (filePaths.isEmpty) {
                           } else {
-                            _medicalCertificateController
+                            mediaController.certificateController.value
                                 .setText(filePaths[0].toString());
                           }
                         }).then((value) => mediaController.uploadPhoto(
-                            _medicalCertificateController.text, context));
+                            mediaController.certificateController.value.text,
+                            context));
                       },
                       child: Obx(
                         () => RoundedBorderTextField(
                           showLoader: mediaController.imgUploaded.value,
                           isenable: false,
-                          controller: _medicalCertificateController,
+                          controller:
+                              mediaController.certificateController.value,
                           focusNode: _focusNode9,
                           nextFocusNode: _focusNode10,
                           validator: (value) {
-                            // if (value == null || value.isEmpty) {
-                            //   return 'Please attach documents';
-                            // } else if (mediaController.imgUrl.isEmpty) {
-                            //   return 'Please attach files';
-                            // } else {
-                            //   return null;
-                            // }
+                            if (value == null || value.isEmpty) {
+                              return 'Please attach documents';
+                            } else if (mediaController
+                                .certificateController.value.text.isEmpty) {
+                              return 'Please attach files';
+                            } else {
+                              return null;
+                            }
                           },
                           hintText: 'Attach File of Medical Certificate',
                           icon: 'Assets/icons/attach-icon.svg',
@@ -397,9 +400,10 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                             onPressed: () {
                               setState(() {
                                 selectedFilePath.remove(path);
-                                _medicalCertificateController.setText(
-                                    selectedFilePath.length.toString() +
-                                        ' file selected');
+                                mediaController.certificateController.value
+                                    .setText(
+                                        selectedFilePath.length.toString() +
+                                            ' file selected');
                               });
                             },
                           ),
@@ -417,6 +421,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                               context: context,
                               builder: (BuildContext context) {
                                 return DoctorAvailDailog(
+                                  initialSelectedTimes: dateAvailability,
                                   onConfirm:
                                       (List<Set<String>> selectedTimes) async {
                                     dateAvailability = selectedTimes;
@@ -524,7 +529,8 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                         _expertiseController.text,
                                         _feesController.text,
                                         _qualificationController.text,
-                                        _medicalCertificateController.text,
+                                        mediaController
+                                            .certificateController.value.text,
                                         context,
                                         _selectedImage.toString());
                                     final _doctorController =

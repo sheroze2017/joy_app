@@ -78,9 +78,9 @@ class DoctorDetailsMap {
     doctorDetailId = json['doctor_detail_id'];
     gender = json['gender'] ?? '';
     expertise = json['expertise'] ?? '';
-    location = json['location'].toString();
-    consultationFee = json['consultation_fee'].toString();
-    qualifications = json['qualifications'].toString();
+    location = json['location'] ?? '';
+    consultationFee = json['consultation_fee'] ?? '';
+    qualifications = json['qualifications'] ?? '';
     if (json['reviews'] != null) {
       reviews = <Reviews>[];
       json['reviews'].forEach((v) {

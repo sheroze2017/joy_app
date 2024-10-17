@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
+import 'package:joy_app/modules/user/user_doctor/view/manage_booking.dart';
 import 'package:joy_app/modules/user/user_hospital/bloc/user_hospital_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -33,7 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
     'Assets/images/pharmacy.png',
     'Assets/images/blood.png',
     'Assets/images/doctorbanner.png',
-    'Assets/images/hospitalbanner.png'
+    'Assets/images/hospitalbanner.png',
+    'Assets/images/bannerlast.png'
   ];
 
   List<String>? filePath;
@@ -153,9 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: TextEditingController()),
                     ),
                   ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
                   Stack(
                     children: [
                       CarouselSlider(
@@ -164,32 +163,36 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (BuildContext context) {
                               return InkWell(
                                 onTap: () {
+                                  if (url.contains('last')) {
+                                    Get.to(ManageAllAppointmentUser(),
+                                        transition: Transition.rightToLeft);
+                                  }
                                   if (url.contains('hospital')) {
                                     Get.to(
                                         AllHospitalScreen(
                                           appBarText: 'All Hospital',
                                           isHospital: true,
                                         ),
-                                        transition: Transition.native);
+                                        transition: Transition.rightToLeft);
                                   } else if (url.contains('blood')) {
                                     Get.to(
                                         AllHospitalScreen(
                                           appBarText: 'All Blood Bank',
                                           isBloodBank: true,
                                         ),
-                                        transition: Transition.native);
+                                        transition: Transition.rightToLeft);
                                   } else if (url.contains('pharmacy')) {
                                     Get.to(
                                         AllHospitalScreen(
                                           appBarText: 'All Pharmacy',
                                           isPharmacy: true,
                                         ),
-                                        transition: Transition.native);
+                                        transition: Transition.rightToLeft);
                                   } else if (url.contains('doctor')) {
                                     Get.to(
                                         AllDoctorsScreen(
                                             appBarText: 'All Doctors'),
-                                        transition: Transition.native);
+                                        transition: Transition.rightToLeft);
                                   }
                                 },
                                 child: Container(
@@ -234,29 +237,29 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
-                      // Positioned(
-                      //   bottom: 2,
-                      //   left: 0,
-                      //   right: 0,
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: imageList.map((url) {
-                      //       int index = imageList.indexOf(url);
-                      //       return Container(
-                      //         width: _currentIndex == index ? 5.w : 2.w,
-                      //         height: 2.w,
-                      //         margin: EdgeInsets.symmetric(
-                      //             vertical: 10.0, horizontal: 2.0),
-                      //         decoration: BoxDecoration(
-                      //           borderRadius: BorderRadius.circular(50),
-                      //           color: _currentIndex == index
-                      //               ? Colors.white
-                      //               : Colors.grey,
-                      //         ),
-                      //       );
-                      //     }).toList(),
-                      //   ),
-                      // )
+                      Positioned(
+                        bottom: 15,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: imageList.map((url) {
+                            int index = imageList.indexOf(url);
+                            return Container(
+                              width: _currentIndex == index ? 7.w : 2.w,
+                              height: 2.w,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 2.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: _currentIndex == index
+                                    ? Colors.white
+                                    : Colors.grey,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(
@@ -284,7 +287,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: Text(
                             'See All',
-                            style: CustomTextStyles.lightSmallTextStyle(),
+                            style:
+                                CustomTextStyles.lightSmallTextStyle(size: 13),
                           ),
                         ),
                       ],
@@ -368,7 +372,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: Text(
                             'See All',
-                            style: CustomTextStyles.lightSmallTextStyle(),
+                            style:
+                                CustomTextStyles.lightSmallTextStyle(size: 13),
                           ),
                         ),
                       ],
@@ -452,7 +457,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: Text(
                             'See All',
-                            style: CustomTextStyles.lightSmallTextStyle(),
+                            style:
+                                CustomTextStyles.lightSmallTextStyle(size: 13),
                           ),
                         ),
                       ],

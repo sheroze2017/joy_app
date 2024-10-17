@@ -604,6 +604,7 @@ class VerticalDoctorsList extends StatelessWidget {
                     )
                   : Get.to(
                       DoctorDetailScreen2(
+                        isFromHospital: false,
                         doctorId: doctorData.userId.toString(),
                         docName: 'Dr. David Patel',
                         location: 'Golden Cardiology Center',

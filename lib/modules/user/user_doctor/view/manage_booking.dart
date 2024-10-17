@@ -303,6 +303,7 @@ class AppointmentCardUser extends StatelessWidget {
                         isCompleted
                             ? Get.to(
                                 DoctorDetailScreen2(
+                                  isFromHospital: false,
                                   doctorId:
                                       bookingDetail.doctorUserId.toString(),
                                   docName: '',

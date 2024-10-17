@@ -25,7 +25,9 @@ class ConfirmationDailog extends StatelessWidget {
             onPressed: () {
               Get.back();
             },
-            backgroundColor: AppColors.whiteColor,
+            backgroundColor: ThemeUtil.isDarkMode(context)
+                ? AppColors.blackColor
+                : AppColors.whiteColor,
             textColor: ThemeUtil.isDarkMode(context)
                 ? AppColors.whiteColor
                 : AppColors.blackColor),

@@ -27,6 +27,9 @@ class MediaPostController extends GetxController {
   var commentLoad = false.obs;
   var fetchPostLoader = false.obs;
 
+  Rx<TextEditingController> certificateController =
+      Rx<TextEditingController>(TextEditingController(text: ""));
+
   @override
   void onInit() {
     super.onInit();
@@ -76,7 +79,7 @@ class MediaPostController extends GetxController {
     } finally {}
   }
 
-  Future<void> uploadPhoto(imagePath, BuildContext context) async {
+  Future<bool> uploadPhoto(imagePath, BuildContext context) async {
     imgUploaded.value = true;
     imgUrl.value = '';
     try {
@@ -87,13 +90,16 @@ class MediaPostController extends GetxController {
       if (response.isNotEmpty) {
         imgUrl.value = response;
         showSuccessMessage(context, 'Image added sucessfully');
+        return true;
       } else {
         showErrorMessage(context, 'Error adding image');
+        certificateController.value.clear();
+        return false;
       }
     } catch (e) {
       showErrorMessage(context, 'Error adding image');
-
       imgUploaded.value = false;
+      certificateController.value.clear();
       throw (e);
     } finally {
       imgUploaded.value = false;

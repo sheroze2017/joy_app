@@ -19,6 +19,7 @@ class DoctorDetailScreen2 extends StatefulWidget {
   final String docName;
   final String location;
   final String Category;
+  final bool isFromHospital;
   String doctorId;
   bool isDoctor;
 
@@ -28,6 +29,7 @@ class DoctorDetailScreen2 extends StatefulWidget {
       required this.location,
       required this.Category,
       required this.doctorId,
+      required this.isFromHospital,
       this.isDoctor = false});
 
   @override
@@ -326,7 +328,13 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                       ),
                                       SizedBox(height: 1.h),
                                       Obx(() => Text(
-                                          '${_doctorController.doctorDetail!.data!.consultationFee!.toString()} for 1 Hour Consultation',
+                                          _doctorController.doctorDetail!.data!
+                                                  .consultationFee!.isEmpty
+                                              ? 'N/a'
+                                              : _doctorController.doctorDetail!
+                                                      .data!.consultationFee
+                                                      .toString() +
+                                                  ' for 1 Hour Consultation',
                                           style:
                                               CustomTextStyles.lightTextStyle(
                                                   size: 14))),
@@ -381,53 +389,58 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                     ),
                   ),
       ),
-      bottomNavigationBar: Stack(
-        alignment: new FractionalOffset(.5, 1.0),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      bottomNavigationBar: !widget
+              .isFromHospital // Replace this with your condition
+          ? Stack(
+              alignment: FractionalOffset(.5, 1.0),
               children: [
-                Expanded(
-                  child: RoundedButton(
-                      text:
-                          widget.isDoctor ? 'Edit Profile' : "Book Appointment",
-                      onPressed: () {
-                        _doctorController.doctorDetail == null
-                            ? null
-                            : widget.isDoctor
-                                ? Get.to(
-                                    DoctorFormScreen(
-                                      email: _doctorController
-                                          .doctorDetail!.data!.email
-                                          .toString(),
-                                      password: _doctorController
-                                          .doctorDetail!.data!.password
-                                          .toString(),
-                                      name: _doctorController
-                                          .doctorDetail!.data!.name
-                                          .toString(),
-                                      details:
-                                          _doctorController.doctorDetail!.data,
-                                      isEdit: true,
-                                    ),
-                                    transition: Transition.native)
-                                : Get.to(
-                                    ProfileFormScreen(
-                                      doctorDetail:
-                                          _doctorController.doctorDetail!,
-                                    ),
-                                    transition: Transition.native);
-                      },
-                      backgroundColor: AppColors.darkBlueColor,
-                      textColor: AppColors.whiteColor),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: RoundedButton(
+                            text: widget.isDoctor
+                                ? 'Edit Profile'
+                                : "Book Appointment",
+                            onPressed: () {
+                              _doctorController.doctorDetail == null
+                                  ? null
+                                  : widget.isDoctor
+                                      ? Get.to(
+                                          DoctorFormScreen(
+                                            email: _doctorController
+                                                .doctorDetail!.data!.email
+                                                .toString(),
+                                            password: _doctorController
+                                                .doctorDetail!.data!.password
+                                                .toString(),
+                                            name: _doctorController
+                                                .doctorDetail!.data!.name
+                                                .toString(),
+                                            details: _doctorController
+                                                .doctorDetail!.data,
+                                            isEdit: true,
+                                          ),
+                                          transition: Transition.native)
+                                      : Get.to(
+                                          ProfileFormScreen(
+                                            doctorDetail:
+                                                _doctorController.doctorDetail!,
+                                          ),
+                                          transition: Transition.native);
+                            },
+                            backgroundColor: AppColors.darkBlueColor,
+                            textColor: AppColors.whiteColor),
+                      ),
+                    ],
+                  ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
+            )
+          : null, // Hides bottomNavigationBar when the condition is false
     );
   }
 }

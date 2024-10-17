@@ -7,6 +7,7 @@ import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
+import 'package:joy_app/modules/user/user_blood_bank/view/blood_bank_detail.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/my_appeals.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/location_widget.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/reviewbar_widget.dart';
@@ -341,7 +342,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                           .searchResults[index].userId
                                           .toString(),
                                     ),
-                                    transition: Transition.native)
+                                    transition: Transition.rightToLeft)
                                 : widget.isHospital
                                     ? Get.to(
                                         HospitalHomeScreen(
@@ -350,8 +351,13 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                               .searchResults[index].userId
                                               .toString(),
                                         ),
-                                        transition: Transition.native)
-                                    : print('null');
+                                        transition: Transition.rightToLeft)
+                                    : Get.to(
+                                        BloodBankDetailScreen(
+                                          donor: bloodBankController
+                                              .searchResults[index],
+                                        ),
+                                        transition: Transition.rightToLeft);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -370,8 +376,8 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12.0),
                                     child: CachedNetworkImage(
-                                      width: 28.w,
-                                      height: 28.w,
+                                      width: 27.w,
+                                      height: 27.w,
                                       fit: BoxFit.cover,
                                       imageUrl: widget.isBloodBank
                                           ? bloodBankController
@@ -411,7 +417,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 2.w,
+                                    width: 4.w,
                                   ),
                                   Expanded(
                                     child: Column(

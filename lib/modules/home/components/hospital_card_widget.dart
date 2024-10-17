@@ -44,7 +44,7 @@ class HosipitalCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 59.4.w,
+      width: 55.w,
       decoration: BoxDecoration(
           border: Border.all(
               color: Color(0xffE5E7EB),
@@ -58,8 +58,8 @@ class HosipitalCardWidget extends StatelessWidget {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12), topRight: Radius.circular(12)),
             child: CachedNetworkImage(
-              width: 59.4.w,
-              height: 31.w,
+              width: 55.w,
+              height: 27.w,
               fit: BoxFit.cover,
               imageUrl: getImageUrl(),
               placeholder: (context, url) => Center(
@@ -97,9 +97,9 @@ class HosipitalCardWidget extends StatelessWidget {
                       : hospitalData!.name.toString(),
             ),
           ),
-          SizedBox(
-            height: 1.h,
-          ),
+          // SizedBox(
+          //   height: 1.h,
+          // ),
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: LocationWidget(
@@ -110,9 +110,9 @@ class HosipitalCardWidget extends StatelessWidget {
                       : hospitalData!.location.toString(),
             ),
           ),
-          SizedBox(
-            height: 1.h,
-          ),
+          // SizedBox(
+          //   height: 1.h,
+          // ),
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: ReviewBar(

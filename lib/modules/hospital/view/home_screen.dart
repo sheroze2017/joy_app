@@ -409,27 +409,30 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16.0),
                                   child: Text(
-                                      'Monday-Friday, 08.00 AM-18.00 PM',
+                                      _hospitalDetailController
+                                          .hospitald.value!.timing
+                                          .toString(),
                                       style: CustomTextStyles.lightTextStyle(
                                           color: Color(0xff4B5563), size: 14)),
                                 ),
-                                SizedBox(height: 2.h),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Heading(
-                                    title: 'Check up Fee',
-                                  ),
-                                ),
-                                SizedBox(height: 1.h),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Text(
-                                      '${_hospitalDetailController.hospitald.value!.checkupFee.toString()}\ Rs',
-                                      style: CustomTextStyles.lightTextStyle(
-                                          color: Color(0xff4B5563), size: 14)),
-                                ),
+                                // SizedBox(height: 2.h),
+                                // Padding(
+                                //   padding: const EdgeInsets.symmetric(
+                                //       horizontal: 16.0),
+                                //   child: Heading(
+                                //     title: 'Check up Fee',
+                                //   ),
+                                // ),
+                                // SizedBox(height: 1.h),
+                                // Padding(
+                                //   padding: const EdgeInsets.symmetric(
+                                //       horizontal: 16.0),
+                                //   child: Text(
+                                //       '${_hospitalDetailController.hospitald.value!.checkupFee.toString()}\ Rs',
+                                //       style: CustomTextStyles.lightTextStyle(
+                                //           color: Color(0xff4B5563), size: 14)),
+                                // ),
+
                                 SizedBox(height: 2.h),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -450,6 +453,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                         onTap: () {
                                           Get.to(
                                               AllDocPharmacy(
+                                                isFromHosipital: true,
                                                 dataList:
                                                     _hospitalDetailController
                                                         .hospitalDoctors.value,
@@ -476,7 +480,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                             child: Text('No Doctors Found'),
                                           )
                                         : Container(
-                                            height: 70.w,
+                                            height: 60.w,
                                             child: ListView.separated(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -549,6 +553,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                     onTap: () {
                                                       Get.to(
                                                         DoctorDetailScreen2(
+                                                          isFromHospital: true,
                                                           doctorId: data
                                                               .pharmacyDetailId
                                                               .toString(),
@@ -564,7 +569,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                       );
                                                     },
                                                     child: Container(
-                                                      width: 57.5.w,
+                                                      width: 55.w,
                                                       decoration: BoxDecoration(
                                                         color: ThemeUtil
                                                                 .isDarkMode(
@@ -596,7 +601,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                                         .toString()
                                                                     : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                                                                 width: 51.28.w,
-                                                                height: 27.9.w,
+                                                                height: 25.w,
                                                                 fit: BoxFit
                                                                     .cover,
                                                               ),
@@ -648,7 +653,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                                             SizedBox(width: 0.5.w),
                                                                             Expanded(
                                                                               child: Text(
-                                                                                data.location.toString(),
+                                                                                data.location ?? 'N/a',
                                                                                 style: CustomTextStyles.lightTextStyle(
                                                                                   color: Color(0xff4B5563),
                                                                                   size: 14,
@@ -676,12 +681,12 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                                               },
                                                                             ),
                                                                             Text(
-                                                                              '5',
+                                                                              '0.0',
                                                                               style: CustomTextStyles.lightTextStyle(color: Color(0xff4B5563), size: 12),
                                                                             ),
                                                                             SizedBox(width: 0.5.w),
                                                                             Text(
-                                                                              ' | 1,872 Reviews',
+                                                                              ' | ${data.reviews!.length.toString()} Reviews',
                                                                               style: CustomTextStyles.lightTextStyle(color: Color(0xff6B7280), size: 10.8),
                                                                             ),
                                                                           ],
@@ -721,6 +726,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                         onTap: () {
                                           Get.to(
                                               AllDocPharmacy(
+                                                isFromHosipital: true,
                                                 dataList:
                                                     _hospitalDetailController
                                                         .hospitalPharmacies
@@ -762,6 +768,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
 
                                                 Get.to(
                                                     AllDocPharmacy(
+                                                      isFromHosipital: true,
                                                       isSelectable: true,
                                                       dataList:
                                                           _pharmacyController

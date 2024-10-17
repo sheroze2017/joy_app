@@ -120,6 +120,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     transition: Transition.native);
                               },
                               child: MedicineCard(
+                                isFromHospital: false,
                                 categoryId: data.categoryId!.toInt(),
                                 isUserProductScreen: true,
                                 onPressed: () {

@@ -7,16 +7,20 @@ import 'package:sizer/sizer.dart';
 
 class DoctorAvailDailog extends StatefulWidget {
   final void Function(List<Set<String>>) onConfirm;
+  final List<Set<String>> initialSelectedTimes; // Pass initial selected times
 
-  const DoctorAvailDailog({Key? key, required this.onConfirm})
-      : super(key: key);
+  const DoctorAvailDailog({
+    Key? key,
+    required this.onConfirm,
+    required this.initialSelectedTimes, // Initialize from parent
+  }) : super(key: key);
 
   @override
   _DoctorAvailDailogState createState() => _DoctorAvailDailogState();
 }
 
 class _DoctorAvailDailogState extends State<DoctorAvailDailog> {
-  List<String> selectedTimes = [];
+  late List<Set<String>> selectedTimesPerDay; // Initialize with the passed list
   final List<String> daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -26,6 +30,7 @@ class _DoctorAvailDailogState extends State<DoctorAvailDailog> {
     'Saturday',
     'Sunday'
   ];
+
   final List<String> times = [
     '08:00 AM',
     '09:00 AM',
@@ -42,10 +47,18 @@ class _DoctorAvailDailogState extends State<DoctorAvailDailog> {
     '08:00 PM',
     '09:00 PM'
   ];
-  final List<Set<String>> selectedTimesPerDay =
-      List.generate(7, (_) => <String>{});
 
   int selectedDayIndex = 0; //
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize selectedTimesPerDay from the parent or empty if none is passed
+    selectedTimesPerDay = widget.initialSelectedTimes.isNotEmpty
+        ? widget.initialSelectedTimes
+        : List.generate(7, (_) => <String>{});
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -61,15 +74,11 @@ class _DoctorAvailDailogState extends State<DoctorAvailDailog> {
                 style: CustomTextStyles.w600TextStyle(
                     color: Theme.of(context).primaryColorDark),
               ),
-              SizedBox(
-                width: 3.w,
-              ),
-              SvgPicture.asset('Assets/icons/dropdown.svg')
+              SizedBox(width: 3.w),
+              SvgPicture.asset('Assets/icons/dropdown.svg'),
             ],
           ),
-          SizedBox(
-            height: 3.h,
-          ),
+          SizedBox(height: 3.h),
           Wrap(
             alignment: WrapAlignment.start,
             spacing: 10.0,
@@ -90,8 +99,9 @@ class _DoctorAvailDailogState extends State<DoctorAvailDailog> {
                         ? Theme.of(context).primaryColorDark
                         : Colors.white,
                     borderRadius: BorderRadius.circular(6.17),
-                    border:
-                        Border.all(color: Theme.of(context).primaryColorDark),
+                    border: Border.all(
+                      color: Theme.of(context).primaryColorDark,
+                    ),
                   ),
                   child: Text(
                     daysOfWeek[index],
@@ -105,9 +115,7 @@ class _DoctorAvailDailogState extends State<DoctorAvailDailog> {
               );
             }),
           ),
-          SizedBox(
-            height: 4.h,
-          ),
+          SizedBox(height: 4.h),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -116,15 +124,11 @@ class _DoctorAvailDailogState extends State<DoctorAvailDailog> {
                 style: CustomTextStyles.w600TextStyle(
                     color: Theme.of(context).primaryColorDark),
               ),
-              SizedBox(
-                width: 3.w,
-              ),
-              SvgPicture.asset('Assets/icons/dropdown.svg')
+              SizedBox(width: 3.w),
+              SvgPicture.asset('Assets/icons/dropdown.svg'),
             ],
           ),
-          SizedBox(
-            height: 3.h,
-          ),
+          SizedBox(height: 3.h),
           Expanded(
             child: Wrap(
               alignment: WrapAlignment.spaceEvenly,
@@ -174,18 +178,19 @@ class _DoctorAvailDailogState extends State<DoctorAvailDailog> {
           children: [
             Expanded(
               child: RoundedButtonSmall(
-                  text: "Confirm",
-                  onPressed: () {
-                    // Pass selected times to the callback function
-                    widget.onConfirm(selectedTimesPerDay);
-                    Navigator.pop(context);
-                  },
-                  backgroundColor: ThemeUtil.isDarkMode(context)
-                      ? Color(0xffC5D3E3)
-                      : Color(0xff1C2A3A),
-                  textColor: ThemeUtil.isDarkMode(context)
-                      ? Color(0xff121212)
-                      : Color(0xffFFFFFF)),
+                text: "Confirm",
+                onPressed: () {
+                  // Pass selected times to the callback function
+                  widget.onConfirm(selectedTimesPerDay);
+                  Navigator.pop(context);
+                },
+                backgroundColor: ThemeUtil.isDarkMode(context)
+                    ? Color(0xffC5D3E3)
+                    : Color(0xff1C2A3A),
+                textColor: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff121212)
+                    : Color(0xffFFFFFF),
+              ),
             ),
           ],
         ),
