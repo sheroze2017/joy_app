@@ -40,6 +40,7 @@ class RoundedBorderTextField extends StatelessWidget {
       validator: validator,
       keyboardType: textInputType,
       focusNode: focusNode,
+      
       enabled: isenable,
       style: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
       cursorColor: const Color(0xffD1D5DB),

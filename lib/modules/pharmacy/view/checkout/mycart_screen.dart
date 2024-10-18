@@ -118,7 +118,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                               .darkHeadingTextStyle(),
                                         ),
                                         Text(
-                                          '${data.quantity} Tablets for ${data.price}\$',
+                                          '${data.quantity} Tablets for ${data.price}\Rs',
                                           style: CustomTextStyles.w600TextStyle(
                                               size: 14,
                                               color: Color(0xff4B5563)),
@@ -253,14 +253,15 @@ class _MyCartScreenState extends State<MyCartScreen> {
                   children: [
                     NameCharges(
                       medName: 'Delivery Charges',
-                      charges: '2\$',
+                      charges: '100\Rs',
                     ),
                     Obx(
                       () => NameCharges(
                         medName: 'Grand Total',
-                        charges: (pharmacyController.calculateGrandTotal() + 2)
-                                .toString() +
-                            '\$',
+                        charges:
+                            (pharmacyController.calculateGrandTotal() + 100)
+                                    .toString() +
+                                '\Rs',
                         isTotal: true,
                       ),
                     ),
