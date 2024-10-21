@@ -116,6 +116,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
                       });
                     },
                     child: RoundedBorderTextField(
+                        showLabel: true,
                         isenable: false,
                         controller: _addressController,
                         focusNode: _focusNode3,

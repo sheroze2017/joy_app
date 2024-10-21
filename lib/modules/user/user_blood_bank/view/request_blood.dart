@@ -98,6 +98,7 @@ class _RequestBloodState extends State<RequestBlood> {
                       RoundedBorderTextField(
                         controller: _locationController,
                         focusNode: _focusNode3,
+                        showLabel: true,
                         nextFocusNode: _focusNode4,
                         isenable: true,
                         hintText: 'Location',
@@ -236,6 +237,7 @@ class _RequestBloodState extends State<RequestBlood> {
                         },
                         child: RoundedBorderTextField(
                           isenable: false,
+                          showLabel: true,
                           controller: _timeController,
                           focusNode: _focusNode2,
                           nextFocusNode: _focusNode3,

@@ -57,8 +57,9 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
 
   final TextEditingController _lnameController = TextEditingController();
   final TextEditingController _fnameController = TextEditingController();
-  final TextEditingController _availabilityController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _availabilityController = TextEditingController();
+  final TextEditingController _aboutMeController = TextEditingController();
 
   // final TextEditingController _medicalCertificateController =
   //     TextEditingController();
@@ -245,6 +246,18 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  RoundedBorderTextField(
+                    //validator: validateName,
+                    controller: _aboutMeController,
+                    focusNode: _focusNode3,
+                    nextFocusNode: _focusNode4,
+                    hintText: 'About Me',
+                    icon: '',
+                    maxlines: true,
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
                   SearchSingleDropdown(
                     hintText: 'Gender',
                     items: ['Male', 'Female'],
@@ -290,6 +303,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                       });
                     },
                     child: RoundedBorderTextField(
+                      //  showLabel: true,
                       isenable: false,
                       focusNode: _focusNode5,
                       nextFocusNode: _focusNode6,
@@ -360,6 +374,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                       },
                       child: Obx(
                         () => RoundedBorderTextField(
+                          //showLabel: true,
                           showLoader: mediaController.imgUploaded.value,
                           isenable: false,
                           controller:
@@ -448,6 +463,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                             focusNode: _focusNode10,
                             nextFocusNode: _focusNode11,
                             isenable: false,
+                            //showLabel: true,
                             controller: _availabilityController,
                             hintText: 'Availability',
                             icon: '',
@@ -498,7 +514,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                                 .toString(),
                                             _feesController.text,
                                             context,
-                                            _selectedImage.toString());
+                                            _selectedImage.toString(),_aboutMeController.text);
                                     if (result == true) {
                                       showDialog(
                                         context: context,

@@ -150,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             transition: Transition.native);
                       },
                       child: RoundedSearchTextField(
+                        
                           isEnable: false,
                           hintText: 'Search doctor...',
                           controller: TextEditingController()),

@@ -226,6 +226,7 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                       });
                     },
                     child: RoundedBorderTextField(
+                      showLabel: true,
                       isenable: false,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -275,6 +276,7 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                       focusNode: _focusNode4,
                       nextFocusNode: _focusNode5,
                       isenable: false,
+                      showLabel: true,
                       controller: _availabilityController,
                       hintText: 'Availability',
                       icon: '',
@@ -304,6 +306,8 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                       child: Obx(
                         () => RoundedBorderTextField(
                           isenable: false,
+                          showLabel: true,
+
                           showLoader: mediaController.imgUploaded.value,
                           controller: _prescriptionController,
                           focusNode: _focusNode5,

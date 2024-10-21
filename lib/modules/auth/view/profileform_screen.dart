@@ -46,6 +46,7 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _diseaseController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _aboutMeController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _profileImgController = TextEditingController();
 
@@ -85,12 +86,13 @@ class _FormScreenState extends State<FormScreen> {
       _selectedImage = _profileController.image.value;
       _nameController.setText(_profileController.firstName.toString());
       _phoneController.setText(_profileController.phone.toString());
+    } else {
+      _nameController.setText(widget.name);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> dropdownItems = ['Item 1', 'Item 2', 'Item 3'];
     return Scaffold(
       appBar: CustomAppBar(
         title: widget.isEdit ? 'Edit Profile' : 'Fill Your Profile',
@@ -187,7 +189,7 @@ class _FormScreenState extends State<FormScreen> {
                     focusNode: _focusNode1,
                     nextFocusNode: _focusNode2,
                     controller: _nameController,
-                    hintText: 'Sheroze Rehman',
+                    hintText: 'Name',
                     icon: '',
                   ),
                   SizedBox(
@@ -205,6 +207,23 @@ class _FormScreenState extends State<FormScreen> {
                     nextFocusNode: _focusNode3,
                     controller: _diseaseController,
                     hintText: 'Disease',
+                    icon: '',
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter about me';
+                      } else {
+                        return null;
+                      }
+                    },
+                    focusNode: _focusNode3,
+                    nextFocusNode: _focusNode4,
+                    controller: _aboutMeController,
+                    hintText: 'About Me',
                     icon: '',
                   ),
                   SizedBox(
@@ -250,6 +269,7 @@ class _FormScreenState extends State<FormScreen> {
                       nextFocusNode: _focusNode5,
                       controller: _locationController,
                       hintText: 'Location',
+                      showLabel: true,
                       icon: '',
                     ),
                   ),
@@ -263,6 +283,7 @@ class _FormScreenState extends State<FormScreen> {
                     },
                     child: RoundedBorderTextField(
                       isenable: false,
+                      showLabel: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your DOB';
@@ -330,7 +351,7 @@ class _FormScreenState extends State<FormScreen> {
                                         _dobController.text,
                                         _genderController.text,
                                         context,
-                                        _selectedImage.toString());
+                                        _selectedImage.toString(),_aboutMeController.text);
                                 if (success == true) {
                                   widget.isEdit
                                       ? {_profileController.updateUserDetal()}

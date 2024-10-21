@@ -52,7 +52,8 @@ class AuthApi {
       String phoneNo,
       String authType,
       String userRole,
-      String image) async {
+      String image,
+      String aboutMe) async {
     try {
       final result = await _dioClient.post(Endpoints.userSignUpApi, data: {
         "name": firstName,
@@ -65,7 +66,8 @@ class AuthApi {
         "user_role": userRole,
         "auth_type": authType,
         "phone": phoneNo,
-        "image": image
+        "image": image,
+        "about_me": aboutMe
       });
       return UserRegisterModel.fromJson(result);
     } catch (e) {
@@ -225,7 +227,8 @@ class AuthApi {
       String consultationFees,
       String qualification,
       String documentUrl,
-      String image) async {
+      String image,
+      String about) async {
     try {
       final result = await _dioClient.post(Endpoints.doctorSignUpApi, data: {
         "name": firstName,
@@ -241,7 +244,8 @@ class AuthApi {
         "consultation_fee": consultationFees,
         "qualifications": qualification,
         "document": documentUrl,
-        "image": image
+        "image": image,
+        "about_me": about
       });
       return DoctorRegisterModel.fromJson(result);
     } catch (e) {

@@ -12,6 +12,7 @@ import 'package:joy_app/modules/user/user_blood_bank/view/my_appeals.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/location_widget.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/reviewbar_widget.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/user_all_order.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/user/user_doctor/view/all_doctor_screen.dart';
@@ -155,7 +156,96 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                 ),
               ),
             )
-          : null,
+          : widget.isPharmacy
+              ? Drawer(
+                  backgroundColor: AppColors.lightGreenColoreb1,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 40),
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: <Widget>[
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: Image.network(
+                                _profileController.image.contains('http')
+                                    ? _profileController.image.toString()
+                                    : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
+                                width: 12.8.w,
+                                height: 12.8.w,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 3.w,
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _profileController.firstName.toString(),
+                                    style: CustomTextStyles.w600TextStyle(
+                                      size: 15.59,
+                                      color: AppColors.darkGreenColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    _profileController.email.toString(),
+                                    style: CustomTextStyles.lightSmallTextStyle(
+                                      color: AppColors.darkGreenColor,
+                                      size: 12.47,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 0.5.w,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5.h,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Get.to(UserAllOrderScreen(),
+                                transition: Transition.rightToLeft);
+                          },
+                          child: DrawerItem(
+                            isBloodBank: true,
+                            isBooking: true,
+                            bookingText: 'My Orders',
+                            bookingAsset: 'Assets/icons/blood.svg',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 3.h,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Get.to(
+                                AllHospitalScreen(
+                                  appBarText: 'All Pharmacy',
+                                  isPharmacy: true,
+                                ),
+                                transition: Transition.rightToLeft);
+                          },
+                          child: DrawerItem(
+                            isBloodBank: true,
+                            isBooking: true,
+                            bookingText: 'All Pharmacy',
+                            bookingAsset: 'Assets/icons/pharmacy.svg',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : null,
       appBar: HomeAppBar(
           title: widget.appBarText,
           leading: Icon(Icons.arrow_back),

@@ -225,6 +225,8 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                     child: RoundedBorderTextField(
                       focusNode: _focusNode3,
                       isenable: false,
+                                        showLabel: true,
+
                       nextFocusNode: _focusNode4,
                       controller: _locationController,
                       hintText: 'Location',
@@ -272,6 +274,8 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                       focusNode: _focusNode4,
                       nextFocusNode: _focusNode5,
                       isenable: false,
+                                        showLabel: true,
+
                       controller: _availabilityController,
                       hintText: 'Availability',
                       icon: '',

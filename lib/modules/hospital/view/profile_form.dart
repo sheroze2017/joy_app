@@ -62,8 +62,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   final FocusNode _focusNode8 = FocusNode();
   final authController = Get.find<AuthController>();
   final _hospitalDetailController = Get.find<HospitalDetailController>();
-    List<Set<String>> dateAvailability = [];
-
+  List<Set<String>> dateAvailability = [];
 
   final _formKey = GlobalKey<FormState>();
   String? _selectedImage;
@@ -228,52 +227,51 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-               InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return DoctorAvailDailog(
-                                  initialSelectedTimes: dateAvailability,
-                                  onConfirm:
-                                      (List<Set<String>> selectedTimes) async {
-                                    dateAvailability = selectedTimes;
-                                    setState(() {});
-                                    String result =
-                                        await generateFormattedString(
-                                            selectedTimes, [
-                                      'Monday',
-                                      'Tuesday',
-                                      'Wednesday',
-                                      'Thursday',
-                                      'Friday',
-                                      'Saturday',
-                                      'Sunday'
-                                    ]);
-                                    _availabilityController.setText(result);
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          child: RoundedBorderTextField(
-                            maxlines: true,
-                            focusNode: _focusNode3,
-                            nextFocusNode: _focusNode4,
-                            isenable: false,
-                            controller: _availabilityController,
-                            hintText: 'Availability',
-                            icon: '',
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter availability';
-                              } else {
-                                return null;
-                              }
+                  InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DoctorAvailDailog(
+                            initialSelectedTimes: dateAvailability,
+                            onConfirm: (List<Set<String>> selectedTimes) async {
+                              dateAvailability = selectedTimes;
+                              setState(() {});
+                              String result = await generateFormattedString(
+                                  selectedTimes, [
+                                'Monday',
+                                'Tuesday',
+                                'Wednesday',
+                                'Thursday',
+                                'Friday',
+                                'Saturday',
+                                'Sunday'
+                              ]);
+                              _availabilityController.setText(result);
                             },
-                          ),
-                        )
-                      ,   SizedBox(
+                          );
+                        },
+                      );
+                    },
+                    child: RoundedBorderTextField(
+                      maxlines: true,
+                      focusNode: _focusNode3,
+                      nextFocusNode: _focusNode4,
+                      isenable: false,
+                      showLabel: true,
+                      controller: _availabilityController,
+                      hintText: 'Availability',
+                      icon: '',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter availability';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                  SizedBox(
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
@@ -301,6 +299,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                       });
                     },
                     child: RoundedBorderTextField(
+                      showLabel: true,
                       isenable: false,
                       controller: _locationController,
                       focusNode: _focusNode5,

@@ -387,7 +387,7 @@ class AuthController extends GetxController {
       dob,
       gender,
       BuildContext context,
-      image) async {
+      image,aboutMe) async {
     try {
       registerLoader.value = true;
       UserRegisterModel response = await authApi.userRegister(
@@ -401,7 +401,7 @@ class AuthController extends GetxController {
           phoneNo,
           authType,
           userRole,
-          image);
+          image,aboutMe);
       if (response.data != null) {
         saveUserDetailInLocal(
           response.data!.userId!,
@@ -445,7 +445,8 @@ class AuthController extends GetxController {
       documentUrl,
       consultationFees,
       BuildContext context,
-      image) async {
+      image,
+      aboutMe) async {
     try {
       registerLoader.value = true;
       DoctorRegisterModel response = await authApi.doctorRegister(
@@ -462,7 +463,8 @@ class AuthController extends GetxController {
           consultationFees,
           qualification,
           documentUrl,
-          image);
+          image,
+          aboutMe);
       if (response.data != null) {
         await saveUserDetailInLocal(
             response.data!.userId!,
