@@ -35,8 +35,12 @@ class RoundedButton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: showLoader
-            ? CircularProgressIndicator(
-                color: AppColors.whiteColor,
+            ? Container(
+                height: 1.5.h,
+                width: 1.5.h,
+                child: CircularProgressIndicator(
+                  color: AppColors.whiteColor,
+                ),
               )
             : Text(
                 text,
@@ -83,8 +87,8 @@ class RoundedButtonSmall extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: showLoader
               ? Container(
-                  height: 2.h,
-                  width: 2.h,
+                  height: 1.5.h,
+                  width: 1.5.h,
                   child: CircularProgressIndicator(
                     color: Colors.white,
                   ),

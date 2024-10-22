@@ -20,6 +20,7 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/home/components/blog_card.dart';
 import 'package:joy_app/modules/user/user_hospital/view/all_hospital_screen.dart';
 import 'package:joy_app/modules/pharmacy/view/pharmacy_product_screen.dart';
+import 'package:joy_app/widgets/dailog/confirmation_dailog.dart';
 import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
@@ -473,239 +474,281 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                   ),
                                 ),
                                 SizedBox(height: 1.h),
-                                Obx(() =>
-                                    _hospitalDetailController
-                                            .hospitalDoctors.isEmpty
-                                        ? Center(
-                                            child: Text('No Doctors Found'),
-                                          )
-                                        : Container(
-                                            height: 60.w,
-                                            child: ListView.separated(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                Obx(
+                                    () =>
+                                        _hospitalDetailController
+                                                .hospitalDoctors.isEmpty
+                                            ? Center(
+                                                child: Text('No Doctors Found'),
+                                              )
+                                            : Container(
+                                                height: 60.w,
+                                                child: ListView.separated(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 16.0),
-                                              shrinkWrap: true,
-                                              separatorBuilder:
-                                                  (context, index) =>
-                                                      SizedBox(width: 2.w),
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: _hospitalDetailController
-                                                      .hospitalDoctors.length +
-                                                  1, // Increase by 1 for the plus widget
-                                              itemBuilder: (context, index) {
-                                                if (index == 0) {
-                                                  return InkWell(
-                                                    onTap: () async {
-                                                      await _userDoctorController
-                                                          .getAllDoctors();
+                                                  shrinkWrap: true,
+                                                  separatorBuilder:
+                                                      (context, index) =>
+                                                          SizedBox(width: 2.w),
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemCount:
+                                                      _hospitalDetailController
+                                                              .hospitalDoctors
+                                                              .length +
+                                                          1, // Increase by 1 for the plus widget
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    if (index == 0) {
+                                                      return InkWell(
+                                                        onTap: () async {
+                                                          await _userDoctorController
+                                                              .getAllDoctors();
 
-                                                      Get.to(
-                                                          AllDoctorsScreen(
-                                                              isSelectable:
-                                                                  true,
-                                                              appBarText:
-                                                                  'Select Doctor'),
-                                                          transition: Transition
-                                                              .native);
-                                                    },
-                                                    child: Container(
-                                                      width: 57.5.w,
-                                                      decoration: BoxDecoration(
-                                                        color: ThemeUtil
-                                                                .isDarkMode(
-                                                                    context)
-                                                            ? AppColors
-                                                                .purpleBlueColor
-                                                            : Color(0xffEEF5FF),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        border: Border.all(
-                                                          color: Colors.grey,
-                                                          width: 1.0,
-                                                        ),
-                                                      ),
-                                                      child: Center(
+                                                          Get.to(
+                                                              AllDoctorsScreen(
+                                                                  isSelectable:
+                                                                      true,
+                                                                  appBarText:
+                                                                      'Select Doctor'),
+                                                              transition:
+                                                                  Transition
+                                                                      .native);
+                                                        },
                                                         child: Container(
-                                                            decoration: BoxDecoration(
+                                                          width: 57.5.w,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: ThemeUtil
+                                                                    .isDarkMode(
+                                                                        context)
+                                                                ? AppColors
+                                                                    .purpleBlueColor
+                                                                : Color(
+                                                                    0xffEEF5FF),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                            border: Border.all(
+                                                              color:
+                                                                  Colors.grey,
+                                                              width: 1.0,
+                                                            ),
+                                                          ),
+                                                          child: Center(
+                                                            child: Container(
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            50),
+                                                                    color: Colors
+                                                                        .black),
+                                                                child: Icon(
+                                                                  Icons.add,
+                                                                  size: 30,
+                                                                  color: Colors
+                                                                      .white,
+                                                                )),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      final data =
+                                                          _hospitalDetailController
+                                                                  .hospitalDoctors[
+                                                              index - 1];
+                                                      return InkWell(
+                                                        onTap: () {
+                                                          Get.to(
+                                                            DoctorDetailScreen2(
+                                                              isFromHospital:
+                                                                  true,
+                                                              doctorId: data
+                                                                  .pharmacyDetailId
+                                                                  .toString(),
+                                                              docName:
+                                                                  'Dr. David Patel',
+                                                              location:
+                                                                  'Golden Cardiology Center',
+                                                              Category:
+                                                                  'Cardiologist',
+                                                            ),
+                                                            transition:
+                                                                Transition
+                                                                    .rightToLeft,
+                                                          );
+                                                        },
+                                                        child: Stack(
+                                                          children: [
+                                                            Container(
+                                                              width: 55.w,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: ThemeUtil
+                                                                        .isDarkMode(
+                                                                            context)
+                                                                    ? AppColors
+                                                                        .purpleBlueColor
+                                                                    : Color(
+                                                                        0xffEEF5FF),
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
-                                                                            50),
-                                                                color: Colors
-                                                                    .black),
-                                                            child: Icon(
-                                                              Icons.add,
-                                                              size: 30,
-                                                              color:
-                                                                  Colors.white,
-                                                            )),
-                                                      ),
-                                                    ),
-                                                  );
-                                                } else {
-                                                  final data =
-                                                      _hospitalDetailController
-                                                              .hospitalDoctors[
-                                                          index - 1];
-                                                  return InkWell(
-                                                    onTap: () {
-                                                      Get.to(
-                                                        DoctorDetailScreen2(
-                                                          isFromHospital: true,
-                                                          doctorId: data
-                                                              .pharmacyDetailId
-                                                              .toString(),
-                                                          docName:
-                                                              'Dr. David Patel',
-                                                          location:
-                                                              'Golden Cardiology Center',
-                                                          Category:
-                                                              'Cardiologist',
-                                                        ),
-                                                        transition: Transition
-                                                            .rightToLeft,
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      width: 55.w,
-                                                      decoration: BoxDecoration(
-                                                        color: ThemeUtil
-                                                                .isDarkMode(
-                                                                    context)
-                                                            ? AppColors
-                                                                .purpleBlueColor
-                                                            : Color(0xffEEF5FF),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(12.0),
-                                                        child: Column(
-                                                          children: [
-                                                            ClipRRect(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          12.0),
-                                                              child:
-                                                                  Image.network(
-                                                                data.image?.toString().contains(
-                                                                            'http') ??
-                                                                        false
-                                                                    ? data.image
-                                                                        .toString()
-                                                                    : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
-                                                                width: 51.28.w,
-                                                                height: 25.w,
-                                                                fit: BoxFit
-                                                                    .cover,
+                                                                            12),
                                                               ),
-                                                            ),
-                                                            SizedBox(
-                                                                width: 2.w),
-                                                            Row(
-                                                              children: [
-                                                                Expanded(
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .fromLTRB(
-                                                                            8,
-                                                                            8,
-                                                                            0,
-                                                                            0),
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .spaceEvenly,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        12.0),
+                                                                child: Column(
+                                                                  children: [
+                                                                    ClipRRect(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              12.0),
+                                                                      child: Image
+                                                                          .network(
+                                                                        data.image?.toString().contains('http') ??
+                                                                                false
+                                                                            ? data.image.toString()
+                                                                            : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                                                        width:
+                                                                            51.28.w,
+                                                                        height:
+                                                                            25.w,
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width: 2
+                                                                            .w),
+                                                                    Row(
                                                                       children: [
-                                                                        Text(
-                                                                          data.name
-                                                                              .toString(),
-                                                                          style:
-                                                                              CustomTextStyles.darkHeadingTextStyle(),
-                                                                        ),
-                                                                        Divider(
-                                                                          color:
-                                                                              Color(0xff6B7280),
-                                                                          thickness:
-                                                                              0.05.h,
-                                                                        ),
-                                                                        Text(
-                                                                          '',
-                                                                          style: CustomTextStyles.w600TextStyle(
-                                                                              size: 14,
-                                                                              color: Color(0xff4B5563)),
-                                                                        ),
-                                                                        Row(
-                                                                          children: [
-                                                                            SvgPicture.asset('Assets/icons/location.svg'),
-                                                                            SizedBox(width: 0.5.w),
-                                                                            Expanded(
-                                                                              child: Text(
-                                                                                data.location ?? 'N/a',
-                                                                                style: CustomTextStyles.lightTextStyle(
-                                                                                  color: Color(0xff4B5563),
-                                                                                  size: 14,
+                                                                        Expanded(
+                                                                          child:
+                                                                              Padding(
+                                                                            padding: const EdgeInsets.fromLTRB(
+                                                                                8,
+                                                                                8,
+                                                                                0,
+                                                                                0),
+                                                                            child:
+                                                                                Column(
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text(
+                                                                                  data.name.toString(),
+                                                                                  style: CustomTextStyles.darkHeadingTextStyle(),
                                                                                 ),
-                                                                              ),
+                                                                                Divider(
+                                                                                  color: Color(0xff6B7280),
+                                                                                  thickness: 0.05.h,
+                                                                                ),
+                                                                                Text(
+                                                                                  '',
+                                                                                  style: CustomTextStyles.w600TextStyle(size: 14, color: Color(0xff4B5563)),
+                                                                                ),
+                                                                                Row(
+                                                                                  children: [
+                                                                                    SvgPicture.asset('Assets/icons/location.svg'),
+                                                                                    SizedBox(width: 0.5.w),
+                                                                                    Expanded(
+                                                                                      child: Text(
+                                                                                        data.location ?? 'N/a',
+                                                                                        style: CustomTextStyles.lightTextStyle(
+                                                                                          color: Color(0xff4B5563),
+                                                                                          size: 14,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                Row(
+                                                                                  children: [
+                                                                                    RatingBar.builder(
+                                                                                      itemSize: 15,
+                                                                                      initialRating: 6,
+                                                                                      minRating: 1,
+                                                                                      direction: Axis.horizontal,
+                                                                                      allowHalfRating: true,
+                                                                                      itemCount: 1,
+                                                                                      itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
+                                                                                      itemBuilder: (context, _) => Icon(
+                                                                                        Icons.star,
+                                                                                        color: Colors.amber,
+                                                                                      ),
+                                                                                      onRatingUpdate: (rating) {
+                                                                                        print(rating);
+                                                                                      },
+                                                                                    ),
+                                                                                    Text(
+                                                                                      '0.0',
+                                                                                      style: CustomTextStyles.lightTextStyle(color: Color(0xff4B5563), size: 12),
+                                                                                    ),
+                                                                                    SizedBox(width: 0.5.w),
+                                                                                    Text(
+                                                                                      ' | ${data.reviews!.length.toString()} Reviews',
+                                                                                      style: CustomTextStyles.lightTextStyle(color: Color(0xff6B7280), size: 10.8),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ],
                                                                             ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          children: [
-                                                                            RatingBar.builder(
-                                                                              itemSize: 15,
-                                                                              initialRating: 6,
-                                                                              minRating: 1,
-                                                                              direction: Axis.horizontal,
-                                                                              allowHalfRating: true,
-                                                                              itemCount: 1,
-                                                                              itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
-                                                                              itemBuilder: (context, _) => Icon(
-                                                                                Icons.star,
-                                                                                color: Colors.amber,
-                                                                              ),
-                                                                              onRatingUpdate: (rating) {
-                                                                                print(rating);
-                                                                              },
-                                                                            ),
-                                                                            Text(
-                                                                              '0.0',
-                                                                              style: CustomTextStyles.lightTextStyle(color: Color(0xff4B5563), size: 12),
-                                                                            ),
-                                                                            SizedBox(width: 0.5.w),
-                                                                            Text(
-                                                                              ' | ${data.reviews!.length.toString()} Reviews',
-                                                                              style: CustomTextStyles.lightTextStyle(color: Color(0xff6B7280), size: 10.8),
-                                                                            ),
-                                                                          ],
+                                                                          ),
                                                                         ),
                                                                       ],
-                                                                    ),
-                                                                  ),
+                                                                    )
+                                                                  ],
                                                                 ),
-                                                              ],
-                                                            )
+                                                              ),
+                                                            ),
+                                                            Positioned(
+                                                                right: 0,
+                                                                top: 0,
+                                                                child: InkWell(
+                                                                  onTap: () {
+                                                                    showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return ConfirmationUnLinkDailog(
+                                                                          link_to_user_id: data
+                                                                              .userId
+                                                                              .toString(),
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                          decoration: BoxDecoration(
+                                                                              color: !ThemeUtil.isDarkMode(context) ? Color(0xff0D0D0D) : Color(0xffE5E7EB),
+                                                                              borderRadius: BorderRadius.circular(50)),
+                                                                          child: Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(3.0),
+                                                                            child:
+                                                                                Icon(
+                                                                              color: ThemeUtil.isDarkMode(context) ? Color(0xff0D0D0D) : Color(0xffE5E7EB),
+                                                                              Icons.remove,
+                                                                              size: 20,
+                                                                            ),
+                                                                          )),
+                                                                ))
                                                           ],
                                                         ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }
-                                              },
-                                            ),
-                                          )),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              )),
                                 SizedBox(height: 2.h),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -827,109 +870,160 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                     transition:
                                                         Transition.rightToLeft);
                                               },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    color: Color(0xffE2FFE3),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12)),
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(12.0),
-                                                  child: Row(
-                                                    children: [
-                                                      ClipRRect(
+                                              child: Stack(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Color(0xffE2FFE3),
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(12.0),
-                                                        child: Image.network(
-                                                          data.image!.contains(
-                                                                  'http')
-                                                              ? data.image!
-                                                              : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
-                                                          width: 28.w,
-                                                          height: 28.w,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 2.w,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceEvenly,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            HospitalName(
-                                                                hospitalName: data
-                                                                    .name
-                                                                    .toString()),
-                                                            LocationWidget(
-                                                                location: data
-                                                                    .location
-                                                                    .toString()),
-                                                            ReviewBar(
-                                                                rating: PharReviews
-                                                                        .calculateAverageRating(
+                                                                .circular(12)),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(12.0),
+                                                      child: Row(
+                                                        children: [
+                                                          ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.0),
+                                                            child:
+                                                                Image.network(
+                                                              data.image!
+                                                                      .contains(
+                                                                          'http')
+                                                                  ? data.image!
+                                                                  : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
+                                                              width: 28.w,
+                                                              height: 28.w,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 2.w,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceEvenly,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                HospitalName(
+                                                                    hospitalName: data
+                                                                        .name
+                                                                        .toString()),
+                                                                LocationWidget(
+                                                                    location: data
+                                                                        .location
+                                                                        .toString()),
+                                                                ReviewBar(
+                                                                    rating: PharReviews.calculateAverageRating(
                                                                             data.reviews ??
                                                                                 [])
-                                                                    .toString(),
-                                                                count: data
-                                                                    .reviews!
-                                                                    .length),
-                                                            Divider(
-                                                              color: Color(
-                                                                  0xff6B7280),
-                                                              thickness: 0.1.h,
-                                                            ),
-                                                            Row(
-                                                              children: [
+                                                                        .toString(),
+                                                                    count: data
+                                                                        .reviews!
+                                                                        .length),
+                                                                Divider(
+                                                                  color: Color(
+                                                                      0xff6B7280),
+                                                                  thickness:
+                                                                      0.1.h,
+                                                                ),
                                                                 Row(
                                                                   children: [
-                                                                    SvgPicture
-                                                                        .asset(
+                                                                    Row(
+                                                                      children: [
+                                                                        SvgPicture.asset(
                                                                             'Assets/icons/routing.svg'),
-                                                                    SizedBox(
-                                                                      width:
-                                                                          0.5.w,
+                                                                        SizedBox(
+                                                                          width:
+                                                                              0.5.w,
+                                                                        ),
+                                                                        Text(
+                                                                            '0.0 km/0min',
+                                                                            style:
+                                                                                CustomTextStyles.lightTextStyle(color: Color(0xff6B7280), size: 10.8))
+                                                                      ],
                                                                     ),
-                                                                    Text(
-                                                                        '0.0 km/0min',
-                                                                        style: CustomTextStyles.lightTextStyle(
-                                                                            color:
-                                                                                Color(0xff6B7280),
-                                                                            size: 10.8))
+                                                                    Spacer(),
+                                                                    Row(
+                                                                      children: [
+                                                                        SvgPicture.asset(
+                                                                            'Assets/icons/pharmacy.svg'),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              0.5.w,
+                                                                        ),
+                                                                        Text(
+                                                                            'Pharmacy',
+                                                                            style:
+                                                                                CustomTextStyles.lightTextStyle(color: Color(0xff6B7280), size: 10.8))
+                                                                      ],
+                                                                    )
                                                                   ],
                                                                 ),
-                                                                Spacer(),
-                                                                Row(
-                                                                  children: [
-                                                                    SvgPicture
-                                                                        .asset(
-                                                                            'Assets/icons/pharmacy.svg'),
-                                                                    SizedBox(
-                                                                      width:
-                                                                          0.5.w,
-                                                                    ),
-                                                                    Text(
-                                                                        'Pharmacy',
-                                                                        style: CustomTextStyles.lightTextStyle(
-                                                                            color:
-                                                                                Color(0xff6B7280),
-                                                                            size: 10.8))
-                                                                  ],
-                                                                )
                                                               ],
                                                             ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
+                                                  Positioned(
+                                                      right: 0,
+                                                      top: 0,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return ConfirmationUnLinkDailog(
+                                                                link_to_user_id:
+                                                                    data.userId
+                                                                        .toString(),
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                        child: Container(
+                                                            decoration: BoxDecoration(
+                                                                color: !ThemeUtil
+                                                                        .isDarkMode(
+                                                                            context)
+                                                                    ? Color(
+                                                                        0xff0D0D0D)
+                                                                    : Color(
+                                                                        0xffE5E7EB),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            50)),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(3.0),
+                                                              child: Icon(
+                                                                color: ThemeUtil
+                                                                        .isDarkMode(
+                                                                            context)
+                                                                    ? Color(
+                                                                        0xff0D0D0D)
+                                                                    : Color(
+                                                                        0xffE5E7EB),
+                                                                Icons.remove,
+                                                                size: 20,
+                                                              ),
+                                                            )),
+                                                      ))
+                                                ],
                                               ),
                                             ),
                                           );

@@ -35,6 +35,8 @@ class Endpoints {
   static String getAllHospitalDoctors = '/hospital/getHospitalDoctors';
   static String getAllHospital = '/hospital/getAllHospitals';
   static String getHospitalDetail = '/hospital/getHospitalDetails';
+  static String linkHospital = '/auth/linkUserToUser';
+
   //Social Media
   static String getAllPosts = '/auth/getAllPosts';
   static String getAllPostById = '/auth/getPosts';
