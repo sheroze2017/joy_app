@@ -121,7 +121,7 @@ class UserBlogScreen extends StatelessWidget {
                                     borderSide: BorderSide.none),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                fillColor: Colors.transparent,
+                                fillColor: const Color.fromRGBO(0, 0, 0, 0),
                                 hintText: "What's on your mind?",
                                 hintStyle: CustomTextStyles.lightTextStyle(
                                     color: AppColors.borderColor),
@@ -180,12 +180,14 @@ class UserBlogScreen extends StatelessWidget {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: mediaController.allPost.length,
                               itemBuilder: ((context, index) {
-                                final data = mediaController.allPost[index];
+                                final data = mediaController.allPost.reversed
+                                    .toList()[index];
                                 return Column(
                                   children: [
                                     Obx(() => MyCustomWidget(
-                                          cm: mediaController
-                                                  .allPost[index].comments ??
+                                          cm: mediaController.allPost.reversed
+                                                  .toList()[index]
+                                                  .comments ??
                                               [],
                                           postIndex: index,
                                           postId: data.postId.toString(),

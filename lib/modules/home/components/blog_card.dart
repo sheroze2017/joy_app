@@ -280,13 +280,19 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                                 .comments!.length
                             : 3
                     : widget.postIndex == showCommentIndex
-                        ? mediaController
-                            .allPost[widget.postIndex].comments!.length
-                        : mediaController.allPost[widget.postIndex].comments!
+                        ? mediaController.allPost.reversed
+                            .toList()[widget.postIndex]
+                            .comments!
+                            .length
+                        : mediaController.allPost.reversed
+                                    .toList()[widget.postIndex]
+                                    .comments!
                                     .length <
                                 4
-                            ? mediaController
-                                .allPost[widget.postIndex].comments!.length
+                            ? mediaController.allPost.reversed
+                                .toList()[widget.postIndex]
+                                .comments!
+                                .length
                             : 3,
                 itemBuilder: ((context, index) {
                   final commen = widget.cm[index];

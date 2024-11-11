@@ -387,7 +387,8 @@ class AuthController extends GetxController {
       dob,
       gender,
       BuildContext context,
-      image,aboutMe) async {
+      image,
+      aboutMe) async {
     try {
       registerLoader.value = true;
       UserRegisterModel response = await authApi.userRegister(
@@ -401,7 +402,8 @@ class AuthController extends GetxController {
           phoneNo,
           authType,
           userRole,
-          image,aboutMe);
+          image,
+          aboutMe);
       if (response.data != null) {
         saveUserDetailInLocal(
           response.data!.userId!,
@@ -735,6 +737,8 @@ class AuthController extends GetxController {
   // }
 
   Future signInWithGoogle(context) async {
+    loginLoader.value = true;
+
     try {
       await FirebaseAuth.instance.signOut();
       await GoogleSignIn().signOut();
@@ -751,12 +755,15 @@ class AuthController extends GetxController {
           await FirebaseAuth.instance.signInWithCredential(credential);
       login(user.user!.email.toString(), '', context, 'SOCIAL');
     } catch (e) {
+      loginLoader.value = false;
       print('Error signing in with Google: $e');
       return Future.error(e);
     } finally {}
   }
 
   Future<UserCredential> registerWithGoogle() async {
+    registerLoader.value = true;
+
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
@@ -769,6 +776,7 @@ class AuthController extends GetxController {
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
+      registerLoader.value = false;
       print('Error signing in with Google: $e');
       return Future.error(e);
     } finally {}
