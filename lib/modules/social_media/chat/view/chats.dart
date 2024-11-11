@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
+import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -22,6 +24,7 @@ class _AllChatsState extends State<AllChats> {
       Get.find<FriendsSocialController>();
 
   ChatController _chatController = Get.put(ChatController());
+  ProfileController _profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +83,17 @@ class _AllChatsState extends State<AllChats> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  _chatController.createConvo(id, name);
+                                  Get.to(DirectMessageScreen(
+                                    userName: name,
+                                    friendId: id.toString(),
+                                    userId: _profileController.userId.value,
+                                    userAsset:
+                                        _profileController.image.toString(),
+                                    // conversationId:
+                                    //     result.data!.sId.toString(),
+                                  ));
+
+                                  //  _chatController.createConvo(id, name);
                                 },
                                 child: ChatBox(
                                   profileImageUrl: img,
@@ -122,9 +135,18 @@ class _AllChatsState extends State<AllChats> {
                                 child: InkWell(
                                     onTap: () {
                                       _friendsController.showlist.value = false;
-                                      _chatController.createConvo(
-                                          data.userId ?? 0,
-                                          data.name.toString());
+                                      Get.to(DirectMessageScreen(
+                                        userName: data.name.toString(),
+                                        friendId: data.userId.toString(),
+                                        userId: _profileController.userId.value,
+                                        userAsset:
+                                            _profileController.image.toString(),
+                                        // conversationId:
+                                        //     result.data!.sId.toString(),
+                                      ));
+                                      // _chatController.createConvo(
+                                      //     data.userId ?? 0,
+                                      //     data.name.toString());
                                     },
                                     child: Row(
                                       children: [

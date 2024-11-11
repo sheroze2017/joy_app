@@ -168,7 +168,7 @@ class DonationApproval extends StatelessWidget {
                                 city,
                                 location,
                                 '',
-                                isBloodDonate ? 'Blood' : 'Plasna',
+                                isBloodDonate ? 'Blood' : 'Plasma',
                                 context)
                             : makingPhoneCall(
                                 phoneNo); //      showPaymentBottomSheet(context, true);

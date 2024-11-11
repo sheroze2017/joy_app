@@ -51,6 +51,8 @@ class UserBloodBankController extends GetxController {
       bool response = await userBloodBankApi.CreateDonor(name, bloodGroup,
           location, gender, city, currentUser!.userId.toString(), type);
       if (response == true) {
+        showLoader.value = true;
+
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -64,8 +66,12 @@ class UserBloodBankController extends GetxController {
           },
         );
       } else {
+        showLoader.value = true;
+
         showErrorMessage(context, 'Error in creating you a donor');
       }
+      showLoader.value = false;
+
       return response;
     } catch (error) {
       throw (error);

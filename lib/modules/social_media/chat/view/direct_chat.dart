@@ -3,8 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:joy_app/Widgets/appbar/chat_appbar.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
+import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
+import 'package:joy_app/modules/social_media/chat/model/create_conversation_model.dart';
 import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -22,14 +25,13 @@ class DirectMessageScreen extends StatefulWidget {
   String userAsset;
   String userId;
   String friendId;
-  String conversationId;
-  DirectMessageScreen(
-      {super.key,
-      required this.userName,
-      required this.userAsset,
-      required this.userId,
-      required this.friendId,
-      required this.conversationId});
+  DirectMessageScreen({
+    super.key,
+    required this.userName,
+    required this.userAsset,
+    required this.userId,
+    required this.friendId,
+  });
 
   @override
   State<DirectMessageScreen> createState() => _DirectMessageScreenState();
@@ -37,10 +39,12 @@ class DirectMessageScreen extends StatefulWidget {
 
 class _DirectMessageScreenState extends State<DirectMessageScreen> {
   final chatMsgTextController = TextEditingController();
+  late CreateConversation? result;
   late IO.Socket socket;
   StreamSocket streamSocket = StreamSocket();
   List<MessageBubble> messageWidgets = [];
   bool _isLoading = false;
+  ChatController _chatController = Get.put(ChatController());
 
   @override
   void initState() {
@@ -50,6 +54,8 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   }
 
   void connectAndListen() async {
+    result = await _chatController.createConvo(
+        int.parse(widget.userId), widget.userName);
     socket = IO.io(Endpoints.CHAT_PROD_URL, <String, dynamic>{
       'transports': ['websocket'],
       'force new connection': true,
@@ -63,9 +69,8 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
 
     //   await getConversationID();
     await getConversations();
-    print(widget.conversationId);
     socket.emit('addUser', {
-      'conversationId': widget.conversationId,
+      'conversationId': result!.data!.sId.toString(),
       'userId': widget.userId,
     });
     socket.on('receiveMessageEvent', (data) {
@@ -173,7 +178,8 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                             onSubmitted: (value) {
                               setState(() {
                                 socket.emit('sendMessageEvent', {
-                                  "conversationId": widget.conversationId,
+                                  "conversationId":
+                                      result!.data!.sId.toString(),
                                   "senderId": widget.userId,
                                   "receiverId": widget.friendId,
                                   "text": chatMsgTextController.text,
@@ -215,7 +221,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                       onTap: () {
                         setState(() {
                           socket.emit('sendMessageEvent', {
-                            "conversationId": widget.conversationId,
+                            "conversationId": result!.data!.sId.toString(),
                             "senderId": widget.userId,
                             "receiverId": widget.friendId,
                             "message": chatMsgTextController.text,
@@ -329,7 +335,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       });
       final url = Endpoints.chatBaseUrl +
           Endpoints.getConversation +
-          widget.conversationId;
+          result!.data!.sId.toString();
       final response = await http.get(
         Uri.parse(url),
         headers: {"Content-Type": "application/json"},

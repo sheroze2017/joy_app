@@ -292,7 +292,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                             child: DoctorCategory(
                               isUser: false,
                               catrgory: 'Donate Blood',
-                              DoctorCount: '1',
+                              DoctorCount: '10',
                               bgColor: AppColors.redLightColor,
                               fgColor: AppColors.redLightDarkColor,
                               imagePath: 'Assets/images/blood.svg',
