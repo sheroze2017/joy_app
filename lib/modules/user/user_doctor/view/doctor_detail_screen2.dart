@@ -347,6 +347,13 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(height: 2.h),
+                                          _doctorController.doctorDetail!.data
+                                                      ?.reviews?.length ==
+                                                  0
+                                              ? Text('No reviews yet',
+                                                  style: CustomTextStyles
+                                                      .lightTextStyle(size: 14))
+                                              : Container(),
                                           Obx(() => ListView.builder(
                                               shrinkWrap: true,
                                               physics:

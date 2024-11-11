@@ -25,6 +25,7 @@ class DoctorApi {
     try {
       final result = await _dioClient
           .get(Endpoints.getDoctorDetail + '?user_id=${userId}');
+      print(result);
       return DoctorDetail.fromJson(result);
     } catch (e) {
       print(e.toString());

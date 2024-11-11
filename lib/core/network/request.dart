@@ -16,8 +16,8 @@ class DioClient {
   static BaseOptions opts = BaseOptions(
     baseUrl: url,
     responseType: ResponseType.json,
-    // connectTimeout: 20000,
-    // receiveTimeout: 20000,
+    connectTimeout: Duration(seconds: 20),
+    receiveTimeout: Duration(seconds: 20),
   );
 
   static Dio createDio() {

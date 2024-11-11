@@ -38,7 +38,11 @@ class ChatController extends GetxController {
               conversationId: result.data!.sId.toString(),
             ),
             transition: Transition.native);
+      } else {
+        print(result);
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 }
