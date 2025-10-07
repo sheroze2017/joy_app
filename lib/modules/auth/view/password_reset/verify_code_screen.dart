@@ -75,7 +75,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                 SizedBox(height: 4.h),
                 Pinput(
                   length: 5,
-                  androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
+                //  androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
                   controller: pinController,
                 ),
                 SizedBox(height: 4.h),
