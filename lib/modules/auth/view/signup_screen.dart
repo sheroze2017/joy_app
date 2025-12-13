@@ -185,65 +185,74 @@ class _SignupScreenState extends State<SignupScreen> {
                                 } else if (selectedButton.isEmpty) {
                                   showErrorMessage(
                                       context, 'Select Account Category');
-                                } else if (await authController.isValidMail(
-                                    _emailController.text, context)) {
-                                  if (selectedButton == 'User') {
-                                    Get.to(
-                                        FormScreen(
-                                          email: _emailController.text,
-                                          password: _passwordController.text,
-                                          name: _nameController.text,
-                                        ),
-                                        transition: Transition.native);
-                                  } else if (selectedButton == 'Professional') {
-                                    selectedFieldValue == 1
-                                        ? Get.to(
+                                } else {
+                                  // Step 1: Check if email is available
+                                  bool emailAvailable = await authController.checkEmailAvailable(
+                                      _emailController.text, context);
+                                  
+                                  if (emailAvailable) {
+                                    // Determine user role
+                                    String userRole = selectedButton == 'User' 
+                                        ? 'USER' 
+                                        : selectedFieldValue == 1 
+                                            ? 'DOCTOR'
+                                            : selectedFieldValue == 2
+                                                ? 'PHARMACY'
+                                                : selectedFieldValue == 3
+                                                    ? 'BLOODBANK'
+                                                    : 'HOSPITAL';
+                                    
+                                    // Navigate to appropriate profile form
+                                    if (selectedButton == 'User') {
+                                      Get.to(
+                                          FormScreen(
+                                            email: _emailController.text,
+                                            password: _passwordController.text,
+                                            name: _nameController.text,
+                                            userRole: userRole,
+                                          ),
+                                          transition: Transition.native);
+                                    } else if (selectedButton == 'Professional') {
+                                      if (selectedFieldValue == 1) {
+                                        Get.to(
                                             DoctorFormScreen(
                                               email: _emailController.text,
-                                              password:
-                                                  _passwordController.text,
+                                              password: _passwordController.text,
                                               name: _nameController.text,
+                                              userRole: userRole,
                                             ),
-                                            transition: Transition.native)
-                                        : selectedFieldValue == 2
-                                            ? Get.to(
-                                                PharmacyFormScreen(
-                                                  email: _emailController.text,
-                                                  password:
-                                                      _passwordController.text,
-                                                  name: _nameController.text,
-                                                ),
-                                                transition: Transition.native)
-                                            : selectedFieldValue == 3
-                                                ? Get.to(
-                                                    BloodBankFormScreen(
-                                                      email:
-                                                          _emailController.text,
-                                                      password:
-                                                          _passwordController
-                                                              .text,
-                                                      name:
-                                                          _nameController.text,
-                                                    ),
-                                                    transition:
-                                                        Transition.native)
-                                                : selectedFieldValue == 4
-                                                    ? Get.to(
-                                                        HospitalFormScreen(
-                                                          email:
-                                                              _emailController
-                                                                  .text,
-                                                          password:
-                                                              _passwordController
-                                                                  .text,
-                                                          name: _nameController
-                                                              .text,
-                                                        ),
-                                                        transition:
-                                                            Transition.native)
-                                                    : print(selectedFieldValue);
+                                            transition: Transition.native);
+                                      } else if (selectedFieldValue == 2) {
+                                        Get.to(
+                                            PharmacyFormScreen(
+                                              email: _emailController.text,
+                                              password: _passwordController.text,
+                                              name: _nameController.text,
+                                              userRole: userRole,
+                                            ),
+                                            transition: Transition.native);
+                                      } else if (selectedFieldValue == 3) {
+                                        Get.to(
+                                            BloodBankFormScreen(
+                                              email: _emailController.text,
+                                              password: _passwordController.text,
+                                              name: _nameController.text,
+                                              userRole: userRole,
+                                            ),
+                                            transition: Transition.native);
+                                      } else if (selectedFieldValue == 4) {
+                                        Get.to(
+                                            HospitalFormScreen(
+                                              email: _emailController.text,
+                                              password: _passwordController.text,
+                                              name: _nameController.text,
+                                              userRole: userRole,
+                                            ),
+                                            transition: Transition.native);
+                                      }
+                                    }
                                   }
-                                } else {}
+                                }
                               },
                               backgroundColor: ThemeUtil.isDarkMode(context)
                                   ? Color(0xffC5D3E3)
@@ -284,8 +293,17 @@ class _SignupScreenState extends State<SignupScreen> {
                           } else {
                             UserCredential user =
                                 await authController.registerWithGoogle();
-                            if (await authController.isValidMail(
+                            if (await authController.checkEmailAvailable(
                                 user.user!.email.toString(), context)) {
+                              String userRole = selectedButton == 'User' 
+                                  ? 'USER' 
+                                  : selectedFieldValue == 1 
+                                      ? 'DOCTOR'
+                                      : selectedFieldValue == 2
+                                          ? 'PHARMACY'
+                                          : selectedFieldValue == 3
+                                              ? 'BLOODBANK'
+                                              : 'HOSPITAL';
                               if (selectedButton == 'User') {
                                 Get.to(
                                     FormScreen(
@@ -293,6 +311,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                       email: _emailController.text,
                                       password: _passwordController.text,
                                       name: _nameController.text,
+                                      userRole: userRole,
                                     ),
                                     transition: Transition.native);
                               } else if (selectedButton == 'Professional') {
@@ -303,6 +322,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   email: _emailController.text,
                                   password: _passwordController.text,
                                   name: _nameController.text,
+                                  userRole: userRole,
                                 );
                               }
                             } else {}
@@ -312,46 +332,46 @@ class _SignupScreenState extends State<SignupScreen> {
                           imagePath: 'Assets/images/google.png',
                         ),
                       ),
-                      InkWell(
-                        onTap: () async {
-                          if (selectedButton.isEmpty) {
-                            showErrorMessage(
-                                context, 'Please select profile type');
-                          } else if (selectedButton == 'Professional' &&
-                              selectedFieldValue == null) {
-                            showErrorMessage(
-                                context, 'Please select professional category');
-                          } else {
-                            UserCredential user =
-                                await authController.registerWithFacebook();
-                            if (await authController.isValidMail(
-                                user.user!.email.toString(), context)) {
-                              if (selectedButton == 'User') {
-                                Get.to(
-                                    FormScreen(
-                                      isSocial: true,
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                      name: _nameController.text,
-                                    ),
-                                    transition: Transition.native);
-                              } else if (selectedButton == 'Professional') {
-                                navigateToFormScreen(
-                                  context: context,
-                                  selectedFieldValue:
-                                      selectedFieldValue!.toInt(),
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
-                                  name: _nameController.text,
-                                );
-                              }
-                            } else {}
-                          }
-                        },
-                        child: RoundedContainer(
-                          imagePath: 'Assets/images/facebook.png',
-                        ),
-                      ),
+                      // InkWell(
+                      //   onTap: () async {
+                      //     if (selectedButton.isEmpty) {
+                      //       showErrorMessage(
+                      //           context, 'Please select profile type');
+                      //     } else if (selectedButton == 'Professional' &&
+                      //         selectedFieldValue == null) {
+                      //       showErrorMessage(
+                      //           context, 'Please select professional category');
+                      //     } else {
+                      //       UserCredential user =
+                      //           await authController.registerWithFacebook();
+                      //       if (await authController.isValidMail(
+                      //           user.user!.email.toString(), context)) {
+                      //         if (selectedButton == 'User') {
+                      //           Get.to(
+                      //               FormScreen(
+                      //                 isSocial: true,
+                      //                 email: _emailController.text,
+                      //                 password: _passwordController.text,
+                      //                 name: _nameController.text,
+                      //               ),
+                      //               transition: Transition.native);
+                      //         } else if (selectedButton == 'Professional') {
+                      //           navigateToFormScreen(
+                      //             context: context,
+                      //             selectedFieldValue:
+                      //                 selectedFieldValue!.toInt(),
+                      //             email: _emailController.text,
+                      //             password: _passwordController.text,
+                      //             name: _nameController.text,
+                      //           );
+                      //         }
+                      //       } else {}
+                      //     }
+                      //   },
+                      //   child: RoundedContainer(
+                      //     imagePath: 'Assets/images/facebook.png',
+                      //   ),
+                      // ),
                       InkWell(
                         onTap: () async {
                           if (selectedButton.isEmpty) {
@@ -364,8 +384,17 @@ class _SignupScreenState extends State<SignupScreen> {
                           } else {
                             UserCredential user =
                                 await authController.registerWithApple();
-                            if (await authController.isValidMail(
+                            if (await authController.checkEmailAvailable(
                                 user.user!.email.toString(), context)) {
+                              String userRole = selectedButton == 'User' 
+                                  ? 'USER' 
+                                  : selectedFieldValue == 1 
+                                      ? 'DOCTOR'
+                                      : selectedFieldValue == 2
+                                          ? 'PHARMACY'
+                                          : selectedFieldValue == 3
+                                              ? 'BLOODBANK'
+                                              : 'HOSPITAL';
                               if (selectedButton == 'User') {
                                 Get.to(
                                     FormScreen(
@@ -373,6 +402,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                       email: _emailController.text,
                                       password: _passwordController.text,
                                       name: _nameController.text,
+                                      userRole: userRole,
                                     ),
                                     transition: Transition.native);
                               } else if (selectedButton == 'Professional') {
@@ -383,6 +413,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   email: _emailController.text,
                                   password: _passwordController.text,
                                   name: _nameController.text,
+                                  userRole: userRole,
                                 );
                               }
                             } else {}
@@ -579,6 +610,7 @@ void navigateToFormScreen({
   required String email,
   required String password,
   required String name,
+  required String userRole,
 }) {
   Widget? destinationScreen;
 
@@ -589,6 +621,7 @@ void navigateToFormScreen({
         email: email,
         password: password,
         name: name,
+        userRole: userRole,
       );
       break;
     case 2:
@@ -597,6 +630,7 @@ void navigateToFormScreen({
         email: email,
         password: password,
         name: name,
+        userRole: userRole,
       );
       break;
     case 3:
@@ -605,6 +639,7 @@ void navigateToFormScreen({
         email: email,
         password: password,
         name: name,
+        userRole: userRole,
       );
       break;
     case 4:
@@ -613,6 +648,7 @@ void navigateToFormScreen({
         email: email,
         password: password,
         name: name,
+        userRole: userRole,
       );
       break;
     default:
@@ -620,9 +656,7 @@ void navigateToFormScreen({
       return;
   }
 
-  if (destinationScreen != null) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => destinationScreen!),
-    );
-  }
+  Navigator.of(context).push(
+    MaterialPageRoute(builder: (context) => destinationScreen!),
+  );
 }

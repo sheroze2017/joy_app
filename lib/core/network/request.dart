@@ -16,8 +16,8 @@ class DioClient {
   static BaseOptions opts = BaseOptions(
     baseUrl: url,
     responseType: ResponseType.json,
-    // connectTimeout: 20000,
-    // receiveTimeout: 20000,
+    connectTimeout: Duration(seconds: 20),
+    receiveTimeout: Duration(seconds: 20),
   );
 
   static Dio createDio() {
@@ -141,12 +141,23 @@ class DioClient {
     try {
       //  baseAPI.options.baseUrl = Endpoints.baseUrl;
       //dio.options.headers['marketplace_id'] = getMarketplaceId();
+      final fullUrl = '${Endpoints.baseUrl}$url';
+      print('📡 [GET] Request URL: $fullUrl');
+      if (queryParameters != null) {
+        print('📤 [GET] Query Parameters: $queryParameters');
+      }
 
       final response = await dio.get(url, queryParameters: queryParameters);
 
+      print('✅ [GET] Response Status: ${response.statusCode}');
+      print('📥 [GET] Response Data: ${response.data}');
       return response.data;
     } catch (e) {
-      print(e.toString());
+      print('❌ [GET] Error: $e');
+      if (e is DioException) {
+        print('❌ [GET] Error Response: ${e.response?.data}');
+        print('❌ [GET] Error Status Code: ${e.response?.statusCode}');
+      }
       throw (e);
     }
   }
@@ -154,13 +165,24 @@ class DioClient {
   Future<dynamic> post(String url, {dynamic data}) async {
     try {
       dio.options.baseUrl = Endpoints.baseUrl;
+      dio.options.headers['Content-Type'] = 'application/json';
       // dio.options.headers['marketplace_id'] = getMarketplaceId();
+      final fullUrl = '${Endpoints.baseUrl}$url';
+      print('📡 [POST] Request URL: $fullUrl');
+      print('📤 [POST] Request Data: $data');
 
       final response = await dio.post(url, data: data);
 
+      print('✅ [POST] Response Status: ${response.statusCode}');
+      print('📥 [POST] Response Data: ${response.data}');
       return response.data;
     } catch (e) {
-      print(e.toString());
+      print('❌ [POST] Error: $e');
+      if (e is DioException) {
+        print('❌ [POST] Error Response: ${e.response?.data}');
+        print('❌ [POST] Error Status Code: ${e.response?.statusCode}');
+        print('❌ [POST] Error URL: ${e.requestOptions.uri}');
+      }
       throw (e);
     }
   }
@@ -179,16 +201,24 @@ class DioClient {
 
   Future<dynamic> put(String url, {dynamic data}) async {
     try {
-      print(url);
-      print('data ${data.toString()}');
       dio.options.baseUrl = Endpoints.baseUrl;
       // dio.options.headers['marketplace_id'] = getMarketplaceId();
+      final fullUrl = '${Endpoints.baseUrl}$url';
+      print('📡 [PUT] Request URL: $fullUrl');
+      print('📤 [PUT] Request Data: $data');
 
       final response = await dio.put(url, data: data);
 
+      print('✅ [PUT] Response Status: ${response.statusCode}');
+      print('📥 [PUT] Response Data: ${response.data}');
       return response.data;
     } catch (e) {
-      print(e.toString());
+      print('❌ [PUT] Error: $e');
+      if (e is DioException) {
+        print('❌ [PUT] Error Response: ${e.response?.data}');
+        print('❌ [PUT] Error Status Code: ${e.response?.statusCode}');
+        print('❌ [PUT] Error URL: ${e.requestOptions.uri}');
+      }
       throw (e);
     }
   }
@@ -197,12 +227,24 @@ class DioClient {
     try {
       dio.options.baseUrl = Endpoints.baseUrl;
       // dio.options.headers['marketplace_id'] = getMarketplaceId();
+      final fullUrl = '${Endpoints.baseUrl}$url';
+      print('📡 [DELETE] Request URL: $fullUrl');
+      if (data != null) {
+        print('📤 [DELETE] Request Data: $data');
+      }
 
       final response = await dio.delete(url, data: data);
 
+      print('✅ [DELETE] Response Status: ${response.statusCode}');
+      print('📥 [DELETE] Response Data: ${response.data}');
       return response.data;
     } catch (e) {
-      print(e.toString());
+      print('❌ [DELETE] Error: $e');
+      if (e is DioException) {
+        print('❌ [DELETE] Error Response: ${e.response?.data}');
+        print('❌ [DELETE] Error Status Code: ${e.response?.statusCode}');
+        print('❌ [DELETE] Error URL: ${e.requestOptions.uri}');
+      }
       throw (e);
     }
   }
@@ -211,15 +253,30 @@ class DioClient {
     try {
       dio.options.baseUrl = Endpoints.baseUrl;
       // dio.options.headers['marketplace_id'] = getMarketplaceId();
+      final fullUrl = '${Endpoints.baseUrl}$url';
+      print('📤 [UPLOAD] Request URL: $fullUrl');
+      print('📤 [UPLOAD] Uploading file...');
 
-      Options options = new Options();
+      // When using FormData, Dio automatically sets Content-Type with boundary
+      // Don't manually set Content-Type for FormData
+      Options? options;
+      if (data is! FormData) {
+        options = Options();
       options.headers?.putIfAbsent('Content-Type', () => 'multipart/form-data');
+      }
 
       final response = await dio.post(url, data: data, options: options);
 
+      print('✅ [UPLOAD] Response Status: ${response.statusCode}');
+      print('📥 [UPLOAD] Response Data: ${response.data}');
       return response.data;
     } catch (e) {
-      print(e.toString());
+      print('❌ [UPLOAD] Error: $e');
+      if (e is DioException) {
+        print('❌ [UPLOAD] Error Response: ${e.response?.data}');
+        print('❌ [UPLOAD] Error Status Code: ${e.response?.statusCode}');
+        print('❌ [UPLOAD] Error URL: ${e.requestOptions.uri}');
+      }
       throw e;
     }
   }

@@ -1,8 +1,27 @@
 class Endpoints {
-  static String baseUrl = 'http://194.233.69.219:3006';
-  static String chatBaseUrl = 'http://154.38.181.14:4000/api/v1';
-  static String getConversation = '/messages/';
-  static String CHAT_PROD_URL = 'http://154.38.181.14:4000';
+  // static String baseUrl = 'https://joy.comsrvssoftwaresolutions.com';
+  static String baseUrl = 'http://localhost:1006';
+
+  // Chat environment config
+  // Toggle this to switch chat URLs between staging (localhost) and prod
+  static bool chatUseProd = false;
+
+  // Staging (localhost) and Prod bases
+  static String chatRestBaseStaging = 'http://localhost:1006';
+  static String chatSocketBaseStaging = 'http://localhost:1006';
+  static String chatRestBaseProd = 'https://joy.comsrvssoftwaresolutions.com';
+  static String chatSocketBaseProd = 'https://joy.comsrvssoftwaresolutions.com';
+
+  // Active chat bases
+  static String get chatRestBase => chatUseProd ? chatRestBaseProd : chatRestBaseStaging;
+  static String get chatSocketBase => chatUseProd ? chatSocketBaseProd : chatSocketBaseStaging;
+
+  // Chat REST paths (prefix /chat)
+  static String chatEnsureConversation = '/chat/ensureConversation';
+  static String chatMyConversations = '/chat/myConversations';
+  static String chatMessages = '/chat/messages';
+  static String chatSend = '/chat/send';
+  static String chatMarkRead = '/chat/markRead';
   //Auth
 
   static String loginApi = '/auth/login';
@@ -35,12 +54,16 @@ class Endpoints {
   static String getAllHospitalDoctors = '/hospital/getHospitalDoctors';
   static String getAllHospital = '/hospital/getAllHospitals';
   static String getHospitalDetail = '/hospital/getHospitalDetails';
+  static String linkHospital = '/auth/linkUserToUser';
+
   //Social Media
   static String getAllPosts = '/auth/getAllPosts';
   static String getAllPostById = '/auth/getPosts';
-  static String uploadBase64Image = '/auth/uploadBase64';
+  static String uploadBase64Image = '/auth/uploadBase64'; // Legacy, kept for backward compatibility
+  static String uploadImage = '/auth/uploadImage'; // New form-data upload endpoint
   static String createPost = '/auth/createPost';
   static String addComment = '/auth/addComment';
+  static String togglePostLike = '/auth/togglePostLike';
 
   static String getAllFriendRequest = '/user/getAllFriendRequests';
   static String getAllUser = '/user/getAllUsers';

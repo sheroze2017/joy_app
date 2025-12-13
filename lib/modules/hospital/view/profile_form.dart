@@ -8,6 +8,7 @@ import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/Widgets/dailog/success_dailog.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/doctor/view/profile_form.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -15,6 +16,7 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/common/utils/file_selector.dart';
 import 'package:joy_app/widgets/appbar/appbar.dart';
+import 'package:joy_app/widgets/dailog/doctor_availability_dailog.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
@@ -25,6 +27,7 @@ class HospitalFormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
+  final String? userRole; // HOSPITAL role for signup (optional for edit flows)
   bool isSocial;
   bool isEdit;
 
@@ -32,6 +35,7 @@ class HospitalFormScreen extends StatefulWidget {
       {required this.email,
       required this.password,
       required this.name,
+      this.userRole,
       this.isSocial = false,
       this.isEdit = false,
       super.key});
@@ -60,6 +64,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   final FocusNode _focusNode8 = FocusNode();
   final authController = Get.find<AuthController>();
   final _hospitalDetailController = Get.find<HospitalDetailController>();
+  List<Set<String>> dateAvailability = [];
 
   final _formKey = GlobalKey<FormState>();
   String? _selectedImage;
@@ -229,33 +234,33 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return MultiTimeSelector(
-                            times: [
-                              '09:00 AM',
-                              '10:00 AM',
-                              '11:00 AM',
-                              '12:00 PM',
-                              '01:00 PM',
-                              '02:00 PM',
-                              '03:00 PM',
-                              '04:00 PM',
-                              '05:00 PM',
-                              '06:00 PM',
-                              '07:00 PM',
-                              '08:00 PM',
-                            ],
-                            onConfirm: (List<String> selectedTimes) {
-                              _availabilityController
-                                  .setText(selectedTimes.join(' '));
+                          return DoctorAvailDailog(
+                            initialSelectedTimes: dateAvailability,
+                            onConfirm: (List<Set<String>> selectedTimes) async {
+                              dateAvailability = selectedTimes;
+                              setState(() {});
+                              String result = await generateFormattedString(
+                                  selectedTimes, [
+                                'Monday',
+                                'Tuesday',
+                                'Wednesday',
+                                'Thursday',
+                                'Friday',
+                                'Saturday',
+                                'Sunday'
+                              ]);
+                              _availabilityController.setText(result);
                             },
                           );
                         },
                       );
                     },
                     child: RoundedBorderTextField(
+                      maxlines: true,
                       focusNode: _focusNode3,
                       nextFocusNode: _focusNode4,
                       isenable: false,
+                      showLabel: true,
                       controller: _availabilityController,
                       hintText: 'Availability',
                       icon: '',
@@ -296,6 +301,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                       });
                     },
                     child: RoundedBorderTextField(
+                      showLabel: true,
                       isenable: false,
                       controller: _locationController,
                       focusNode: _focusNode5,
@@ -356,7 +362,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
 
                                 if (!_formKey.currentState!.validate()) {
                                 } else {
-                                  List result = widget.isEdit
+                                  dynamic result = widget.isEdit
                                       ? await authController.editHospital(
                                           _nameController.text,
                                           _profileController.email.value
@@ -382,7 +388,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                           "",
                                           _contactController.text,
                                           widget.isSocial ? 'SOCIAL' : "EMAIL",
-                                          'HOSPITAL',
+                                          widget.userRole ?? 'HOSPITAL',
                                           latitude.toString(),
                                           longitude.toString(),
                                           "AD1234",
@@ -391,7 +397,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                           _feesController.text,
                                           context,
                                           _selectedImage.toString());
-                                  if (result[0] == true) {
+                                  if ((result is List && result[0] == true) || (result is bool && result == true)) {
                                     widget.isEdit
                                         ? {_profileController.updateUserDetal()}
                                         : showDialog(

@@ -32,8 +32,11 @@ class updateDotorController extends GetxController {
       String consultationFee,
       String qualifications,
       String document,
+      String aboutMe,
       BuildContext context,
-      image) async {
+      image,
+      {bool profileCompleted = false,
+      List<Map<String, dynamic>>? availability}) async {
     editLoader.value = true;
     try {
       bool response = await doctorApi.updateDoctor(
@@ -51,7 +54,10 @@ class updateDotorController extends GetxController {
           consultationFee,
           qualifications,
           document,
-          image);
+          aboutMe,
+          image,
+          profileCompleted: profileCompleted,
+          availability: availability);
 
       if (response == true) {
         editLoader.value = false;

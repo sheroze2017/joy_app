@@ -103,10 +103,11 @@ class _FormScreenState extends State<PatientProfileScreen> {
                 ),
                 RoundedBorderTextField(
                   isenable: false,
+                  showLabel: true,
                   focusNode: _focusNode1,
                   nextFocusNode: _focusNode2,
                   controller: _fnameController,
-                  hintText: 'James',
+                  hintText: 'First Name',
                   icon: '',
                 ),
                 SizedBox(
@@ -114,10 +115,11 @@ class _FormScreenState extends State<PatientProfileScreen> {
                 ),
                 RoundedBorderTextField(
                   isenable: false,
+                  showLabel: true,
                   focusNode: _focusNode2,
                   nextFocusNode: _focusNode3,
                   controller: _lnameController,
-                  hintText: '',
+                  hintText: 'Last Name',
                   icon: '',
                 ),
                 SizedBox(
@@ -125,10 +127,11 @@ class _FormScreenState extends State<PatientProfileScreen> {
                 ),
                 RoundedBorderTextField(
                   isenable: false,
+                  showLabel: true,
                   focusNode: _focusNode3,
                   nextFocusNode: _focusNode4,
                   controller: _genderController,
-                  hintText: 'Female',
+                  hintText: 'Gender',
                   icon: '',
                 ),
                 SizedBox(
@@ -176,6 +179,7 @@ class _FormScreenState extends State<PatientProfileScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   isenable: false,
                   focusNode: _focusNode6,
                   nextFocusNode: _focusNode7,
@@ -187,11 +191,12 @@ class _FormScreenState extends State<PatientProfileScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   isenable: false,
                   focusNode: _focusNode7,
                   nextFocusNode: _focusNode8,
                   controller: _locationController,
-                  hintText: 'USA',
+                  hintText: 'location',
                   icon: '',
                 ),
                 SizedBox(
@@ -209,17 +214,19 @@ class _FormScreenState extends State<PatientProfileScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   isenable: false,
                   focusNode: _focusNode9,
                   nextFocusNode: _focusNode10,
                   controller: _timeController,
                   icon: '',
-                  hintText: '',
+                  hintText: 'Time',
                 ),
                 SizedBox(
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   isenable: false,
                   focusNode: _focusNode10,
                   nextFocusNode: _focusNode11,

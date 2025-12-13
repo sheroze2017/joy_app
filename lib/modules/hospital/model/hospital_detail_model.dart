@@ -44,6 +44,7 @@ class hospitaldetail {
   String? institute;
   String? checkupFee;
   String? location;
+  String? timing;
 
   hospitaldetail(
       {this.userId,
@@ -62,7 +63,8 @@ class hospitaldetail {
       this.about,
       this.institute,
       this.checkupFee,
-      this.location});
+      this.location,
+      this.timing});
 
   hospitaldetail.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -82,6 +84,7 @@ class hospitaldetail {
     institute = json['institute'] ?? '';
     checkupFee = json['checkup_fee'] ?? '';
     location = json['location'] ?? '';
+    timing = json['availability'] ?? 'N/a';
   }
 
   Map<String, dynamic> toJson() {

@@ -599,11 +599,14 @@ class VerticalDoctorsList extends StatelessWidget {
                   ? showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return ConfirmationDailog();
+                        return ConfirmationDailog(
+                          link_to_user_id: doctorData.userId.toString(),
+                        );
                       },
                     )
                   : Get.to(
                       DoctorDetailScreen2(
+                        isFromHospital: false,
                         doctorId: doctorData.userId.toString(),
                         docName: 'Dr. David Patel',
                         location: 'Golden Cardiology Center',

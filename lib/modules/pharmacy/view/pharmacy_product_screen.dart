@@ -49,37 +49,40 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
             // width: .w,
           ),
           actions: [
-            InkWell(
-              onTap: () {
-                Get.to(MyCartScreen(), transition: Transition.native);
-              },
-              child: Padding(
-                padding: EdgeInsets.only(right: 16),
-                child: Stack(
-                  children: [
-                    SvgPicture.asset('Assets/icons/cart.svg'),
-                    Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Container(
-                          height: 1.5.h,
-                          width: 1.5.h,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Color(0xffD65B5B)),
-                          child: Center(
-                              child: Obx(
-                            () => Text(
-                              pharmacyController.cartItems.length.toString(),
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 6),
-                            ),
-                          )),
-                        ))
-                  ],
-                ),
-              ),
-            )
+            widget.isHospital
+                ? Container()
+                : InkWell(
+                    onTap: () {
+                      Get.to(MyCartScreen(), transition: Transition.native);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: Stack(
+                        children: [
+                          SvgPicture.asset('Assets/icons/cart.svg'),
+                          Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Container(
+                                height: 1.5.h,
+                                width: 1.5.h,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color: Color(0xffD65B5B)),
+                                child: Center(
+                                    child: Obx(
+                                  () => Text(
+                                    pharmacyController.cartItems.length
+                                        .toString(),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 6),
+                                  ),
+                                )),
+                              ))
+                        ],
+                      ),
+                    ),
+                  )
           ],
           showIcon: true),
       body: RefreshIndicator(
@@ -115,8 +118,9 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 3.0,
                               mainAxisSpacing: 3,
-                              childAspectRatio:
-                                  0.75, // Set the aspect ratio of the children
+                              childAspectRatio: widget.isHospital
+                                  ? 1
+                                  : 0.75, // Set the aspect ratio of the children
                             ),
                             itemCount: pharmacyController
                                 .searchPharmacyProducts.length,
@@ -132,16 +136,20 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
                                           const EdgeInsets.only(bottom: 8.0),
                                       child: InkWell(
                                         onTap: () {
-                                          Get.to(
-                                              MedicineDetailScreen(
-                                                product: data,
-                                                isPharmacyAdmin: false,
-                                                productId:
-                                                    data.productId.toString(),
-                                              ),
-                                              transition: Transition.native);
+                                          widget.isHospital
+                                              ? null
+                                              : Get.to(
+                                                  MedicineDetailScreen(
+                                                    product: data,
+                                                    isPharmacyAdmin: false,
+                                                    productId: data.productId
+                                                        .toString(),
+                                                  ),
+                                                  transition:
+                                                      Transition.native);
                                         },
                                         child: MedicineCard(
+                                          isFromHospital: widget.isHospital,
                                           categoryId: data.categoryId ?? 0,
                                           isUserProductScreen: true,
                                           onPressed: () {

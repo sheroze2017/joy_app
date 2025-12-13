@@ -42,4 +42,18 @@ class HospitalDetailsApi {
       throw e;
     }
   }
+
+  Future<Map<String, dynamic>> linkHospital(
+      String link_user_id, String link_to_user_id) async {
+    try {
+      final result = await _dioClient.post(Endpoints.linkHospital, data: {
+        "linked_user": link_user_id,
+        "linked_to_user": link_to_user_id
+      });
+      return result;
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
 }

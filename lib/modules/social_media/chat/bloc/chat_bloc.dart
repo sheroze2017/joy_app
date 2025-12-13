@@ -35,10 +35,13 @@ class ChatController extends GetxController {
               friendId: friendId.toString(),
               userId: _profileController.userId.value,
               userAsset: _profileController.image.toString(),
-              conversationId: result.data!.sId.toString(),
             ),
             transition: Transition.native);
+      } else {
+        print(result);
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 }

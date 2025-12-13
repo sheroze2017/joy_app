@@ -24,7 +24,7 @@ class _MyOrderScreenState extends State<MyOrderScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    ordersController.allOrders('15', context);
+    ordersController.allOrders(null, context);
   }
 
   @override

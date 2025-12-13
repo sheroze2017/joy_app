@@ -94,79 +94,123 @@ class MessageBubble extends StatelessWidget {
   final bool user;
   final bool sending;
   final String date;
-  MessageBubble(
-      {required this.msgText,
-      required this.msgSender,
-      required this.user,
-      this.sending = false,
-      this.date = ""});
+  final String? receiverImage;
+
+  MessageBubble({
+    required this.msgText,
+    required this.msgSender,
+    required this.user,
+    this.sending = false,
+    this.date = "",
+    this.receiverImage,
+  });
 
   @override
   Widget build(BuildContext context) {
     return user
-        ? Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Spacer(),
-              Container(
-                width: 56.4.w,
-                decoration: BoxDecoration(
-                    color: ThemeUtil.isDarkMode(context)
-                        ? Color(0xffC5D3E3)
-                        : Color(0xff1C2A3A),
-                    borderRadius: BorderRadius.circular(18)),
-                child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(msgText,
-                        style: CustomTextStyles.lightTextStyle(
-                            heigh: 1,
-                            color: ThemeUtil.isDarkMode(context)
-                                ? AppColors.blackColor
-                                : Colors.white,
-                            size: 16))),
-              ),
-              SizedBox(
-                width: 2.w,
-              ),
-              Image(
-                image: AssetImage(
-                  'Assets/icons/read.png',
+        ? Align(
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Flexible(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.7,
+                    ),
+                    decoration: BoxDecoration(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffC5D3E3)
+                            : Color(0xff1C2A3A),
+                        borderRadius: BorderRadius.circular(18)),
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14.0, vertical: 10.0),
+                        child: Text(msgText,
+                            style: CustomTextStyles.lightTextStyle(
+                                heigh: 1.3,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.blackColor
+                                    : Colors.white,
+                                size: 15))),
+                  ),
                 ),
-                color: ThemeUtil.isDarkMode(context) ? Color(0xffC5D3E3) : null,
-              )
-            ],
+                SizedBox(
+                  width: 2.w,
+                ),
+                Image(
+                  image: AssetImage(
+                    'Assets/icons/read.png',
+                  ),
+                  width: 16,
+                  height: 16,
+                  color:
+                      ThemeUtil.isDarkMode(context) ? Color(0xffC5D3E3) : null,
+                )
+              ],
+            ),
           )
-        : Row(
-            children: [
-              ClipOval(
-                child: Image.network(
-                  CustomConstant.nullUserImage,
-                  width: 5.h,
-                  height: 5.h,
-                  fit: BoxFit.cover,
+        : Align(
+            alignment: Alignment.centerLeft,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipOval(
+                  child: Image.network(
+                    receiverImage ?? CustomConstant.nullUserImage,
+                    width: 5.h,
+                    height: 5.h,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 5.h,
+                        height: 5.h,
+                        decoration: BoxDecoration(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff2A2A2A)
+                              : Color(0xffE5E5E5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: 3.h,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff5A5A5A)
+                              : Color(0xffA5A5A5),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: 2.w,
-              ),
-              Container(
-                width: 56.4.w,
-                decoration: BoxDecoration(
-                    color: ThemeUtil.isDarkMode(context)
-                        ? Color(0xff151515)
-                        : Color.fromRGBO(0, 0, 0, 0.06),
-                    borderRadius: BorderRadius.circular(24)),
-                child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(msgText,
-                        style: CustomTextStyles.lightTextStyle(
-                            heigh: 1,
-                            color: ThemeUtil.isDarkMode(context)
-                                ? AppColors.whiteColor
-                                : Colors.black,
-                            size: 16))),
-              )
-            ],
+                SizedBox(
+                  width: 2.w,
+                ),
+                Flexible(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.6,
+                    ),
+                    decoration: BoxDecoration(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xff151515)
+                            : Color.fromRGBO(0, 0, 0, 0.06),
+                        borderRadius: BorderRadius.circular(18)),
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14.0, vertical: 10.0),
+                        child: Text(msgText,
+                            style: CustomTextStyles.lightTextStyle(
+                                heigh: 1.3,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? AppColors.whiteColor
+                                    : Colors.black,
+                                size: 15))),
+                  ),
+                )
+              ],
+            ),
           );
   }
 }

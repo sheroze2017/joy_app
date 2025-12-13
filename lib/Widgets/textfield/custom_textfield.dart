@@ -17,9 +17,11 @@ class RoundedBorderTextField extends StatelessWidget {
   FocusNode? nextFocusNode;
   TextInputType textInputType;
   final FormFieldValidator<String>? validator;
+  bool showLabel;
 
   RoundedBorderTextField({
     this.isLocation = false,
+    this.showLabel = false,
     this.showLoader = false,
     required this.controller,
     required this.hintText,
@@ -46,6 +48,7 @@ class RoundedBorderTextField extends StatelessWidget {
       maxLines: maxlines == false ? 1 : null,
       controller: controller,
       decoration: InputDecoration(
+        label: showLabel ? Text(hintText) : null,
         contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
         suffix: showLoader
             ? Container(

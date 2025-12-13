@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
+import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:sizer/sizer.dart';
@@ -28,6 +30,7 @@ class DonorsCardWidget extends StatelessWidget {
     required this.donId,
   });
   final _chatController = Get.find<ChatController>();
+  ProfileController _profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +70,16 @@ class DonorsCardWidget extends StatelessWidget {
                 ),
                 InkWell(
                     onTap: () {
-                      _chatController.createConvo(donId, docName);
+                      Get.to(DirectMessageScreen(
+                        userName: docName,
+                        friendId: donId.toString(),
+                        userId: _profileController.userId.value,
+                        userAsset: _profileController.image.toString(),
+                        // conversationId:
+                        //     result.data!.sId.toString(),
+                      ));
+
+                      // _chatController.createConvo(donId, docName);
                     },
                     child: SvgPicture.asset(
                       'Assets/images/sms-notification.svg',

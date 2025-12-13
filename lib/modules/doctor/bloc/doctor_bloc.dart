@@ -50,7 +50,7 @@ class DoctorController extends GetxController {
     doctorAppointment.clear();
     try {
       DoctorAppointment response =
-          await doctorApi.getAllAppointments(currentUser!.userId.toString());
+          await doctorApi.getAllAppointments(currentUser!.userId);
 
       if (response.data != null) {
         response.data!.forEach((element) {
@@ -73,7 +73,7 @@ class DoctorController extends GetxController {
 
     try {
       DoctorDetail response =
-          await doctorApi.getDoctorDetail(currentUser!.userId.toString());
+          await doctorApi.getDoctorDetail(currentUser!.userId);
       // await Hive.openBox<DoctorDetailModelAdapter>('doctor_details');
 
       if (response.data != null) {
@@ -137,6 +137,7 @@ class DoctorController extends GetxController {
       String consultationFee,
       String qualifications,
       String document,
+      String aboutMe,
       BuildContext context,
       image) async {
     try {
@@ -155,6 +156,7 @@ class DoctorController extends GetxController {
           consultationFee,
           qualifications,
           document,
+          aboutMe,
           image);
 
       if (response == true) {
@@ -241,10 +243,10 @@ class DoctorController extends GetxController {
           consultationFees,
           qualification,
           documentUrl,
-          currentUser!.userId.toString());
+          currentUser!.userId);
       if (response.data != null) {
         saveUserDetailInLocal(
-            response.data!.userId!,
+            response.data!.userId!.toString(),
             response.data!.name!.toString(),
             email,
             password,
@@ -272,7 +274,7 @@ class DoctorController extends GetxController {
   }
 
   saveUserDetailInLocal(
-      int userId,
+      String userId,
       String firstName,
       String email,
       String password,

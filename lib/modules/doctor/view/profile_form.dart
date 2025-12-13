@@ -30,6 +30,7 @@ class DoctorFormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
+  final String? userRole; // DOCTOR role for signup (optional for edit flows)
   DoctorDetailsMap? details;
   bool isSocial;
   bool isEdit;
@@ -38,6 +39,7 @@ class DoctorFormScreen extends StatefulWidget {
       {required this.email,
       required this.password,
       required this.name,
+      this.userRole,
       this.isSocial = false,
       this.details,
       this.isEdit = false,
@@ -57,11 +59,12 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
 
   final TextEditingController _lnameController = TextEditingController();
   final TextEditingController _fnameController = TextEditingController();
-  final TextEditingController _availabilityController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _availabilityController = TextEditingController();
+  final TextEditingController _aboutMeController = TextEditingController();
 
-  final TextEditingController _medicalCertificateController =
-      TextEditingController();
+  // final TextEditingController _medicalCertificateController =
+  //     TextEditingController();
 
   final mediaController = Get.find<MediaPostController>();
 
@@ -245,6 +248,18 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  RoundedBorderTextField(
+                    //validator: validateName,
+                    controller: _aboutMeController,
+                    focusNode: _focusNode3,
+                    nextFocusNode: _focusNode4,
+                    hintText: 'About Me',
+                    icon: '',
+                    maxlines: true,
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
                   SearchSingleDropdown(
                     hintText: 'Gender',
                     items: ['Male', 'Female'],
@@ -290,6 +305,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                       });
                     },
                     child: RoundedBorderTextField(
+                      //  showLabel: true,
                       isenable: false,
                       focusNode: _focusNode5,
                       nextFocusNode: _focusNode6,
@@ -351,27 +367,25 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                         pickSingleFile().then((filePaths) {
                           if (filePaths.isEmpty) {
                           } else {
-                            _medicalCertificateController
+                            mediaController.certificateController.value
                                 .setText(filePaths[0].toString());
                           }
                         }).then((value) => mediaController.uploadPhoto(
-                            _medicalCertificateController.text, context));
+                            mediaController.certificateController.value.text,
+                            context));
                       },
                       child: Obx(
                         () => RoundedBorderTextField(
+                          //showLabel: true,
                           showLoader: mediaController.imgUploaded.value,
                           isenable: false,
-                          controller: _medicalCertificateController,
+                          controller:
+                              mediaController.certificateController.value,
                           focusNode: _focusNode9,
                           nextFocusNode: _focusNode10,
                           validator: (value) {
-                            // if (value == null || value.isEmpty) {
-                            //   return 'Please attach documents';
-                            // } else if (mediaController.imgUrl.isEmpty) {
-                            //   return 'Please attach files';
-                            // } else {
-                            //   return null;
-                            // }
+                            // Document is optional, no validation needed
+                            return null;
                           },
                           hintText: 'Attach File of Medical Certificate',
                           icon: 'Assets/icons/attach-icon.svg',
@@ -397,9 +411,10 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                             onPressed: () {
                               setState(() {
                                 selectedFilePath.remove(path);
-                                _medicalCertificateController.setText(
-                                    selectedFilePath.length.toString() +
-                                        ' file selected');
+                                mediaController.certificateController.value
+                                    .setText(
+                                        selectedFilePath.length.toString() +
+                                            ' file selected');
                               });
                             },
                           ),
@@ -417,6 +432,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                               context: context,
                               builder: (BuildContext context) {
                                 return DoctorAvailDailog(
+                                  initialSelectedTimes: dateAvailability,
                                   onConfirm:
                                       (List<Set<String>> selectedTimes) async {
                                     dateAvailability = selectedTimes;
@@ -443,6 +459,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                             focusNode: _focusNode10,
                             nextFocusNode: _focusNode11,
                             isenable: false,
+                            //showLabel: true,
                             controller: _availabilityController,
                             hintText: 'Availability',
                             icon: '',
@@ -473,17 +490,18 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                 if (!_formKey.currentState!.validate()) {
                                 } else {
                                   if (widget.details == null) {
+                                    // Single-step doctor signup
                                     bool result =
                                         await authController.doctorRegister(
                                             dateAvailability,
-                                            widget.name,
+                                            _fnameController.text,
                                             _locationController.text,
                                             _phoneController.text,
                                             '',
                                             widget.isSocial
                                                 ? 'SOCIAL'
                                                 : 'EMAIL',
-                                            'DOCTOR',
+                                            widget.userRole ?? 'DOCTOR',
                                             widget.email,
                                             widget.password,
                                             _genderController.text,
@@ -493,7 +511,8 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                                 .toString(),
                                             _feesController.text,
                                             context,
-                                            _selectedImage.toString());
+                                            _selectedImage.toString(),
+                                            _aboutMeController.text);
                                     if (result == true) {
                                       showDialog(
                                         context: context,
@@ -518,13 +537,15 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                         _locationController.text,
                                         await getToken().toString(),
                                         _genderController.text,
-                                        'EMAIL',
                                         'DOCTOR',
+                                        'EMAIL',
                                         _phoneController.text,
                                         _expertiseController.text,
                                         _feesController.text,
                                         _qualificationController.text,
-                                        _medicalCertificateController.text,
+                                        mediaController
+                                            .certificateController.value.text,
+                                        _aboutMeController.text,
                                         context,
                                         _selectedImage.toString());
                                     final _doctorController =

@@ -174,14 +174,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           imagePath: 'Assets/images/google.png',
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          authController.signInWithFacebook(context);
-                        },
-                        child: RoundedContainer(
-                          imagePath: 'Assets/images/facebook.png',
-                        ),
-                      ),
+                      // InkWell(
+                      //   onTap: () {
+                      //     authController.signInWithFacebook(context);
+                      //   },
+                      //   child: RoundedContainer(
+                      //     imagePath: 'Assets/images/facebook.png',
+                      //   ),
+                      // ),
                       InkWell(
                         onTap: () {
                           authController.signInWithApple(context);

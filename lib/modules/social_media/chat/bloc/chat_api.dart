@@ -12,12 +12,12 @@ class ChatApi {
       int userId, int friendId, String userName, String friendName) async {
     try {
       final result = await _dioClient.postCustomize(
-          Endpoints.chatBaseUrl + Endpoints.createConversation,
+          Endpoints.chatRestBase + Endpoints.chatEnsureConversation,
           data: {
-            "userId": userId,
-            "friendId": friendId,
-            "userName": userName,
-            "friendName": friendName
+            "user_id": userId,
+            "user_type": 'user',
+            "peer_id": friendId,
+            "peer_type": 'user'
           });
 
       return CreateConversation.fromJson(result);

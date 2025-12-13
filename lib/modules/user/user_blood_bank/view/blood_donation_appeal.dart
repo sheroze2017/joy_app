@@ -92,8 +92,10 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
                           : _bloodBankController.allPlasmaRequest.length,
                       itemBuilder: (context, index) {
                         final data = widget.isBloodDontate
-                            ? _bloodBankController.allBloodRequest[index]
-                            : _bloodBankController.allBloodRequest[index];
+                            ? _bloodBankController.allBloodRequest.reversed
+                                .toList()[index]
+                            : _bloodBankController.allPlasmaRequest.reversed
+                                .toList()[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: DonationApproval(
@@ -135,7 +137,7 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
                       itemBuilder: (context, index) {
                         final data = widget.isBloodDontate
                             ? _bloodBankController.allBloodRequest[index]
-                            : _bloodBankController.allBloodRequest[index];
+                            : _bloodBankController.allPlasmaRequest[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: DonationApproval(

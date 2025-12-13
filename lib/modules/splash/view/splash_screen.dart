@@ -21,11 +21,23 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   checkUserAndRoute() async {
-    UserHive? currentUser = await getCurrentUser();
-    if (currentUser != null) {
-      Timer(Duration(seconds: 5),
-          () => handleUserRoleNavigation(currentUser.userRole));
-    } else {
+    try {
+      UserHive? currentUser = await getCurrentUser();
+      if (currentUser != null) {
+        Timer(Duration(seconds: 5),
+            () => handleUserRoleNavigation(currentUser.userRole));
+      } else {
+        Timer(Duration(seconds: 5), () => Get.offAll(OnboardingScreen()));
+      }
+    } catch (e) {
+      print('❌ [SplashScreen] Error checking user: $e');
+      // If there's a Hive corruption error, clear data and go to onboarding
+      if (e.toString().contains('is not a subtype') || 
+          e.toString().contains('type cast') ||
+          e.toString().contains('subtype')) {
+        print('⚠️ [SplashScreen] Hive data corruption detected, clearing and redirecting to onboarding');
+        clearUserInformation();
+      }
       Timer(Duration(seconds: 5), () => Get.offAll(OnboardingScreen()));
     }
   }

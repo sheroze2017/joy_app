@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/navbar/view/navbar.dart';
 import 'package:joy_app/core/network/request.dart';
@@ -7,6 +8,7 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmac
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
+import 'package:joy_app/widgets/dailog/success_dailog.dart';
 
 import '../models/product_purchase_model.dart';
 
@@ -220,12 +222,26 @@ class AllPharmacyController extends GetxController {
         pharmacyId.toString(),
       );
       if (response.data != null) {
-        showSuccessMessage(context, response.message.toString());
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(
+              pharmacyId: pharmacyId.toString(),
+              isPharmacyCheckout: true,
+              title: 'Congratulations!',
+              content: 'Your Order has been placed !',
+              showButton: true,
+              isBookAppointment: false,
+            );
+          },
+        );
+
+        // showSuccessMessage(context, response.message.toString());
 
         placeOrderLoader.value = false;
-        Get.offAll(NavBarScreen(
-          isUser: true,
-        ));
+        // Get.offAll(NavBarScreen(
+        //   isUser: true,
+        // ));
       } else {
         showErrorMessage(context, response.message.toString());
       }

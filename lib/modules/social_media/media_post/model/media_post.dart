@@ -8,7 +8,8 @@ class MediaPostModel {
 
   MediaPostModel.fromJson(Map<String, dynamic> json) {
     code = json['code'];
-    sucess = json['sucess'];
+    // Handle both 'sucess' (typo) and 'success' (correct spelling) from backend
+    sucess = json['sucess'] ?? json['success'];
     if (json['data'] != null) {
       data = <MediaPost>[];
       json['data'].forEach((v) {
@@ -31,12 +32,12 @@ class MediaPostModel {
 }
 
 class MediaPost {
-  int? postId;
+  dynamic postId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? image;
   String? title;
   String? description;
   String? likes;
-  int? createdBy;
+  dynamic createdBy; // Changed to dynamic to handle both String (MongoDB ObjectId) and int (legacy)
   String? createdAt;
   String? status;
   String? userId;
@@ -44,6 +45,7 @@ class MediaPost {
   String? phone;
   String? user_image;
   List<Comments>? comments;
+  bool? isMyLike; // Added to track if current user has liked this post
 
   MediaPost(
       {this.postId,
@@ -58,21 +60,34 @@ class MediaPost {
       this.name,
       this.phone,
       this.user_image,
-      this.comments});
+      this.comments,
+      this.isMyLike});
 
   MediaPost.fromJson(Map<String, dynamic> json) {
-    postId = json['post_id'];
+    // Handle both '_id' (MongoDB) and 'post_id' (legacy) fields
+    postId = json['_id'] ?? json['post_id'];
+    // Keep postId as string for MongoDB ObjectId (don't convert to hash code)
+    // Only convert if it's not already a string
+    if (postId != null && postId is! String) {
+      postId = postId.toString();
+    }
     image = json['image'];
     title = json['title'];
     description = json['description'];
-    likes = json['likes'].toString();
+    likes = json['likes']?.toString() ?? '0';
+    // Handle both string and int for created_by (MongoDB ObjectId)
     createdBy = json['created_by'];
+    if (createdBy != null && createdBy is! String) {
+      createdBy = createdBy.toString();
+    }
     createdAt = json['created_at'];
     status = json['status'];
-    userId = json["user_id"].toString();
-    name = json["name"];
-    phone = json["phone"];
-    user_image = json['user_image'].toString();
+    userId = json["user_id"]?.toString() ?? json["created_by"]?.toString() ?? '';
+    name = json["name"] ?? '';
+    phone = json["phone"] ?? '';
+    user_image = json['user_image']?.toString() ?? '';
+    // Parse is_my_like field (handle both snake_case and camelCase)
+    isMyLike = json['is_my_like'] ?? json['isMyLike'] ?? false;
     if (json['comments'] != null) {
       comments = <Comments>[];
       json['comments'].forEach((v) {
@@ -99,16 +114,23 @@ class MediaPost {
 
 class Comments {
   String? comment;
-  int? commentId;
+  dynamic commentId; // Changed to dynamic to handle both '_id' (MongoDB) and 'comment_id' (legacy)
   String? createdAt;
   String? name;
-  Comments({this.name, this.comment, this.commentId, this.createdAt});
+  String? userId; // Added userId from response
+  Comments({this.name, this.comment, this.commentId, this.createdAt, this.userId});
 
   Comments.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
+    // Handle both '_id' (MongoDB) and 'comment_id' (legacy) fields
+    commentId = json['_id'] ?? json['comment_id'];
+    // If commentId is a String (MongoDB ObjectId), convert to int using hash code
+    if (commentId is String) {
+      commentId = commentId.toString().hashCode.abs();
+    }
     comment = json['comment'];
-    commentId = json['comment_id'];
+    userId = json['user_id']?.toString();
     createdAt = json['created_at'];
+    name = json['name'] ?? ''; // Name might not be in response, will need to fetch from user_id
   }
 
   Map<String, dynamic> toJson() {

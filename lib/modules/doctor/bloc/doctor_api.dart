@@ -25,6 +25,7 @@ class DoctorApi {
     try {
       final result = await _dioClient
           .get(Endpoints.getDoctorDetail + '?user_id=${userId}');
+      print(result);
       return DoctorDetail.fromJson(result);
     } catch (e) {
       print(e.toString());
@@ -47,9 +48,18 @@ class DoctorApi {
       String consultationFee,
       String qualifications,
       String document,
-      String image) async {
+      String image,
+      String aboutMe,
+      {bool profileCompleted = false,
+      List<Map<String, dynamic>>? availability}) async {
     try {
-      final result = await _dioClient.post(Endpoints.updateDoctor, data: {
+      print('👨‍⚕️ [DoctorApi] updateDoctor() called - Step 2: Complete Doctor Profile');
+      print('👨‍⚕️ [DoctorApi] UserId: $userId, ProfileCompleted: $profileCompleted');
+      print('👨‍⚕️ [DoctorApi] Expertise: $expertise, ConsultationFee: $consultationFee');
+      if (availability != null && availability.isNotEmpty) {
+        print('👨‍⚕️ [DoctorApi] Availability slots: ${availability.length} days');
+      }
+      Map<String, dynamic> data = {
         "user_id": userId,
         "name": name,
         "email": email,
@@ -57,22 +67,31 @@ class DoctorApi {
         "location": location,
         "device_token": deviceToken,
         "gender": gender,
-        "user_role": "DOCTOR",
-        "auth_type": "SOCIAL",
+        "user_role": userRole,
+        "auth_type": authType,
         "phone": phone,
         "expertise": expertise,
         "consultation_fee": consultationFee,
         "qualifications": qualifications,
         "document": document,
-        "image": image
-      });
+        "about_me": aboutMe,
+        "image": image,
+        "profile_completed": profileCompleted
+      };
+      if (availability != null && availability.isNotEmpty) {
+        data["availability"] = availability;
+      }
+      final result = await _dioClient.post(Endpoints.updateDoctor, data: data);
+      print('✅ [DoctorApi] updateDoctor() response received');
       if (result['sucess'] == true) {
+        print('✅ [DoctorApi] updateDoctor() success - ProfileCompleted: $profileCompleted');
         return true;
       } else {
+        print('⚠️ [DoctorApi] updateDoctor() returned false - Success: ${result['sucess']}');
         return false;
       }
     } catch (e) {
-      print(e.toString());
+      print('❌ [DoctorApi] updateDoctor() error: $e');
       throw e;
     }
   }

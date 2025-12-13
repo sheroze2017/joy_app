@@ -56,7 +56,7 @@ class AuthController extends GetxController {
   }
 
   saveUserDetailInLocal(
-      int userId,
+      String userId, // Changed to String to store MongoDB ObjectId
       String firstName,
       String email,
       String password,
@@ -77,7 +77,7 @@ class AuthController extends GetxController {
         phone: phone,
         lastName: lastName,
         deviceToken: deviceToken);
-    await Hive.openBox<UserHive>('users');
+    // Use the safe box opening function from auth_hive_utils
     final userBox = await Hive.openBox<UserHive>('users');
     await userBox.put('current_user', user);
     _profileController.updateUserDetal();
@@ -113,7 +113,7 @@ class AuthController extends GetxController {
           image);
       if (response.data != null) {
         saveUserDetailInLocal(
-          response.data!.userId!,
+          response.data!.userId!.toString(),
           response.data!.name!.toString(),
           email,
           password,
@@ -125,6 +125,232 @@ class AuthController extends GetxController {
           response.data!.deviceToken.toString(),
         );
         showSuccessMessage(context, 'Edit Successfully');
+        return true;
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return false;
+      }
+    } catch (error) {
+      registerLoader.value = false;
+      throw (error);
+    } finally {
+      registerLoader.value = false;
+    }
+  }
+
+  // Step 2: Complete user profile (for new signups)
+  Future<bool> completeUserProfile(
+      String userId,
+      firstName,
+      location,
+      phoneNo,
+      authType,
+      String email,
+      String password,
+      dob,
+      gender,
+      BuildContext context,
+      image,
+      aboutMe) async {
+    try {
+      registerLoader.value = true;
+      UserRegisterModel response = await authApi.editUser(
+          userId,
+          firstName,
+          email,
+          password,
+          location,
+          fcmToken,
+          dob,
+          gender,
+          phoneNo,
+          image,
+          profileCompleted: true);
+      if (response.data != null) {
+        saveUserDetailInLocal(
+          response.data!.userId!.toString(),
+          response.data!.name!.toString(),
+          email,
+          password,
+          response.data!.image.toString(),
+          response.data!.userRole.toString(),
+          response.data!.authType.toString(),
+          response.data!.phone.toString(),
+          '',
+          response.data!.deviceToken.toString(),
+        );
+        showSuccessMessage(context, 'Profile Completed Successfully');
+        return true;
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return false;
+      }
+    } catch (error) {
+      registerLoader.value = false;
+      throw (error);
+    } finally {
+      registerLoader.value = false;
+    }
+  }
+
+  // Step 2: Complete pharmacy profile (for new signups)
+  Future<bool> completePharmacyProfile(
+      String userId,
+      name,
+      email,
+      password,
+      location,
+      phoneNo,
+      authType,
+      lat,
+      long,
+      placeId,
+      BuildContext context,
+      image) async {
+    try {
+      registerLoader.value = true;
+      PharmacyRegisterModel response = await authApi.editPharmacy(
+          userId,
+          name,
+          email,
+          password,
+          location,
+          fcmToken,
+          phoneNo,
+          lat,
+          long,
+          placeId,
+          image,
+          profileCompleted: true);
+      if (response.data != null) {
+        saveUserDetailInLocal(
+            response.data!.userId!.toString(),
+            response.data!.name!.toString(),
+            email,
+            password,
+            response.data!.image.toString(),
+            response.data!.userRole.toString(),
+            response.data!.authType.toString(),
+            response.data!.phone.toString(),
+            '',
+            response.data!.deviceToken.toString());
+        showSuccessMessage(context, 'Profile Completed Successfully');
+        return true;
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return false;
+      }
+    } catch (error) {
+      registerLoader.value = false;
+      throw (error);
+    } finally {
+      registerLoader.value = false;
+    }
+  }
+
+  // Step 2: Complete blood bank profile (for new signups)
+  Future<bool> completeBloodBankProfile(
+      String userId,
+      name,
+      email,
+      password,
+      location,
+      phoneNo,
+      authType,
+      lat,
+      long,
+      placeId,
+      BuildContext context,
+      image) async {
+    try {
+      registerLoader.value = true;
+      BloodBankRegisterModel response = await authApi.editBloodBank(
+          userId,
+          name,
+          email,
+          password,
+          location,
+          fcmToken,
+          phoneNo,
+          placeId,
+          lat,
+          long,
+          image,
+          profileCompleted: true);
+      if (response.data != null) {
+        saveUserDetailInLocal(
+            response.data!.userId!.toString(),
+            response.data!.name!.toString(),
+            email,
+            password,
+            response.data!.image.toString(),
+            response.data!.userRole.toString(),
+            response.data!.authType.toString(),
+            response.data!.phone.toString(),
+            '',
+            response.data!.deviceToken.toString());
+        showSuccessMessage(context, 'Profile Completed Successfully');
+        return true;
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return false;
+      }
+    } catch (error) {
+      registerLoader.value = false;
+      throw (error);
+    } finally {
+      registerLoader.value = false;
+    }
+  }
+
+  // Step 2: Complete hospital profile (for new signups)
+  Future<bool> completeHospitalProfile(
+      String userId,
+      name,
+      email,
+      password,
+      location,
+      phoneNo,
+      authType,
+      lat,
+      long,
+      placeId,
+      instituteType,
+      about,
+      checkupFee,
+      BuildContext context,
+      image) async {
+    try {
+      registerLoader.value = true;
+      HospitalRegisterModel response = await authApi.editHospital(
+          userId,
+          name,
+          email,
+          password,
+          location,
+          fcmToken,
+          phoneNo,
+          lat,
+          long,
+          placeId,
+          instituteType,
+          about,
+          checkupFee,
+          image,
+          profileCompleted: true);
+      if (response.data != null) {
+        saveUserDetailInLocal(
+            response.data!.userId!.toString(),
+            response.data!.name!.toString(),
+            email,
+            password,
+            response.data!.image.toString(),
+            response.data!.userRole.toString(),
+            response.data!.authType.toString(),
+            response.data!.phone.toString(),
+            '',
+            response.data!.deviceToken.toString());
+        showSuccessMessage(context, 'Profile Completed Successfully');
         return true;
       } else {
         showErrorMessage(context, response.message.toString());
@@ -171,7 +397,7 @@ class AuthController extends GetxController {
           image);
       if (response.data != null) {
         saveUserDetailInLocal(
-            response.data!.userId!,
+            response.data!.userId!.toString(),
             response.data!.name!.toString(),
             email,
             password,
@@ -229,7 +455,7 @@ class AuthController extends GetxController {
           image);
       if (response.data != null) {
         saveUserDetailInLocal(
-            response.data!.userId!,
+            response.data!.userId!.toString(),
             response.data!.name!.toString(),
             email,
             password,
@@ -293,7 +519,7 @@ class AuthController extends GetxController {
           image);
       if (response.data != null) {
         saveUserDetailInLocal(
-            response.data!.userId!,
+            response.data!.userId!.toString(),
             response.data!.name!.toString(),
             email,
             password,
@@ -325,51 +551,115 @@ class AuthController extends GetxController {
     loginLoader.value = true;
     try {
       LoginModel response = await authApi.login(email, password, authType);
-      if (response.data != null) {
+      
+      // Check for errors first
+      if (response.sucess == false || response.code != 200) {
+        String errorMessage = response.message ?? 'Login failed';
+        print('❌ [AuthController] login() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
+        return response;
+      }
+      
+      if (response.data != null && response.data!.userId != null) {
+        String userIdString = response.data!.userId.toString(); // Ensure it's a string
+        print('✅ [AuthController] login() Saving user with ID: $userIdString');
         saveUserDetailInLocal(
-            response.data!.userId!,
-            response.data!.name.toString(),
+            userIdString,
+            response.data!.name?.toString() ?? '',
             email,
             password,
-            response.data!.image.toString(),
-            response.data!.userRole.toString(),
-            response.data!.authType.toString(),
-            response.data!.phone.toString(),
+            response.data!.image?.toString() ?? '',
+            response.data!.userRole?.toString() ?? 'USER',
+            response.data!.authType?.toString() ?? 'EMAIL',
+            response.data!.phone?.toString() ?? '',
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken?.toString() ?? '');
 
         showSuccessMessage(context, 'Login Successfully');
 
-        handleUserRoleNavigation(response.data!.userRole!);
+        // Navigate to dashboard after successful login
+        print('✅ [AuthController] login() Navigating to dashboard');
+        Future.delayed(Duration(milliseconds: 500), () {
+          handleUserRoleNavigation(response.data!.userRole ?? 'USER');
+        });
       } else {
-        showErrorMessage(context, response.message.toString());
+        String errorMessage = response.message ?? 'Login failed - no user data returned';
+        print('❌ [AuthController] login() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
       }
       return response;
     } catch (error) {
       loginLoader.value = false;
-
-      throw (error);
+      String errorMessage = error.toString().replaceAll('Exception: ', '');
+      print('❌ [AuthController] login() Exception: $errorMessage');
+      showErrorMessage(context, errorMessage);
+      rethrow;
     } finally {
       loginLoader.value = false;
     }
   }
 
-  Future<bool> isValidMail(String email, BuildContext context) async {
+  Future<bool> checkEmailAvailable(String email, BuildContext context) async {
     try {
       registerLoader.value = true;
-      var response = await authApi.isValidEmail(
-        email,
-      );
-      if (response == 400) {
+      var response = await authApi.checkEmail(email);
+      bool isAvailable = response['data']?['available'] ?? false;
+      if (isAvailable) {
+        print('✅ [AuthController] Email is available');
         return true;
-        // showSuccessMessage(context, 'Register Successfully');
       } else {
-        showErrorMessage(context, 'User Already Exist');
+        showErrorMessage(context, response['message'] ?? 'Email already registered');
         return false;
       }
     } catch (error) {
       registerLoader.value = false;
-      throw (error);
+      showErrorMessage(context, 'Error checking email availability');
+      return false;
+    } finally {
+      registerLoader.value = false;
+    }
+  }
+
+  // Legacy method for backward compatibility
+  Future<bool> isValidMail(String email, BuildContext context) async {
+    return await checkEmailAvailable(email, context);
+  }
+
+  // Step 1: Create base user with minimal fields
+  Future<String?> userSignupStep1(
+    String name,
+    String email,
+    String password,
+    String userRole,
+    String authType,
+    BuildContext context,
+  ) async {
+    try {
+      registerLoader.value = true;
+      UserRegisterModel response = await authApi.userSignup(
+        name,
+        email,
+        password,
+        userRole,
+        authType,
+      );
+      if (response.data != null) {
+        // Return the user_id (backend may return _id or user_id)
+        String userId = response.data!.userId?.toString() ?? '';
+        if (userId.isEmpty && response.data != null) {
+          // Try to get _id from response if user_id is not available
+          // This handles backend returning _id instead of user_id
+          userId = response.data!.userId?.toString() ?? '';
+        }
+        return userId;
+      } else {
+        showErrorMessage(context, response.message?.toString() ?? 'Signup failed');
+        return null;
+      }
+    } catch (error) {
+      registerLoader.value = false;
+      showErrorMessage(context, 'Signup failed: ${error.toString()}');
+      return null;
     } finally {
       registerLoader.value = false;
     }
@@ -387,7 +677,8 @@ class AuthController extends GetxController {
       dob,
       gender,
       BuildContext context,
-      image) async {
+      image,
+      aboutMe) async {
     try {
       registerLoader.value = true;
       UserRegisterModel response = await authApi.userRegister(
@@ -401,29 +692,60 @@ class AuthController extends GetxController {
           phoneNo,
           authType,
           userRole,
-          image);
-      if (response.data != null) {
+          image,
+          aboutMe);
+      
+      // Check for errors first
+      if (response.sucess == false || response.code != 200) {
+        String errorMessage = response.message ?? 'Registration failed';
+        print('❌ [AuthController] userRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
+        return false;
+      }
+      
+      if (response.data != null && response.data!.userId != null) {
+        // Store MongoDB ObjectId as string (don't convert to int)
+        String userIdString = response.data!.userId.toString();
+        
+        print('✅ [AuthController] userRegister() Saving user:');
+        print('   - MongoDB ObjectId: $userIdString');
+        print('   - Name: ${response.data!.name}');
+        print('   - Email: $email');
+        print('   - Role: ${response.data!.userRole}');
+        
         saveUserDetailInLocal(
-          response.data!.userId!,
+          userIdString,
           response.data!.name!.toString(),
           email,
           password,
-          response.data!.image.toString(),
-          response.data!.userRole.toString(),
-          response.data!.authType.toString(),
-          response.data!.phone.toString(),
+          response.data!.image?.toString() ?? '',
+          response.data!.userRole?.toString() ?? 'USER',
+          response.data!.authType?.toString() ?? 'EMAIL',
+          response.data!.phone?.toString() ?? '',
           '',
-          response.data!.deviceToken.toString(),
+          response.data!.deviceToken?.toString() ?? '',
         );
+        
+        // Navigate to dashboard after successful registration
+        print('✅ [AuthController] userRegister() Navigating to dashboard');
+        Future.delayed(Duration(milliseconds: 500), () {
+          handleUserRoleNavigation(response.data!.userRole ?? 'USER');
+        });
+        
         showSuccessMessage(context, 'Register Successfully');
         return true;
       } else {
-        showErrorMessage(context, response.message.toString());
+        String errorMessage = response.message ?? 'Registration failed - no user data returned';
+        print('❌ [AuthController] userRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
         return false;
       }
     } catch (error) {
       registerLoader.value = false;
-      throw (error);
+      String errorMessage = error.toString().replaceAll('Exception: ', '');
+      print('❌ [AuthController] userRegister() Exception: $errorMessage');
+      showErrorMessage(context, errorMessage);
+      return false;
     } finally {
       registerLoader.value = false;
     }
@@ -445,7 +767,8 @@ class AuthController extends GetxController {
       documentUrl,
       consultationFees,
       BuildContext context,
-      image) async {
+      image,
+      aboutMe) async {
     try {
       registerLoader.value = true;
       DoctorRegisterModel response = await authApi.doctorRegister(
@@ -462,10 +785,20 @@ class AuthController extends GetxController {
           consultationFees,
           qualification,
           documentUrl,
-          image);
+          image,
+          aboutMe);
+      
+      // Check for errors first
+      if (response.sucess == false || response.code != 200) {
+        String errorMessage = response.message ?? 'Doctor registration failed';
+        print('❌ [AuthController] doctorRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
+        return false;
+      }
+      
       if (response.data != null) {
         await saveUserDetailInLocal(
-            response.data!.userId!,
+            response.data!.userId!.toString(),
             response.data!.name!.toString(),
             email,
             password,
@@ -489,13 +822,17 @@ class AuthController extends GetxController {
         showSuccessMessage(context, 'Register Successfully');
         return true;
       } else {
-        showErrorMessage(context, response.message.toString());
+        String errorMessage = response.message ?? 'Doctor registration failed - no user data returned';
+        print('❌ [AuthController] doctorRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
         return false;
       }
     } catch (error) {
       registerLoader.value = false;
-
-      throw (error);
+      String errorMessage = error.toString().replaceAll('Exception: ', '');
+      print('❌ [AuthController] doctorRegister() Exception: $errorMessage');
+      showErrorMessage(context, errorMessage);
+      return false;
     } finally {
       registerLoader.value = false;
     }
@@ -531,9 +868,18 @@ class AuthController extends GetxController {
           long,
           placeId,
           image);
+      
+      // Check for errors first
+      if (response.sucess == false || response.code != 200) {
+        String errorMessage = response.message ?? 'Blood bank registration failed';
+        print('❌ [AuthController] bloodBankRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
+        return false;
+      }
+      
       if (response.data != null) {
         saveUserDetailInLocal(
-            response.data!.userId!,
+            response.data!.userId!.toString(),
             response.data!.name!.toString(),
             email,
             password,
@@ -546,13 +892,17 @@ class AuthController extends GetxController {
         showSuccessMessage(context, 'Register Successfully');
         return true;
       } else {
-        showErrorMessage(context, response.message.toString());
+        String errorMessage = response.message ?? 'Blood bank registration failed - no user data returned';
+        print('❌ [AuthController] bloodBankRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
         return false;
       }
     } catch (error) {
       registerLoader.value = false;
-
-      throw (error);
+      String errorMessage = error.toString().replaceAll('Exception: ', '');
+      print('❌ [AuthController] bloodBankRegister() Exception: $errorMessage');
+      showErrorMessage(context, errorMessage);
+      return false;
     } finally {
       registerLoader.value = false;
     }
@@ -588,9 +938,18 @@ class AuthController extends GetxController {
           long,
           placeId,
           image);
+      
+      // Check for errors first
+      if (response.sucess == false || response.code != 200) {
+        String errorMessage = response.message ?? 'Pharmacy registration failed';
+        print('❌ [AuthController] PharmacyRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
+        return false;
+      }
+      
       if (response.data != null) {
         saveUserDetailInLocal(
-            response.data!.userId!,
+            response.data!.userId!.toString(),
             response.data!.name!.toString(),
             email,
             password,
@@ -605,13 +964,17 @@ class AuthController extends GetxController {
 
         return true;
       } else {
-        showErrorMessage(context, response.message.toString());
+        String errorMessage = response.message ?? 'Pharmacy registration failed - no user data returned';
+        print('❌ [AuthController] PharmacyRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
         return false;
       }
     } catch (error) {
       registerLoader.value = false;
-
-      throw (error);
+      String errorMessage = error.toString().replaceAll('Exception: ', '');
+      print('❌ [AuthController] PharmacyRegister() Exception: $errorMessage');
+      showErrorMessage(context, errorMessage);
+      return false;
     } finally {
       registerLoader.value = false;
     }
@@ -653,9 +1016,18 @@ class AuthController extends GetxController {
           about,
           checkupFee,
           image);
+      
+      // Check for errors first
+      if (response.sucess == false || response.code != 200) {
+        String errorMessage = response.message ?? 'Hospital registration failed';
+        print('❌ [AuthController] HospitalRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
+        return [false];
+      }
+      
       if (response.data != null) {
         saveUserDetailInLocal(
-            response.data!.userId!,
+            response.data!.userId!.toString(),
             response.data!.name!.toString(),
             email,
             password,
@@ -668,13 +1040,17 @@ class AuthController extends GetxController {
         showSuccessMessage(context, 'Register Successfully');
         return [true, response.data!.hospitalDetailId];
       } else {
-        showErrorMessage(context, response.message.toString());
+        String errorMessage = response.message ?? 'Hospital registration failed - no user data returned';
+        print('❌ [AuthController] HospitalRegister() Error: $errorMessage');
+        showErrorMessage(context, errorMessage);
         return [false];
       }
     } catch (error) {
       registerLoader.value = false;
-
-      throw (error);
+      String errorMessage = error.toString().replaceAll('Exception: ', '');
+      print('❌ [AuthController] HospitalRegister() Exception: $errorMessage');
+      showErrorMessage(context, errorMessage);
+      return [false];
     } finally {
       registerLoader.value = false;
     }
@@ -733,6 +1109,8 @@ class AuthController extends GetxController {
   // }
 
   Future signInWithGoogle(context) async {
+    loginLoader.value = true;
+
     try {
       await FirebaseAuth.instance.signOut();
       await GoogleSignIn().signOut();
@@ -749,12 +1127,15 @@ class AuthController extends GetxController {
           await FirebaseAuth.instance.signInWithCredential(credential);
       login(user.user!.email.toString(), '', context, 'SOCIAL');
     } catch (e) {
+      loginLoader.value = false;
       print('Error signing in with Google: $e');
       return Future.error(e);
     } finally {}
   }
 
   Future<UserCredential> registerWithGoogle() async {
+    registerLoader.value = true;
+
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
@@ -767,6 +1148,7 @@ class AuthController extends GetxController {
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
+      registerLoader.value = false;
       print('Error signing in with Google: $e');
       return Future.error(e);
     } finally {}

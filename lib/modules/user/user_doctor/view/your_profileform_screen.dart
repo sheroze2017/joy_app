@@ -254,6 +254,7 @@ class _FormScreenState extends State<ProfileFormScreen> {
                         () => RoundedBorderTextField(
                           showLoader: mediaController.imgUploaded.value,
                           isenable: false,
+                          //showLabel: true,
                           controller: _medicalCertificateController,
                           // validator: (value) {
                           //   if (value == null || value.isEmpty) {

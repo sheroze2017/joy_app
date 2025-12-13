@@ -46,7 +46,7 @@ class AllPostScreen extends StatelessWidget {
                         cm: [],
                         postIndex: index,
                         postId: data.postId.toString(),
-                        postTime: '',
+                        postTime: data.title.toString(),
                         imgPath: data.image.toString(),
                         isLiked: true,
                         isReply: false,

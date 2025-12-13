@@ -1,35 +1,33 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:joy_app/Widgets/appbar/chat_appbar.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/theme.dart';
-import 'package:sizer/sizer.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:http/http.dart' as http;
-import '../model/message_response.dart';
+import 'package:dio/dio.dart';
+import 'package:joy_app/modules/social_media/chat/bloc/chat_service.dart';
 import '../widgets/message_widget.dart';
 
-String _conversationId = "";
-int _senderId = 0;
-int _receiverId = 0;
-String _date = "";
+// legacy unused globals removed
 
 class DirectMessageScreen extends StatefulWidget {
-  String userName;
-  String userAsset;
-  String userId;
-  String friendId;
-  String conversationId;
-  DirectMessageScreen(
-      {super.key,
-      required this.userName,
-      required this.userAsset,
-      required this.userId,
-      required this.friendId,
-      required this.conversationId});
+  final String userName;
+  final String userAsset;
+  final String userId;
+  final String friendId;
+  final String senderType; // user, doctor, pharmacy, hospital, bloodbank
+  final String receiverType;
+  DirectMessageScreen({
+    super.key,
+    required this.userName,
+    required this.userAsset,
+    required this.userId,
+    required this.friendId,
+    this.senderType = 'user',
+    this.receiverType = 'user',
+  });
 
   @override
   State<DirectMessageScreen> createState() => _DirectMessageScreenState();
@@ -38,9 +36,13 @@ class DirectMessageScreen extends StatefulWidget {
 class _DirectMessageScreenState extends State<DirectMessageScreen> {
   final chatMsgTextController = TextEditingController();
   late IO.Socket socket;
+  ChatService? chatService;
+  String? conversationId;
   StreamSocket streamSocket = StreamSocket();
   List<MessageBubble> messageWidgets = [];
   bool _isLoading = false;
+  String? _loadError;
+  // ChatController not needed in new flow
 
   @override
   void initState() {
@@ -50,47 +52,75 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   }
 
   void connectAndListen() async {
-    socket = IO.io(Endpoints.CHAT_PROD_URL, <String, dynamic>{
-      'transports': ['websocket'],
-      'force new connection': true,
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
     });
-    print("Socket Connected: ${socket.connected}");
 
-    socket.onConnect((_) async {
-      print('connecting');
-    });
-    print("Socket Connected: ${socket.connected}");
+    // Build service
+    chatService = ChatService(Dio(BaseOptions(
+      baseUrl: Endpoints.chatRestBase,
+      connectTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 20),
+    )));
 
-    //   await getConversationID();
-    await getConversations();
-    print(widget.conversationId);
-    socket.emit('addUser', {
-      'conversationId': widget.conversationId,
-      'userId': widget.userId,
-    });
-    socket.on('receiveMessageEvent', (data) {
-      print("@@@@@@@@@@@@@@@@ $data @@@@@@@@@@@@@@");
-
-      final msgBubble = MessageBubble(
-        msgText: data,
-        msgSender: widget.userName,
-        user: false,
+    try {
+      // Ensure conversation
+      final ensuredConversationId = await chatService!.ensureConversation(
+        userId: int.parse(widget.userId),
+        userType: widget.senderType,
+        peerId: int.parse(widget.friendId),
+        peerType: widget.receiverType,
       );
+      conversationId = ensuredConversationId;
+      print('[Chat] Conversation ID: $conversationId');
+
+      // Connect socket + auth
+      chatService!.connectSocket(
+        userId: int.parse(widget.userId),
+        userType: widget.senderType,
+      );
+
+      // Join conversation room
+      chatService!.joinConversation(conversationId!);
+
+      // Load history
+      await loadHistory();
+
+      // Listen for new messages
+      chatService!.onMessage((data) {
+        print('[Socket] on message: ' + data.toString());
+        // Try both snake_case and camelCase for compatibility
+        final senderId = (data['senderId'] ?? data['sender_id'])?.toString() ?? '';
+        final isCurrentUser = senderId.toString() == widget.userId.toString();
+        print('[Chat] Real-time message from sender: $senderId, current user: ${widget.userId}, isCurrentUser: $isCurrentUser');
+        final msgBubble = MessageBubble(
+          msgText: data['body']?.toString() ?? '',
+          msgSender: isCurrentUser ? 'You' : widget.userName,
+          user: isCurrentUser,
+          receiverImage: widget.userAsset,
+        );
+        if (mounted) {
+          setState(() {
+            messageWidgets.add(msgBubble);
+          });
+        }
+      });
+    } catch (e) {
+      print('[Chat][ERROR] connectAndListen failed: $e');
       if (mounted) {
         setState(() {
-          messageWidgets.add(msgBubble);
+          _loadError = 'Failed to connect: ${e.toString()}';
+          _isLoading = false;
         });
       }
-      streamSocket.addResponse;
-    });
-    socket.onDisconnect((_) => print('Socket.IO disconnect'));
-    socket.on('fromServer', (e) => print(e));
-    socket.on('error', (error) => print('Socket.IO Error: $error'));
+      return;
+    }
   }
 
   @override
   void dispose() {
-    socket.dispose();
+    chatService?.dispose();
     super.dispose();
   }
 
@@ -98,145 +128,215 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ChatAppBar(
-        username: widget.userName,
-        status: 'Offline',
+        username: widget.userName.isNotEmpty ? widget.userName : 'User',
+        status: _isLoading
+            ? 'Loading...'
+            : (_loadError != null ? 'Error' : 'Offline'),
         userId: widget.friendId,
+        userImage: widget.userAsset,
       ),
       body: Column(
         children: [
-          StreamBuilder(
-            stream: streamSocket.getResponse,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final msgBubble = MessageBubble(
-                  msgText: snapshot.data ?? "N/A",
-                  msgSender: widget.userName ?? "",
-                  user: false,
-                );
-                messageWidgets.add(msgBubble);
-              }
-              return _isLoading
-                  ? Expanded(
-                      child: Center(
-                          child: CircularProgressIndicator(
-                      color: ThemeUtil.isDarkMode(context)
-                          ? Color(0xffC5D3E3)
-                          : Color(0xff1C2A3A),
-                    )))
-                  : Expanded(
-                      child: ListView.builder(
-                        reverse: true,
-                        itemCount: messageWidgets.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4.0, horizontal: 12),
-                            child: messageWidgets.reversed.toList()[index],
-                          );
-                        },
+          if (_loadError != null)
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red.withValues(alpha: 0.7),
                       ),
-                    );
-            },
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Row(
-                children: [
-                  // SvgPicture.asset('Assets/icons/camera-2.svg'),
-                  // SizedBox(
-                  //   width: 2.w,
-                  // ),
-                  // SvgPicture.asset('Assets/icons/gallery.svg'),
-                  // SizedBox(
-                  //   width: 2.w,
-                  // ),
-                  // SvgPicture.asset('Assets/icons/microphone-2.svg'),
-                  // SizedBox(
-                  //   width: 2.w,
-                  // ),
-
-                  Expanded(
-                      child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: ThemeUtil.isDarkMode(context)
-                          ? Color(0xff121212)
-                          : Color(0x05000000),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            onSubmitted: (value) {
-                              setState(() {
-                                socket.emit('sendMessageEvent', {
-                                  "conversationId": widget.conversationId,
-                                  "senderId": widget.userId,
-                                  "receiverId": widget.friendId,
-                                  "text": chatMsgTextController.text,
-                                  "type": 'txt',
-                                  "url": '',
-                                  "txt": chatMsgTextController.text,
-                                });
-                                final msgBubble = MessageBubble(
-                                  msgText: chatMsgTextController.text,
-                                  msgSender: "You",
-                                  user: true,
-                                  sending: true,
-                                );
-                                chatMsgTextController.clear();
-                                messageWidgets.add(msgBubble);
-                              });
-                            },
-                            controller: chatMsgTextController,
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(0),
-                                border: InputBorder.none,
-                                hintText: 'Aa',
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none),
-                                fillColor: Colors.transparent),
-                          ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Unable to load chat',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Colors.white
+                              : Colors.black87,
                         ),
-                        Icon(
-                          Icons.emoji_emotions,
-                          color: Color(0xffA5ABB3),
-                        )
-                      ],
-                    ),
-                  )),
-                  SizedBox(width: 3.w),
-                  InkWell(
-                      onTap: () {
-                        setState(() {
-                          socket.emit('sendMessageEvent', {
-                            "conversationId": widget.conversationId,
-                            "senderId": widget.userId,
-                            "receiverId": widget.friendId,
-                            "message": chatMsgTextController.text,
-                            "text": chatMsgTextController.text,
-                            "txt": chatMsgTextController.text,
-                            "type": 'txt',
-                            "url": ''
-                          });
-                          final msgBubble = MessageBubble(
-                            msgText: chatMsgTextController.text,
-                            msgSender: "You",
-                            user: true,
-                            sending: true,
-                          );
-                          chatMsgTextController.clear();
-                          messageWidgets.add(msgBubble);
-                        });
-                      },
-                      child: SvgPicture.asset('Assets/icons/send-2.svg')),
-                ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        _loadError!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Colors.white70
+                              : Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          connectAndListen();
+                        },
+                        icon: Icon(Icons.refresh),
+                        label: Text('Retry'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ThemeUtil.isDarkMode(context)
+                              ? Color(0xffC5D3E3)
+                              : Color(0xff1C2A3A),
+                          foregroundColor: ThemeUtil.isDarkMode(context)
+                              ? Color(0xff1C2A3A)
+                              : Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+            )
+          else if (_isLoading)
+            Expanded(
+                child: Center(
+                    child: CircularProgressIndicator(
+              color: ThemeUtil.isDarkMode(context)
+                  ? Color(0xffC5D3E3)
+                  : Color(0xff1C2A3A),
+            )))
+          else
+            Expanded(
+              child: messageWidgets.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No messages yet\nSay hi to start the conversation!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: ThemeUtil.isDarkMode(context)
+                              ? Colors.white70
+                              : Colors.black54,
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      reverse: true,
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      itemCount: messageWidgets.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 12),
+                          child: messageWidgets.reversed.toList()[index],
+                        );
+                      },
+                    ),
+            ),
+          Container(
+            padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                    child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                  decoration: BoxDecoration(
+                    color: ThemeUtil.isDarkMode(context)
+                        ? Color(0xff121212)
+                        : Color(0x05000000),
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          onSubmitted: (value) {
+                            if (chatMsgTextController.text.trim().isEmpty) return;
+                            setState(() {
+                              chatService?.sendMessage(
+                                conversationId: conversationId!,
+                                senderId: int.parse(widget.userId),
+                                senderType: widget.senderType,
+                                receiverId: int.parse(widget.friendId),
+                                receiverType: widget.receiverType,
+                                body: chatMsgTextController.text,
+                              );
+                              final msgBubble = MessageBubble(
+                                msgText: chatMsgTextController.text,
+                                msgSender: "You",
+                                user: true,
+                                sending: true,
+                                receiverImage: widget.userAsset,
+                              );
+                              chatMsgTextController.clear();
+                              messageWidgets.add(msgBubble);
+                            });
+                          },
+                          controller: chatMsgTextController,
+                          maxLines: null,
+                          textInputAction: TextInputAction.newline,
+                          decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                              border: InputBorder.none,
+                              hintText: 'Type a message...',
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              fillColor: Colors.transparent),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(
+                        Icons.emoji_emotions_outlined,
+                        color: Color(0xffA5ABB3),
+                        size: 24,
+                      )
+                    ],
+                  ),
+                )),
+                SizedBox(width: 10),
+                InkWell(
+                    onTap: () {
+                      if (chatMsgTextController.text.trim().isEmpty) return;
+                      setState(() {
+                        chatService?.sendMessage(
+                          conversationId: conversationId!,
+                          senderId: int.parse(widget.userId),
+                          senderType: widget.senderType,
+                          receiverId: int.parse(widget.friendId),
+                          receiverType: widget.receiverType,
+                          body: chatMsgTextController.text,
+                        );
+                        final msgBubble = MessageBubble(
+                          msgText: chatMsgTextController.text,
+                          msgSender: "You",
+                          user: true,
+                          sending: true,
+                          receiverImage: widget.userAsset,
+                        );
+                        chatMsgTextController.clear();
+                        messageWidgets.add(msgBubble);
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffC5D3E3)
+                            : Color(0xff1C2A3A),
+                        shape: BoxShape.circle,
+                      ),
+                      child: SvgPicture.asset(
+                        'Assets/icons/send-2.svg',
+                        width: 20,
+                        height: 20,
+                        colorFilter: ColorFilter.mode(
+                          ThemeUtil.isDarkMode(context)
+                              ? Color(0xff1C2A3A)
+                              : Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    )),
+              ],
             ),
           ),
         ],
@@ -322,40 +422,36 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   //   }
   // }
 
-  Future<void> getConversations() async {
+  Future<void> loadHistory() async {
     try {
       setState(() {
         _isLoading = true;
+        _loadError = null;
       });
-      final url = Endpoints.chatBaseUrl +
-          Endpoints.getConversation +
-          widget.conversationId;
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-      );
-      if (response.statusCode == 200) {
-        final resp = (jsonDecode(response.body) as List)
-            .map((e) => MessageResponse.fromJson(e));
-        print(resp);
-        for (final message in resp) {
-          final msgBubble = MessageBubble(
-              msgText: message.text ?? "",
-              msgSender:
-                  message.senderId == widget.userId ? "You" : widget.userName,
-              user: widget.userId == message.senderId.toString(),
-              date: message.createdAt!);
-          setState(() {
-            messageWidgets.add(msgBubble);
-          });
-        }
+      final list = await chatService!.getMessages(conversationId!, limit: 50);
+      for (final item in list) {
+        // Try both snake_case and camelCase for compatibility
+        final senderId = (item['senderId'] ?? item['sender_id'])?.toString() ?? '';
+        final body = item['body']?.toString() ?? '';
+        final isCurrentUser = senderId.toString() == widget.userId.toString();
+        print('[Chat] Message from sender: $senderId, current user: ${widget.userId}, isCurrentUser: $isCurrentUser');
+        final msgBubble = MessageBubble(
+          msgText: body,
+          msgSender: isCurrentUser ? 'You' : widget.userName,
+          user: isCurrentUser,
+          receiverImage: widget.userAsset,
+        );
+        messageWidgets.add(msgBubble);
       }
-    } on Exception catch (e) {
-      print(e.toString());
+      if (mounted) setState(() {});
+    } catch (e) {
+      _loadError = e.toString();
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }

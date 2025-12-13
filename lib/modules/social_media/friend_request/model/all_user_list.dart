@@ -31,7 +31,7 @@ class AllUserList {
 }
 
 class UserList {
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? name;
   String? email;
   String? password;
@@ -61,19 +61,31 @@ class UserList {
       this.location});
 
   UserList.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    // Convert to String if it's not already
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
     name = json['name'] ?? '';
     email = json['email'] ?? '';
     password = json['password'] ?? '';
-    image = json['image'].toString();
+    image = json['image']?.toString() ?? '';
     userRole = json['user_role'] ?? '';
     authType = json['auth_type'] ?? '';
     phone = json['phone'] ?? '';
     deviceToken = json['device_token'] ?? '';
-    userDetailId = json['user_detail_id'] ?? '';
-    gender = json['gender'] ?? '';
-    dob = json['dob'] ?? '';
-    location = json['location'] ?? '';
+    userDetailId = json['user_detail_id'];
+    // Handle nested profile structure
+    if (json['profile'] != null && json['profile']['demographics'] != null) {
+      gender = json['profile']['demographics']['gender'];
+      dob = json['profile']['demographics']['dob'];
+      location = json['profile']['demographics']['location'];
+    } else {
+      gender = json['gender'] ?? '';
+      dob = json['dob'] ?? '';
+      location = json['location'] ?? '';
+    }
   }
 
   Map<String, dynamic> toJson() {

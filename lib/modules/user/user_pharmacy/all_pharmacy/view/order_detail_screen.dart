@@ -64,28 +64,31 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 4.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   isenable: false,
                   controller: _fnameController,
                   focusNode: _focusNode1,
                   nextFocusNode: _focusNode2,
-                  hintText: 'James',
+                  hintText: 'Order Id',
                   icon: '',
                 ),
                 SizedBox(
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   controller: _lnameController,
                   focusNode: _focusNode2,
                   nextFocusNode: _focusNode3,
                   isenable: false,
-                  hintText: 'Robinson',
+                  hintText: 'Last Name',
                   icon: '',
                 ),
                 SizedBox(
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   isenable: false,
                   controller: _contactController,
                   focusNode: _focusNode3,
@@ -97,6 +100,7 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   focusNode: _focusNode4,
                   nextFocusNode: _focusNode5,
                   isenable: false,
@@ -158,6 +162,7 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 1.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   isenable: false,
                   controller: _locationController,
                   focusNode: _focusNode5,
@@ -170,6 +175,7 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   focusNode: _focusNode6,
                   nextFocusNode: _focusNode7,
                   isenable: false,
@@ -182,6 +188,7 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   focusNode: _focusNode7,
                   nextFocusNode: _focusNode8,
                   controller: _townController,
@@ -194,11 +201,12 @@ class _FormScreenState extends State<OrderDetailScreen> {
                   height: 2.h,
                 ),
                 RoundedBorderTextField(
+                  showLabel: true,
                   isenable: false,
                   focusNode: _focusNode8,
                   nextFocusNode: _focusNode9,
                   controller: _feeController,
-                  hintText: '20\$ Bill',
+                  hintText: 'Bill',
                   icon: '',
                 ),
                 SizedBox(

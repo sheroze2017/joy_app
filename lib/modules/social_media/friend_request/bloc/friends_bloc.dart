@@ -51,7 +51,7 @@ class FriendsSocialController extends GetxController {
       UserHive? currentUser = await getCurrentUser();
 
       AllFriendRequest response =
-          await friendApi.getAllFriendRequest(currentUser!.userId.toString());
+          await friendApi.getAllFriendRequest(currentUser!.userId);
       if (response.data != null) {
         response.data!.forEach((element) {
           friendRequest.add(element);
@@ -61,6 +61,13 @@ class FriendsSocialController extends GetxController {
       return response;
     } catch (error) {
       fetchFriendRequest.value = false;
+      // Don't throw if it's a Hive type mismatch - user will need to login again
+      if (error.toString().contains('is not a subtype') || 
+          error.toString().contains('type cast') ||
+          error.toString().contains('subtype')) {
+        print('⚠️ [FriendsSocialController] Hive data corruption detected. User needs to login again.');
+        return AllFriendRequest(code: 401, sucess: false, message: 'Please login again');
+      }
       throw (error);
     } finally {
       fetchFriendRequest.value = false;
@@ -72,7 +79,7 @@ class FriendsSocialController extends GetxController {
     try {
       UserHive? currentUser = await getCurrentUser();
       bool response =
-          await friendApi.addFriend(currentUser!.userId.toString(), friendId);
+          await friendApi.addFriend(currentUser!.userId, friendId);
       if (response == true) {
         showSuccessMessage(context, 'Friend request sent successfully');
         removeUser(friendId.toString());
@@ -96,8 +103,8 @@ class FriendsSocialController extends GetxController {
       profileScreenLoader.value = true;
       SearchUserProfileDetail response =
           await friendApi.getSearchUserProfileData(
-              !myProfile ? currentUser!.userId.toString() : friendId.toString(),
-              currentUser!.userId.toString());
+              !myProfile ? currentUser!.userId : friendId.toString(),
+              currentUser!.userId);
       await getAllPostById(myProfile, friendId);
       if (response.data != null) {
         userProfileData.value = response.data!.first;
@@ -110,7 +117,14 @@ class FriendsSocialController extends GetxController {
     } catch (error) {
       profileScreenLoader.value = false;
       userProfileData.value = null;
-
+      print('❌ [FriendsSocialController] getSearchUserProfileData() error: $error');
+      // Don't throw if it's a type mismatch - just return empty response
+      if (error.toString().contains('is not a subtype') || 
+          error.toString().contains('type cast') ||
+          error.toString().contains('subtype')) {
+        print('⚠️ [FriendsSocialController] Type error detected, returning empty response');
+        return SearchUserProfileDetail(code: 400, sucess: false, message: 'Error loading profile');
+      }
       throw (error);
     } finally {
       profileScreenLoader.value = false;
@@ -125,7 +139,7 @@ class FriendsSocialController extends GetxController {
       userPostById.value = await [];
 
       AllUserPostModel response = await friendApi.getAllPostById(
-        !myProfile ? currentUser!.userId.toString() : friendId.toString(),
+        !myProfile ? currentUser!.userId : friendId.toString(),
       );
       if (response.data != null) {
         response.data!.forEach((element) {
@@ -183,7 +197,13 @@ class FriendsSocialController extends GetxController {
       return response;
     } catch (error) {
       fetchAllUser.value = false;
-
+      // Don't throw if it's a Hive type mismatch - user will need to login again
+      if (error.toString().contains('is not a subtype') || 
+          error.toString().contains('type cast') ||
+          error.toString().contains('subtype')) {
+        print('⚠️ [FriendsSocialController] Hive data corruption detected in getAllUserList. User needs to login again.');
+        return AllUserList(code: 401, sucess: false, message: 'Please login again');
+      }
       throw (error);
     } finally {
       fetchAllUser.value = false;

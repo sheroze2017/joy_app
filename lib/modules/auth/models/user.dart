@@ -4,7 +4,7 @@ part 'user.g.dart';
 @HiveType(typeId: 0)
 class UserHive extends HiveObject {
   @HiveField(0)
-  int userId;
+  String userId; // Changed to String to store MongoDB ObjectId
 
   @HiveField(1)
   String firstName;

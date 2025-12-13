@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/auth/view/profileform_screen.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
+import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 import 'package:joy_app/modules/social_media/friend_request/model/all_post_id.dart';
 import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
@@ -34,6 +36,8 @@ class MyProfileScreen extends StatefulWidget {
 class _MyProfileScreenState extends State<MyProfileScreen> {
   FriendsSocialController _friendsController =
       Get.find<FriendsSocialController>();
+  ProfileController _profileController = Get.put(ProfileController());
+
   @override
   void initState() {
     _friendsController.getSearchUserProfileData(
@@ -288,17 +292,46 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                       isSmall: true,
                                                       text: "Message",
                                                       onPressed: () {
-                                                        _chatController.createConvo(
-                                                            _friendsController
-                                                                    .userProfileData
-                                                                    .value!
-                                                                    .userId ??
-                                                                0,
-                                                            _friendsController
-                                                                .userProfileData
-                                                                .value!
-                                                                .name
-                                                                .toString());
+                                                        Get.to(
+                                                            DirectMessageScreen(
+                                                          userName:
+                                                              _friendsController
+                                                                  .userProfileData
+                                                                  .value!
+                                                                  .name
+                                                                  .toString(),
+                                                          friendId:
+                                                              _friendsController
+                                                                  .userProfileData
+                                                                  .value!
+                                                                  .userId
+                                                                  .toString(),
+
+                                                          userId:
+                                                              _profileController
+                                                                  .userId.value,
+                                                          userAsset:
+                                                              _profileController
+                                                                  .image
+                                                                  .toString(),
+                                                          // Adjust types when chatting with non-user entities
+                                                          senderType: 'user',
+                                                          receiverType: 'user',
+                                                          // conversationId:
+                                                          //     result.data!.sId.toString(),
+                                                        ));
+
+                                                        // _chatController.createConvo(
+                                                        //     _friendsController
+                                                        //             .userProfileData
+                                                        //             .value!
+                                                        //             .userId ??
+                                                        //         0,
+                                                        //     _friendsController
+                                                        //         .userProfileData
+                                                        //         .value!
+                                                        //         .name
+                                                        //         .toString());
                                                       },
                                                       backgroundColor: ThemeUtil
                                                               .isDarkMode(

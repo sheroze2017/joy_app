@@ -41,7 +41,7 @@ class Post {
   int? createdBy;
   String? createdAt;
   String? status;
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? name;
   String? userImage;
   String? phone;
@@ -71,7 +71,12 @@ class Post {
     createdBy = json['created_by'];
     createdAt = json['created_at'];
     status = json['status'] ?? '';
-    userId = json['user_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    // Convert to String if it's not already
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
     name = json['name'] ?? '';
     userImage = json['user_image'] ?? '';
     phone = json['phone'] ?? '';

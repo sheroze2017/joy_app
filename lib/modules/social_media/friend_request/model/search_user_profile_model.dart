@@ -31,7 +31,7 @@ class SearchUserProfileDetail {
 }
 
 class UserProfileData {
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? name;
   String? image;
   List<Posts>? posts;
@@ -41,7 +41,12 @@ class UserProfileData {
       {this.userId, this.name, this.image, this.posts, this.allFriends});
 
   UserProfileData.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    // Convert to String if it's not already
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
     name = json['name'];
     image = json['image'].toString();
     if (json['posts'] != null) {
@@ -112,16 +117,24 @@ class Posts {
 
 class AllFriends {
   String? status;
-  int? userId;
-  int? friendId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
+  dynamic friendId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   FriendDetails? friendDetails;
 
   AllFriends({this.status, this.userId, this.friendId, this.friendDetails});
 
   AllFriends.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    userId = json['user_id'];
-    friendId = json['friend_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    friendId = json['friend_id'] ?? json['_id'];
+    // Convert to String if they're not already
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
+    if (friendId != null && friendId is! String) {
+      friendId = friendId.toString();
+    }
     friendDetails = json['friend_details'] != null
         ? new FriendDetails.fromJson(json['friend_details'])
         : null;

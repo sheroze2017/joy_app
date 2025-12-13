@@ -60,8 +60,9 @@ class MyApp extends StatelessWidget {
           title: 'Joy',
           theme: MyAppThemes.lightTheme,
           darkTheme: MyAppThemes.darkTheme,
-          themeMode:
-              _themeController.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          themeMode: _themeController.isManualMode
+              ? (_themeController.isDarkMode ? ThemeMode.dark : ThemeMode.light)
+              : ThemeMode.system,
           // theme: ThemeData(
           //   useMaterial3: true,
           // ),

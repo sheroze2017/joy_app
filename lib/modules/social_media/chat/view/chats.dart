@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
+import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -22,6 +24,7 @@ class _AllChatsState extends State<AllChats> {
       Get.find<FriendsSocialController>();
 
   ChatController _chatController = Get.put(ChatController());
+  ProfileController _profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +83,12 @@ class _AllChatsState extends State<AllChats> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  _chatController.createConvo(id, name);
+                                  Get.to(DirectMessageScreen(
+                                    userName: name,
+                                    friendId: id.toString(),
+                                    userId: _profileController.userId.value,
+                                    userAsset: img,
+                                  ));
                                 },
                                 child: ChatBox(
                                   profileImageUrl: img,
@@ -122,9 +130,17 @@ class _AllChatsState extends State<AllChats> {
                                 child: InkWell(
                                     onTap: () {
                                       _friendsController.showlist.value = false;
-                                      _chatController.createConvo(
-                                          data.userId ?? 0,
-                                          data.name.toString());
+                                      Get.to(DirectMessageScreen(
+                                        userName: data.name.toString(),
+                                        friendId: data.userId.toString(),
+                                        userId: _profileController.userId.value,
+                                        userAsset: data.image!.contains('http')
+                                            ? data.image.toString()
+                                            : "http://194.233.69.219/joy-Images/c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                      ));
+                                      // _chatController.createConvo(
+                                      //     data.userId ?? 0,
+                                      //     data.name.toString());
                                     },
                                     child: Row(
                                       children: [
@@ -132,10 +148,13 @@ class _AllChatsState extends State<AllChats> {
                                           child: Image.network(
                                             data.image!.contains('http')
                                                 ? data.image.toString()
-                                                : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                                : "http://194.233.69.219/joy-Images/c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
                                             width: 6.6.h,
                                             height: 6.6.h,
                                             fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              return Icon(Icons.person, size: 6.6.h);
+                                            },
                                           ),
                                         ),
                                         SizedBox(

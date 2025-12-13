@@ -19,7 +19,7 @@ import '../../user_doctor/bloc/user_doctor_bloc.dart';
 class UserBlogScreen extends StatelessWidget {
   UserBlogScreen({super.key});
 
-  final mediaController = Get.find<MediaPostController>();
+  final mediaController = Get.put(MediaPostController());
   final TextEditingController imageurl = TextEditingController();
   ProfileController _profileController = Get.put(ProfileController());
   UserBloodBankController _userBloodBankController =
@@ -121,7 +121,7 @@ class UserBlogScreen extends StatelessWidget {
                                     borderSide: BorderSide.none),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                fillColor: Colors.transparent,
+                                fillColor: const Color.fromRGBO(0, 0, 0, 0),
                                 hintText: "What's on your mind?",
                                 hintStyle: CustomTextStyles.lightTextStyle(
                                     color: AppColors.borderColor),
@@ -180,19 +180,21 @@ class UserBlogScreen extends StatelessWidget {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: mediaController.allPost.length,
                               itemBuilder: ((context, index) {
-                                final data = mediaController.allPost[index];
+                                final data = mediaController.allPost.reversed
+                                    .toList()[index];
                                 return Column(
                                   children: [
                                     Obx(() => MyCustomWidget(
-                                          cm: mediaController
-                                                  .allPost[index].comments ??
+                                          cm: mediaController.allPost.reversed
+                                                  .toList()[index]
+                                                  .comments ??
                                               [],
                                           postIndex: index,
                                           postId: data.postId.toString(),
                                           postTime: data.createdAt.toString(),
                                           id: data.createdBy.toString(),
                                           imgPath: data.image.toString(),
-                                          isLiked: true,
+                                          isLiked: data.isMyLike ?? false, // Use is_my_like from API response
                                           isReply: false,
                                           showImg: (data.image == null ||
                                                   data.image!.isEmpty)

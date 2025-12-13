@@ -141,7 +141,9 @@ class ProductController extends GetxController {
         pendingOrders.clear();
         onTheWayOrders.clear();
         deliveredOrders.clear();
+        pharmaciesOrder.clear();
         response.data!.forEach((element) {
+          pharmaciesOrder.add(element);
           if (element.status == 'Pending') {
             pendingOrders.add(element);
           } else if (element.status == 'On the way') {

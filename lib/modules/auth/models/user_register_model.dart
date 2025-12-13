@@ -8,7 +8,8 @@ class UserRegisterModel {
 
   UserRegisterModel.fromJson(Map<String, dynamic> json) {
     code = json['code'];
-    sucess = json['sucess'];
+    // Handle both 'sucess' (typo) and 'success' (correct spelling) from backend
+    sucess = json['sucess'] ?? json['success'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     message = json['message'];
   }
@@ -26,7 +27,7 @@ class UserRegisterModel {
 }
 
 class Data {
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both int and String (_id from MongoDB)
   String? name;
   String? email;
   String? password;
@@ -56,7 +57,10 @@ class Data {
       this.location});
 
   Data.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    print('📋 [Data] Parsing userId: $userId (type: ${userId.runtimeType})');
+    // Keep userId as-is (can be String for MongoDB _id or int for legacy user_id)
     name = json['name'];
     email = json['email'];
     password = json['password'];
@@ -66,9 +70,16 @@ class Data {
     phone = json['phone'];
     deviceToken = json['device_token'];
     userDetailId = json['user_detail_id'];
-    gender = json['gender'];
-    dob = json['dob'];
-    location = json['location'];
+    // Handle nested profile structure
+    if (json['profile'] != null && json['profile']['demographics'] != null) {
+      gender = json['profile']['demographics']['gender'];
+      dob = json['profile']['demographics']['dob'];
+      location = json['profile']['demographics']['location'];
+    } else {
+      gender = json['gender'];
+      dob = json['dob'];
+      location = json['location'];
+    }
   }
 
   Map<String, dynamic> toJson() {

@@ -235,7 +235,7 @@ class _FormScreenState extends State<ProfileScreen> {
                       onTap: () {
                         widget.isDoctor
                             ? Get.to(AllAppointments(),
-                                transition: Transition.native)
+                                  transition: Transition.native)
                             : Get.to(ManageAllAppointmentUser(),
                                 transition: Transition.native);
                       },

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_api.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
+import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
 
 import '../../../core/network/request.dart';
 import '../../auth/utils/auth_hive_utils.dart';
@@ -16,6 +17,8 @@ class HospitalDetailController extends GetxController {
   final hospitald = Rxn<hospitaldetail>();
   var hospitaldetailloader = false.obs;
   late HospitalDetailsApi hospitalDetailsApi;
+  var linkLoader = false.obs;
+  var unlinkLoader = false.obs;
 
   @override
   void onInit() {
@@ -88,6 +91,60 @@ class HospitalDetailController extends GetxController {
       throw (error);
     } finally {
       hospitaldetailloader.value = false;
+    }
+  }
+
+  Future<void> linkProfile(String link_to_user_id, BuildContext context) async {
+    UserHive? currentUser = await getCurrentUser();
+
+    linkLoader.value = true;
+    try {
+      var hospitalId = currentUser!.userId.toString();
+
+      Map<String, dynamic> response =
+          await hospitalDetailsApi.linkHospital(hospitalId, link_to_user_id);
+      if (response['data'] != null && response['code'] == 200) {
+        Get.back();
+        showSuccessMessage(context, 'Profile Link Successfully');
+        linkLoader.value = false;
+      } else {
+        Get.back();
+        showErrorMessage(context, response['message']);
+        linkLoader.value = false;
+      }
+    } catch (error) {
+      showErrorMessage(context, error.toString());
+      linkLoader.value = false;
+      throw (error);
+    } finally {
+      linkLoader.value = false;
+    }
+  }
+
+  Future<void> unLinkProfile(
+      String link_to_user_id, BuildContext context) async {
+    UserHive? currentUser = await getCurrentUser();
+    unlinkLoader.value = true;
+    try {
+      var hospitalId = currentUser!.userId.toString();
+
+      Map<String, dynamic> response =
+          await hospitalDetailsApi.linkHospital(hospitalId, link_to_user_id);
+      if (response['data'] != null && response['code'] == 200) {
+        Get.back();
+        showSuccessMessage(context, 'Profile Unlinked Successfully');
+        unlinkLoader.value = false;
+      } else {
+        showErrorMessage(context, response['message']);
+        Get.back();
+        unlinkLoader.value = false;
+      }
+    } catch (error) {
+      showErrorMessage(context, error.toString());
+      unlinkLoader.value = false;
+      throw (error);
+    } finally {
+      unlinkLoader.value = false;
     }
   }
 }

@@ -43,6 +43,9 @@
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open and in the background.</string>
+    
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Joy is using this access to upload images for posting feature</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

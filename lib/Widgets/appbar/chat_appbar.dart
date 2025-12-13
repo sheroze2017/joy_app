@@ -11,12 +11,14 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String username;
   final String status;
   final String userId;
+  final String? userImage;
 
   const ChatAppBar({
     Key? key,
     required this.username,
     required this.status,
     required this.userId,
+    this.userImage,
   }) : super(key: key);
 
   @override
@@ -47,10 +49,29 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             },
             child: ClipOval(
               child: Image.network(
-                CustomConstant.nullUserImage,
+                userImage ?? CustomConstant.nullUserImage,
                 width: 5.h,
                 height: 5.h,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 5.h,
+                    height: 5.h,
+                    decoration: BoxDecoration(
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff2A2A2A)
+                          : Color(0xffE5E5E5),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      size: 3.h,
+                      color: ThemeUtil.isDarkMode(context)
+                          ? Color(0xff5A5A5A)
+                          : Color(0xffA5A5A5),
+                    ),
+                  );
+                },
               ),
             ),
           ),

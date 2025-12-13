@@ -89,6 +89,7 @@ class _ManageAppointmentState extends State<DoctorDaginosis> {
                     ),
                     RoundedBorderTextField(
                         isenable: false,
+                        showLabel: true,
                         controller: _nameController,
                         focusNode: _focusNode1,
                         nextFocusNode: _focusNode2,
@@ -109,6 +110,7 @@ class _ManageAppointmentState extends State<DoctorDaginosis> {
                     ),
                     RoundedBorderTextField(
                         isenable: false,
+                        showLabel: true,
                         focusNode: _focusNode2,
                         nextFocusNode: _focusNode3,
                         maxlines: true,
@@ -137,6 +139,7 @@ class _ManageAppointmentState extends State<DoctorDaginosis> {
                     ),
                     RoundedBorderTextField(
                       isenable: false,
+                      showLabel: true,
                       focusNode: _focusNode3,
                       nextFocusNode: _focusNode4,
                       validator: (value) {

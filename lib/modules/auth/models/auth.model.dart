@@ -26,7 +26,7 @@ class LoginModel {
 }
 
 class Data {
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? name;
   String? email;
   String? password;
@@ -48,15 +48,21 @@ class Data {
       this.deviceToken});
 
   Data.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    print('📋 [LoginModel.Data] Parsing userId: $userId (type: ${userId.runtimeType})');
+    // Convert to String if it's not already (for MongoDB ObjectId)
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
     name = json['name'];
     email = json['email'];
     password = json['password'];
-    image = json['image'].toString();
+    image = json['image']?.toString() ?? '';
     userRole = json['user_role'];
     authType = json['auth_type'];
-    phone = json['phone'];
-    deviceToken = json['device_token'];
+    phone = json['phone']?.toString() ?? '';
+    deviceToken = json['device_token']?.toString() ?? '';
   }
 
   Map<String, dynamic> toJson() {

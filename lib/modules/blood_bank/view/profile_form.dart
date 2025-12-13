@@ -11,10 +11,12 @@ import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/Widgets/dailog/success_dailog.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/doctor/view/profile_form.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/common/utils/file_selector.dart';
+import 'package:joy_app/widgets/dailog/doctor_availability_dailog.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
@@ -26,12 +28,14 @@ class BloodBankFormScreen extends StatefulWidget {
   final String email;
   final String password;
   final String name;
+  final String? userRole; // BLOODBANK role for signup (optional for edit flows)
   bool isEdit;
   bool isSocial;
   BloodBankFormScreen(
       {required this.email,
       required this.password,
       required this.name,
+      this.userRole,
       this.isSocial = false,
       this.isEdit = false,
       super.key});
@@ -52,6 +56,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
+  List<Set<String>> dateAvailability = [];
 
   final authController = Get.find<AuthController>();
   final _formKey = GlobalKey<FormState>();
@@ -222,6 +227,8 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                     child: RoundedBorderTextField(
                       focusNode: _focusNode3,
                       isenable: false,
+                                        showLabel: true,
+
                       nextFocusNode: _focusNode4,
                       controller: _locationController,
                       hintText: 'Location',
@@ -243,33 +250,34 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return MultiTimeSelector(
-                            times: [
-                              '09:00 AM',
-                              '10:00 AM',
-                              '11:00 AM',
-                              '12:00 PM',
-                              '01:00 PM',
-                              '02:00 PM',
-                              '03:00 PM',
-                              '04:00 PM',
-                              '05:00 PM',
-                              '06:00 PM',
-                              '07:00 PM',
-                              '08:00 PM',
-                            ],
-                            onConfirm: (List<String> selectedTimes) {
-                              _availabilityController
-                                  .setText(selectedTimes.join(' '));
+                          return DoctorAvailDailog(
+                            initialSelectedTimes: dateAvailability,
+                            onConfirm: (List<Set<String>> selectedTimes) async {
+                              dateAvailability = selectedTimes;
+                              setState(() {});
+                              String result = await generateFormattedString(
+                                  selectedTimes, [
+                                'Monday',
+                                'Tuesday',
+                                'Wednesday',
+                                'Thursday',
+                                'Friday',
+                                'Saturday',
+                                'Sunday'
+                              ]);
+                              _availabilityController.setText(result);
                             },
                           );
                         },
                       );
                     },
                     child: RoundedBorderTextField(
-                      focusNode: _focusNode5,
-                      nextFocusNode: _focusNode6,
+                      maxlines: true,
+                      focusNode: _focusNode4,
+                      nextFocusNode: _focusNode5,
                       isenable: false,
+                                        showLabel: true,
+
                       controller: _availabilityController,
                       hintText: 'Availability',
                       icon: '',
@@ -322,7 +330,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                         "",
                                         _contactController.text,
                                         widget.isSocial ? 'SOCIAL' : "EMAIL",
-                                        "BLOODBANK",
+                                        widget.userRole ?? 'BLOODBANK',
                                         latitude.toString(),
                                         longitude.toString(),
                                         "ASDA21321",

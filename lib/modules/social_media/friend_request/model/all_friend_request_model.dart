@@ -31,9 +31,9 @@ class AllFriendRequest {
 }
 
 class FriendRequest {
-  int? friendsId;
-  int? userId;
-  int? friendId;
+  dynamic friendsId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
+  dynamic friendId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? status;
   String? createdAt;
   String? updatedAt;
@@ -49,9 +49,17 @@ class FriendRequest {
       this.friendDetails});
 
   FriendRequest.fromJson(Map<String, dynamic> json) {
-    friendsId = json['friends_id'];
-    userId = json['user_id'];
-    friendId = json['friend_id'];
+    friendsId = json['friends_id'] ?? json['_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    friendId = json['friend_id'] ?? json['_id'];
+    // Convert to String if they're not already
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
+    if (friendId != null && friendId is! String) {
+      friendId = friendId.toString();
+    }
     status = json['status'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
@@ -78,15 +86,20 @@ class FriendRequest {
 class FriendDetails {
   String? name;
   String? image;
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   List<MutualFriends>? mutualFriends;
 
   FriendDetails({this.name, this.image, this.userId, this.mutualFriends});
 
   FriendDetails.fromJson(Map<String, dynamic> json) {
     name = json['name'];
-    image = json['image'].toString();
-    userId = json['user_id'];
+    image = json['image']?.toString() ?? '';
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    // Convert to String if it's not already
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
     if (json['mutual_friends'] != null) {
       mutualFriends = <MutualFriends>[];
       json['mutual_friends'].forEach((v) {

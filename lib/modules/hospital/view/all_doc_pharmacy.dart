@@ -20,11 +20,13 @@ class AllDocPharmacy extends StatefulWidget {
   String appBarText;
   bool isPharmacy;
   List<PharmacyModelData> dataList;
+  bool isFromHosipital;
   AllDocPharmacy(
       {super.key,
       required this.appBarText,
       this.isSelectable = false,
       required this.dataList,
+      required this.isFromHosipital,
       required this.isPharmacy});
 
   @override
@@ -94,18 +96,23 @@ class _AllDocPharmacyState extends State<AllDocPharmacy> {
                               ? showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return ConfirmationDailog();
+                                    return ConfirmationDailog(
+                                      link_to_user_id:
+                                          filteredList[index].userId.toString(),
+                                    );
                                   },
                                 )
                               : widget.isPharmacy
                                   ? Get.to(
                                       PharmacyProductScreen(
+                                          isHospital: widget.isFromHosipital,
                                           userId: filteredList[index]
                                               .userId
                                               .toString()),
                                       transition: Transition.native)
                                   : Get.to(
                                       DoctorDetailScreen2(
+                                        isFromHospital: widget.isFromHosipital,
                                         doctorId: filteredList[index]
                                             .userId
                                             .toString(),
@@ -115,101 +122,148 @@ class _AllDocPharmacyState extends State<AllDocPharmacy> {
                                       ),
                                       transition: Transition.native);
                         },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: widget.isPharmacy
-                                  ? Color(0xffE2FFE3)
-                                  : ThemeUtil.isDarkMode(context)
-                                      ? Color(0xff151515)
-                                      : Color(0xffEEF5FF),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Image.network(
-                                    filteredList[index].image!.contains('http')
-                                        ? filteredList[index].image!
-                                        : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
-                                    width: 28.w,
-                                    height: 28.w,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 2.w,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      HospitalName(
-                                          hospitalName: filteredList[index]
-                                              .name
-                                              .toString()),
-                                      LocationWidget(
-                                          location: filteredList[index]
-                                              .location
-                                              .toString()),
-                                      ReviewBar(
-                                        rating: '0',
-                                        count:
-                                            filteredList[index].reviews!.length,
+                        child: Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: widget.isPharmacy
+                                      ? Color(0xffE2FFE3)
+                                      : ThemeUtil.isDarkMode(context)
+                                          ? Color(0xff151515)
+                                          : Color(0xffEEF5FF),
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                      child: Image.network(
+                                        filteredList[index]
+                                                .image!
+                                                .contains('http')
+                                            ? filteredList[index].image!
+                                            : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
+                                        width: 28.w,
+                                        height: 28.w,
+                                        fit: BoxFit.cover,
                                       ),
-                                      Divider(
-                                        color: Color(0xff6B7280),
-                                        thickness: 0.1.h,
-                                      ),
-                                      Row(
+                                    ),
+                                    SizedBox(
+                                      width: 2.w,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
+                                          HospitalName(
+                                              hospitalName: filteredList[index]
+                                                  .name
+                                                  .toString()),
+                                          LocationWidget(
+                                              location: filteredList[index]
+                                                  .location
+                                                  .toString()),
+                                          ReviewBar(
+                                            rating: '0',
+                                            count: filteredList[index]
+                                                .reviews!
+                                                .length,
+                                          ),
+                                          Divider(
+                                            color: Color(0xff6B7280),
+                                            thickness: 0.1.h,
+                                          ),
                                           Row(
                                             children: [
-                                              SvgPicture.asset(
-                                                  'Assets/icons/routing.svg'),
-                                              SizedBox(
-                                                width: 0.5.w,
+                                              Row(
+                                                children: [
+                                                  SvgPicture.asset(
+                                                      'Assets/icons/routing.svg'),
+                                                  SizedBox(
+                                                    width: 0.5.w,
+                                                  ),
+                                                  Text('0.0 km/0min',
+                                                      style: CustomTextStyles
+                                                          .lightTextStyle(
+                                                              color: Color(
+                                                                  0xff6B7280),
+                                                              size: 10.8))
+                                                ],
                                               ),
-                                              Text('0.0 km/0min',
-                                                  style: CustomTextStyles
-                                                      .lightTextStyle(
-                                                          color:
-                                                              Color(0xff6B7280),
-                                                          size: 10.8))
+                                              Spacer(),
+                                              Row(
+                                                children: [
+                                                  SvgPicture.asset(widget
+                                                          .isPharmacy
+                                                      ? 'Assets/icons/pharmacy.svg'
+                                                      : 'Assets/icons/hospital.svg'),
+                                                  SizedBox(
+                                                    width: 0.5.w,
+                                                  ),
+                                                  Text(
+                                                      widget.isPharmacy
+                                                          ? 'Pharmacy'
+                                                          : 'Doctor',
+                                                      style: CustomTextStyles
+                                                          .lightTextStyle(
+                                                              color: Color(
+                                                                  0xff6B7280),
+                                                              size: 10.8))
+                                                ],
+                                              )
                                             ],
                                           ),
-                                          Spacer(),
-                                          Row(
-                                            children: [
-                                              SvgPicture.asset(widget.isPharmacy
-                                                  ? 'Assets/icons/pharmacy.svg'
-                                                  : 'Assets/icons/hospital.svg'),
-                                              SizedBox(
-                                                width: 0.5.w,
-                                              ),
-                                              Text(
-                                                  widget.isPharmacy
-                                                      ? 'Pharmacy'
-                                                      : 'Doctor',
-                                                  style: CustomTextStyles
-                                                      .lightTextStyle(
-                                                          color:
-                                                              Color(0xff6B7280),
-                                                          size: 10.8))
-                                            ],
-                                          )
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                              ],
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                            widget.isFromHosipital
+                                ? Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return ConfirmationUnLinkDailog(
+                                              link_to_user_id:
+                                                  filteredList[index]
+                                                      .userId
+                                                      .toString(),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              color:
+                                                  !ThemeUtil.isDarkMode(context)
+                                                      ? Color(0xff0D0D0D)
+                                                      : Color(0xffE5E7EB),
+                                              borderRadius:
+                                                  BorderRadius.circular(50)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(3.0),
+                                            child: Icon(
+                                              color:
+                                                  ThemeUtil.isDarkMode(context)
+                                                      ? Color(0xff0D0D0D)
+                                                      : Color(0xffE5E7EB),
+                                              Icons.remove,
+                                              size: 20,
+                                            ),
+                                          )),
+                                    ))
+                                : Container()
+                          ],
                         ),
                       );
                     }),

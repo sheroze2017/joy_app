@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:joy_app/styles/colors.dart';
+import 'package:joy_app/widgets/custom_message/animated_snackbar.dart';
 
 void showErrorMessage(BuildContext context, String message) {
-  Fluttertoast.showToast(
-    msg: message,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    timeInSecForIosWeb: 1,
+  AnimatedSnackbar.showSnackbar(
+    context: context,
+    message: message,
+    icon: Icons.info,
     backgroundColor: AppColors.redColor,
-    textColor: Colors.white,
-    fontSize: 12.0,
+    textColor: AppColors.whiteColor,
+    fontSize: 14.0,
   );
 }
 
 void showSuccessMessage(BuildContext context, String message) {
-  Fluttertoast.showToast(
-    msg: message,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    timeInSecForIosWeb: 1,
+  AnimatedSnackbar.showSnackbar(
+    context: context,
+    message: message,
+    icon: Icons.check,
     backgroundColor: Colors.green,
-    textColor: Colors.white,
-    fontSize: 12.0,
+    textColor: AppColors.whiteColor,
+    fontSize: 14.0,
   );
 }
