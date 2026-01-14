@@ -42,7 +42,61 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
   @override
   void initState() {
     super.initState();
-    _doctorController.getDoctorDetail(widget.doctorId.toString());
+    if (widget.doctorId.isNotEmpty && widget.doctorId != 'null') {
+      _doctorController.getDoctorDetail(widget.doctorId);
+    }
+  }
+
+  Widget _buildDoctorAvatar(String? url, double size, BuildContext context) {
+    final isValidUrl = url != null &&
+        url.trim().isNotEmpty &&
+        url.trim().toLowerCase() != 'null' &&
+        url.contains('http') &&
+        !url.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab');
+
+    if (isValidUrl) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12.0),
+        child: CachedNetworkImage(
+          imageUrl: url.trim(),
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: LoadingWidget(),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: Icon(
+              Icons.person,
+              size: size * 0.5,
+              color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+            ),
+          ),
+        ),
+      );
+    }
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Icon(
+        Icons.person,
+        size: size * 0.5,
+        color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+      ),
+    );
   }
 
   @override
@@ -113,32 +167,10 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                     children: [
                                       Row(
                                         children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            child: CachedNetworkImage(
-                                              imageUrl: _doctorController
-                                                  .doctorDetail!.data!.image
-                                                  .toString(),
-                                              width: 27.9.w,
-                                              height: 27.9.w,
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  Center(
-                                                      child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 20.0),
-                                                child: LoadingWidget(),
-                                              )),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Center(
-                                                          child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 20.0),
-                                                child: ErorWidget(),
-                                              )),
-                                            ),
+                                          _buildDoctorAvatar(
+                                            _doctorController.doctorDetail!.data!.image?.toString(),
+                                            27.9.w,
+                                            context,
                                           ),
                                           SizedBox(
                                             width: 1.w,
@@ -365,20 +397,24 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                                       ?.length ??
                                                   0,
                                               itemBuilder: ((context, index) {
-                                                final data = _doctorController
+                                                final reviews = _doctorController
                                                     .doctorDetail!
                                                     .data
-                                                    ?.reviews![index];
+                                                    ?.reviews;
+                                                if (reviews == null || index >= reviews.length) {
+                                                  return SizedBox.shrink();
+                                                }
+                                                final data = reviews[index];
                                                 return Padding(
                                                   padding:
                                                       const EdgeInsets.only(
                                                           bottom: 10.0),
                                                   child: UserRatingWidget(
-                                                    image: data!.giveBy!.image!,
+                                                    image: data.giveBy?.image,
                                                     docName:
-                                                        data!.giveBy!.name!,
-                                                    reviewText: data!.review!,
-                                                    rating: data.rating!,
+                                                        data.giveBy?.name ?? 'Unknown',
+                                                    reviewText: data.review ?? '',
+                                                    rating: data.rating,
                                                   ),
                                                 );
                                               })))
@@ -398,54 +434,41 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
       ),
       bottomNavigationBar: !widget
               .isFromHospital // Replace this with your condition
-          ? Stack(
-              alignment: FractionalOffset(.5, 1.0),
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: RoundedButton(
-                            text: widget.isDoctor
-                                ? 'Edit Profile'
-                                : "Book Appointment",
-                            onPressed: () {
-                              _doctorController.doctorDetail == null
-                                  ? null
-                                  : widget.isDoctor
-                                      ? Get.to(
-                                          DoctorFormScreen(
-                                            email: _doctorController
-                                                .doctorDetail!.data!.email
-                                                .toString(),
-                                            password: _doctorController
-                                                .doctorDetail!.data!.password
-                                                .toString(),
-                                            name: _doctorController
-                                                .doctorDetail!.data!.name
-                                                .toString(),
-                                            details: _doctorController
-                                                .doctorDetail!.data,
-                                            isEdit: true,
-                                          ),
-                                          transition: Transition.native)
-                                      : Get.to(
-                                          ProfileFormScreen(
-                                            doctorDetail:
-                                                _doctorController.doctorDetail!,
-                                          ),
-                                          transition: Transition.native);
-                            },
-                            backgroundColor: AppColors.darkBlueColor,
-                            textColor: AppColors.whiteColor),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          ? Container(
+              padding: EdgeInsets.only(bottom: 24.0, top: 8.0, left: 16.0, right: 16.0),
+              child: RoundedButton(
+                  text: widget.isDoctor
+                      ? 'Edit Profile'
+                      : "Book Appointment",
+                  onPressed: () {
+                    _doctorController.doctorDetail == null
+                        ? null
+                        : widget.isDoctor
+                            ? Get.to(
+                                DoctorFormScreen(
+                                  email: _doctorController
+                                      .doctorDetail!.data!.email
+                                      .toString(),
+                                  password: _doctorController
+                                      .doctorDetail!.data!.password
+                                      .toString(),
+                                  name: _doctorController
+                                      .doctorDetail!.data!.name
+                                      .toString(),
+                                  details: _doctorController
+                                      .doctorDetail!.data,
+                                  isEdit: true,
+                                ),
+                                transition: Transition.native)
+                            : Get.to(
+                                ProfileFormScreen(
+                                  doctorDetail:
+                                      _doctorController.doctorDetail!,
+                                ),
+                                transition: Transition.native);
+                  },
+                  backgroundColor: AppColors.darkBlueColor,
+                  textColor: AppColors.whiteColor),
             )
           : null, // Hides bottomNavigationBar when the condition is false
     );

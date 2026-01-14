@@ -157,14 +157,38 @@ class MessageBubble extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipOval(
-                  child: Image.network(
-                    receiverImage ?? CustomConstant.nullUserImage,
-                    width: 5.h,
-                    height: 5.h,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
+                (receiverImage != null && 
+                 receiverImage!.trim().isNotEmpty && 
+                 receiverImage!.contains('http') &&
+                 !receiverImage!.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'))
+                    ? ClipOval(
+                        child: Image.network(
+                          receiverImage!,
+                          width: 5.h,
+                          height: 5.h,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 5.h,
+                              height: 5.h,
+                              decoration: BoxDecoration(
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff2A2A2A)
+                                    : Color(0xffE5E5E5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.person,
+                                size: 3.h,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff5A5A5A)
+                                    : Color(0xffA5A5A5),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : Container(
                         width: 5.h,
                         height: 5.h,
                         decoration: BoxDecoration(
@@ -180,10 +204,7 @@ class MessageBubble extends StatelessWidget {
                               ? Color(0xff5A5A5A)
                               : Color(0xffA5A5A5),
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
                 SizedBox(
                   width: 2.w,
                 ),

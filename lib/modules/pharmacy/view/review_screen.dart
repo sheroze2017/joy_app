@@ -35,12 +35,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    @override
-    void initState() {
-      super.initState();
-    }
-
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Get.back(),
+        ),
+        title: Text('Add Review'),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -49,7 +52,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 children: [
-                  SizedBox(height: 7.h),
+                  SizedBox(height: 2.h),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: SvgPicture.asset(
@@ -123,15 +126,30 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                     showErrorMessage(
                                         context, 'Please give rating');
                                   } else {
-                                    _userdoctorController.createReview(
-                                        widget.isPharmacy
-                                            ? widget.pharmacyId.toString()
-                                            : widget.details!.doctorUserId
-                                                .toString(),
-                                        '',
-                                        starRating.toString(),
-                                        _reviewController.text,
-                                        context);
+                                    if (widget.isPharmacy) {
+                                      // Pharmacy review logic (if needed in future)
+                                      showErrorMessage(context, 'Pharmacy review not supported yet');
+                                    } else if (widget.details == null) {
+                                      showErrorMessage(context, 'Appointment details not found');
+                                    } else {
+                                      // Use appointment_id for doctor reviews
+                                      // Handle both int and string appointmentId (MongoDB ObjectId is string)
+                                      String appointmentId = '';
+                                      if (widget.details!.appointmentId != null) {
+                                        appointmentId = widget.details!.appointmentId.toString();
+                                      }
+                                      
+                                      if (appointmentId.isEmpty || appointmentId == 'null' || appointmentId == '0') {
+                                        showErrorMessage(context, 'Appointment ID not found');
+                                        return;
+                                      }
+                                      
+                                      _userdoctorController.createReview(
+                                          appointmentId,
+                                          starRating.toString(),
+                                          _reviewController.text,
+                                          context);
+                                    }
                                   }
                                 }
                               },

@@ -32,6 +32,7 @@ class AllHospital {
 
 class Hospital {
   int? userId;
+  String? originalId; // Store original ID as string for cases where ID is not an int
   String? name;
   String? email;
   String? password;
@@ -52,6 +53,7 @@ class Hospital {
 
   Hospital(
       {this.userId,
+      this.originalId,
       this.name,
       this.email,
       this.password,
@@ -71,7 +73,14 @@ class Hospital {
       this.reviews});
 
   Hospital.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
+    // Handle both _id (MongoDB) and user_id (legacy)
+    if (json['_id'] != null) {
+      originalId = json['_id'].toString(); // Store original ID as string
+      userId = int.tryParse(json['_id'].toString()) ?? json['_id'];
+    } else {
+      originalId = json['user_id']?.toString(); // Store original ID as string
+      userId = json['user_id'];
+    }
     name = json['name'] ?? '';
     email = json['email'] ?? '';
     password = json['password'] ?? '';

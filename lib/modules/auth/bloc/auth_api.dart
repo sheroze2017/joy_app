@@ -33,8 +33,9 @@ class AuthApi {
       print('📥 [AuthApi] login() Response: $result');
       final loginModel = LoginModel.fromJson(result);
       print('📥 [AuthApi] login() Parsed Response:');
-      print('   - UserId: ${loginModel.data?.userId}');
-      print('   - Role: ${loginModel.data?.userRole}');
+      print('   - Token: ${loginModel.data?.token != null ? "***" : "null"}');
+      print('   - UserId: ${loginModel.data?.user?.userId}');
+      print('   - Role: ${loginModel.data?.user?.userRole}');
       print('   - Success: ${loginModel.sucess}');
       print('   - Message: ${loginModel.message}');
       return loginModel;
@@ -58,6 +59,24 @@ class AuthApi {
     } catch (e) {
       print('❌ [AuthApi] checkEmail() error: $e');
       throw e;
+    }
+  }
+
+  Future<bool> updateDeviceToken(String userId, String deviceToken) async {
+    try {
+      final requestData = {
+        "user_id": userId,
+        "device_token": deviceToken,
+      };
+      print('📡 [AuthApi] updateDeviceToken() called');
+      print('📤 [AuthApi] updateDeviceToken() Payload: $requestData');
+      final result =
+          await _dioClient.post(Endpoints.updateDeviceToken, data: requestData);
+      print('📥 [AuthApi] updateDeviceToken() Response: $result');
+      return result['sucess'] == true || result['success'] == true;
+    } catch (e) {
+      print('❌ [AuthApi] updateDeviceToken() error: $e');
+      return false;
     }
   }
 

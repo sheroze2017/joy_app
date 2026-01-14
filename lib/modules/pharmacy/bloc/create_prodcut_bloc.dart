@@ -20,8 +20,10 @@ class ProductController extends GetxController {
   final pharmacyController = Get.find<AllPharmacyController>();
   RxList<PharmacyOrders> pharmaciesOrder = <PharmacyOrders>[].obs;
   RxList<PharmacyOrders> pendingOrders = <PharmacyOrders>[].obs;
+  RxList<PharmacyOrders> confirmedOrders = <PharmacyOrders>[].obs;
   RxList<PharmacyOrders> onTheWayOrders = <PharmacyOrders>[].obs;
   RxList<PharmacyOrders> deliveredOrders = <PharmacyOrders>[].obs;
+  RxList<PharmacyOrders> cancelledOrders = <PharmacyOrders>[].obs;
   RxList<Category> categoriesList = <Category>[].obs;
 
   @override
@@ -80,6 +82,49 @@ class ProductController extends GetxController {
     }
   }
 
+  // New method to create product with category as string (matches edit product format)
+  Future<CreateProduct?> createProductWithCategory(
+      String medName,
+      String shortDesc,
+      String category, // Category as string (e.g., "Anesthesiologist", "PILL")
+      String price,
+      String discount,
+      String pharmacyId,
+      String quantity,
+      String dosage,
+      String imgUrl,
+      BuildContext context) async {
+    createProLoader.value = true;
+    try {
+      CreateProduct response = await createProductApi.createProductWithCategory(
+        medName,
+        shortDesc,
+        category,
+        price,
+        discount,
+        pharmacyId,
+        quantity,
+        dosage,
+        imgUrl,
+      );
+
+      if (response.data != null) {
+        // Don't show success message here - let the calling widget handle it
+        // This prevents AnimationController errors when context is disposed
+        return response;
+      } else {
+        showErrorMessage(context, response.message.toString());
+        return null;
+      }
+    } catch (error) {
+      print(error);
+      showErrorMessage(context, 'Failed to create product: ${error.toString()}');
+      return null;
+    } finally {
+      createProLoader.value = false;
+    }
+  }
+
   Future<CreateProduct> editProduct(
       medName,
       shortDesc,
@@ -130,7 +175,50 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<AllOrders> allOrders(userId, BuildContext context) async {
+  // New method to edit product with category as string (matches user's API requirements)
+  Future<CreateProduct?> editProductWithCategory(
+      String medName,
+      String shortDesc,
+      String category, // Category as string (e.g., "PILL", "SYRUP")
+      String price,
+      String discount,
+      String pharmacyId,
+      String quantity,
+      String dosage,
+      String productId,
+      BuildContext context) async {
+    createProLoader.value = true;
+    try {
+      CreateProduct response = await createProductApi.editProductWithCategory(
+        medName,
+        shortDesc,
+        category,
+        price,
+        discount,
+        pharmacyId,
+        quantity,
+        dosage,
+        productId,
+      );
+
+      if (response.data != null) {
+        // Don't show success message here - let the calling widget handle it
+        return response;
+      } else {
+        // Show error message
+        showErrorMessage(context, response.message.toString());
+        return null;
+      }
+    } catch (error) {
+      print(error);
+      showErrorMessage(context, 'Failed to update product: ${error.toString()}');
+      return null;
+    } finally {
+      createProLoader.value = false;
+    }
+  }
+
+  Future<AllOrders> allOrders(userId, BuildContext? context) async {
     try {
       UserHive? currentUser = await getCurrentUser();
 
@@ -139,17 +227,27 @@ class ProductController extends GetxController {
 
       if (response.data != null) {
         pendingOrders.clear();
+        confirmedOrders.clear();
         onTheWayOrders.clear();
         deliveredOrders.clear();
+        cancelledOrders.clear();
         pharmaciesOrder.clear();
         response.data!.forEach((element) {
           pharmaciesOrder.add(element);
-          if (element.status == 'Pending') {
+          String status = element.status?.toUpperCase() ?? '';
+          if (status == 'PENDING') {
             pendingOrders.add(element);
-          } else if (element.status == 'On the way') {
+          } else if (status == 'CONFIRMED') {
+            confirmedOrders.add(element);
+          } else if (status == 'SHIPPED' || status == 'OUT_FOR_DELIVERY' || status == 'ON THE WAY') {
             onTheWayOrders.add(element);
-          } else {
+          } else if (status == 'DELIVERED') {
             deliveredOrders.add(element);
+          } else if (status == 'CANCELLED') {
+            cancelledOrders.add(element);
+          } else {
+            // Fallback: treat unknown statuses as pending
+            pendingOrders.add(element);
           }
         });
       } else {}
@@ -183,15 +281,37 @@ class ProductController extends GetxController {
           await createProductApi.updateOrderStatusById(orderId, orderStatus);
 
       if (response.data != null) {
-        showSuccessMessage(context, response.message.toString());
-        allOrders('1', context);
+        // Show success message using Get.context to avoid deactivated widget issues
+        try {
+          final ctx = Get.context ?? context;
+          showSuccessMessage(ctx, response.message.toString());
+        } catch (e) {
+          // Context might be deactivated, ignore toast error
+          print('Could not show success message: $e');
+        }
+        // Refresh orders list - await to ensure it completes
+        await allOrders(null, null);
       } else {
-        showErrorMessage(context, response.message.toString());
+        try {
+          final ctx = Get.context ?? context;
+          showErrorMessage(ctx, response.message.toString());
+        } catch (e) {
+          // Context might be deactivated, ignore toast error
+          print('Could not show error message: $e');
+        }
       }
       return response;
     } catch (error) {
       changeStatusLoader.value = false;
-      throw (error);
+      // Show error message if context is available
+      try {
+        final ctx = Get.context ?? context;
+        showErrorMessage(ctx, 'Failed to update order status: ${error.toString()}');
+      } catch (e) {
+        // Context might be deactivated, ignore toast error
+        print('Could not show error message: $e');
+      }
+      rethrow;
     } finally {
       changeStatusLoader.value = false;
     }

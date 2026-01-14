@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
-import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/blood_bank_detail.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/my_appeals.dart';
@@ -21,6 +19,7 @@ import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart
 import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/blood_donation_appeal.dart';
+import 'package:joy_app/modules/user/user_blood_bank/view/widgets/donor_detail_sheet.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
@@ -28,7 +27,11 @@ import 'package:sizer/sizer.dart';
 import '../bloc/user_hospital_bloc.dart';
 import '../../../home/components/hospital_card_widget.dart';
 import '../../user_blood_bank/view/request_blood.dart';
-import '../../../pharmacy/view/pharmacy_product_screen.dart';
+import '../../user_pharmacy/all_pharmacy/view/product_screen.dart';
+import '../../user_home/bloc/nearby_services_bloc.dart';
+import '../../user_home/model/nearby_services_model.dart';
+import '../../user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
+import '../model/all_hospital_model.dart';
 
 class AllHospitalScreen extends StatefulWidget {
   bool isPharmacy;
@@ -47,24 +50,104 @@ class AllHospitalScreen extends StatefulWidget {
 }
 
 class _AllHospitalScreenState extends State<AllHospitalScreen> {
-  final pharmacyController = Get.find<AllPharmacyController>();
-  final bloodBankController = Get.find<UserBloodBankController>();
-  final _userHospitalController = Get.find<UserHospitalController>();
+  final pharmacyController = Get.put(AllPharmacyController());
+  final bloodBankController = Get.put(UserBloodBankController());
+  final _userHospitalController = Get.put(UserHospitalController());
   final locationController = Get.find<LocationController>();
   final _profileController = Get.find<ProfileController>();
+  final nearbyServicesController = Get.put(NearbyServicesController());
 
   @override
   void initState() {
     super.initState();
-    pharmacyController.searchResults.value =
-        pharmacyController.pharmacies.value;
-    bloodBankController.searchResults.value =
-        bloodBankController.bloodbank.value;
-    _userHospitalController.searchResults.value =
-        _userHospitalController.hospitalList.value;
-    // pharmacyController.getAllPharmacy();
-    // bloodBankController.getAllBloodBank();
-    //  _userHospitalController.getAllHospitals();
+    // Ensure data is loaded from unified API
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _populateData();
+    });
+  }
+
+  void _populateData() {
+    // Use data from unified API (nearbyServicesController) if available
+    if (widget.isPharmacy) {
+      // Convert NearbyPharmacy to PharmacyModelData for compatibility
+      if (nearbyServicesController.pharmacies.isNotEmpty) {
+        final pharmaciesList = nearbyServicesController.pharmacies
+            .map((p) => _convertNearbyPharmacyToPharmacyModel(p))
+            .toList();
+        pharmacyController.searchResults.value = pharmaciesList;
+      }
+    } else if (widget.isBloodBank) {
+      // Fetch all donors and blood requests for blood bank screen
+      bloodBankController.getAllDonors();
+      // Load blood requests to show counts on cards
+      bloodBankController.getAllBloodRequest();
+    } else if (widget.isHospital) {
+      // Convert NearbyHospital to Hospital for compatibility
+      if (nearbyServicesController.hospitals.isNotEmpty) {
+        final hospitalsList = nearbyServicesController.hospitals
+            .map((h) => _convertNearbyHospitalToHospital(h))
+            .toList();
+        _userHospitalController.searchResults.value = hospitalsList;
+      } else {
+        // If no data, try to refresh
+        nearbyServicesController.getNearbyServicesAndBookings().then((_) {
+          if (nearbyServicesController.hospitals.isNotEmpty) {
+            final hospitalsList = nearbyServicesController.hospitals
+                .map((h) => _convertNearbyHospitalToHospital(h))
+                .toList();
+            _userHospitalController.searchResults.value = hospitalsList;
+          }
+        });
+      }
+    }
+  }
+
+  // Helper method to convert NearbyPharmacy to PharmacyModelData
+  PharmacyModelData _convertNearbyPharmacyToPharmacyModel(NearbyPharmacy nearby) {
+    return PharmacyModelData(
+      userId: nearby.id?.toString(),
+      name: nearby.name ?? '',
+      email: nearby.email ?? '',
+      location: nearby.details?.location ?? nearby.location ?? '',
+      lat: nearby.details?.lat ?? '',
+      lng: nearby.details?.lng ?? '',
+      placeId: nearby.details?.placeId ?? '',
+      image: nearby.image ?? '',
+      phone: nearby.phone ?? '',
+      reviews: [],
+    );
+  }
+
+  // Helper method to convert NearbyHospital to Hospital
+  Hospital _convertNearbyHospitalToHospital(NearbyHospital nearby) {
+    // Try to parse ID as int, fallback to string conversion
+    int? userIdInt;
+    String? originalIdString;
+    if (nearby.id != null) {
+      originalIdString = nearby.id.toString(); // Always store original ID as string
+      if (nearby.id is int) {
+        userIdInt = nearby.id as int;
+      } else {
+        userIdInt = int.tryParse(nearby.id.toString());
+      }
+    }
+    
+    return Hospital(
+      userId: userIdInt,
+      originalId: originalIdString, // Store original ID string
+      name: nearby.name ?? '',
+      email: nearby.email ?? '',
+      location: nearby.details?.location ?? nearby.location ?? '',
+      lat: nearby.details?.lat ?? '',
+      lng: nearby.details?.lng ?? '',
+      placeId: nearby.details?.placeId ?? '',
+      image: nearby.image ?? '',
+      phone: nearby.phone ?? '',
+      about: nearby.details?.about ?? '',
+      institute: nearby.details?.institute ?? '',
+      checkupFee: nearby.details?.checkupFee ?? '',
+      reviews: [],
+    );
   }
 
   @override
@@ -259,7 +342,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
             children: [
               RoundedSearchTextField(
                   onChanged: widget.isBloodBank
-                      ? (query) => bloodBankController.searchBloodBanks(query)
+                      ? (query) => bloodBankController.searchDonors(query)
                       : widget.isPharmacy
                           ? (query) => pharmacyController.searchPharmacy(query)
                           : widget.isHospital
@@ -276,116 +359,109 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                 height: 1.h,
               ),
               widget.isBloodBank
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(
-                                  BloodDonationAppealUser(
-                                    isBloodDontate: true,
-                                    isUser: true,
-                                  ),
-                                  transition: Transition.native);
-                            },
-                            child: DoctorCategory(
-                              isUser: false,
-                              catrgory: 'Donate Blood',
-                              DoctorCount: '10',
-                              bgColor: AppColors.redLightColor,
-                              fgColor: AppColors.redLightDarkColor,
-                              imagePath: 'Assets/images/blood.svg',
-                              isBloodBank: widget.isBloodBank,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 1.w,
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(
-                                  BloodDonationAppealUser(
-                                    isPlasmaDonate: true,
-                                    isUser: true,
-                                  ),
-                                  transition: Transition.native);
-                            },
-                            child: DoctorCategory(
-                              isUser: false,
-                              catrgory: 'Donate Plasma',
-                              DoctorCount: '4',
-                              bgColor: AppColors.yellowLightColor,
-                              fgColor: AppColors.yellowLightDarkColor,
-                              imagePath: 'Assets/images/plasma.svg',
-                              isBloodBank: widget.isBloodBank,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Container(),
-              widget.isBloodBank
-                  ? SizedBox(
-                      height: 1.h,
-                    )
-                  : SizedBox(
-                      height: 0.h,
-                    ),
-              widget.isBloodBank
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: RoundedButton(
-                                text: "All Donors",
-                                onPressed: () {
-                                  Get.to(AllDonorScreen(),
+                  ? Obx(() {
+                      // Count ACTIVE or OPEN status requests for blood/plasma.
+                      final activeBloodCount = bloodBankController.allBloodRequest
+                          .where((req) {
+                            final status = req.status?.toUpperCase() ?? '';
+                            return status == 'ACTIVE' || status == 'OPEN';
+                          })
+                          .length;
+                      final activePlasmaCount = bloodBankController.allPlasmaRequest
+                          .where((req) {
+                            final status = req.status?.toUpperCase() ?? '';
+                            return status == 'ACTIVE' || status == 'OPEN';
+                          })
+                          .length;
+                      final donorsCount = bloodBankController.allDonors.length;
+
+                      return SizedBox(
+                        height: 15.h,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Get.to(
+                                      BloodDonationAppealUser(
+                                        isBloodDontate: true,
+                                        isUser: true,
+                                      ),
                                       transition: Transition.native);
                                 },
-                                backgroundColor: AppColors.redLightDarkColor,
-                                textColor: Colors.white),
-                          )
-                        ],
-                      ),
-                    )
-                  : Container(),
-              widget.isBloodBank
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: RoundedButton(
-                              text: "Request Blood",
-                              onPressed: () {
-                                Get.to(RequestBlood(),
-                                    transition: Transition.native);
-                              },
-                              backgroundColor: AppColors.redLightDarkColor,
-                              textColor: Colors.white),
+                                child: DoctorCategory(
+                                  isUser: false,
+                                  catrgory: 'Donate Blood',
+                                  DoctorCount: '$activeBloodCount',
+                                  bgColor: AppColors.redLightColor,
+                                  fgColor: AppColors.redLightDarkColor,
+                                  imagePath: 'Assets/images/blood.svg',
+                                  isBloodBank: widget.isBloodBank,
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              InkWell(
+                                onTap: () {
+                                  Get.to(
+                                      BloodDonationAppealUser(
+                                        isPlasmaDonate: true,
+                                        isUser: true,
+                                      ),
+                                      transition: Transition.native);
+                                },
+                                child: DoctorCategory(
+                                  isUser: false,
+                                  catrgory: 'Donate Plasma',
+                                  DoctorCount: '$activePlasmaCount',
+                                  bgColor: AppColors.yellowLightColor,
+                                  fgColor: AppColors.yellowLightDarkColor,
+                                  imagePath: 'Assets/images/plasma.svg',
+                                  isBloodBank: widget.isBloodBank,
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              InkWell(
+                                onTap: () {
+                                  Get.to(RequestBlood(),
+                                      transition: Transition.native);
+                                },
+                                child: DoctorCategory(
+                                  isUser: false,
+                                  catrgory: 'Request Blood',
+                                  DoctorCount: '$donorsCount',
+                                  bgColor: AppColors.lightBlueColore5e,
+                                  fgColor: AppColors.lightBlueColord0d,
+                                  imagePath: 'Assets/images/blood.svg',
+                                  isBloodBank: widget.isBloodBank,
+                                  isAppeal: true,
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              InkWell(
+                                onTap: () {
+                                  Get.to(
+                                      RequestBlood(
+                                        isRegister: true,
+                                      ),
+                                      transition: Transition.native);
+                                },
+                                child: DoctorCategory(
+                                  isUser: false,
+                                  catrgory: 'Register Donor',
+                                  DoctorCount: '$donorsCount',
+                                  bgColor: AppColors.lightGreenColor,
+                                  fgColor: AppColors.lightGreenColorFC7,
+                                  imagePath: 'Assets/images/user.svg',
+                                  isBloodBank: widget.isBloodBank,
+                                  isAppeal: true,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(
-                          width: 1.w,
-                        ),
-                        Expanded(
-                          child: RoundedButton(
-                              text: "Register Donor",
-                              onPressed: () {
-                                Get.to(
-                                    RequestBlood(
-                                      isRegister: true,
-                                    ),
-                                    transition: Transition.native);
-                              },
-                              backgroundColor: AppColors.redLightDarkColor,
-                              textColor: Colors.white),
-                        )
-                      ],
-                    )
+                      );
+                    })
                   : Container(),
               widget.isBloodBank
                   ? SizedBox(height: 2.h)
@@ -395,7 +471,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
               Obx(
                 () => Text(
                   widget.isBloodBank
-                      ? bloodBankController.searchResults.length.toString() +
+                      ? bloodBankController.searchedDonors.length.toString() +
                           ' found'
                       : widget.isPharmacy
                           ? pharmacyController.searchResults.length.toString() +
@@ -414,10 +490,123 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
               ),
               Expanded(
                 child: Obx(
-                  () => ListView.separated(
-                      itemCount: widget.isBloodBank
-                          ? bloodBankController.searchResults.length
-                          : widget.isPharmacy
+                  () => widget.isBloodBank
+                      ? ListView.separated(
+                          itemCount: bloodBankController.searchedDonors.length,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 2.w),
+                          itemBuilder: (context, index) {
+                            final donor = bloodBankController.searchedDonors[index];
+                            return InkWell(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) => DonorDetailSheet(
+                                    donor: donor,
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0XFFF4F4F4),
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 27.w,
+                                        height: 27.w,
+                                        decoration: BoxDecoration(
+                                          color: ThemeUtil.isDarkMode(context)
+                                              ? Color(0xff2A2A2A)
+                                              : Color(0xffE5E5E5),
+                                          borderRadius: BorderRadius.circular(12.0),
+                                        ),
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 20.w,
+                                          color: ThemeUtil.isDarkMode(context)
+                                              ? Color(0xff5A5A5A)
+                                              : Color(0xffA5A5A5),
+                                        ),
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              donor.name ?? 'Unknown',
+                                              style: CustomTextStyles.darkHeadingTextStyle(
+                                                  size: 16),
+                                            ),
+                                            SizedBox(height: 0.5.h),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.redLightColor,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Text(
+                                                    donor.bloodGroup ?? '',
+                                                    style: CustomTextStyles.w600TextStyle(
+                                                        size: 12,
+                                                        color: AppColors.redColor),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 2.w),
+                                                Text(
+                                                  donor.gender ?? '',
+                                                  style: CustomTextStyles.lightTextStyle(
+                                                      size: 12),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 0.5.h),
+                                            Row(
+                                              children: [
+                                                SvgPicture.asset('Assets/icons/location.svg',
+                                                    width: 12, height: 12),
+                                                SizedBox(width: 1.w),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${donor.location ?? ''}, ${donor.city ?? ''}',
+                                                    style: CustomTextStyles.lightTextStyle(
+                                                        size: 11),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 0.3.h),
+                                            Text(
+                                              'Status: ${donor.status ?? 'N/A'}',
+                                              style: CustomTextStyles.lightTextStyle(
+                                                  size: 10,
+                                                  color: donor.status == 'AVAILABLE'
+                                                      ? Colors.green
+                                                      : Colors.grey),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : ListView.separated(
+                          itemCount: widget.isPharmacy
                               ? pharmacyController.searchResults.length
                               : _userHospitalController.searchResults.length,
                       separatorBuilder: (context, index) =>
@@ -425,29 +614,52 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            widget.isPharmacy
-                                ? Get.to(
-                                    PharmacyProductScreen(
-                                      userId: pharmacyController
-                                          .searchResults[index].userId
-                                          .toString(),
-                                    ),
-                                    transition: Transition.rightToLeft)
-                                : widget.isHospital
-                                    ? Get.to(
-                                        HospitalHomeScreen(
-                                          isUser: true,
-                                          hospitalId: _userHospitalController
-                                              .searchResults[index].userId
-                                              .toString(),
-                                        ),
-                                        transition: Transition.rightToLeft)
-                                    : Get.to(
-                                        BloodBankDetailScreen(
-                                          donor: bloodBankController
-                                              .searchResults[index],
-                                        ),
-                                        transition: Transition.rightToLeft);
+                            if (widget.isPharmacy) {
+                              Get.to(
+                                ProductScreen(
+                                  userId: pharmacyController
+                                      .searchResults[index].userId
+                                      .toString(),
+                                  isAdmin: false, // User mode, not admin
+                                ),
+                                transition: Transition.rightToLeft,
+                              );
+                            } else if (widget.isHospital) {
+                              final hospital = _userHospitalController
+                                  .searchResults[index];
+                              // Use originalId if available, otherwise use userId
+                              final hospitalId = hospital.originalId ?? hospital.userId?.toString();
+                              
+                              if (hospitalId == null || hospitalId == 'null' || hospitalId.isEmpty) {
+                                // Show error if hospital ID is invalid
+                                Get.snackbar(
+                                  'Error',
+                                  'Invalid hospital ID. Please try again.',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                  duration: Duration(seconds: 2),
+                                  icon: Icon(Icons.error, color: Colors.white),
+                                );
+                                return;
+                              }
+                              
+                              Get.to(
+                                HospitalHomeScreen(
+                                  isUser: true,
+                                  hospitalId: hospitalId,
+                                ),
+                                transition: Transition.rightToLeft,
+                              );
+                            } else {
+                              Get.to(
+                                BloodBankDetailScreen(
+                                  donor: bloodBankController
+                                      .searchResults[index],
+                                ),
+                                transition: Transition.rightToLeft,
+                              );
+                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(

@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
@@ -46,8 +45,24 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
   @override
   void initState() {
     super.initState();
-    _userdoctorController.searchDoctorsList.value =
-        _userdoctorController.doctorsList.value;
+    // Load doctor categories with doctors
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _userdoctorController.getDoctorCategoriesWithDoctors();
+    });
+  }
+
+  void _searchByName(String query) {
+    if (query.isEmpty) {
+      _userdoctorController.searchDoctorsList.assignAll(_userdoctorController.doctorsList);
+    } else {
+      final filtered = _userdoctorController.doctorsList.where((doctor) {
+        final name = doctor.name?.toLowerCase() ?? '';
+        final expertise = doctor.expertise?.toLowerCase() ?? '';
+        final searchQuery = query.toLowerCase();
+        return name.contains(searchQuery) || expertise.contains(searchQuery);
+      }).toList();
+      _userdoctorController.searchDoctorsList.assignAll(filtered);
+    }
   }
 
   @override
@@ -146,48 +161,92 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
               child: Icon(Icons.arrow_back)),
           actions: [],
           showIcon: true),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 1.h,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: RoundedSearchTextField(
-                    onChanged: _userdoctorController.searchByName,
-                    hintText: 'Search doctor...',
-                    controller: TextEditingController()),
-              ),
-              SizedBox(
-                height: 2.h,
-              ),
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Obx(
-                    () => Text(
-                      _userdoctorController.searchDoctorsList.length
-                              .toString() +
-                          ' found',
-                      style: CustomTextStyles.darkHeadingTextStyle(
-                          color: ThemeUtil.isDarkMode(context)
-                              ? Color(0xffC8D3E0)
-                              : null),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _userdoctorController.getDoctorCategoriesWithDoctors();
+        },
+        child: Obx(
+          () => _userdoctorController.showLoader.value
+              ? Center(child: LoadingWidget())
+              : SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 1.h,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: RoundedSearchTextField(
+                              onChanged: _searchByName,
+                              hintText: 'Search doctor...',
+                              controller: TextEditingController()),
+                        ),
+                        SizedBox(
+                          height: 1.5.h,
+                        ),
+                        // Horizontal categories list
+                        Container(
+                          height: 22.h, // Height for category cards
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.only(left: 16.0),
+                            itemCount: _userdoctorController.doctorCategories.length,
+                            itemBuilder: (context, index) {
+                              final category = _userdoctorController.doctorCategories[index];
+                              final isSelected = _userdoctorController.selectedCategory.value?.categoryId == category.categoryId;
+                              final doctorCount = category.doctors?.length ?? 0;
+                              // Get first 3 doctor images for avatars
+                              final doctorImages = category.doctors != null && category.doctors!.isNotEmpty
+                                  ? category.doctors!.take(3).map((d) => d.image ?? '').toList()
+                                  : <String>[];
+                              
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 12.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    _userdoctorController.selectCategory(category);
+                                  },
+                                  child: DoctorCategoryCard(
+                                    categoryName: category.name ?? '',
+                                    doctorCount: doctorCount,
+                                    isSelected: isSelected,
+                                    doctorImages: doctorImages,
+                                    categoryIndex: index,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: 1.5.h,
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Obx(
+                              () => Text(
+                                _userdoctorController.searchDoctorsList.length.toString() + ' found',
+                                style: CustomTextStyles.darkHeadingTextStyle(
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xffC8D3E0)
+                                        : null),
+                              ),
+                            )),
+                        SizedBox(
+                          height: 1.h,
+                        ),
+                        Obx(
+                          () => VerticalDoctorsList(
+                            isSelectable: widget.isSelectable,
+                            doctorList: _userdoctorController.searchDoctorsList.toList(),
+                          ),
+                        )
+                      ],
                     ),
-                  )),
-              SizedBox(
-                height: 1.h,
-              ),
-              Obx(
-                () => VerticalDoctorsList(
-                  isSelectable: widget.isSelectable,
-                  doctorList: _userdoctorController.searchDoctorsList.value,
+                  ),
                 ),
-              )
-            ],
-          ),
         ),
       ),
     );
@@ -262,6 +321,58 @@ class DoctorsCardWidget extends StatelessWidget {
       this.isFav = false,
       required this.rating});
 
+  Widget _buildDoctorAvatar(String? url, double size, BuildContext context) {
+    final isValidUrl = url != null &&
+        url.trim().isNotEmpty &&
+        url.trim().toLowerCase() != 'null' &&
+        url.contains('http') &&
+        !url.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab');
+
+    if (isValidUrl) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12.0),
+        child: CachedNetworkImage(
+          imageUrl: url.trim(),
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: LoadingWidget(),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: Icon(
+              Icons.person,
+              size: size * 0.5,
+              color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+            ),
+          ),
+        ),
+      );
+    }
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Icon(
+        Icons.person,
+        size: size * 0.5,
+        color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -276,25 +387,7 @@ class DoctorsCardWidget extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: CachedNetworkImage(
-                  imageUrl: imgUrl,
-                  width: 27.9.w,
-                  height: 27.9.w,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Center(
-                      child: Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: LoadingWidget(),
-                  )),
-                  errorWidget: (context, url, error) => Center(
-                      child: Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: ErorWidget(),
-                  )),
-                ),
-              ),
+              _buildDoctorAvatar(imgUrl, 27.9.w, context),
               SizedBox(
                 width: 2.w,
               ),
@@ -307,75 +400,61 @@ class DoctorsCardWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              docName,
-                              style: CustomTextStyles.darkHeadingTextStyle(
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xffC8D3E0)
-                                      : null),
-                            ),
-                            Spacer(),
-                            InkWell(
-                                onTap: () {},
-                                child: SvgPicture.asset(
-                                  'Assets/icons/favourite.svg',
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? Color(0xffC8D3E0)
-                                      : null,
-                                ))
-                          ],
-                        ),
-                        Divider(
-                          color: ThemeUtil.isDarkMode(context)
-                              ? Color(0xff1F2228)
-                              : AppColors.lightGreyColor,
-                        ),
                         Text(
-                          Category,
+                          docName,
+                          style: CustomTextStyles.darkHeadingTextStyle(
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xffC8D3E0)
+                                  : null),
+                        ),
+                        SizedBox(height: 0.5.h),
+                        // Show expertise/specialty
+                        Text(
+                          Category.isNotEmpty ? Category : '',
                           style: CustomTextStyles.w600TextStyle(
                               size: 14, color: Color(0xff4B5563)),
                         ),
-                        Row(
-                          children: [
-                            SvgPicture.asset('Assets/icons/location.svg'),
-                            SizedBox(
-                              width: 0.5.w,
-                            ),
-                            Text(loction,
-                                style: CustomTextStyles.lightTextStyle(
-                                    color: Color(0xff4B5563), size: 14))
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            RatingBar.builder(
-                              itemSize: 15,
-                              initialRating: 6,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 1,
-                              itemPadding:
-                                  EdgeInsets.symmetric(horizontal: 0.0),
-                              itemBuilder: (context, _) => Icon(
-                                Icons.star,
-                                color: Colors.amber,
+                        SizedBox(height: 0.5.h),
+                        // Show location if available
+                        if (loction.isNotEmpty)
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                size: 12,
+                                color: Color(0xff6B7280),
                               ),
-                              onRatingUpdate: (rating) {
-                                print(rating);
-                              },
+                              SizedBox(width: 0.3.w),
+                              Expanded(
+                                child: Text(
+                                  loction,
+                                  style: CustomTextStyles.lightTextStyle(
+                                      color: Color(0xff6B7280), size: 11),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        SizedBox(height: 0.5.h),
+                        // Show stars and review count
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 16,
                             ),
-                            Text(rating,
-                                style: CustomTextStyles.lightTextStyle(
-                                    color: Color(0xff4B5563), size: 12)),
-                            SizedBox(
-                              width: 0.5.w,
-                            ),
-                            Text(' | ${reviewCount} Reviews',
-                                style: CustomTextStyles.lightTextStyle(
-                                    color: Color(0xff6B7280), size: 10.8)),
+                            SizedBox(width: 0.3.w),
+                            Text(
+                              rating,
+                              style: CustomTextStyles.lightTextStyle(
+                                  color: Color(0xff4B5563), size: 12)),
+                            SizedBox(width: 0.5.w),
+                            Text(
+                              '| ${reviewCount} Reviews',
+                              style: CustomTextStyles.lightTextStyle(
+                                  color: Color(0xff6B7280), size: 12)),
                           ],
                         ),
                       ],
@@ -457,57 +536,59 @@ class DoctorCategory extends StatelessWidget {
                   ),
                 ],
               ),
-              isUser == true
-                  ? Row(
-                      children: [
-                        for (var i = 0;
-                            i <
-                                (int.parse(DoctorCount) >= 3
-                                    ? 3
-                                    : int.parse(DoctorCount));
-                            i++)
-                          Container(
-                            width: 3.h,
-                            height: 3.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40),
-                              border: Border.all(
-                                color: AppColors.whiteColor,
-                                width: 1,
+              // Remove round circles for blood bank mode - only show for user mode and not blood bank
+              isUser == true && !isBloodBank
+                  ? Builder(
+                      builder: (context) {
+                        // Remove any non-numeric characters (like '+') before parsing
+                        final numericString = DoctorCount.replaceAll(RegExp(r'[^0-9]'), '');
+                        final count = numericString.isNotEmpty ? int.tryParse(numericString) ?? 0 : 0;
+                        final displayCount = count >= 3 ? 3 : count;
+                        return Row(
+                          children: [
+                            for (var i = 0; i < displayCount; i++)
+                              Container(
+                                width: 3.h,
+                                height: 3.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(40),
+                                  border: Border.all(
+                                    color: AppColors.whiteColor,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(images == null ||
+                                          !images![i].contains('http')
+                                      ? 'https://s3-alpha-sig.figma.com/img/03f8/d194/48dd31b8127b7f6577d5ff98da01cf59?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lgLceP1ZBkEXbOBgkLxwPEqC~XNBIv8ttTKC8oLRSutfDk3qzEwbwicLgmk6ck-utlWYJsPIw-N4~zYhSpW9xy8F3RVnsS6c-JH7gXOAszbQREfqlywHKb~qxnVTLZEdGtniH7XzTgyNNaI6f67HuUYN~YSh0brcpTS2lolLBxHo0Aj77cTy~7My4KdTR52XEUTm-0ojlJL6H-KvF6hzPFZa4LjyV6x5XO8kCpIPfBSo~9OccwFKXGgGlxfLqR5yAgt3VChGyZlDYIkgdWc9hmceD2~WmVaQvS6HtzF0W4Mc0T26ON-R8JTQc~iOvfm7gHB-dJwxN0GOVe8q8B-wIA__'
+                                      : images![i].toString()),
+                                ),
                               ),
-                            ),
-                            child: CircleAvatar(
-                              backgroundImage: NetworkImage(images == null ||
-                                      !images![i].contains('http')
-                                  ? 'https://s3-alpha-sig.figma.com/img/03f8/d194/48dd31b8127b7f6577d5ff98da01cf59?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lgLceP1ZBkEXbOBgkLxwPEqC~XNBIv8ttTKC8oLRSutfDk3qzEwbwicLgmk6ck-utlWYJsPIw-N4~zYhSpW9xy8F3RVnsS6c-JH7gXOAszbQREfqlywHKb~qxnVTLZEdGtniH7XzTgyNNaI6f67HuUYN~YSh0brcpTS2lolLBxHo0Aj77cTy~7My4KdTR52XEUTm-0ojlJL6H-KvF6hzPFZa4LjyV6x5XO8kCpIPfBSo~9OccwFKXGgGlxfLqR5yAgt3VChGyZlDYIkgdWc9hmceD2~WmVaQvS6HtzF0W4Mc0T26ON-R8JTQc~iOvfm7gHB-dJwxN0GOVe8q8B-wIA__'
-                                  : images![i].toString()),
-                            ),
-                          ),
-                        Container(
-                          width: 3.h,
-                          height: 3.h,
-                          decoration: BoxDecoration(
-                            color: Color(0xffD1C3E6),
-                            borderRadius: BorderRadius.circular(40),
-                            border: Border.all(
-                              color: AppColors.whiteColor,
-                              width: 1,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              int.parse(DoctorCount) >= 3
-                                  ? '+' +
-                                      (int.parse(DoctorCount) - 3).toString()
-                                  : '',
-                              style: CustomTextStyles.lightTextStyle(
-                                  size: 9.6, color: AppColors.blackColor393),
-                            ),
-                          ),
-                        )
-                      ],
+                            if (count >= 3)
+                              Container(
+                                width: 3.h,
+                                height: 3.h,
+                                decoration: BoxDecoration(
+                                  color: Color(0xffD1C3E6),
+                                  borderRadius: BorderRadius.circular(40),
+                                  border: Border.all(
+                                    color: AppColors.whiteColor,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '+' + (count - 3).toString(),
+                                    style: CustomTextStyles.lightTextStyle(
+                                        size: 9.6, color: AppColors.blackColor393),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
                     )
-                  : Container()
+                  : Container(),
             ],
           ),
         ),
@@ -579,6 +660,226 @@ class HorizontalDoctorCategories extends StatelessWidget {
   }
 }
 
+// New category card widget for the new design
+class DoctorCategoryCard extends StatelessWidget {
+  final String categoryName;
+  final int doctorCount;
+  final bool isSelected;
+  final List<String> doctorImages;
+  final int categoryIndex;
+
+  const DoctorCategoryCard({
+    Key? key,
+    required this.categoryName,
+    required this.doctorCount,
+    required this.isSelected,
+    required this.doctorImages,
+    required this.categoryIndex,
+  }) : super(key: key);
+
+  String? _getCategoryIconPath(String categoryName) {
+    // Map category names to SVG icons
+    final name = categoryName.toLowerCase();
+    if (name.contains('dental') || name.contains('dentist')) {
+      return 'Assets/icons/dental.svg';
+    } else if (name.contains('cardio')) {
+      return 'Assets/icons/heart.svg';
+    } else if (name.contains('pediatric')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('neurolog')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('dermatolog')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('orthopedic')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('gynecolog')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('general') || name.contains('physician')) {
+      return 'Assets/icons/hospital.svg';
+    } else if (name.contains('family')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('emergency')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('surgeon')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('ent') || name.contains('ear') || name.contains('nose')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('eye') || name.contains('ophthalm')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('gastro')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('urolog') || name.contains('nephrolog')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('pulmon') || name.contains('chest')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('onco') || name.contains('cancer')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('endocrin') || name.contains('diabetes')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('hematolog') || name.contains('blood')) {
+      return 'Assets/icons/blood.svg';
+    } else if (name.contains('radio') || name.contains('sonolog') || name.contains('imaging')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('anesthes')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('physio') || name.contains('rehab')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('nutrition') || name.contains('diet')) {
+      return 'Assets/icons/health-care.svg';
+    } else if (name.contains('psych')) {
+      return 'Assets/icons/health-care.svg';
+    }
+    // Default icon
+    return 'Assets/icons/health-care.svg';
+  }
+
+  Color _getCategoryBgColor(int index) {
+    final colors = [
+      Color(0xFFE5E7EB), // Light gray
+      Color(0xFFF3E8FF), // Light purple
+      Color(0xFFE0F2FE), // Light blue
+      Color(0xFFFEF3C7), // Light yellow
+      Color(0xFFFCE7F3), // Light pink
+    ];
+    return colors[index % colors.length];
+  }
+
+  Color _getCategoryFgColor(int index) {
+    final colors = [
+      Color(0xFF9CA3AF), // Gray
+      Color(0xFFC084FC), // Purple
+      Color(0xFF60A5FA), // Blue
+      Color(0xFFFBBF24), // Yellow
+      Color(0xFFF472B6), // Pink
+    ];
+    return colors[index % colors.length];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bgColor = isSelected 
+        ? _getCategoryFgColor(categoryIndex).withValues(alpha: 0.2)
+        : _getCategoryBgColor(categoryIndex);
+    final fgColor = _getCategoryFgColor(categoryIndex);
+    
+    return Container(
+      width: 35.w,
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+        border: isSelected 
+            ? Border.all(color: fgColor, width: 2)
+            : null,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon
+            Container(
+              width: 12.w,
+              height: 12.w,
+              decoration: BoxDecoration(
+                color: fgColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  _getCategoryIconPath(categoryName) ?? 'Assets/icons/health-care.svg',
+                  width: 6.w,
+                  height: 6.w,
+                  colorFilter: ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 1.h),
+            // Category name
+            Text(
+              categoryName,
+              style: CustomTextStyles.w600TextStyle(
+                color: AppColors.blackColor393,
+                size: 14,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 0.3.h),
+            // Doctor count
+            Text(
+              '$doctorCount Doctors',
+              style: CustomTextStyles.lightTextStyle(
+                color: AppColors.blackColor393,
+                size: 12,
+              ),
+            ),
+            SizedBox(height: 1.h),
+            // Doctor avatars
+            if (doctorImages.isNotEmpty)
+              Row(
+                children: [
+                  for (var i = 0; i < (doctorImages.length > 3 ? 3 : doctorImages.length); i++)
+                    Container(
+                      margin: EdgeInsets.only(right: i < 2 ? 4 : 0),
+                      width: 6.w,
+                      height: 6.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                        image: doctorImages[i].isNotEmpty && 
+                               doctorImages[i].contains('http') &&
+                               !doctorImages[i].contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab')
+                            ? DecorationImage(
+                                image: NetworkImage(doctorImages[i]),
+                                fit: BoxFit.cover,
+                                onError: (_, __) {},
+                              )
+                            : null,
+                      ),
+                      child: doctorImages[i].isEmpty || 
+                             !doctorImages[i].contains('http') ||
+                             doctorImages[i].contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab')
+                          ? Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey[300],
+                              ),
+                              child: Icon(Icons.person, size: 3.w, color: Colors.grey[600]),
+                            )
+                          : null,
+                    ),
+                  if (doctorCount > 3)
+                    Container(
+                      width: 6.w,
+                      height: 6.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFD1C3E6),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '+${doctorCount - 3}',
+                          style: CustomTextStyles.lightTextStyle(
+                            size: 9,
+                            color: AppColors.blackColor393,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class VerticalDoctorsList extends StatelessWidget {
   bool isSelectable;
   List<Doctor> doctorList;
@@ -595,32 +896,43 @@ class VerticalDoctorsList extends StatelessWidget {
           final doctorData = doctorList[index];
           return InkWell(
             onTap: () {
+              final doctorId = doctorData.userId?.toString() ?? '';
+              if (doctorId.isEmpty || doctorId == 'null') {
+                // Show error or return early if doctor ID is invalid
+                return;
+              }
               isSelectable
                   ? showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmationDailog(
-                          link_to_user_id: doctorData.userId.toString(),
+                          link_to_user_id: doctorId,
                         );
                       },
                     )
                   : Get.to(
                       DoctorDetailScreen2(
                         isFromHospital: false,
-                        doctorId: doctorData.userId.toString(),
-                        docName: 'Dr. David Patel',
-                        location: 'Golden Cardiology Center',
-                        Category: 'Cardiologist',
+                        doctorId: doctorId,
+                        docName: doctorData.name ?? 'Dr. Unknown',
+                        location: doctorData.location ?? '',
+                        Category: doctorData.expertise ?? '',
                       ),
                       transition: Transition.native);
             },
             child: DoctorsCardWidget(
-              imgUrl: doctorData.image.toString(),
-              reviewCount: '',
-              docName: doctorData.name.toString(),
-              Category: '',
-              loction: '',
-              rating: '5',
+              imgUrl: doctorData.image?.toString() ?? '',
+              reviewCount: doctorData.reviews != null && doctorData.reviews!.isNotEmpty
+                  ? doctorData.reviews!.length.toString()
+                  : '0',
+              docName: doctorData.name?.toString() ?? '',
+              Category: (doctorData.expertise != null && doctorData.expertise!.isNotEmpty)
+                  ? doctorData.expertise!
+                  : '',
+              loction: doctorData.location ?? '', // Show location
+              rating: doctorData.averageRating != null && doctorData.averageRating! > 0
+                  ? doctorData.averageRating!.toStringAsFixed(1)
+                  : '0',
             ),
           );
         },

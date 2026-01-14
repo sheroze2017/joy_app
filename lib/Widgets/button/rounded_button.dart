@@ -84,7 +84,10 @@ class RoundedButtonSmall extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          padding: EdgeInsets.symmetric(
+            vertical: isSmall == true ? 2.0 : 4.0, // Smaller padding for small buttons
+            horizontal: isSmall == true ? 4.0 : 8.0,
+          ),
           child: showLoader
               ? Container(
                   height: 1.5.h,
@@ -98,7 +101,12 @@ class RoundedButtonSmall extends StatelessWidget {
                   style: TextStyle(
                       color: textColor,
                       fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-                      fontSize: isBold ? (14 / 3.9).w : (12.18 / 3.9).w),
+                      fontSize: isSmall == true 
+                          ? (10 / 3.9).w  // Smaller font for small buttons
+                          : (isBold ? (14 / 3.9).w : (12.18 / 3.9).w)),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
         ),
       ),

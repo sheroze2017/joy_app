@@ -61,8 +61,153 @@ int? showCommentIndex;
 bool? showComment;
 
 class _MyCustomWidgetState extends State<MyCustomWidget> {
+  static const String _defaultPostImage = 'Assets/images/app-icon.png';
+
+  bool _isValidImageUrl(String? url) {
+    return url != null &&
+        url.trim().isNotEmpty &&
+        url.trim().toLowerCase() != 'null';
+  }
+
+  Widget _buildAvatarWidget(String? url, double radius, BuildContext context) {
+    if (_isValidImageUrl(url)) {
+      return ClipOval(
+        child: Image.network(
+          url!.trim(),
+          width: radius * 2,
+          height: radius * 2,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: radius * 2,
+              height: radius * 2,
+              decoration: BoxDecoration(
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff2A2A2A)
+                    : Color(0xffE5E5E5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.person,
+                size: radius,
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff5A5A5A)
+                    : Color(0xffA5A5A5),
+              ),
+            );
+          },
+        ),
+      );
+    }
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: ThemeUtil.isDarkMode(context)
+          ? Color(0xff2A2A2A)
+          : Color(0xffE5E5E5),
+      child: Icon(
+        Icons.person,
+        size: radius,
+        color: ThemeUtil.isDarkMode(context)
+            ? Color(0xff5A5A5A)
+            : Color(0xffA5A5A5),
+      ),
+    );
+  }
+
+  Widget _buildCommentsList(List<Comments> commentsList, BuildContext context) {
+    if (commentsList.isEmpty) {
+      return SizedBox.shrink();
+    }
+    
+    final itemCount = widget.postIndex == showCommentIndex
+        ? commentsList.length
+        : commentsList.length < 4
+            ? commentsList.length
+            : 3;
+    
+    return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: itemCount,
+        itemBuilder: ((context, index) {
+          final commen = commentsList[index];
+          final commenterName = (commen.name ?? commen.user?.name ?? '')
+                  .trim()
+                  .isEmpty
+              ? 'User'
+              : (commen.name ?? commen.user?.name ?? '');
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildAvatarWidget(
+                  commen.userImage ?? commen.user?.image, 13, context),
+              SizedBox(width: 2.w), // Adjust as needed
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      commenterName,
+                      style: CustomTextStyles.w600TextStyle(
+                          letterspacing: 0.5,
+                          size: 13.21,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : Color(0xff19295C)),
+                    ),
+                    Text(
+                      commen.comment ?? '',
+                      style:
+                          CustomTextStyles.lightTextStyle(size: 11.28),
+                    ),
+                    SizedBox(
+                      height: 1.h,
+                    ),
+                    Row(
+                      children: [
+                        Text('Like',
+                            style:
+                                CustomTextStyles.darkHeadingTextStyle(
+                                    size: 10,
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xffC9C9C9)
+                                        : Color(0xff60709D))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30.0),
+                          child: Text('Reply',
+                              style:
+                                  CustomTextStyles.darkHeadingTextStyle(
+                                      size: 10,
+                                      color:
+                                          ThemeUtil.isDarkMode(context)
+                                              ? Color(0xffC9C9C9)
+                                              : Color(0xff60709D))),
+                        ),
+                        Text(
+                            getElapsedTime(commen.createdAt.toString()),
+                            style: CustomTextStyles.lightTextStyle(
+                                size: 10,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xffC9C9C9)
+                                    : Color(0xff60709D)))
+                      ],
+                    ),
+                    SizedBox(height: 1.h),
+                  ],
+                ),
+              )
+            ],
+          );
+        })
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final postOwnerName =
+        widget.postName.trim().isEmpty ? 'User' : widget.postName;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -78,18 +223,13 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
           },
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 25,
-                backgroundImage: NetworkImage(widget.userImage.contains('http')
-                    ? widget.userImage.toString()
-                    : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png"),
-              ),
+              _buildAvatarWidget(widget.userImage, 25, context),
               SizedBox(width: 2.w), // Adjust as needed
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.postName.toString(),
+                    postOwnerName,
                     style: CustomTextStyles.w600TextStyle(
                         letterspacing: 0.5,
                         size: 13.21,
@@ -129,21 +269,32 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                clipBehavior: Clip.antiAlias, // Add this line
-                child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: widget.imgPath,
-                  placeholder: (context, url) => Center(
-                      child: Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: LoadingWidget(),
-                  )),
-                  errorWidget: (context, url, error) => Center(
-                      child: Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: ErorWidget(),
-                  )),
-                ),
+                clipBehavior: Clip.antiAlias,
+                child: Builder(builder: (context) {
+                  final postImageUrl = widget.imgPath.trim();
+                  final hasValidUrl = postImageUrl.isNotEmpty &&
+                      postImageUrl.toLowerCase() != 'null';
+                  if (!hasValidUrl) {
+                    return Image.asset(
+                      _defaultPostImage,
+                      fit: BoxFit.cover,
+                    );
+                  }
+                  return CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: postImageUrl,
+                    placeholder: (context, url) => Center(
+                        child: Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: LoadingWidget(),
+                    )),
+                    errorWidget: (context, url, error) => Center(
+                        child: Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: ErorWidget(),
+                    )),
+                  );
+                }),
               )
             : Container(),
         SizedBox(
@@ -175,11 +326,6 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                 isLikeButton: true,
                 isActive: widget.isLiked,
                 img: 'Assets/images/like.png',
-                // color: widget.isLiked
-                //     ? ThemeUtil.isDarkMode(context)
-                // ? Color(0xffC5D3E3)
-                // : Color(0XFF1C2A3A)
-                //     : Color(0xff121212),
                 color: ThemeUtil.isDarkMode(context)
                     ? widget.isLiked
                         ? Color(0xffC5D3E3)
@@ -189,23 +335,7 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
                         : AppColors.whiteColorf9f,
               ),
             ),
-//            SizedBox(width: 10),
-            // InkWell(
-            //   onTap: () {},
-            //   child: CircleButton(
-            //     isLikeButton: false,
-            //     img: 'Assets/images/message.png',
-            //     color: ThemeUtil.isDarkMode(context)
-            //         ? Color(0xff121212)
-            //         : AppColors.whiteColorf9f,
-            //   ),
-            // ),
-
             Spacer(),
-            // LikeCount(
-            //   like: '32.1K',
-            //   name: 'Ali',
-            // ),
             Divider(
               color: Color(0xffE5E7EB),
             ),
@@ -231,106 +361,19 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
         SizedBox(
           height: 1.5.h,
         ),
-        (widget.cm.length > 0)
-            ? Obx(() => ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: widget.isHospital
-                    ? widget.postIndex == showCommentIndex
-                        ? mediaController
-                            .postsByUserId[widget.postIndex].comments!.length
-                        : mediaController.postsByUserId[widget.postIndex]
-                                    .comments!.length <
-                                4
-                            ? mediaController.postsByUserId[widget.postIndex]
-                                .comments!.length
-                            : 3
-                    : widget.postIndex == showCommentIndex
-                        ? mediaController.allPost.reversed
-                            .toList()[widget.postIndex]
-                            .comments!
-                            .length
-                        : mediaController.allPost.reversed
-                                    .toList()[widget.postIndex]
-                                    .comments!
-                                    .length <
-                                4
-                            ? mediaController.allPost.reversed
-                                .toList()[widget.postIndex]
-                                .comments!
-                                .length
-                            : 3,
-                itemBuilder: ((context, index) {
-                  final commen = widget.cm[index];
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                          radius: 13,
-                          backgroundImage: NetworkImage(
-                            "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
-                          )),
-                      SizedBox(width: 2.w), // Adjust as needed
-
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              commen.name.toString(),
-                              style: CustomTextStyles.w600TextStyle(
-                                  letterspacing: 0.5,
-                                  size: 13.21,
-                                  color: ThemeUtil.isDarkMode(context)
-                                      ? AppColors.whiteColor
-                                      : Color(0xff19295C)),
-                            ),
-                            Text(
-                              commen.comment.toString(),
-                              style:
-                                  CustomTextStyles.lightTextStyle(size: 11.28),
-                            ),
-                            SizedBox(
-                              height: 1.h,
-                            ),
-                            Row(
-                              children: [
-                                Text('Like',
-                                    style:
-                                        CustomTextStyles.darkHeadingTextStyle(
-                                            size: 10,
-                                            color: ThemeUtil.isDarkMode(context)
-                                                ? Color(0xffC9C9C9)
-                                                : Color(0xff60709D))),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 30.0),
-                                  child: Text('Reply',
-                                      style:
-                                          CustomTextStyles.darkHeadingTextStyle(
-                                              size: 10,
-                                              color:
-                                                  ThemeUtil.isDarkMode(context)
-                                                      ? Color(0xffC9C9C9)
-                                                      : Color(0xff60709D))),
-                                ),
-                                Text(
-                                    getElapsedTime(commen.createdAt.toString()),
-                                    style: CustomTextStyles.lightTextStyle(
-                                        size: 10,
-                                        color: ThemeUtil.isDarkMode(context)
-                                            ? Color(0xffC9C9C9)
-                                            : Color(0xff60709D)))
-                              ],
-                            ),
-                            SizedBox(height: 1.h),
-                          ],
-                        ),
-                      )
-                    ],
-                  );
-                })))
-            : Container(),
+        // For hospital mode, use regular widget (not Obx) since widget.cm is not reactive
+        widget.isHospital
+            ? _buildCommentsList(widget.cm, context)
+            : Obx(() {
+                // For non-hospital mode, use reactive controller lists
+                final commentsList = mediaController.postsByUserId.length > widget.postIndex
+                    ? (mediaController.postsByUserId[widget.postIndex].comments ?? widget.cm)
+                    : (mediaController.allPost.reversed.toList().length > widget.postIndex
+                        ? (mediaController.allPost.reversed.toList()[widget.postIndex].comments ?? widget.cm)
+                        : widget.cm);
+                
+                return _buildCommentsList(commentsList, context);
+              }),
         (showCommentIndex == widget.postIndex)
             ? Container()
             : (widget.cm.length > 3)
@@ -366,8 +409,15 @@ class ShimmerWidget extends StatelessWidget {
         children: [
           CircleAvatar(
               radius: 15,
-              backgroundImage: NetworkImage(
-                "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+              backgroundColor: ThemeUtil.isDarkMode(context)
+                  ? Color(0xff2A2A2A)
+                  : Color(0xffE5E5E5),
+              child: Icon(
+                Icons.person,
+                size: 15,
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff5A5A5A)
+                    : Color(0xffA5A5A5),
               )),
           SizedBox(width: 2.w), // Adjust as needed
           SizedBox(

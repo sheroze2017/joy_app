@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:geolocator/geolocator.dart';
@@ -48,11 +50,68 @@ class AuthController extends GetxController {
     dioClient = DioClient.getInstance();
     authApi = AuthApi(dioClient);
     settoken();
+    if (_isFirebaseReady()) {
+      _listenForDeviceTokenRefresh();
+    } else {
+      print('⚠️ [AuthController] Firebase not initialized, skip FCM listener');
+    }
+  }
+
+  bool _isFirebaseReady() {
+    return Firebase.apps.isNotEmpty;
   }
 
   settoken() async {
     fcmToken = await getToken();
     print(fcmToken);
+  }
+
+  void _listenForDeviceTokenRefresh() {
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      if (newToken.isEmpty) {
+        return;
+      }
+      fcmToken = newToken;
+      await setToken(newToken);
+      final currentUser = await getCurrentUser();
+      if (currentUser == null) {
+        return;
+      }
+      final updated = await authApi.updateDeviceToken(
+          currentUser.userId.toString(), newToken);
+      if (updated && currentUser.deviceToken != newToken) {
+        currentUser.deviceToken = newToken;
+        await currentUser.save();
+      }
+    });
+  }
+
+  Future<void> updateDeviceTokenForUser(String userId) async {
+    String token = '';
+    if (_isFirebaseReady()) {
+      try {
+        token = await FirebaseMessaging.instance.getToken() ?? '';
+      } catch (error) {
+        print('⚠️ [AuthController] FCM token error: $error');
+      }
+    }
+    if (token.isEmpty) {
+      token = await getToken();
+    }
+    if (token.isEmpty) {
+      print('⚠️ [AuthController] Device token is empty, skipping update');
+      return;
+    }
+    fcmToken = token;
+    await setToken(token);
+    final updated = await authApi.updateDeviceToken(userId, token);
+    if (updated) {
+      final currentUser = await getCurrentUser();
+      if (currentUser != null && currentUser.deviceToken != token) {
+        currentUser.deviceToken = token;
+        await currentUser.save();
+      }
+    }
   }
 
   saveUserDetailInLocal(
@@ -65,7 +124,9 @@ class AuthController extends GetxController {
       String authType,
       String phone,
       String lastName,
-      String deviceToken) async {
+      String deviceToken,
+      String? token,
+      {String? gender}) async {
     var user = UserHive(
         userId: userId,
         firstName: firstName,
@@ -76,10 +137,22 @@ class AuthController extends GetxController {
         authType: authType,
         phone: phone,
         lastName: lastName,
-        deviceToken: deviceToken);
+        deviceToken: deviceToken,
+        token: token,
+        gender: gender);
     // Use the safe box opening function from auth_hive_utils
     final userBox = await Hive.openBox<UserHive>('users');
     await userBox.put('current_user', user);
+    print('✅ [saveUserDetailInLocal] User saved - userId: $userId, token: ${token != null ? (token.length > 20 ? "${token.substring(0, 20)}..." : token) : "null"}, gender: $gender');
+    
+    // Verify token was saved correctly
+    final savedUser = userBox.get('current_user');
+    if (savedUser != null) {
+      print('✅ [saveUserDetailInLocal] Verification - Token in saved user: ${savedUser.token != null ? (savedUser.token!.length > 20 ? "${savedUser.token!.substring(0, 20)}..." : savedUser.token) : "null"}');
+    } else {
+      print('❌ [saveUserDetailInLocal] Verification failed - User not found in box after save!');
+    }
+    
     _profileController.updateUserDetal();
   }
 
@@ -112,6 +185,8 @@ class AuthController extends GetxController {
           phoneNo,
           image);
       if (response.data != null) {
+        // Preserve the existing token when editing profile
+        final existingToken = currentUser.token;
         saveUserDetailInLocal(
           response.data!.userId!.toString(),
           response.data!.name!.toString(),
@@ -123,6 +198,7 @@ class AuthController extends GetxController {
           response.data!.phone.toString(),
           '',
           response.data!.deviceToken.toString(),
+          existingToken, // Preserve existing token for profile edit
         );
         showSuccessMessage(context, 'Edit Successfully');
         return true;
@@ -178,6 +254,7 @@ class AuthController extends GetxController {
           response.data!.phone.toString(),
           '',
           response.data!.deviceToken.toString(),
+          null, // No token for user signup
         );
         showSuccessMessage(context, 'Profile Completed Successfully');
         return true;
@@ -233,7 +310,8 @@ class AuthController extends GetxController {
             response.data!.authType.toString(),
             response.data!.phone.toString(),
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken.toString(),
+            null); // No token for registration
         showSuccessMessage(context, 'Profile Completed Successfully');
         return true;
       } else {
@@ -288,7 +366,8 @@ class AuthController extends GetxController {
             response.data!.authType.toString(),
             response.data!.phone.toString(),
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken.toString(),
+            null); // No token for registration
         showSuccessMessage(context, 'Profile Completed Successfully');
         return true;
       } else {
@@ -349,7 +428,8 @@ class AuthController extends GetxController {
             response.data!.authType.toString(),
             response.data!.phone.toString(),
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken.toString(),
+            null); // No token for registration
         showSuccessMessage(context, 'Profile Completed Successfully');
         return true;
       } else {
@@ -396,6 +476,8 @@ class AuthController extends GetxController {
           long,
           image);
       if (response.data != null) {
+        // Preserve the existing token when editing profile
+        final existingToken = currentUser.token;
         saveUserDetailInLocal(
             response.data!.userId!.toString(),
             response.data!.name!.toString(),
@@ -406,7 +488,8 @@ class AuthController extends GetxController {
             response.data!.authType.toString(),
             response.data!.phone.toString(),
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken.toString(),
+            existingToken); // Preserve existing token for profile edit
         showSuccessMessage(context, 'Profile Edit Successfully');
         return true;
       } else {
@@ -454,6 +537,8 @@ class AuthController extends GetxController {
           placeId,
           image);
       if (response.data != null) {
+        // Preserve the existing token when editing profile
+        final existingToken = currentUser.token;
         saveUserDetailInLocal(
             response.data!.userId!.toString(),
             response.data!.name!.toString(),
@@ -464,7 +549,8 @@ class AuthController extends GetxController {
             response.data!.authType.toString(),
             response.data!.phone.toString(),
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken.toString(),
+            existingToken); // Preserve existing token for profile edit
 
         showSuccessMessage(context, 'Profile Edit Successfully');
 
@@ -518,6 +604,8 @@ class AuthController extends GetxController {
           checkupFee,
           image);
       if (response.data != null) {
+        // Preserve the existing token when editing profile
+        final existingToken = currentUser.token;
         saveUserDetailInLocal(
             response.data!.userId!.toString(),
             response.data!.name!.toString(),
@@ -528,7 +616,8 @@ class AuthController extends GetxController {
             response.data!.authType.toString(),
             response.data!.phone.toString(),
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken.toString(),
+            existingToken); // Preserve existing token for profile edit
         _hospitalDetailController.getHospitalDetails(
             true, response.data!.userId.toString(), context);
         showSuccessMessage(context, 'Edit successfully');
@@ -560,31 +649,69 @@ class AuthController extends GetxController {
         return response;
       }
       
-      if (response.data != null && response.data!.userId != null) {
-        String userIdString = response.data!.userId.toString(); // Ensure it's a string
+      // Debug: Check response structure
+      print('🔍 [AuthController] Response structure check:');
+      print('   - response.data: ${response.data != null ? "exists" : "null"}');
+      print('   - response.data?.token: ${response.data?.token != null ? "exists" : "null"}');
+      print('   - response.data?.user: ${response.data?.user != null ? "exists" : "null"}');
+      if (response.data?.user != null) {
+        print('   - response.data.user.userId: ${response.data!.user!.userId}');
+        print('   - response.data.user.name: ${response.data!.user!.name}');
+        print('   - response.data.user.userRole: ${response.data!.user!.userRole}');
+        print('   - response.data.user.location: ${response.data!.user!.location}');
+        print('   - response.data.user.status: ${response.data!.user!.status}');
+      }
+      
+      if (response.data != null && response.data!.user != null && response.data!.user!.userId != null) {
+        String userIdString = response.data!.user!.userId.toString(); // Ensure it's a string
+        String? token = response.data!.token;
+        String? gender = response.data!.user!.gender;
         print('✅ [AuthController] login() Saving user with ID: $userIdString');
+        print('✅ [AuthController] login() Token: ${token != null ? (token.length > 20 ? "${token.substring(0, 20)}..." : token) : "null"}');
+        print('✅ [AuthController] login() Gender: ${gender ?? "null"}');
+        print('✅ [AuthController] login() User location: ${response.data!.user!.location}');
+        print('✅ [AuthController] login() User status: ${response.data!.user!.status}');
+        
+        // Validate token exists before saving
+        if (token == null || token.isEmpty) {
+          print('❌ [AuthController] login() ERROR: Token is null or empty! Cannot save user.');
+          showErrorMessage(context, 'Login failed: No authentication token received');
+          return response;
+        }
+        
         saveUserDetailInLocal(
             userIdString,
-            response.data!.name?.toString() ?? '',
+            response.data!.user!.name?.toString() ?? '',
             email,
             password,
-            response.data!.image?.toString() ?? '',
-            response.data!.userRole?.toString() ?? 'USER',
-            response.data!.authType?.toString() ?? 'EMAIL',
-            response.data!.phone?.toString() ?? '',
+            response.data!.user!.image?.toString() ?? '',
+            response.data!.user!.userRole?.toString() ?? 'USER',
+            response.data!.user!.authType?.toString() ?? 'EMAIL',
+            response.data!.user!.phone?.toString() ?? '',
             '',
-            response.data!.deviceToken?.toString() ?? '');
+            response.data!.user!.deviceToken?.toString() ?? '',
+            token,
+            gender: gender);
+        await updateDeviceTokenForUser(userIdString);
 
         showSuccessMessage(context, 'Login Successfully');
 
         // Navigate to dashboard after successful login
         print('✅ [AuthController] login() Navigating to dashboard');
         Future.delayed(Duration(milliseconds: 500), () {
-          handleUserRoleNavigation(response.data!.userRole ?? 'USER');
+          handleUserRoleNavigation(response.data!.user!.userRole ?? 'USER');
         });
       } else {
-        String errorMessage = response.message ?? 'Login failed - no user data returned';
+        String errorMessage = 'Login failed - invalid response structure';
+        if (response.data == null) {
+          errorMessage = 'Login failed - no data in response';
+        } else if (response.data!.user == null) {
+          errorMessage = 'Login failed - no user data in response';
+        } else if (response.data!.user!.userId == null) {
+          errorMessage = 'Login failed - no user ID in response';
+        }
         print('❌ [AuthController] login() Error: $errorMessage');
+        print('❌ [AuthController] Full response: ${response.toJson()}');
         showErrorMessage(context, errorMessage);
       }
       return response;
@@ -724,6 +851,7 @@ class AuthController extends GetxController {
           response.data!.phone?.toString() ?? '',
           '',
           response.data!.deviceToken?.toString() ?? '',
+          null, // No token for user register
         );
         
         // Navigate to dashboard after successful registration
@@ -797,17 +925,34 @@ class AuthController extends GetxController {
       }
       
       if (response.data != null) {
+        // Get userId - handle both _id (MongoDB) and user_id (legacy)
+        String? userIdString = response.data!.userId?.toString();
+        if (userIdString == null || userIdString.isEmpty) {
+          String errorMessage = 'Doctor registration failed - user ID not found in response';
+          print('❌ [AuthController] doctorRegister() Error: $errorMessage');
+          showErrorMessage(context, errorMessage);
+          registerLoader.value = false;
+          return false;
+        }
+        
+        print('✅ [AuthController] doctorRegister() Saving user:');
+        print('   - UserId: $userIdString');
+        print('   - Name: ${response.data!.name}');
+        print('   - Email: $email');
+        print('   - Role: ${response.data!.userRole}');
+        
         await saveUserDetailInLocal(
-            response.data!.userId!.toString(),
-            response.data!.name!.toString(),
+            userIdString,
+            response.data!.name?.toString() ?? '',
             email,
             password,
-            response.data!.image.toString(),
-            response.data!.userRole.toString(),
-            response.data!.authType.toString(),
-            response.data!.phone.toString(),
+            response.data!.image?.toString() ?? '',
+            response.data!.userRole?.toString() ?? 'DOCTOR',
+            response.data!.authType?.toString() ?? 'EMAIL',
+            response.data!.phone?.toString() ?? '',
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken?.toString() ?? '',
+            null); // No token for doctor registration
 
         List<String> monday = dateAvail[0].toList();
         List<String> tuesday = dateAvail[1].toList();
@@ -817,7 +962,7 @@ class AuthController extends GetxController {
         List<String> saturday = dateAvail[5].toList();
         List<String> sunday = dateAvail[6].toList();
 
-        await authApi.AddDoctorAvailability(response.data!.userId.toString(),
+        await authApi.AddDoctorAvailability(userIdString,
             monday, tuesday, wednesday, thursday, friday, saturday, sunday);
         showSuccessMessage(context, 'Register Successfully');
         return true;
@@ -878,17 +1023,34 @@ class AuthController extends GetxController {
       }
       
       if (response.data != null) {
+        // Get userId - handle both _id (MongoDB) and user_id (legacy)
+        String? userIdString = response.data!.userId?.toString();
+        if (userIdString == null || userIdString.isEmpty) {
+          String errorMessage = 'Blood bank registration failed - user ID not found in response';
+          print('❌ [AuthController] bloodBankRegister() Error: $errorMessage');
+          showErrorMessage(context, errorMessage);
+          registerLoader.value = false;
+          return false;
+        }
+        
+        print('✅ [AuthController] bloodBankRegister() Saving user:');
+        print('   - UserId: $userIdString');
+        print('   - Name: ${response.data!.name}');
+        print('   - Email: $email');
+        print('   - Role: ${response.data!.userRole}');
+        
         saveUserDetailInLocal(
-            response.data!.userId!.toString(),
-            response.data!.name!.toString(),
+            userIdString,
+            response.data!.name?.toString() ?? '',
             email,
             password,
-            response.data!.image.toString(),
-            response.data!.userRole.toString(),
-            response.data!.authType.toString(),
-            response.data!.phone.toString(),
+            response.data!.image?.toString() ?? '',
+            response.data!.userRole?.toString() ?? 'BLOODBANK',
+            response.data!.authType?.toString() ?? 'EMAIL',
+            response.data!.phone?.toString() ?? '',
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken?.toString() ?? '',
+            null); // No token for blood bank registration
         showSuccessMessage(context, 'Register Successfully');
         return true;
       } else {
@@ -948,17 +1110,34 @@ class AuthController extends GetxController {
       }
       
       if (response.data != null) {
+        // Get userId - handle both _id (MongoDB) and user_id (legacy)
+        String? userIdString = response.data!.userId?.toString();
+        if (userIdString == null || userIdString.isEmpty) {
+          String errorMessage = 'Pharmacy registration failed - user ID not found in response';
+          print('❌ [AuthController] PharmacyRegister() Error: $errorMessage');
+          showErrorMessage(context, errorMessage);
+          registerLoader.value = false;
+          return false;
+        }
+        
+        print('✅ [AuthController] PharmacyRegister() Saving user:');
+        print('   - UserId: $userIdString');
+        print('   - Name: ${response.data!.name}');
+        print('   - Email: $email');
+        print('   - Role: ${response.data!.userRole}');
+        
         saveUserDetailInLocal(
-            response.data!.userId!.toString(),
-            response.data!.name!.toString(),
+            userIdString,
+            response.data!.name?.toString() ?? '',
             email,
             password,
-            response.data!.image.toString(),
-            response.data!.userRole.toString(),
-            response.data!.authType.toString(),
-            response.data!.phone.toString(),
+            response.data!.image?.toString() ?? '',
+            response.data!.userRole?.toString() ?? 'PHARMACY',
+            response.data!.authType?.toString() ?? 'EMAIL',
+            response.data!.phone?.toString() ?? '',
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken?.toString() ?? '',
+            null); // No token for pharmacy registration
 
         showSuccessMessage(context, 'Register Successfully');
 
@@ -1026,17 +1205,34 @@ class AuthController extends GetxController {
       }
       
       if (response.data != null) {
+        // Get userId - handle both _id (MongoDB) and user_id (legacy)
+        String? userIdString = response.data!.userId?.toString();
+        if (userIdString == null || userIdString.isEmpty) {
+          String errorMessage = 'Hospital registration failed - user ID not found in response';
+          print('❌ [AuthController] HospitalRegister() Error: $errorMessage');
+          showErrorMessage(context, errorMessage);
+          registerLoader.value = false;
+          return [false];
+        }
+        
+        print('✅ [AuthController] HospitalRegister() Saving user:');
+        print('   - UserId: $userIdString');
+        print('   - Name: ${response.data!.name}');
+        print('   - Email: $email');
+        print('   - Role: ${response.data!.userRole}');
+        
         saveUserDetailInLocal(
-            response.data!.userId!.toString(),
-            response.data!.name!.toString(),
+            userIdString,
+            response.data!.name?.toString() ?? '',
             email,
             password,
-            response.data!.image.toString(),
-            response.data!.userRole.toString(),
-            response.data!.authType.toString(),
-            response.data!.phone.toString(),
+            response.data!.image?.toString() ?? '',
+            response.data!.userRole?.toString() ?? 'HOSPITAL',
+            response.data!.authType?.toString() ?? 'EMAIL',
+            response.data!.phone?.toString() ?? '',
             '',
-            response.data!.deviceToken.toString());
+            response.data!.deviceToken?.toString() ?? '',
+            null); // No token for hospital registration
         showSuccessMessage(context, 'Register Successfully');
         return [true, response.data!.hospitalDetailId];
       } else {

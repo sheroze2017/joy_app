@@ -8,8 +8,8 @@ import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/media_posts_api.dart';
-
-import '../../../auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import '../model/comment_model.dart';
 import '../model/create_post_model.dart';
 import '../model/media_post.dart';
@@ -158,12 +158,55 @@ class MediaPostController extends GetxController {
     profileUpload.value = true;
     try {
       print('📸 [MediaPostController] uploadProfilePhoto() called with path: $imagePath');
-      // Use form-data upload instead of base64
-      final response = await mediaPosts.uploadImageFile(imagePath);
-      if (response.isNotEmpty) {
+      
+      // Get current user ID for profile image upload
+      UserHive? currentUser = await getCurrentUser();
+      if (currentUser == null) {
+        print('❌ [MediaPostController] No current user found for profile upload');
         profileUpload.value = false;
-        print('✅ [MediaPostController] Profile photo uploaded: $response');
-        return response;
+        showErrorMessage(context, 'User not logged in');
+        return '';
+      }
+      
+      String userId = currentUser.userId;
+      print('👤 [MediaPostController] Uploading profile image for user: $userId');
+      
+      // Use form-data upload with user_id to update user profile
+      final imageUrl = await mediaPosts.uploadImageFile(imagePath, userId: userId);
+      if (imageUrl.isNotEmpty) {
+        // Update local storage with new image URL
+        print('💾 [MediaPostController] Updating local storage with new image URL: $imageUrl');
+        final updatedUser = UserHive(
+          userId: currentUser.userId,
+          firstName: currentUser.firstName,
+          lastName: currentUser.lastName,
+          email: currentUser.email,
+          password: currentUser.password,
+          image: imageUrl, // Update image URL
+          userRole: currentUser.userRole,
+          authType: currentUser.authType,
+          phone: currentUser.phone,
+          deviceToken: currentUser.deviceToken,
+          token: currentUser.token,
+          gender: currentUser.gender,
+        );
+        await saveUser(updatedUser);
+        print('✅ [MediaPostController] Local storage updated with new image');
+        
+        // Update ProfileController
+        try {
+          final profileController = Get.find<ProfileController>();
+          profileController.image.value = imageUrl;
+          profileController.updateUserDetal(); // Refresh profile data
+          print('✅ [MediaPostController] ProfileController updated');
+        } catch (e) {
+          print('⚠️ [MediaPostController] ProfileController not found, skipping update: $e');
+        }
+        
+        profileUpload.value = false;
+        print('✅ [MediaPostController] Profile photo uploaded and user updated: $imageUrl');
+        showSuccessMessage(context, 'Profile image updated successfully');
+        return imageUrl;
       } else {
         profileUpload.value = false;
         showErrorMessage(context, 'Error adding image');
@@ -221,25 +264,73 @@ class MediaPostController extends GetxController {
       Comment response = await mediaPosts.addComment(
           currentUser!.userId, postId, comment);
       if (response.sucess == true) {
-        showSuccessMessage(context, 'Comment added');
-        Comments newComment = await Comments(
+        // Show success message using Get.snackbar (doesn't require context with overlay)
+        Get.snackbar(
+          'Success',
+          'Comment added',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 2),
+          icon: Icon(Icons.check, color: Colors.white),
+        );
+        
+        // Use the actual createdAt from API response, or current time as fallback
+        String createdAt = response.data?.createdAt ?? DateTime.now().toIso8601String();
+        
+        Comments newComment = Comments(
             comment: comment,
-            commentId: response.data!.commentId,
-            createdAt: DateTime.now().toString(),
-            name: currentUser.firstName.toString());
-        allPost[postIndex].comments!.add(newComment);
+            commentId: response.data?.commentId?.toString(),
+            createdAt: createdAt,
+            name: currentUser.firstName.toString(),
+            userId: currentUser.userId.toString(),
+            userImage: currentUser.image ?? '',
+            user: PostUser(
+                userId: currentUser.userId.toString(),
+                name: currentUser.firstName,
+                image: currentUser.image ?? ''));
+        
+        // Ensure comments list exists before adding
+        if (allPost[postIndex].comments == null) {
+          allPost[postIndex].comments = <Comments>[];
+        }
+        // Add comment at the beginning (index 0) so it appears at the top
+        allPost[postIndex].comments!.insert(0, newComment);
         update();
         commentLoad.value = false;
+        
+        // Refresh posts from server to ensure comment count and data are in sync
+        // This ensures the comment appears immediately and stays updated
+        await getAllPost();
 
         return response;
       } else {
-        showErrorMessage(context, 'Error adding comment');
+        // Show error message using Get.snackbar
+        Get.snackbar(
+          'Error',
+          'Error adding comment',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 2),
+          icon: Icon(Icons.error, color: Colors.white),
+        );
         commentLoad.value = false;
         return response;
       }
     } catch (error) {
       commentLoad.value = false;
-      throw (error);
+      // Show error message using Get.snackbar
+      Get.snackbar(
+        'Error',
+        'Failed to add comment: ${error.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 2),
+        icon: Icon(Icons.error, color: Colors.white),
+      );
+      rethrow;
     } finally {
       commentLoad.value = false;
     }

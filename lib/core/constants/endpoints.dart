@@ -1,20 +1,10 @@
 class Endpoints {
-  // static String baseUrl = 'https://joy.comsrvssoftwaresolutions.com';
-  static String baseUrl = 'http://localhost:1006';
+  static String baseUrl = 'https://joy.comsrvssoftwaresolutions.com';
+//   static String baseUrl = 'http://localhost:1006';
 
-  // Chat environment config
-  // Toggle this to switch chat URLs between staging (localhost) and prod
-  static bool chatUseProd = false;
-
-  // Staging (localhost) and Prod bases
-  static String chatRestBaseStaging = 'http://localhost:1006';
-  static String chatSocketBaseStaging = 'http://localhost:1006';
-  static String chatRestBaseProd = 'https://joy.comsrvssoftwaresolutions.com';
-  static String chatSocketBaseProd = 'https://joy.comsrvssoftwaresolutions.com';
-
-  // Active chat bases
-  static String get chatRestBase => chatUseProd ? chatRestBaseProd : chatRestBaseStaging;
-  static String get chatSocketBase => chatUseProd ? chatSocketBaseProd : chatSocketBaseStaging;
+  // Chat uses same baseUrl as APIs
+  static String get chatRestBase => baseUrl;
+  static String get chatSocketBase => baseUrl;
 
   // Chat REST paths (prefix /chat)
   static String chatEnsureConversation = '/chat/ensureConversation';
@@ -59,8 +49,10 @@ class Endpoints {
   //Social Media
   static String getAllPosts = '/auth/getAllPosts';
   static String getAllPostById = '/auth/getPosts';
-  static String uploadBase64Image = '/auth/uploadBase64'; // Legacy, kept for backward compatibility
-  static String uploadImage = '/auth/uploadImage'; // New form-data upload endpoint
+  static String uploadBase64Image =
+      '/auth/uploadBase64'; // Legacy, kept for backward compatibility
+  static String uploadImage =
+      '/auth/uploadImage'; // New form-data upload endpoint
   static String createPost = '/auth/createPost';
   static String addComment = '/auth/addComment';
   static String togglePostLike = '/auth/togglePostLike';
@@ -71,21 +63,30 @@ class Endpoints {
   static String updateFriendRequest = '/user/updateFriendRequest';
   static String getAllFriendWithStatus = '/user/getAllFriends';
   static String getAllSearchUserDetail = '/user/getSearchedUserDetails';
+  static String getMyProfile = '/user/getMyProfile';
+  static String getFriendRequestsAndSuggestions =
+      '/user/getFriendRequestsAndSuggestions';
 
   static String createConversation = '/conversations';
 
   //Doctor
 
-  static String getAllAppointment = '/doctor/getDoctorAppoinntments';
+  static String getAllAppointment = '/doctor/getDoctorAppointments';
   static String getAllDoctors = '/doctor/getAllDoctors';
+  static String getDoctorCategoriesWithDoctors =
+      '/doctor/getDoctorCategoriesWithDoctors';
   static String getDoctorDetail = '/doctor/getDoctorDetails';
   static String updateDoctor = '/doctor/updateDoctor';
   static String updateAppointmentStatus = '/auth/updateAppointmentStatus';
+  static String rescheduleAppointment = '/auth/rescheduleAppointment';
   static String createAppointment = '/doctor/appointment';
   static String giveReview = '/doctor/giveReview';
   static String giveAppointmentMedication = '/doctor/appointmentMedications';
   static String getAllUserAppointment = '/auth/getUserAppointments';
+  static String getUserAppointmentsByStatus =
+      '/auth/getUserAppointmentsByStatus';
   static String giveMedication = '/doctor/appointmentMedications';
+  static String updateDeviceToken = '/auth/updateDeviceToken';
 
   // BLOOD BANK
 
@@ -94,6 +95,17 @@ class Endpoints {
   static String getAllBloodRequest = '/bloodbank/getAllBloodRequests';
   static String createBloodDonor = '/bloodbank/createDonor';
   static String createBloodAppeal = '/bloodbank/createBloodRequest';
+  static String deleteBloodRequest = '/bloodbank/deleteBloodRequest';
+  static String attachDonorToBloodRequest =
+      '/bloodbank/attachDonorToBloodRequest';
+  static String detachDonorFromBloodRequest =
+      '/bloodbank/detachDonorFromBloodRequest';
   static String editBloodBank = '/bloodbank/editBloodBank';
   static String getAllBloodBanks = '/bloodbank/getAllBloodBanks';
+  static String updateAbout = '/bloodbank/updateAbout';
+  static String updateTimings = '/bloodbank/updateTimings';
+
+  // Nearby Services
+  static String getNearbyServicesAndBookings =
+      '/user/getNearbyServicesAndBookings';
 }

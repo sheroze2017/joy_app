@@ -26,6 +26,14 @@ class DoctorAllPost extends StatelessWidget {
               itemCount: mediaController.postsByUserId.length,
               itemBuilder: ((context, index) {
                 final data = mediaController.postsByUserId[index];
+                final creatorName =
+                    data.createdByUser?.name ?? data.name ?? '';
+                final creatorImage =
+                    data.createdByUser?.image ?? data.user_image ?? '';
+                final creatorId = data.createdByUser?.userId ??
+                    data.createdBy?.toString() ??
+                    data.userId ??
+                    '';
                 return Column(
                   children: [
                     Obx(() => MyCustomWidget(
@@ -34,16 +42,16 @@ class DoctorAllPost extends StatelessWidget {
                           postIndex: index,
                           postId: data.postId.toString(),
                           postTime: data.createdAt.toString(),
-                          id: data.createdBy.toString(),
+                          id: creatorId,
                           imgPath: data.image.toString(),
                           isLiked: true,
                           isReply: false,
                           showImg: (data.image == null || data.image!.isEmpty)
                               ? false
                               : true,
-                          postName: data.name.toString(),
+                          postName: creatorName,
                           text: data.description.toString(),
-                          userImage: data.user_image.toString(),
+                          userImage: creatorImage,
                         )),
                   ],
                 );

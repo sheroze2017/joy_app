@@ -26,13 +26,13 @@ class CreateProduct {
 }
 
 class Data {
-  int? productId;
+  dynamic productId; // Changed to dynamic to handle both _id (MongoDB) and product_id (legacy)
   String? name;
   String? shortDescription;
-  int? categoryId;
+  dynamic categoryId; // Changed to dynamic to handle both string (MongoDB) and int (legacy)
   String? price;
   String? discount;
-  int? pharmacyId;
+  dynamic pharmacyId; // Changed to dynamic to handle both String (MongoDB) and int (legacy)
   int? quantity;
   String? dosage;
   String? image;
@@ -50,16 +50,69 @@ class Data {
       this.image});
 
   Data.fromJson(Map<String, dynamic> json) {
-    productId = json['product_id'];
-    name = json['name'];
-    shortDescription = json['short_description'];
-    categoryId = json['category_id'];
-    price = json['price'];
-    discount = json['discount'];
-    pharmacyId = json['pharmacy_id'];
-    quantity = json['quantity'];
-    dosage = json['dosage'];
-    image = json['image'];
+    // Handle both '_id' (MongoDB) and 'product_id' (legacy) fields
+    if (json['_id'] != null) {
+      productId = json['_id'].toString(); // Store as string for MongoDB IDs
+    } else {
+      productId = json['product_id'];
+    }
+    
+    name = json['name']?.toString();
+    shortDescription = json['short_description']?.toString();
+    
+    // Handle category_id - can be string (MongoDB) or int (legacy)
+    if (json['category_id'] != null) {
+      categoryId = json['category_id'].toString();
+    } else {
+      categoryId = null;
+    }
+    
+    // Handle price - can be int, double, or string
+    if (json['price'] != null) {
+      if (json['price'] is String) {
+        price = json['price'];
+      } else if (json['price'] is num) {
+        price = json['price'].toString();
+      } else {
+        price = json['price']?.toString();
+      }
+    } else {
+      price = null;
+    }
+    
+    // Handle discount - can be int, double, or string
+    if (json['discount'] != null) {
+      if (json['discount'] is String) {
+        discount = json['discount'];
+      } else if (json['discount'] is num) {
+        discount = json['discount'].toString();
+      } else {
+        discount = json['discount']?.toString();
+      }
+    } else {
+      discount = null;
+    }
+    
+    // Handle pharmacy_id - can be string (MongoDB) or int (legacy)
+    if (json['pharmacy_id'] != null) {
+      pharmacyId = json['pharmacy_id'].toString();
+    } else {
+      pharmacyId = null;
+    }
+    
+    // Handle quantity
+    if (json['quantity'] != null) {
+      if (json['quantity'] is int) {
+        quantity = json['quantity'];
+      } else {
+        quantity = int.tryParse(json['quantity'].toString()) ?? 0;
+      }
+    } else {
+      quantity = null;
+    }
+    
+    dosage = json['dosage']?.toString();
+    image = json['image']?.toString();
   }
 
   Map<String, dynamic> toJson() {

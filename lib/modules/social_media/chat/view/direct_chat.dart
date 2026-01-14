@@ -6,9 +6,9 @@ import 'package:joy_app/Widgets/appbar/chat_appbar.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/theme.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:dio/dio.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_service.dart';
 import '../widgets/message_widget.dart';
+import 'package:joy_app/core/network/request.dart';
 
 // legacy unused globals removed
 
@@ -40,15 +40,27 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   String? conversationId;
   StreamSocket streamSocket = StreamSocket();
   List<MessageBubble> messageWidgets = [];
+  Set<String> processedMessageIds = {}; // Track processed message IDs to prevent duplicates
   bool _isLoading = false;
   String? _loadError;
   // ChatController not needed in new flow
+  
+  // Helper function to normalize IDs for comparison (handle both string and number formats)
+  String _normalizeId(dynamic id) {
+    if (id == null) return '';
+    final str = id.toString().trim();
+    // Remove any ObjectId wrapper if present and normalize to lowercase
+    return str.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '').toLowerCase();
+  }
 
   @override
   void initState() {
-    connectAndListen();
-    print("************** ${DateTime.now().toString()} *****************");
     super.initState();
+    // Clear previous messages when opening chat
+    messageWidgets.clear();
+    processedMessageIds.clear(); // Clear processed IDs
+    print("************** ${DateTime.now().toString()} *****************");
+    connectAndListen();
   }
 
   void connectAndListen() async {
@@ -57,19 +69,17 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       _loadError = null;
     });
 
-    // Build service
-    chatService = ChatService(Dio(BaseOptions(
-      baseUrl: Endpoints.chatRestBase,
-      connectTimeout: const Duration(seconds: 20),
-      receiveTimeout: const Duration(seconds: 20),
-    )));
+    // Build service - use DioClient to get Dio with interceptors (Bearer token)
+    final dio = DioClient.createDio();
+    dio.options.baseUrl = Endpoints.chatRestBase;
+    chatService = ChatService(dio);
 
     try {
-      // Ensure conversation
+      // Ensure conversation (user IDs are strings, not ints)
       final ensuredConversationId = await chatService!.ensureConversation(
-        userId: int.parse(widget.userId),
+        userId: widget.userId, // Pass as string
         userType: widget.senderType,
-        peerId: int.parse(widget.friendId),
+        peerId: widget.friendId, // Pass as string
         peerType: widget.receiverType,
       );
       conversationId = ensuredConversationId;
@@ -77,7 +87,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
 
       // Connect socket + auth
       chatService!.connectSocket(
-        userId: int.parse(widget.userId),
+        userId: widget.userId, // Pass as string
         userType: widget.senderType,
       );
 
@@ -88,22 +98,139 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       await loadHistory();
 
       // Listen for new messages
-      chatService!.onMessage((data) {
-        print('[Socket] on message: ' + data.toString());
-        // Try both snake_case and camelCase for compatibility
-        final senderId = (data['senderId'] ?? data['sender_id'])?.toString() ?? '';
-        final isCurrentUser = senderId.toString() == widget.userId.toString();
-        print('[Chat] Real-time message from sender: $senderId, current user: ${widget.userId}, isCurrentUser: $isCurrentUser');
-        final msgBubble = MessageBubble(
-          msgText: data['body']?.toString() ?? '',
-          msgSender: isCurrentUser ? 'You' : widget.userName,
-          user: isCurrentUser,
-          receiverImage: widget.userAsset,
-        );
-        if (mounted) {
-          setState(() {
-            messageWidgets.add(msgBubble);
-          });
+      chatService!.onMessage((data) async {
+        print('📨 [Socket] Received message: ${data.toString()}');
+        // Handle message structure from guide: _id, conversationId, senderId, senderType, receiverId, receiverType, body, mediaUrl, status, createdAt
+        final messageId = data['_id']?.toString() ?? '';
+        final senderIdRaw = data['senderId'] ?? data['sender_id'];
+        final senderId = senderIdRaw?.toString() ?? '';
+        final senderType = (data['senderType'] ?? data['sender_type'])?.toString() ?? '';
+        final conversationIdFromMsg = (data['conversationId'] ?? data['conversation_id'])?.toString() ?? '';
+        final body = data['body']?.toString() ?? '';
+        
+        // Only process messages for this conversation
+        if (conversationIdFromMsg.isNotEmpty && conversationIdFromMsg != conversationId) {
+          print('⚠️ [Socket] Ignoring message from different conversation: $conversationIdFromMsg (current: $conversationId)');
+          return;
+        }
+        
+        // Handle "NaN" sender_id case - if sender_id is "NaN" or invalid, check sender_type
+        bool isCurrentUser = false;
+        String normalizedSenderId = '';
+        String normalizedUserId = '';
+        
+        if (senderId.toLowerCase() == 'nan' || senderId.isEmpty) {
+          // If sender_id is NaN, check if sender_type matches and assume it's our message if type matches
+          // This is a workaround for backend issue where sender_id is "NaN"
+          if (senderType.toLowerCase() == widget.senderType.toLowerCase()) {
+            isCurrentUser = true;
+            print('⚠️ [Chat] Socket: sender_id is "NaN", but sender_type matches, assuming current user message');
+          }
+          normalizedSenderId = senderId;
+          normalizedUserId = widget.userId;
+        } else {
+          // Normalize IDs for comparison (handle both string and number formats)
+          normalizedSenderId = _normalizeId(senderId);
+          normalizedUserId = _normalizeId(widget.userId);
+          isCurrentUser = normalizedSenderId.isNotEmpty && 
+                         normalizedUserId.isNotEmpty && 
+                         normalizedSenderId == normalizedUserId;
+        }
+        
+        print('📨 [Chat] Real-time message - id: $messageId, sender: "$normalizedSenderId" (raw: "$senderId"), current user: "$normalizedUserId" (raw: "${widget.userId}"), isCurrentUser: $isCurrentUser, body: $body');
+        
+        // Check if message already exists (avoid duplicates)
+        bool messageExists = false;
+        if (messageId.isNotEmpty) {
+          // Check by messageId first (most reliable)
+          messageExists = processedMessageIds.contains(messageId);
+        }
+        
+        // Also check by text and sender to catch duplicates (including optimistic messages)
+        if (!messageExists) {
+          // Find optimistic message with same text from current user
+          if (isCurrentUser) {
+            final optimisticIndex = messageWidgets.indexWhere((msg) => 
+              msg.msgText == body && 
+              msg.user == true // Sent message (right side)
+            );
+            
+            if (optimisticIndex != -1) {
+              // Replace optimistic message with real one
+              messageExists = true;
+              if (mounted) {
+                setState(() {
+                  messageWidgets[optimisticIndex] = MessageBubble(
+                    msgText: body,
+                    msgSender: "You",
+                    user: true, // Always right side for sent messages
+                    sending: false, // No longer sending
+                    receiverImage: widget.userAsset,
+                  );
+                  if (messageId.isNotEmpty) {
+                    processedMessageIds.add(messageId);
+                  }
+                });
+              }
+              print('✅ [Chat] Replaced optimistic message with real message: $messageId');
+              return; // Don't add again - IMPORTANT: prevents duplicate
+            }
+          }
+          
+          // Check for other duplicates (including if message already exists with same text and alignment)
+          messageExists = messageWidgets.any((msg) => 
+            msg.msgText == body && 
+            ((isCurrentUser && msg.user == true) || (!isCurrentUser && msg.user == false))
+          );
+        }
+        
+        // CRITICAL: If message is from current user but isCurrentUser is false, fix it
+        // This handles cases where ID comparison failed but we know it's our message
+        bool shouldBeRightSide = isCurrentUser;
+        if (!isCurrentUser && body.isNotEmpty) {
+          // Double-check: if we just sent this message (check optimistic messages)
+          final recentOptimistic = messageWidgets.any((msg) => 
+            msg.msgText == body && 
+            msg.user == true && 
+            msg.sending == true
+          );
+          if (recentOptimistic) {
+            shouldBeRightSide = true;
+            print('⚠️ [Chat] Fixing alignment: message from current user incorrectly identified, forcing right side');
+          }
+        }
+        
+        if (!messageExists && body.isNotEmpty) {
+          // Mark as processed
+          if (messageId.isNotEmpty) {
+            processedMessageIds.add(messageId);
+          }
+          final msgBubble = MessageBubble(
+            msgText: body,
+            msgSender: shouldBeRightSide ? 'You' : widget.userName,
+            user: shouldBeRightSide, // true = right side (sent), false = left side (received)
+            receiverImage: widget.userAsset,
+          );
+          if (mounted) {
+            setState(() {
+              messageWidgets.add(msgBubble);
+            });
+          }
+          
+          // Mark as read if message is from peer and user is viewing chat
+          if (!isCurrentUser && messageId.isNotEmpty) {
+            try {
+              await chatService!.markMessageAsRead(
+                messageId: messageId,
+                readerId: widget.userId,
+                readerType: widget.senderType,
+              );
+            } catch (e) {
+              print('⚠️ [Chat] Failed to mark message as read: $e');
+            }
+          }
+        } else {
+          print('⚠️ [Chat] Duplicate message detected, skipping');
         }
       });
     } catch (e) {
@@ -249,25 +376,32 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                         child: TextField(
                           onSubmitted: (value) {
                             if (chatMsgTextController.text.trim().isEmpty) return;
+                            final messageText = chatMsgTextController.text.trim();
+                            chatMsgTextController.clear();
+                            
+                            // Add message optimistically (immediate UI feedback)
+                            final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}_${messageText.hashCode}';
+                            final optimisticBubble = MessageBubble(
+                              msgText: messageText,
+                              msgSender: "You",
+                              user: true, // Always right side for sent messages
+                              sending: true,
+                              receiverImage: widget.userAsset,
+                            );
                             setState(() {
-                              chatService?.sendMessage(
-                                conversationId: conversationId!,
-                                senderId: int.parse(widget.userId),
-                                senderType: widget.senderType,
-                                receiverId: int.parse(widget.friendId),
-                                receiverType: widget.receiverType,
-                                body: chatMsgTextController.text,
-                              );
-                              final msgBubble = MessageBubble(
-                                msgText: chatMsgTextController.text,
-                                msgSender: "You",
-                                user: true,
-                                sending: true,
-                                receiverImage: widget.userAsset,
-                              );
-                              chatMsgTextController.clear();
-                              messageWidgets.add(msgBubble);
+                              messageWidgets.add(optimisticBubble);
+                              processedMessageIds.add(tempId); // Track temp ID
                             });
+                            
+                            // Send message (IDs are strings, not ints)
+                            chatService?.sendMessage(
+                              conversationId: conversationId!,
+                              senderId: widget.userId, // Pass as string
+                              senderType: widget.senderType,
+                              receiverId: widget.friendId, // Pass as string
+                              receiverType: widget.receiverType,
+                              body: messageText,
+                            );
                           },
                           controller: chatMsgTextController,
                           maxLines: null,
@@ -296,25 +430,32 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                 InkWell(
                     onTap: () {
                       if (chatMsgTextController.text.trim().isEmpty) return;
+                      final messageText = chatMsgTextController.text.trim();
+                      chatMsgTextController.clear();
+                      
+                      // Add message optimistically (immediate UI feedback)
+                      final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}_${messageText.hashCode}';
+                      final optimisticBubble = MessageBubble(
+                        msgText: messageText,
+                        msgSender: "You",
+                        user: true, // Always right side for sent messages
+                        sending: true,
+                        receiverImage: widget.userAsset,
+                      );
                       setState(() {
-                        chatService?.sendMessage(
-                          conversationId: conversationId!,
-                          senderId: int.parse(widget.userId),
-                          senderType: widget.senderType,
-                          receiverId: int.parse(widget.friendId),
-                          receiverType: widget.receiverType,
-                          body: chatMsgTextController.text,
-                        );
-                        final msgBubble = MessageBubble(
-                          msgText: chatMsgTextController.text,
-                          msgSender: "You",
-                          user: true,
-                          sending: true,
-                          receiverImage: widget.userAsset,
-                        );
-                        chatMsgTextController.clear();
-                        messageWidgets.add(msgBubble);
+                        messageWidgets.add(optimisticBubble);
+                        processedMessageIds.add(tempId); // Track temp ID
                       });
+                      
+                      // Send message (IDs are strings, not ints)
+                      chatService?.sendMessage(
+                        conversationId: conversationId!,
+                        senderId: widget.userId, // Pass as string
+                        senderType: widget.senderType,
+                        receiverId: widget.friendId, // Pass as string
+                        receiverType: widget.receiverType,
+                        body: messageText,
+                      );
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
@@ -428,23 +569,87 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
         _isLoading = true;
         _loadError = null;
       });
+      print('📥 [Chat] Loading message history for conversation: $conversationId');
       final list = await chatService!.getMessages(conversationId!, limit: 50);
+      print('📥 [Chat] Loaded ${list.length} messages from history');
+      
+      // Clear existing messages before loading history
+      messageWidgets.clear();
+      
+      // Track unread message IDs to mark as read
+      final List<String> unreadMessageIds = [];
+      
       for (final item in list) {
-        // Try both snake_case and camelCase for compatibility
-        final senderId = (item['senderId'] ?? item['sender_id'])?.toString() ?? '';
+        // Handle message structure from guide: _id, senderId, senderType, receiverId, receiverType, body, mediaUrl, status, createdAt
+        final messageId = item['_id']?.toString() ?? '';
+        final senderIdRaw = item['senderId'] ?? item['sender_id'];
+        final senderId = senderIdRaw?.toString() ?? '';
+        final senderType = (item['senderType'] ?? item['sender_type'])?.toString() ?? '';
         final body = item['body']?.toString() ?? '';
-        final isCurrentUser = senderId.toString() == widget.userId.toString();
-        print('[Chat] Message from sender: $senderId, current user: ${widget.userId}, isCurrentUser: $isCurrentUser');
-        final msgBubble = MessageBubble(
-          msgText: body,
-          msgSender: isCurrentUser ? 'You' : widget.userName,
-          user: isCurrentUser,
-          receiverImage: widget.userAsset,
-        );
-        messageWidgets.add(msgBubble);
+        final status = item['status']?.toString() ?? 'sent';
+        
+        // Handle "NaN" sender_id case - if sender_id is "NaN" or invalid, check sender_type
+        // If sender_type matches current user type, it's likely our message
+        bool isCurrentUser = false;
+        if (senderId.toLowerCase() == 'nan' || senderId.isEmpty) {
+          // If sender_id is NaN, check if sender_type matches and assume it's our message if type matches
+          // This is a workaround for backend issue where sender_id is "NaN"
+          if (senderType.toLowerCase() == widget.senderType.toLowerCase()) {
+            isCurrentUser = true;
+            print('⚠️ [Chat] History: sender_id is "NaN", but sender_type matches, assuming current user message');
+          }
+        } else {
+          // Normalize IDs for comparison (handle both string and number formats)
+          final normalizedSenderId = _normalizeId(senderId);
+          final normalizedUserId = _normalizeId(widget.userId);
+          isCurrentUser = normalizedSenderId.isNotEmpty && 
+                         normalizedUserId.isNotEmpty && 
+                         normalizedSenderId == normalizedUserId;
+        }
+        
+        print('📥 [Chat] History message - id: $messageId, sender: "$senderId" (type: ${senderIdRaw.runtimeType}), sender_type: "$senderType", current user: "${widget.userId}", isCurrentUser: $isCurrentUser, body: $body, status: $status');
+        
+        if (body.isNotEmpty) {
+          // Mark as processed to prevent duplicates
+          if (messageId.isNotEmpty) {
+            processedMessageIds.add(messageId);
+          }
+          
+          final msgBubble = MessageBubble(
+            msgText: body,
+            msgSender: isCurrentUser ? 'You' : widget.userName,
+            user: isCurrentUser, // true = right side (sent), false = left side (received)
+            receiverImage: widget.userAsset,
+          );
+          messageWidgets.add(msgBubble);
+          
+          // Track unread messages (not sent by current user and status is not 'read')
+          if (!isCurrentUser && messageId.isNotEmpty && status != 'read') {
+            unreadMessageIds.add(messageId);
+          }
+        }
       }
+      
+      // Mark unread messages as read
+      if (unreadMessageIds.isNotEmpty) {
+        print('📥 [Chat] Marking ${unreadMessageIds.length} messages as read');
+        for (final messageId in unreadMessageIds) {
+          try {
+            await chatService!.markMessageAsRead(
+              messageId: messageId,
+              readerId: widget.userId,
+              readerType: widget.senderType,
+            );
+          } catch (e) {
+            print('⚠️ [Chat] Failed to mark message $messageId as read: $e');
+          }
+        }
+      }
+      
+      print('📥 [Chat] Total messages in UI: ${messageWidgets.length}');
       if (mounted) setState(() {});
     } catch (e) {
+      print('❌ [Chat] Error loading history: $e');
       _loadError = e.toString();
     } finally {
       if (mounted) {

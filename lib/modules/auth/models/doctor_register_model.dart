@@ -26,7 +26,7 @@ class DoctorRegisterModel {
 }
 
 class Data {
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? name;
   String? email;
   String? password;
@@ -62,22 +62,39 @@ class Data {
       this.qualifications});
 
   Data.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    print('📋 [DoctorRegisterModel.Data] Parsing userId: $userId (type: ${userId.runtimeType})');
+    // Convert to String if it's not already (for MongoDB ObjectId)
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
     name = json['name'];
     email = json['email'];
     password = json['password'];
-    image = json['image'];
+    image = json['image']?.toString() ?? '';
     userRole = json['user_role'];
     authType = json['auth_type'];
-    phone = json['phone'];
-    deviceToken = json['device_token'];
+    phone = json['phone']?.toString() ?? '';
+    deviceToken = json['device_token']?.toString() ?? '';
     doctorDetailId = json['doctor_detail_id'];
-    gender = json['gender'];
-    expertise = json['expertise'];
-    location = json['location'];
-    consultationFee = json['consultation_fee'];
-    document = json['document'];
-    qualifications = json['qualifications'];
+    // Handle nested profile structure if present
+    if (json['profile'] != null && json['profile']['doctor'] != null) {
+      final doctorProfile = json['profile']['doctor'];
+      gender = doctorProfile['gender']?.toString();
+      expertise = doctorProfile['expertise']?.toString();
+      location = doctorProfile['location']?.toString();
+      consultationFee = doctorProfile['consultation_fee']?.toString();
+      document = doctorProfile['document']?.toString();
+      qualifications = doctorProfile['qualifications']?.toString();
+    } else {
+      gender = json['gender']?.toString();
+      expertise = json['expertise']?.toString();
+      location = json['location']?.toString();
+      consultationFee = json['consultation_fee']?.toString();
+      document = json['document']?.toString();
+      qualifications = json['qualifications']?.toString();
+    }
   }
 
   Map<String, dynamic> toJson() {

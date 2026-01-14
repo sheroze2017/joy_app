@@ -31,18 +31,22 @@ class AllDonor {
 }
 
 class BloodDonor {
-  int? donorId;
+  dynamic donorId;
   String? name;
   String? bloodGroup;
   String? location;
   String? gender;
   String? city;
   String? status;
-  int? userId;
+  dynamic userId;
   String? createdAt;
   String? type;
   String? phone;
   String? image;
+  String? email;
+  String? about;
+  int? age;
+  int? totalDonations;
 
   BloodDonor(
       {this.donorId,
@@ -56,10 +60,14 @@ class BloodDonor {
       this.createdAt,
       this.type,
       this.phone,
-      this.image});
+      this.image,
+      this.email,
+      this.about,
+      this.age,
+      this.totalDonations});
 
   BloodDonor.fromJson(Map<String, dynamic> json) {
-    donorId = json['donor_id'];
+    donorId = json['donor_id'] ?? json['_id'];
     name = json['name'];
     bloodGroup = json['blood_group'];
     location = json['location'];
@@ -70,7 +78,11 @@ class BloodDonor {
     createdAt = json['created_at'];
     type = json['type'];
     phone = json['phone'];
-    image = json['image'].toString();
+    image = json['image']?.toString() ?? '';
+    email = json['email'];
+    about = json['about'];
+    age = json['age'] is int ? json['age'] : (json['age'] != null ? int.tryParse(json['age'].toString()) : null);
+    totalDonations = json['total_donations'] is int ? json['total_donations'] : (json['total_donations'] != null ? int.tryParse(json['total_donations'].toString()) : null);
   }
 
   Map<String, dynamic> toJson() {
@@ -87,6 +99,10 @@ class BloodDonor {
     data['type'] = this.type;
     data['phone'] = this.phone;
     data['image'] = this.image;
+    data['email'] = this.email;
+    data['about'] = this.about;
+    data['age'] = this.age;
+    data['total_donations'] = this.totalDonations;
     return data;
   }
 }

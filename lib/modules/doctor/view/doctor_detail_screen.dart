@@ -10,9 +10,9 @@ import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
-import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 import '../bloc/doctor_bloc.dart';
+import '../models/doctor_detail_model.dart';
 
 class DoctorDetailScreen extends StatelessWidget {
   final String docName;
@@ -28,6 +28,76 @@ class DoctorDetailScreen extends StatelessWidget {
       this.isDoctor = false});
 
   DoctorController _doctorController = Get.find<DoctorController>();
+  
+  Widget _buildDoctorAvatar(String? imageUrl, BuildContext context) {
+    final isValidUrl = imageUrl != null &&
+        imageUrl.trim().isNotEmpty &&
+        imageUrl.trim().toLowerCase() != 'null' &&
+        imageUrl.contains('http') &&
+        !imageUrl.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab') &&
+        !imageUrl.contains('194.233.69.219');
+    
+    if (isValidUrl) {
+      return CachedNetworkImage(
+        imageUrl: imageUrl.trim(),
+        width: 27.9.w,
+        height: 27.9.w,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => Container(
+          width: 27.9.w,
+          height: 27.9.w,
+          decoration: BoxDecoration(
+            color: ThemeUtil.isDarkMode(context)
+                ? Color(0xff2A2A2A)
+                : Color(0xffE5E5E5),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Icon(
+            Icons.person,
+            size: 15.w,
+            color: ThemeUtil.isDarkMode(context)
+                ? Color(0xff5A5A5A)
+                : Color(0xffA5A5A5),
+          ),
+        ),
+        errorWidget: (context, url, error) => Container(
+          width: 27.9.w,
+          height: 27.9.w,
+          decoration: BoxDecoration(
+            color: ThemeUtil.isDarkMode(context)
+                ? Color(0xff2A2A2A)
+                : Color(0xffE5E5E5),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Icon(
+            Icons.person,
+            size: 15.w,
+            color: ThemeUtil.isDarkMode(context)
+                ? Color(0xff5A5A5A)
+                : Color(0xffA5A5A5),
+          ),
+        ),
+      );
+    }
+    return Container(
+      width: 27.9.w,
+      height: 27.9.w,
+      decoration: BoxDecoration(
+        color: ThemeUtil.isDarkMode(context)
+            ? Color(0xff2A2A2A)
+            : Color(0xffE5E5E5),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Icon(
+        Icons.person,
+        size: 15.w,
+        color: ThemeUtil.isDarkMode(context)
+            ? Color(0xff5A5A5A)
+            : Color(0xffA5A5A5),
+      ),
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     final data = _doctorController.doctorDetail!.data;
@@ -39,7 +109,7 @@ class DoctorDetailScreen extends StatelessWidget {
               : AppColors.lightishBlueColorebf,
           title: isDoctor ? 'Your Profile' : 'Doctor Details',
           leading: Icon(Icons.arrow_back),
-          actions: [
+          actions: isDoctor ? [] : [
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: InkWell(
@@ -88,22 +158,7 @@ class DoctorDetailScreen extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(12.0),
-                                child: CachedNetworkImage(
-                                  imageUrl: data!.image.toString(),
-                                  width: 27.9.w,
-                                  height: 27.9.w,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(
-                                      child: Padding(
-                                    padding: const EdgeInsets.only(top: 20.0),
-                                    child: LoadingWidget(),
-                                  )),
-                                  errorWidget: (context, url, error) => Center(
-                                      child: Padding(
-                                    padding: const EdgeInsets.only(top: 20.0),
-                                    child: ErorWidget(),
-                                  )),
-                                ),
+                                child: _buildDoctorAvatar(data!.image, context),
                               ),
                               SizedBox(
                                 width: 1.w,
@@ -134,7 +189,7 @@ class DoctorDetailScreen extends StatelessWidget {
                                               : Color(0XFFE5E7EB),
                                         ),
                                         Text(
-                                          data.qualifications.toString(),
+                                          data.expertise?.toString() ?? data.qualifications?.toString() ?? '',
                                           style: CustomTextStyles.w600TextStyle(
                                               size: 14,
                                               color: Color(0xff4B5563)),
@@ -177,33 +232,26 @@ class DoctorDetailScreen extends StatelessWidget {
                                   bgColor: AppColors.lightishBlueColorebf,
                                   iconColor: Color(0xff023477),
                                   svgAsset: 'Assets/icons/profile-2user.svg',
-                                  numberText: data.reviews!.length.toString(),
+                                  numberText: data.totalPatients != null 
+                                      ? '${data.totalPatients}+' 
+                                      : '0',
                                   isDoctor: true,
                                   descriptionText: 'Patients',
                                 ),
                                 RoundedSVGContainer(
                                   bgColor: AppColors.lightishBlueColorebf,
                                   iconColor: Color(0xff023477),
-                                  svgAsset: 'Assets/icons/medal.svg',
-                                  numberText: '10+',
-                                  isDoctor: true,
-                                  descriptionText: 'experience',
-                                ),
-                                RoundedSVGContainer(
-                                  bgColor: AppColors.lightishBlueColorebf,
-                                  iconColor: Color(0xff023477),
                                   svgAsset: 'Assets/icons/star.svg',
-                                  numberText:
-                                      _doctorController.val.value.toString(),
-                                  descriptionText: 'rating',
+                                  numberText: _calculateAverageRating(data.reviews ?? []).toStringAsFixed(1),
                                   isDoctor: true,
+                                  descriptionText: 'rating',
                                 ),
                                 RoundedSVGContainer(
                                   isDoctor: true,
                                   bgColor: AppColors.lightishBlueColorebf,
                                   iconColor: Color(0xff023477),
                                   svgAsset: 'Assets/icons/messages.svg',
-                                  numberText: data!.reviews!.length.toString(),
+                                  numberText: (data.reviews?.length ?? 0).toString(),
                                   descriptionText: 'reviews',
                                 ),
                               ],
@@ -228,19 +276,15 @@ class DoctorDetailScreen extends StatelessWidget {
                             title: 'About me',
                           ),
                           SizedBox(height: 1.h),
-                          Text('',
+                          Text(
+                              data.aboutMe?.toString() ?? '',
                               style: CustomTextStyles.lightTextStyle(size: 14)),
                           SizedBox(height: 1.5.h),
                           Heading(
                             title: 'Working Time',
                           ),
                           SizedBox(height: 1.h),
-                          Obx(
-                            () => Text(
-                              _doctorController.doctorAvailabilityText.value,
-                              style: CustomTextStyles.lightTextStyle(size: 14),
-                            ),
-                          ),
+                          _buildWorkingTime(data.availability ?? []),
                           SizedBox(height: 1.5.h),
                           Heading(
                             title: 'Appointment Cost',
@@ -266,15 +310,16 @@ class DoctorDetailScreen extends StatelessWidget {
                                       0,
                                   itemBuilder: ((context, index) {
                                     final data = _doctorController
-                                        .doctorDetail!.data?.reviews![index];
+                                        .doctorDetail!.data?.reviews?[index];
+                                    if (data == null) return SizedBox.shrink();
                                     return Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 10.0),
                                       child: UserRatingWidget(
-                                        image: data!.giveBy!.image!,
-                                        docName: data!.giveBy!.name!,
-                                        reviewText: data!.review!,
-                                        rating: data.rating!,
+                                        image: data.giveBy?.image,
+                                        docName: data.giveBy?.name ?? 'Unknown',
+                                        reviewText: data.review ?? '',
+                                        rating: data.rating,
                                       ),
                                     );
                                   })))
@@ -323,6 +368,47 @@ class DoctorDetailScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+  
+  double _calculateAverageRating(List<Reviews>? reviews) {
+    if (reviews == null || reviews.isEmpty) return 0.0;
+    double total = 0.0;
+    for (var review in reviews) {
+      if (review.rating != null) {
+        if (review.rating is int) {
+          total += (review.rating as int).toDouble();
+        } else if (review.rating is double) {
+          total += review.rating as double;
+        } else if (review.rating is String) {
+          total += double.tryParse(review.rating as String) ?? 0.0;
+        }
+      }
+    }
+    return total / reviews.length;
+  }
+  
+  Widget _buildWorkingTime(List<Availability>? availability) {
+    if (availability == null || availability.isEmpty) {
+      return Text(
+        'No working hours available',
+        style: CustomTextStyles.lightTextStyle(size: 14),
+      );
+    }
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: availability.map((avail) {
+        final times = avail.times ?? '';
+        final day = avail.day ?? '';
+        return Padding(
+          padding: EdgeInsets.only(bottom: 0.5.h),
+          child: Text(
+            '$day: $times',
+            style: CustomTextStyles.lightTextStyle(size: 14),
+          ),
+        );
+      }).toList(),
     );
   }
 }

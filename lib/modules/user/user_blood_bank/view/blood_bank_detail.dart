@@ -5,6 +5,7 @@ import 'package:joy_app/common/profile/view/my_profile.dart';
 import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
 import 'package:joy_app/modules/blood_bank/view/component/donors_card.dart';
+import 'package:joy_app/modules/user/user_blood_bank/view/widgets/donor_detail_sheet.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -49,14 +50,50 @@ class _BloodBankDetailScreenState extends State<BloodBankDetailScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    widget.donor.image!.contains('http')
-                        ? widget.donor.image!
-                        : CustomConstant.nullUserImage,
-                    width: 23.74.w,
-                    height: 23.74.w,
-                    fit: BoxFit.cover,
-                  ),
+                  child: (widget.donor.image!.contains('http') &&
+                          !widget.donor.image!.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'))
+                      ? Image.network(
+                          widget.donor.image!,
+                          width: 23.74.w,
+                          height: 23.74.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 23.74.w,
+                              height: 23.74.w,
+                              decoration: BoxDecoration(
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff2A2A2A)
+                                    : Color(0xffE5E5E5),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                Icons.person,
+                                size: 15.w,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff5A5A5A)
+                                    : Color(0xffA5A5A5),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          width: 23.74.w,
+                          height: 23.74.w,
+                          decoration: BoxDecoration(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff2A2A2A)
+                                : Color(0xffE5E5E5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: 15.w,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff5A5A5A)
+                                : Color(0xffA5A5A5),
+                          ),
+                        ),
                 ),
                 SizedBox(
                   width: 5.w,
@@ -140,17 +177,29 @@ class _VerticalDonorsList extends StatelessWidget {
         childAspectRatio: 0.75, // Set the aspect ratio of the children
       ),
       itemCount: donors.length,
-      itemBuilder: (context, index) {
-        return DonorsCardWidget(
-          color: donors[index].type == 'Plasma' ? bgColors[1] : bgColors[0],
-          imgUrl: donors[index].image.toString(),
-          docName: donors[index].name.toString(),
-          Category: 'Blood ' + donors[index].bloodGroup.toString(),
-          loction: donors[index].location.toString() +
-              ' ' +
-              donors[index].city.toString(),
-          phoneNo: donors[index].phone.toString(),
-          donId: donors[index].userId ?? 0,
+      itemBuilder: (BuildContext context, int index) {
+        return InkWell(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (BuildContext context) => DonorDetailSheet(
+                donor: donors[index],
+              ),
+            );
+          },
+          child: DonorsCardWidget(
+            color: donors[index].type == 'Plasma' ? bgColors[1] : bgColors[0],
+            imgUrl: donors[index].image.toString(),
+            docName: donors[index].name.toString(),
+            Category: 'Blood ' + donors[index].bloodGroup.toString(),
+            loction: donors[index].location.toString() +
+                ' ' +
+                donors[index].city.toString(),
+            phoneNo: donors[index].phone.toString(),
+            donId: donors[index].userId ?? 0,
+          ),
         );
       },
     );

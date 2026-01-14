@@ -24,8 +24,15 @@ class _AllDonorScreenState extends State<AllDonorScreen> {
   @override
   void initState() {
     super.initState();
-    _bloodBankController.searchedDonors.value =
-        _bloodBankController.allDonors.value;
+    // Defer observable updates to avoid setState during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Load donors if not already loaded
+      if (_bloodBankController.allDonors.isEmpty) {
+        _bloodBankController.getallDonor();
+      } else {
+        _bloodBankController.searchedDonors.assignAll(_bloodBankController.allDonors);
+      }
+    });
   }
 
   @override
@@ -54,7 +61,7 @@ class _AllDonorScreenState extends State<AllDonorScreen> {
               ),
               Obx(
                 () => Text(
-                  _bloodBankController.searchedDonors.value.length.toString() +
+                  _bloodBankController.searchedDonors.length.toString() +
                       ' founds',
                   style: CustomTextStyles.darkHeadingTextStyle(
                       color: ThemeUtil.isDarkMode(context)
@@ -67,9 +74,23 @@ class _AllDonorScreenState extends State<AllDonorScreen> {
               ),
               Expanded(
                   child: Obx(
-                () => _VerticalDonorsList(
-                  donors: _bloodBankController.searchedDonors.value,
-                ),
+                () {
+                  final donors = _bloodBankController.searchedDonors;
+                  if (donors.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Text(
+                          'No donors found',
+                          style: CustomTextStyles.lightTextStyle(size: 16),
+                        ),
+                      ),
+                    );
+                  }
+                  return _VerticalDonorsList(
+                    donors: donors,
+                  );
+                },
               )),
             ],
           ),
@@ -106,7 +127,7 @@ class _VerticalDonorsList extends StatelessWidget {
                 ' ' +
                 donors[index].city.toString(),
             phoneNo: donors[index].phone.toString(),
-            donId: donors[index].userId ?? 0,
+            donId: donors[index].userId?.toString() ?? '',
           ),
         );
       },

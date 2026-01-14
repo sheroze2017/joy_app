@@ -48,14 +48,50 @@ class _DonorDetailScreenState extends State<DonorDetailScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(50),
-                  child: Image.network(
-                    widget.donor.image!.contains('http')
-                        ? widget.donor.image!
-                        : CustomConstant.nullUserImage,
-                    width: 23.74.w,
-                    height: 23.74.w,
-                    fit: BoxFit.cover,
-                  ),
+                  child: (widget.donor.image!.contains('http') &&
+                          !widget.donor.image!.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'))
+                      ? Image.network(
+                          widget.donor.image!,
+                          width: 23.74.w,
+                          height: 23.74.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 23.74.w,
+                              height: 23.74.w,
+                              decoration: BoxDecoration(
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff2A2A2A)
+                                    : Color(0xffE5E5E5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.person,
+                                size: 15.w,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff5A5A5A)
+                                    : Color(0xffA5A5A5),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          width: 23.74.w,
+                          height: 23.74.w,
+                          decoration: BoxDecoration(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff2A2A2A)
+                                : Color(0xffE5E5E5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: 15.w,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff5A5A5A)
+                                : Color(0xffA5A5A5),
+                          ),
+                        ),
                 ),
                 SizedBox(
                   width: 5.w,
@@ -167,7 +203,7 @@ class _VerticalDonorsList extends StatelessWidget {
               ' ' +
               donors[index].city.toString(),
           phoneNo: donors[index].phone.toString(),
-          donId: donors[index].userId ?? 0,
+          donId: donors[index].userId?.toString() ?? '',
         );
       },
     );

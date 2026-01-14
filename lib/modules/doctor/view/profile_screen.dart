@@ -79,14 +79,50 @@ class _FormScreenState extends State<ProfileScreen> {
                       child: Center(
                         child: ClipOval(
                           // Add this widget
-                          child: Image.network(
-                            fit: BoxFit.cover,
-                            _profileController.image.toString().contains('http')
-                                ? _profileController.image.toString()
-                                : CustomConstant.nullUserImage,
-                            width: 41.w,
-                            height: 41.w,
-                          ),
+                          child: (_profileController.image.toString().contains('http') &&
+                                  !_profileController.image.toString().contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'))
+                              ? Image.network(
+                                  _profileController.image.toString(),
+                                  fit: BoxFit.cover,
+                                  width: 41.w,
+                                  height: 41.w,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 41.w,
+                                      height: 41.w,
+                                      decoration: BoxDecoration(
+                                        color: ThemeUtil.isDarkMode(context)
+                                            ? Color(0xff2A2A2A)
+                                            : Color(0xffE5E5E5),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 20.w,
+                                        color: ThemeUtil.isDarkMode(context)
+                                            ? Color(0xff5A5A5A)
+                                            : Color(0xffA5A5A5),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  width: 41.w,
+                                  height: 41.w,
+                                  decoration: BoxDecoration(
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xff2A2A2A)
+                                        : Color(0xffE5E5E5),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 20.w,
+                                    color: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xff5A5A5A)
+                                        : Color(0xffA5A5A5),
+                                  ),
+                                ),
                         ),
                       ),
                     ),

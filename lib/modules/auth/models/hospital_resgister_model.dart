@@ -26,7 +26,7 @@ class HospitalRegisterModel {
 }
 
 class Data {
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? name;
   String? email;
   String? password;
@@ -64,23 +64,41 @@ class Data {
       this.location});
 
   Data.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    print('📋 [HospitalRegisterModel.Data] Parsing userId: $userId (type: ${userId.runtimeType})');
+    // Convert to String if it's not already (for MongoDB ObjectId)
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
     name = json['name'];
     email = json['email'];
     password = json['password'];
-    image = json['image'];
+    image = json['image']?.toString() ?? '';
     userRole = json['user_role'];
     authType = json['auth_type'];
-    phone = json['phone'];
-    deviceToken = json['device_token'];
+    phone = json['phone']?.toString() ?? '';
+    deviceToken = json['device_token']?.toString() ?? '';
     hospitalDetailId = json['hospital_detail_id'];
-    placeId = json['place_id'];
-    lat = json['lat'];
-    lng = json['lng'];
-    about = json['about'];
-    institute = json['institute'];
-    checkupFee = json['checkup_fee'];
-    location = json['location'];
+    // Handle nested profile structure if present
+    if (json['profile'] != null && json['profile']['hospital'] != null) {
+      final hospitalProfile = json['profile']['hospital'];
+      placeId = hospitalProfile['place_id']?.toString();
+      lat = hospitalProfile['lat']?.toString();
+      lng = hospitalProfile['lng']?.toString();
+      about = hospitalProfile['about']?.toString();
+      institute = hospitalProfile['institute']?.toString();
+      checkupFee = hospitalProfile['checkup_fee']?.toString();
+      location = hospitalProfile['location']?.toString();
+    } else {
+      placeId = json['place_id']?.toString();
+      lat = json['lat']?.toString();
+      lng = json['lng']?.toString();
+      about = json['about']?.toString();
+      institute = json['institute']?.toString();
+      checkupFee = json['checkup_fee']?.toString();
+      location = json['location']?.toString();
+    }
   }
 
   Map<String, dynamic> toJson() {

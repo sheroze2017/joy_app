@@ -1,11 +1,13 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:joy_app/common/navbar/view/navbar.dart';
+import 'package:joy_app/modules/auth/models/user.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/widgets/custom_message/notification_item.dart';
+import 'package:joy_app/widgets/drawer/user_drawer.dart';
 
 class NotificationScreen extends StatefulWidget {
   bool showBackIcon;
@@ -17,6 +19,8 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   List<NotificationItem> _notifications = [];
+  bool isPharmacyMode = false;
+  bool isBloodBankMode = false;
 
   Future<void> _handleNotification(RemoteMessage message) async {
     // Handle notification data here
@@ -43,44 +47,91 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
-
+    _checkMode();
     FirebaseMessaging.onMessage.listen(_handleNotification);
+  }
+
+  Future<void> _checkMode() async {
+    UserHive? currentUser = await getCurrentUser();
+    if (currentUser != null) {
+      setState(() {
+        isPharmacyMode = currentUser.userRole == 'PHARMACY';
+        isBloodBankMode = currentUser.userRole == 'BLOODBANK';
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeAppBar(
-        showIcon: widget.showBackIcon,
-        title: 'Notification',
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 24.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: ThemeUtil.isDarkMode(context)
-                      ? Color(0xffC5D3E3)
-                      : Color(0xff4B5563),
-                  borderRadius: BorderRadius.circular(8)),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
-                child: Text(
-                  '${_notifications.length} New',
-                  style: CustomTextStyles.w600TextStyle(
-                      color: ThemeUtil.isDarkMode(context)
-                          ? AppColors.blackColor
-                          : AppColors.whiteColor,
-                      size: 14),
+      drawer: widget.showBackIcon ? null : UserDrawer(),
+      appBar: (isPharmacyMode || isBloodBankMode)
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              title: Padding(
+                padding: const EdgeInsets.only(right: 24.0),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffC5D3E3)
+                            : Color(0xff4B5563),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
+                      child: Text(
+                        '${_notifications.length} New',
+                        style: CustomTextStyles.w600TextStyle(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.blackColor
+                                : AppColors.whiteColor,
+                            size: 14),
+                      ),
+                    ),
+                  ),
                 ),
               ),
+            )
+          : HomeAppBar(
+              isImage: widget.showBackIcon ? false : true,
+              showIcon: widget.showBackIcon,
+              title: 'Notification',
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 24.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: ThemeUtil.isDarkMode(context)
+                            ? Color(0xffC5D3E3)
+                            : Color(0xff4B5563),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
+                      child: Text(
+                        '${_notifications.length} New',
+                        style: CustomTextStyles.w600TextStyle(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? AppColors.blackColor
+                                : AppColors.whiteColor,
+                            size: 14),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+              leading: widget.showBackIcon ? Icon(Icons.arrow_back) : Text(''),
             ),
-          )
-        ],
-        leading: Icon(Icons.arrow_back),
-      ),
       body: Container(
         child: Padding(
-            padding: EdgeInsets.all(24.0),
+            padding: EdgeInsets.only(
+              left: 24.0,
+              right: 24.0,
+              top: (isPharmacyMode || isBloodBankMode) ? 60.0 : 24.0,
+              bottom: 24.0,
+            ),
             child: ListView.separated(
                 itemCount: _notifications.length,
                 separatorBuilder: (context, index) {

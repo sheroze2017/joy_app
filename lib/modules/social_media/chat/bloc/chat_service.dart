@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:joy_app/core/constants/endpoints.dart';
+import 'package:joy_app/core/network/utils/token.dart';
 
 class ChatService {
   final Dio dio;
@@ -9,22 +10,51 @@ class ChatService {
   ChatService(this.dio);
 
   Future<String> ensureConversation({
-    required int userId,
+    required dynamic userId, // Changed to dynamic to accept both String and int
     required String userType,
-    required int peerId,
+    required dynamic peerId, // Changed to dynamic to accept both String and int
     required String peerType,
   }) async {
     try {
-      print('[Chat] POST ${Endpoints.chatRestBase + Endpoints.chatEnsureConversation}');
-      print('[Chat] payload: {user_id: $userId, user_type: $userType, peer_id: $peerId, peer_type: $peerType}');
+      // Convert to string if needed (MongoDB ObjectIds are strings)
+      final userIdStr = userId.toString();
+      final peerIdStr = peerId.toString();
+      
+      final url = Endpoints.chatRestBase + Endpoints.chatEnsureConversation;
+      final payload = {
+        'user_id': userIdStr,
+        'user_type': userType,
+        'peer_id': peerIdStr,
+        'peer_type': peerType,
+      };
+      
+      // Get actual token for cURL logging
+      String? actualToken;
+      try {
+        final token = await getToken();
+        actualToken = token;
+      } catch (e) {
+        actualToken = null;
+      }
+      
+      // Log complete cURL command with actual token
+      final jsonPayload = '{"user_id":"$userIdStr","user_type":"$userType","peer_id":"$peerIdStr","peer_type":"$peerType"}';
+      print('📡 [ChatService] ========== cURL for ensureConversation ==========');
+      print('curl --location --request POST \'$url\' \\');
+      if (actualToken != null) {
+        print('  --header \'Authorization: Bearer $actualToken\' \\');
+      } else {
+        print('  --header \'Authorization: Bearer {YOUR_TOKEN}\' \\');
+      }
+      print('  --header \'Content-Type: application/json\' \\');
+      print('  --data-raw \'$jsonPayload\'');
+      print('📡 [ChatService] ================================================');
+      print('[Chat] POST $url');
+      print('[Chat] payload: $payload');
+      
       final res = await dio.post(
-        Endpoints.chatRestBase + Endpoints.chatEnsureConversation,
-        data: {
-          'user_id': userId,
-          'user_type': userType,
-          'peer_id': peerId,
-          'peer_type': peerType,
-        },
+        url,
+        data: payload,
       );
       print('[Chat] ensureConversation response: ${res.data}');
 
@@ -63,14 +93,36 @@ class ChatService {
   }) async {
     try {
       final url = Endpoints.chatRestBase + Endpoints.chatMessages;
-      print('[Chat] GET $url?conversation_id=$conversationId&limit=$limit${before != null ? '&before=$before' : ''}');
+      final queryParams = {
+        'conversation_id': conversationId,
+        'limit': limit,
+        if (before != null) 'before': before,
+      };
+      final queryString = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
+      
+      // Get actual token for cURL logging
+      String? actualToken;
+      try {
+        final token = await getToken();
+        actualToken = token;
+      } catch (e) {
+        actualToken = null;
+      }
+      
+      // Log complete cURL command with actual token
+      print('📡 [ChatService] ========== cURL for getMessages ==========');
+      print('curl --location --request GET \'$url?$queryString\' \\');
+      if (actualToken != null) {
+        print('  --header \'Authorization: Bearer $actualToken\'');
+      } else {
+        print('  --header \'Authorization: Bearer {YOUR_TOKEN}\'');
+      }
+      print('📡 [ChatService] ============================================');
+      print('[Chat] GET $url?$queryString');
+      
       final res = await dio.get(
         url,
-        queryParameters: {
-          'conversation_id': conversationId,
-          'limit': limit,
-          if (before != null) 'before': before,
-        },
+        queryParameters: queryParams,
       );
       print('[Chat] messages response: ${res.data}');
       final data = res.data;
@@ -84,7 +136,7 @@ class ChatService {
     }
   }
 
-  void connectSocket({required int userId, required String userType}) {
+  void connectSocket({required dynamic userId, required String userType}) {
     print('[Socket] connecting: ${Endpoints.chatSocketBase}');
     socket = IO.io(
       Endpoints.chatSocketBase,
@@ -93,7 +145,7 @@ class ChatService {
 
     socket!.onConnect((_) {
       print('[Socket] connected');
-      final payload = {'user_id': userId, 'user_type': userType};
+      final payload = {'user_id': userId.toString(), 'user_type': userType};
       print('[Socket] emit auth: ' + payload.toString());
       socket!.emit('auth', payload);
     });
@@ -111,24 +163,76 @@ class ChatService {
 
   void sendMessage({
     required String conversationId,
-    required int senderId,
+    required dynamic senderId, // Changed to dynamic to accept both String and int
     required String senderType,
-    required int receiverId,
+    required dynamic receiverId, // Changed to dynamic to accept both String and int
     required String receiverType,
     String? body,
     String? mediaUrl,
   }) {
     final payload = {
       'conversation_id': conversationId,
-      'sender_id': senderId,
+      'sender_id': senderId.toString(), // Convert to string
       'sender_type': senderType,
-      'receiver_id': receiverId,
+      'receiver_id': receiverId.toString(), // Convert to string
       'receiver_type': receiverType,
       'body': body,
       'media_url': mediaUrl,
     };
-    print('[Socket] emit send_message: ' + payload.toString());
+    print('📤 [Socket] Sending message via socket:');
+    print('📤 [Socket] Event: send_message');
+    print('📤 [Socket] Payload: $payload');
     socket?.emit('send_message', payload);
+  }
+
+  Future<bool> markMessageAsRead({
+    required String messageId,
+    required dynamic readerId,
+    required String readerType,
+  }) async {
+    try {
+      final url = Endpoints.chatRestBase + Endpoints.chatMarkRead;
+      final payload = {
+        'message_id': messageId,
+        'reader_id': readerId.toString(),
+        'reader_type': readerType,
+      };
+      
+      // Get actual token for cURL logging
+      String? actualToken;
+      try {
+        final token = await getToken();
+        actualToken = token;
+      } catch (e) {
+        actualToken = null;
+      }
+      
+      // Log complete cURL command
+      final jsonPayload = '{"message_id":"$messageId","reader_id":"${readerId.toString()}","reader_type":"$readerType"}';
+      print('📡 [ChatService] ========== cURL for markRead ==========');
+      print('curl --location --request POST \'$url\' \\');
+      if (actualToken != null) {
+        print('  --header \'Authorization: Bearer $actualToken\' \\');
+      } else {
+        print('  --header \'Authorization: Bearer {YOUR_TOKEN}\' \\');
+      }
+      print('  --header \'Content-Type: application/json\' \\');
+      print('  --data-raw \'$jsonPayload\'');
+      print('📡 [ChatService] =======================================');
+      
+      final res = await dio.post(url, data: payload);
+      print('[Chat] markRead response: ${res.data}');
+      
+      final data = res.data;
+      if (data is Map) {
+        return data['sucess'] ?? data['success'] ?? false;
+      }
+      return false;
+    } on DioException catch (e) {
+      final msg = e.response?.data ?? e.message;
+      print('[Chat][ERROR] markRead failed: $msg');
+      return false;
+    }
   }
 
   void dispose() {

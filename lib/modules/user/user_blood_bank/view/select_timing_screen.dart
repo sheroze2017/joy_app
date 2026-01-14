@@ -18,13 +18,17 @@ class SelectTimingScreen extends StatefulWidget {
 }
 
 class _SelectTimingScreenState extends State<SelectTimingScreen> {
-  String _date = DateFormat('dd, MMMM yyyy').format(DateTime.now()).toString();
+  String _date = DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
   String? timeSelection;
+  DateTime? _selectedDateTime;
 
   void selectionChanged(DateRangePickerSelectionChangedArgs args) {
-    SchedulerBinding.instance!.addPostFrameCallback((duration) {
+    SchedulerBinding.instance.addPostFrameCallback((duration) {
       setState(() {
-        _date = DateFormat('dd, MMMM yyyy').format(args.value).toString();
+        _selectedDateTime = args.value as DateTime;
+        if (_selectedDateTime != null) {
+          _date = DateFormat('yyyy-MM-dd').format(_selectedDateTime!).toString();
+        }
       });
     });
   }

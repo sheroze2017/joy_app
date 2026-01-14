@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
-import 'package:joy_app/core/utils/constant/constant.dart';
 import 'package:joy_app/modules/social_media/chat/bloc/chat_bloc.dart';
 import 'package:joy_app/modules/social_media/chat/view/direct_chat.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/theme.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,7 +17,7 @@ class DonorsCardWidget extends StatelessWidget {
   final String loction;
   final Color color;
   final String phoneNo;
-  final int donId;
+  final dynamic donId;
 
   DonorsCardWidget({
     super.key,
@@ -46,14 +46,50 @@ class DonorsCardWidget extends StatelessWidget {
             Center(
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: Image.network(
-                    imgUrl.contains('http')
-                        ? imgUrl
-                        : CustomConstant.nullUserImage,
-                    height: 26.w,
-                    width: 35.71.w,
-                    fit: BoxFit.cover,
-                  )),
+                  child: (imgUrl.contains('http') &&
+                          !imgUrl.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'))
+                      ? Image.network(
+                          imgUrl,
+                          height: 26.w,
+                          width: 35.71.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 26.w,
+                              width: 35.71.w,
+                              decoration: BoxDecoration(
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff2A2A2A)
+                                    : Color(0xffE5E5E5),
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Icon(
+                                Icons.person,
+                                size: 20.w,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff5A5A5A)
+                                    : Color(0xffA5A5A5),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          height: 26.w,
+                          width: 35.71.w,
+                          decoration: BoxDecoration(
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff2A2A2A)
+                                : Color(0xffE5E5E5),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: 20.w,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff5A5A5A)
+                                : Color(0xffA5A5A5),
+                          ),
+                        )),
             ),
             SizedBox(
               height: 1.h,
@@ -128,7 +164,15 @@ class DonorsCardWidget extends StatelessWidget {
 }
 
 makingPhoneCall(String phoneNo) async {
-  var url = Uri.parse("tel:${phoneNo}");
+  // Guard against null/empty/"null" values to avoid tel:null errors
+  if (phoneNo.trim().isEmpty || phoneNo.toLowerCase() == 'null') {
+    print('⚠️ [makingPhoneCall] Phone number is empty or null-like, aborting call.');
+    return;
+  }
+
+  final cleaned = phoneNo.trim();
+  print('📞 [makingPhoneCall] Attempting to call: $cleaned');
+  var url = Uri.parse("tel:$cleaned");
   if (await canLaunchUrl(url)) {
     await launchUrl(url);
   } else {

@@ -57,10 +57,17 @@ class MediaPosts {
   }
 
   // New method: Upload image using form-data (multipart)
-  Future<String> uploadImageFile(String imagePath) async {
+  // If userId is provided, it will update the user's profile image
+  // If userId is null, it will just return the image URL (for posts, etc.)
+  Future<String> uploadImageFile(String imagePath, {String? userId}) async {
     try {
       print('📸 [MediaPosts] uploadImageFile() called');
       print('📸 [MediaPosts] Image path: $imagePath');
+      if (userId != null) {
+        print('👤 [MediaPosts] Uploading profile image for user: $userId');
+      } else {
+        print('📸 [MediaPosts] Uploading image (no user_id - for posts, etc.)');
+      }
       
       File imageFile = File(imagePath);
       if (!imageFile.existsSync()) {
@@ -76,14 +83,63 @@ class MediaPosts {
         ),
       });
 
+      // Build URL with query parameter if userId is provided
+      String endpoint = Endpoints.uploadImage;
+      if (userId != null && userId.isNotEmpty) {
+        endpoint = '${Endpoints.uploadImage}?user_id=$userId';
+      }
+
       print('📤 [MediaPosts] Uploading image as form-data...');
-      final result = await _dioClient.upload(Endpoints.uploadImage, data: formData);
+      print('📤 [MediaPosts] Endpoint: ${Endpoints.baseUrl}$endpoint');
+      print('📤 [MediaPosts] User ID: ${userId ?? "null"}');
+      print('📤 [MediaPosts] Image file: $fileName');
+      print('📤 [MediaPosts] Request will include Authorization: Bearer token (added by interceptor)');
+      final result = await _dioClient.upload(endpoint, data: formData);
       print('✅ [MediaPosts] uploadImageFile() response: $result');
       
-      if (result['sucess'] == true) {
-        return result['data'] ?? '';
+      // Handle both 'sucess' and 'success' spellings
+      final isSuccess = result['sucess'] == true || result['success'] == true;
+      if (isSuccess) {
+        String imageUrl = '';
+        if (userId != null) {
+          // When userId is provided, response structure can be:
+          // 1. data.image (direct image field)
+          // 2. data.user.image (nested user object)
+          // 3. data.image_url (alternative field name)
+          if (result['data'] != null) {
+            if (result['data'] is Map) {
+              // Check direct image field first (most common)
+              imageUrl = result['data']['image']?.toString() ?? '';
+              
+              // Fallback to nested user.image
+              if (imageUrl.isEmpty && result['data']['user'] != null) {
+                imageUrl = result['data']['user']['image']?.toString() ?? '';
+              }
+              
+              // Fallback to image_url
+              if (imageUrl.isEmpty) {
+                imageUrl = result['data']['image_url']?.toString() ?? '';
+              }
+            } else if (result['data'] is String) {
+              // If data is a string, it's the URL directly
+              imageUrl = result['data'];
+            }
+          }
+          print('✅ [MediaPosts] Profile image uploaded and user updated. URL: $imageUrl');
+        } else {
+          // When userId is not provided, response structure is: data (just the URL string)
+          if (result['data'] is String) {
+            imageUrl = result['data'];
+          } else if (result['data'] is Map) {
+            imageUrl = result['data']['image']?.toString() ?? 
+                      result['data']['image_url']?.toString() ?? 
+                      '';
+          }
+          print('✅ [MediaPosts] Image uploaded successfully. URL: $imageUrl');
+        }
+        return imageUrl;
       } else {
-        print('⚠️ [MediaPosts] Upload failed: ${result['message']}');
+        print('⚠️ [MediaPosts] Upload failed: ${result['message'] ?? 'Unknown error'}');
         return '';
       }
     } catch (e) {

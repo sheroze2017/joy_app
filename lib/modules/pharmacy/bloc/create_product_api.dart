@@ -40,6 +40,37 @@ class CreateProductApi {
     }
   }
 
+  // New method to create product with category as string (matches edit product format)
+  Future<CreateProduct> createProductWithCategory(
+    String medName,
+    String shortDesc,
+    String category, // Category as string (e.g., "Anesthesiologist", "PILL")
+    String price,
+    String discount,
+    String pharmacyId,
+    String quantity,
+    String dosage,
+    String imgUrl,
+  ) async {
+    try {
+      final result = await _dioClient.post(Endpoints.createProduct, data: {
+        "name": medName,
+        "short_description": shortDesc,
+        "category": category, // Use category as string
+        "price": price,
+        "discount": discount,
+        "pharmacy_id": pharmacyId,
+        "quantity": int.tryParse(quantity) ?? 0, // Quantity as int, default to 0 if parsing fails
+        "dosage": dosage,
+        "image": imgUrl
+      });
+      return CreateProduct.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
   Future<CreateProduct> editProduct(
     String medName,
     String shortDesc,
@@ -61,6 +92,38 @@ class CreateProductApi {
         "discount": discount,
         "pharmacy_id": pharmacyId,
         "quantity": quantity,
+        "dosage": dosage,
+        "product_id": productId
+      });
+      return CreateProduct.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  // Method to edit product with category as string (matches user's API requirements)
+  Future<CreateProduct> editProductWithCategory(
+    String medName,
+    String shortDesc,
+    String category, // Category as string (e.g., "PILL", "SYRUP")
+    String price,
+    String discount,
+    String pharmacyId,
+    String quantity,
+    String dosage,
+    String productId,
+  ) async {
+    try {
+      final result =
+          await _dioClient.post(Endpoints.editPharmacyProduct, data: {
+        "name": medName,
+        "short_description": shortDesc,
+        "category": category, // Use category as string
+        "price": price,
+        "discount": discount,
+        "pharmacy_id": pharmacyId,
+        "quantity": int.tryParse(quantity) ?? 0, // Convert to int
         "dosage": dosage,
         "product_id": productId
       });
@@ -133,9 +196,9 @@ class OrderStatus {
 }
 
 class Data {
-  int? orderId;
-  int? userId;
-  int? productId;
+  dynamic orderId; // Changed to dynamic to handle MongoDB _id (string) or order_id (int)
+  dynamic userId; // Changed to dynamic to handle MongoDB string IDs
+  dynamic productId; // Changed to dynamic to handle MongoDB string IDs
   String? totalPrice;
   String? status;
   String? createdAt;
@@ -159,24 +222,66 @@ class Data {
       this.placeId});
 
   Data.fromJson(Map<String, dynamic> json) {
-    orderId = json['order_id'];
-    userId = json['user_id'];
-    productId = json['product_id'];
-    totalPrice = json['total_price'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    quantity = json['quantity'];
-    location = json['location'];
-    lat = json['lat'];
-    lng = json['lng'];
-    placeId = json['place_id'];
+    // Handle both _id (MongoDB) and order_id (legacy)
+    if (json['_id'] != null) {
+      orderId = json['_id'].toString();
+    } else {
+      orderId = json['order_id']?.toString() ?? json['order_id'];
+    }
+    
+    // Handle user_id - can be string (MongoDB) or int (legacy)
+    if (json['user_id'] != null) {
+      userId = json['user_id'].toString();
+    } else {
+      userId = null;
+    }
+    
+    // Handle product_id - can be string (MongoDB) or int (legacy)
+    if (json['product_id'] != null) {
+      productId = json['product_id'].toString();
+    } else {
+      productId = null;
+    }
+    
+    // Handle total_price - can be int, double, or string
+    if (json['total_price'] != null) {
+      if (json['total_price'] is String) {
+        totalPrice = json['total_price'];
+      } else if (json['total_price'] is num) {
+        totalPrice = json['total_price'].toString();
+      } else {
+        totalPrice = json['total_price']?.toString();
+      }
+    } else {
+      totalPrice = null;
+    }
+    
+    status = json['status']?.toString() ?? '';
+    createdAt = json['created_at']?.toString() ?? '';
+    
+    // Handle quantity - can be int or string
+    if (json['quantity'] != null) {
+      if (json['quantity'] is int) {
+        quantity = json['quantity'].toString();
+      } else {
+        quantity = json['quantity']?.toString();
+      }
+    } else {
+      quantity = null;
+    }
+    
+    location = json['location']?.toString() ?? '';
+    lat = json['lat']?.toString() ?? '';
+    lng = json['lng']?.toString() ?? '';
+    placeId = json['place_id']?.toString() ?? '';
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['order_id'] = this.orderId;
-    data['user_id'] = this.userId;
-    data['product_id'] = this.productId;
+    data['_id'] = this.orderId?.toString();
+    data['order_id'] = this.orderId?.toString();
+    data['user_id'] = this.userId?.toString();
+    data['product_id'] = this.productId?.toString();
     data['total_price'] = this.totalPrice;
     data['status'] = this.status;
     data['created_at'] = this.createdAt;

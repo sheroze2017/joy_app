@@ -27,6 +27,196 @@ class _AllChatsState extends State<AllChats> {
   ProfileController _profileController = Get.put(ProfileController());
 
   @override
+  void initState() {
+    super.initState();
+    // Load conversations when screen is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _chatController.getMyConversations();
+    });
+  }
+
+  String _getPeerType(dynamic conversation) {
+    // Get peer type from conversation - check 'peer' object first (API format)
+    if (conversation is Map) {
+      // New API format: {peer: {id, name, image, type, user_role}}
+      final peer = conversation['peer'];
+      if (peer is Map) {
+        final type = (peer['type'] ?? peer['user_role']?.toString().toLowerCase())?.toString().toLowerCase() ?? 'user';
+        return type;
+      }
+      
+      // Fallback: participants array (old format)
+      final participants = conversation['participants'] ?? [];
+      if (participants is List && participants.isNotEmpty) {
+        for (var p in participants) {
+          if (p is Map) {
+            final userId = _profileController.userId.value;
+            final pId = (p['id'] ?? p['user_id'] ?? p['userId'])?.toString() ?? '';
+            if (pId != userId && pId.isNotEmpty) {
+              final type = (p['type'] ?? p['user_type'] ?? p['userType'])?.toString().toLowerCase() ?? 'user';
+              return type;
+            }
+          }
+        }
+      }
+    }
+    return 'user';
+  }
+
+  String _getPeerId(dynamic conversation) {
+    // Get peer ID from conversation - check 'peer' object first (API format)
+    if (conversation is Map) {
+      // New API format: {peer: {id, name, image, type, user_role}}
+      final peer = conversation['peer'];
+      if (peer is Map) {
+        final peerId = (peer['id'] ?? peer['user_id'] ?? peer['userId'])?.toString() ?? '';
+        if (peerId.isNotEmpty) {
+          return peerId;
+        }
+      }
+      
+      // Fallback: participants array (old format)
+      final participants = conversation['participants'] ?? [];
+      if (participants is List && participants.isNotEmpty) {
+        for (var p in participants) {
+          if (p is Map) {
+            final userId = _profileController.userId.value;
+            final pId = (p['id'] ?? p['user_id'] ?? p['userId'])?.toString() ?? '';
+            if (pId != userId && pId.isNotEmpty) {
+              return pId;
+            }
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  String _getPeerName(dynamic conversation) {
+    // Get peer name from conversation - check 'peer' object first (API format)
+    if (conversation is Map) {
+      // New API format: {peer: {id, name, image, type, user_role}}
+      final peer = conversation['peer'];
+      if (peer is Map) {
+        final name = peer['name']?.toString() ?? '';
+        if (name.isNotEmpty && name.toLowerCase() != 'unknown') {
+          return name;
+        }
+      }
+      
+      // Fallback: participants array (old format)
+      final participants = conversation['participants'] ?? [];
+      if (participants is List && participants.isNotEmpty) {
+        for (var p in participants) {
+          if (p is Map) {
+            final userId = _profileController.userId.value;
+            final pId = (p['id'] ?? p['user_id'] ?? p['userId'])?.toString() ?? '';
+            if (pId != userId && pId.isNotEmpty) {
+              final name = p['name']?.toString() ?? 
+                          p['user_name']?.toString() ?? 
+                          p['username']?.toString() ??
+                          p['full_name']?.toString() ??
+                          p['fullName']?.toString();
+              if (name != null && name.isNotEmpty && name.toLowerCase() != 'unknown') {
+                return name;
+              }
+            }
+          }
+        }
+      }
+    }
+    return 'Unknown';
+  }
+
+  String _getPeerImage(dynamic conversation) {
+    // Get peer image from conversation - check 'peer' object first (API format)
+    if (conversation is Map) {
+      // New API format: {peer: {id, name, image, type, user_role}}
+      final peer = conversation['peer'];
+      if (peer is Map) {
+        final image = peer['image']?.toString() ?? 
+                     peer['image_url']?.toString() ?? 
+                     peer['profile_image']?.toString() ??
+                     '';
+        // Return empty string if image is invalid (will be handled by ChatBox)
+        if (image.isNotEmpty && image.contains('http')) {
+          return image;
+        }
+        return '';
+      }
+      
+      // Fallback: participants array (old format)
+      final participants = conversation['participants'] ?? [];
+      if (participants is List && participants.isNotEmpty) {
+        for (var p in participants) {
+          if (p is Map) {
+            final userId = _profileController.userId.value;
+            final pId = (p['id'] ?? p['user_id'] ?? p['userId'])?.toString() ?? '';
+            if (pId != userId && pId.isNotEmpty) {
+              final image = p['image']?.toString() ?? 
+                           p['image_url']?.toString() ?? 
+                           p['profile_image']?.toString() ??
+                           '';
+              if (image.isNotEmpty && image.contains('http')) {
+                return image;
+              }
+              return '';
+            }
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  String _getLastMessage(dynamic conversation) {
+    // Get last message from conversation (guide format: lastMessage object with body field)
+    if (conversation is Map) {
+      final lastMessage = conversation['lastMessage'] ?? conversation['last_message'];
+      if (lastMessage is Map) {
+        // Guide format: {body: "Hello!", ...}
+        return lastMessage['body']?.toString() ?? 
+               lastMessage['text']?.toString() ?? 
+               '';
+      }
+      // Fallback to direct field
+      return conversation['last_message_text']?.toString() ?? 
+             conversation['lastMessageText']?.toString() ?? 
+             '';
+    }
+    return '';
+  }
+
+  String _getLastMessageTime(dynamic conversation) {
+    // Get last message time from conversation
+    if (conversation is Map) {
+      final lastMessage = conversation['lastMessage'] ?? conversation['last_message'];
+      if (lastMessage is Map) {
+        final createdAt = lastMessage['createdAt'] ?? lastMessage['created_at'];
+        if (createdAt != null) {
+          try {
+            final date = DateTime.parse(createdAt.toString());
+            final now = DateTime.now();
+            final diff = now.difference(date);
+            if (diff.inDays > 0) {
+              return '${diff.inDays}d ago';
+            } else if (diff.inHours > 0) {
+              return '${diff.inHours}h ago';
+            } else if (diff.inMinutes > 0) {
+              return '${diff.inMinutes}m ago';
+            } else {
+              return 'Just now';
+            }
+          } catch (e) {
+            return '';
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(
@@ -65,36 +255,60 @@ class _AllChatsState extends State<AllChats> {
                   // ),
                   RefreshIndicator(
                     onRefresh: () async {
-                      await _friendsController.getSearchUserProfileData(
-                          false, '', context);
-                      setState(() {});
+                      await _chatController.getMyConversations();
                     },
-                    child: Obx(() => ListView.builder(
+                    child: Obx(() {
+                      if (_chatController.isLoadingConversations.value) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      
+                      if (_chatController.myConversations.length == 0) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: Text(
+                              'No conversations yet',
+                              style: CustomTextStyles.lightTextStyle(),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
                         shrinkWrap: true,
                         physics: AlwaysScrollableScrollPhysics(),
-                        itemCount: _friendsController.getAllUserNames().length,
+                        itemCount: _chatController.myConversations.length,
                         itemBuilder: (context, index) {
-                          final img =
-                              _friendsController.getAllUserAssets()[index];
-                          final name =
-                              _friendsController.getAllUserNames()[index];
-                          final id = _friendsController.getAllUserId()[index];
+                          final conversation = _chatController.myConversations.elementAt(index);
+                          final peerId = _getPeerId(conversation);
+                          final peerName = _getPeerName(conversation);
+                          final peerImage = _getPeerImage(conversation);
+                          final peerType = _getPeerType(conversation);
+                          final lastMessage = _getLastMessage(conversation);
+                          final lastMessageTime = _getLastMessageTime(conversation);
+
                           return Column(
                             children: [
                               InkWell(
                                 onTap: () {
-                                  Get.to(DirectMessageScreen(
-                                    userName: name,
-                                    friendId: id.toString(),
-                                    userId: _profileController.userId.value,
-                                    userAsset: img,
-                                  ));
+                                  if (peerId.isNotEmpty) {
+                                    Get.to(DirectMessageScreen(
+                                      userName: peerName,
+                                      friendId: peerId,
+                                      userId: _profileController.userId.value,
+                                      userAsset: peerImage,
+                                      senderType: 'user',
+                                      receiverType: peerType,
+                                    ));
+                                  }
                                 },
                                 child: ChatBox(
-                                  profileImageUrl: img,
-                                  personName: name,
-                                  lastMessage: 'Hello there!',
-                                  dateTime: '2:30 PM',
+                                  profileImageUrl: peerImage,
+                                  personName: peerName,
+                                  lastMessage: lastMessage.isNotEmpty ? lastMessage : 'No messages yet',
+                                  dateTime: lastMessageTime.isNotEmpty ? lastMessageTime : '',
                                 ),
                               ),
                               SizedBox(
@@ -102,7 +316,9 @@ class _AllChatsState extends State<AllChats> {
                               ),
                             ],
                           );
-                        })),
+                        },
+                      );
+                    }),
                   )
                 ],
               ),
@@ -120,10 +336,10 @@ class _AllChatsState extends State<AllChats> {
                           //shrinkWrap: true,
                           physics: AlwaysScrollableScrollPhysics(),
                           itemCount:
-                              _friendsController.filteredList.value.length,
+                              _friendsController.filteredList.length,
                           itemBuilder: ((context, index) {
                             final data =
-                                _friendsController.filteredList.value[index];
+                                _friendsController.filteredList[index];
 
                             return Padding(
                                 padding: const EdgeInsets.all(10.0),
@@ -134,9 +350,11 @@ class _AllChatsState extends State<AllChats> {
                                         userName: data.name.toString(),
                                         friendId: data.userId.toString(),
                                         userId: _profileController.userId.value,
-                                        userAsset: data.image!.contains('http')
+                                        userAsset: (data.image != null && 
+                                                    data.image!.contains('http') &&
+                                                    !data.image!.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'))
                                             ? data.image.toString()
-                                            : "http://194.233.69.219/joy-Images/c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                            : '',
                                       ));
                                       // _chatController.createConvo(
                                       //     data.userId ?? 0,
@@ -144,19 +362,21 @@ class _AllChatsState extends State<AllChats> {
                                     },
                                     child: Row(
                                       children: [
-                                        ClipOval(
-                                          child: Image.network(
-                                            data.image!.contains('http')
-                                                ? data.image.toString()
-                                                : "http://194.233.69.219/joy-Images/c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
-                                            width: 6.6.h,
-                                            height: 6.6.h,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (context, error, stackTrace) {
-                                              return Icon(Icons.person, size: 6.6.h);
-                                            },
-                                          ),
-                                        ),
+                                        (data.image != null && 
+                                         data.image!.contains('http') &&
+                                         !data.image!.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'))
+                                            ? ClipOval(
+                                                child: Image.network(
+                                                  data.image.toString(),
+                                                  width: 6.6.h,
+                                                  height: 6.6.h,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context, error, stackTrace) {
+                                                    return Icon(Icons.person, size: 6.6.h);
+                                                  },
+                                                ),
+                                              )
+                                            : Icon(Icons.person, size: 6.6.h),
                                         SizedBox(
                                           width: 5.w,
                                         ),
@@ -274,12 +494,27 @@ class ChatBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if image URL is valid before using NetworkImage
+    final isValidImageUrl = profileImageUrl.isNotEmpty && 
+                           profileImageUrl.contains('http') &&
+                           !profileImageUrl.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab');
+    
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CircleAvatar(
           radius: 30,
-          backgroundImage: NetworkImage(profileImageUrl),
+          backgroundImage: isValidImageUrl ? NetworkImage(profileImageUrl) : null,
+          backgroundColor: isValidImageUrl 
+              ? Colors.transparent 
+              : (ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5)),
+          child: !isValidImageUrl
+              ? Icon(
+                  Icons.person,
+                  size: 30,
+                  color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+                )
+              : null,
         ),
         SizedBox(width: 4.w),
         Expanded(

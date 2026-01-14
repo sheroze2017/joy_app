@@ -31,7 +31,7 @@ class PharmacyModel {
 }
 
 class PharmacyModelData {
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
   String? name;
   String? email;
   String? password;
@@ -65,7 +65,12 @@ class PharmacyModelData {
       this.reviews});
 
   PharmacyModelData.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'] ?? 22;
+    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
+    userId = json['_id'] ?? json['user_id'];
+    // Convert to String if it's not already (for MongoDB ObjectId)
+    if (userId != null && userId is! String) {
+      userId = userId.toString();
+    }
     name = json['name'] ?? '';
     email = json['email'] ?? '';
     password = json['password'] ?? '';

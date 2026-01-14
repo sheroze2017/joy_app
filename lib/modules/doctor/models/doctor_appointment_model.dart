@@ -31,9 +31,9 @@ class DoctorAppointment {
 }
 
 class Appointment {
-  int? appointmentId;
-  int? doctorUserId;
-  int? patientUserId;
+  dynamic appointmentId; // Changed to dynamic to handle both String (MongoDB ObjectId) and int (legacy)
+  dynamic doctorUserId; // Changed to dynamic to handle both String and int
+  dynamic patientUserId; // Changed to dynamic to handle both String and int
   String? date;
   String? time;
   String? status;
@@ -49,6 +49,7 @@ class Appointment {
   String? diagnosis;
   String? medications;
   UserDetails? userDetails;
+  AppointmentReview? review;
 
   Appointment(
       {this.appointmentId,
@@ -68,12 +69,23 @@ class Appointment {
       this.certificate,
       this.diagnosis,
       this.medications,
-      this.userDetails});
+      this.userDetails,
+      this.review});
 
   Appointment.fromJson(Map<String, dynamic> json) {
-    appointmentId = json['appointment_id'];
-    doctorUserId = json['doctor_user_id'];
-    patientUserId = json['patient_user_id'];
+    // Handle MongoDB ObjectId (_id) or legacy appointment_id
+    if (json['_id'] != null) {
+      appointmentId = json['_id'] is String ? json['_id'] : json['_id'].toString();
+    } else {
+      appointmentId = json['appointment_id'];
+    }
+    
+    doctorUserId = json['doctor_user_id'] != null
+        ? (json['doctor_user_id'] is String ? json['doctor_user_id'] : json['doctor_user_id'].toString())
+        : null;
+    patientUserId = json['patient_user_id'] != null
+        ? (json['patient_user_id'] is String ? json['patient_user_id'] : json['patient_user_id'].toString())
+        : null;
     date = json['date'] ?? '';
     time = json['time'] ?? '';
     status = json['status'] ?? '';
@@ -88,8 +100,15 @@ class Appointment {
     certificate = json['certificate'] ?? '';
     diagnosis = json['diagnosis'] ?? '';
     medications = json['medications'] ?? '';
-    userDetails = json['user_details'] != null
-        ? new UserDetails.fromJson(json['user_details'])
+    // Handle both patient_details (new API) and user_details (legacy)
+    userDetails = json['patient_details'] != null
+        ? new UserDetails.fromJson(json['patient_details'])
+        : (json['user_details'] != null
+            ? new UserDetails.fromJson(json['user_details'])
+            : null);
+    // Parse review object if present
+    review = json['review'] != null && json['review'] is Map
+        ? new AppointmentReview.fromJson(json['review'])
         : null;
   }
 
@@ -115,6 +134,51 @@ class Appointment {
     if (this.userDetails != null) {
       data['user_details'] = this.userDetails!.toJson();
     }
+    if (this.review != null) {
+      data['review'] = this.review!.toJson();
+    }
+    return data;
+  }
+}
+
+class AppointmentReview {
+  String? patientName;
+  String? patientEmail;
+  String? patientPhone;
+  String? patientImage;
+  dynamic rating;
+  String? review;
+  String? reviewCreatedAt;
+
+  AppointmentReview({
+    this.patientName,
+    this.patientEmail,
+    this.patientPhone,
+    this.patientImage,
+    this.rating,
+    this.review,
+    this.reviewCreatedAt,
+  });
+
+  AppointmentReview.fromJson(Map<String, dynamic> json) {
+    patientName = json['patient_name'] ?? '';
+    patientEmail = json['patient_email'] ?? '';
+    patientPhone = json['patient_phone'] ?? '';
+    patientImage = json['patient_image'] ?? '';
+    rating = json['rating'];
+    review = json['review'] ?? '';
+    reviewCreatedAt = json['review_created_at'] ?? '';
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['patient_name'] = this.patientName;
+    data['patient_email'] = this.patientEmail;
+    data['patient_phone'] = this.patientPhone;
+    data['patient_image'] = this.patientImage;
+    data['rating'] = this.rating;
+    data['review'] = this.review;
+    data['review_created_at'] = this.reviewCreatedAt;
     return data;
   }
 }
@@ -123,7 +187,7 @@ class UserDetails {
   String? name;
   String? email;
   String? phone;
-  int? userId;
+  dynamic userId; // Changed to dynamic to handle both String (MongoDB ObjectId) and int (legacy)
   String? image;
 
   UserDetails({this.name, this.email, this.phone, this.userId, this.image});
@@ -132,7 +196,8 @@ class UserDetails {
     name = json['name'] ?? '';
     email = json['email'] ?? '';
     phone = json['phone'] ?? '';
-    userId = json['user_id'] ?? 0;
+    // Handle both _id (MongoDB) and user_id (legacy)
+    userId = json['_id'] ?? json['user_id'] ?? '';
     image = json['image'] ?? '';
   }
 

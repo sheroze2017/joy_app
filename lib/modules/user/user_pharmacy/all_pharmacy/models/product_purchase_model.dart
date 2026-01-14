@@ -26,8 +26,8 @@ class ProductPurchaseModel {
 }
 
 class Data {
-  int? orderId;
-  int? userId;
+  dynamic orderId; // Changed to dynamic to handle both _id (MongoDB string) and order_id (legacy int)
+  dynamic userId; // Changed to dynamic to handle both string (MongoDB) and int (legacy)
   String? totalPrice;
   String? status;
   String? createdAt;
@@ -50,16 +50,63 @@ class Data {
       this.placeId});
 
   Data.fromJson(Map<String, dynamic> json) {
-    orderId = json['order_id'];
-    userId = json['user_id'];
-    totalPrice = json['total_price'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    quantity = json['quantity'];
-    location = json['location'];
-    lat = json['lat'];
-    lng = json['lng'];
-    placeId = json['place_id'];
+    // Handle both '_id' (MongoDB) and 'order_id' (legacy) fields
+    if (json['_id'] != null) {
+      orderId = json['_id'].toString();
+    } else {
+      orderId = json['order_id'];
+    }
+    
+    // Handle user_id - can be string (MongoDB) or int (legacy)
+    if (json['user_id'] != null) {
+      userId = json['user_id'].toString();
+    } else {
+      userId = null;
+    }
+    
+    // Handle total_price - can be int, double, or string
+    if (json['total_price'] != null) {
+      if (json['total_price'] is String) {
+        totalPrice = json['total_price'];
+      } else if (json['total_price'] is num) {
+        totalPrice = json['total_price'].toString();
+      } else {
+        totalPrice = json['total_price']?.toString();
+      }
+    } else {
+      totalPrice = null;
+    }
+    
+    status = json['status']?.toString();
+    createdAt = json['created_at']?.toString();
+    
+    // Handle quantity - can be int or string
+    if (json['quantity'] != null) {
+      if (json['quantity'] is int) {
+        quantity = json['quantity'].toString();
+      } else {
+        quantity = json['quantity']?.toString();
+      }
+    } else {
+      quantity = null;
+    }
+    
+    location = json['location']?.toString();
+    
+    // Handle lat and lng - can be double or string
+    if (json['lat'] != null) {
+      lat = json['lat'].toString();
+    } else {
+      lat = null;
+    }
+    
+    if (json['lng'] != null) {
+      lng = json['lng'].toString();
+    } else {
+      lng = null;
+    }
+    
+    placeId = json['place_id']?.toString();
   }
 
   Map<String, dynamic> toJson() {

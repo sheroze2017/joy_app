@@ -33,8 +33,66 @@ class BloodBankApi {
 
   Future<AllBloodRequest> getAllBloodRequest() async {
     try {
+      print('🩸 [BloodBankApi] getAllBloodRequest() - Calling: ${Endpoints.baseUrl}${Endpoints.getAllBloodRequest}');
       final result = await _dioClient.get(Endpoints.getAllBloodRequest);
+      print('🩸 [BloodBankApi] getAllBloodRequest() - Response received');
+      print('🩸 [BloodBankApi] Response structure: ${result.keys.toList()}');
+      if (result['data'] != null && result['data'].isNotEmpty) {
+        print('🩸 [BloodBankApi] First request sample: ${result['data'][0]}');
+        print('🩸 [BloodBankApi] First request keys: ${result['data'][0].keys.toList()}');
+      }
       return AllBloodRequest.fromJson(result);
+    } catch (e) {
+      print('❌ [BloodBankApi] getAllBloodRequest() error: $e');
+      throw e;
+    }
+  }
+
+  Future<bool> deleteBloodRequest(String bloodId) async {
+    try {
+      // Using GET to match the curl command provided
+      final result = await _dioClient.get(
+        '${Endpoints.deleteBloodRequest}?blood_id=$bloodId',
+      );
+      if (result['sucess'] == true || result['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<bool> attachDonorToBloodRequest(String bloodRequestId, String donorUserId) async {
+    try {
+      final result = await _dioClient.post(Endpoints.attachDonorToBloodRequest, data: {
+        'blood_request_id': bloodRequestId,
+        'donor_user_id': donorUserId,
+      });
+      if (result['sucess'] == true || result['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<bool> detachDonorFromBloodRequest(String bloodRequestId, String userId) async {
+    try {
+      final result = await _dioClient.post(Endpoints.detachDonorFromBloodRequest, data: {
+        'blood_request_id': bloodRequestId,
+        'user_id': userId,
+      });
+      if (result['sucess'] == true || result['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       print(e.toString());
       throw e;
@@ -138,6 +196,40 @@ class BloodBankApi {
         "document": documentUrl
       });
       return DoctorRegisterModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<bool> updateAbout(String userId, String about) async {
+    try {
+      final result = await _dioClient.post(Endpoints.updateAbout, data: {
+        'user_id': userId,
+        'about': about,
+      });
+      if (result['sucess'] == true || result['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<bool> updateTimings(String userId, String timings) async {
+    try {
+      final result = await _dioClient.post(Endpoints.updateTimings, data: {
+        'user_id': userId,
+        'timings': timings,
+      });
+      if (result['sucess'] == true || result['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       print(e.toString());
       throw e;

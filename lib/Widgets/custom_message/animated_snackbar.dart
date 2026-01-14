@@ -11,7 +11,9 @@ class AnimatedSnackbar {
     Duration duration = const Duration(seconds: 3),
   }) {
     final overlay = Overlay.of(context)!;
-    final overlayEntry = OverlayEntry(
+    late OverlayEntry overlayEntry;
+    
+    overlayEntry = OverlayEntry(
       builder: (context) => _AnimatedSnackbar(
         message: message,
         icon: icon,
@@ -19,14 +21,14 @@ class AnimatedSnackbar {
         textColor: textColor,
         fontSize: fontSize,
         duration: duration,
+        onAnimationComplete: () {
+          // Remove overlay entry after animation completes
+          overlayEntry.remove();
+        },
       ),
     );
 
     overlay.insert(overlayEntry);
-
-    Future.delayed(duration, () {
-      overlayEntry.remove();
-    });
   }
 }
 
@@ -37,6 +39,7 @@ class _AnimatedSnackbar extends StatefulWidget {
   final Color textColor;
   final double fontSize;
   final Duration duration;
+  final VoidCallback onAnimationComplete;
 
   const _AnimatedSnackbar({
     required this.message,
@@ -45,6 +48,7 @@ class _AnimatedSnackbar extends StatefulWidget {
     required this.textColor,
     required this.fontSize,
     required this.duration,
+    required this.onAnimationComplete,
   });
 
   @override
@@ -78,11 +82,34 @@ class __AnimatedSnackbarState extends State<_AnimatedSnackbar>
 
     // Animate out after the duration
     Future.delayed(widget.duration, () {
-      _animationController.reverse().then((_) {
-        if (mounted) {
-          Navigator.of(context).pop(); // Remove widget
+      if (!mounted) {
+        widget.onAnimationComplete();
+        return;
+      }
+      
+      try {
+        // Check if controller is still valid and not disposed
+        if (_animationController.status != AnimationStatus.dismissed && 
+            _animationController.status != AnimationStatus.reverse) {
+          _animationController.reverse().then((_) {
+            // Animation complete, remove overlay entry
+            if (mounted) {
+              widget.onAnimationComplete();
+            }
+          }).catchError((error) {
+            // If reverse fails, still remove the overlay entry
+            if (mounted) {
+              widget.onAnimationComplete();
+            }
+          });
+        } else {
+          // Controller already reversed or disposed, just remove overlay entry
+          widget.onAnimationComplete();
         }
-      });
+      } catch (e) {
+        // If any error occurs, still try to remove overlay entry
+        widget.onAnimationComplete();
+      }
     });
   }
 

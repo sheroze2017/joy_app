@@ -33,6 +33,12 @@ class UserHive extends HiveObject {
   @HiveField(9)
   String deviceToken;
 
+  @HiveField(10)
+  String? token;
+
+  @HiveField(11)
+  String? gender;
+
   UserHive({
     required this.userId,
     required this.firstName,
@@ -44,5 +50,7 @@ class UserHive extends HiveObject {
     required this.phone,
     required this.lastName,
     required this.deviceToken,
+    this.token,
+    this.gender,
   });
 }

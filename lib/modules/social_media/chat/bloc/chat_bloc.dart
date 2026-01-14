@@ -20,6 +20,27 @@ class ChatController extends GetxController {
 
   ProfileController _profileController = Get.put(ProfileController());
 
+  RxList<dynamic> myConversations = <dynamic>[].obs;
+  var isLoadingConversations = false.obs;
+
+  Future<void> getMyConversations() async {
+    isLoadingConversations.value = true;
+    try {
+      final userId = _profileController.userId.value;
+      if (userId.isEmpty) {
+        print('⚠️ [ChatController] User ID is empty');
+        return;
+      }
+      final conversations = await chatApi.getMyConversations(userId, 'user');
+      myConversations.value = conversations;
+      print('✅ [ChatController] Loaded ${conversations.length} conversations');
+    } catch (e) {
+      print('❌ [ChatController] Error loading conversations: $e');
+    } finally {
+      isLoadingConversations.value = false;
+    }
+  }
+
   createConvo(int friendId, String friendName) async {
     try {
       CreateConversation result = await chatApi.createConversation(

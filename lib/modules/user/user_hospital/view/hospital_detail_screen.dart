@@ -329,34 +329,100 @@ import 'package:sizer/sizer.dart';
 class UserRatingWidget extends StatelessWidget {
   final String docName;
   final String reviewText;
-  final String rating;
-  final String image;
+  final dynamic rating; // Changed to dynamic to handle both int and String
+  final String? image; // Changed to nullable
 
   const UserRatingWidget(
       {super.key,
       required this.docName,
       required this.reviewText,
       required this.rating,
-      required this.image});
+      this.image});
+
+  Widget _buildReviewAvatar(String? url, double size, BuildContext context) {
+    final isValidUrl = url != null &&
+        url.trim().isNotEmpty &&
+        url.trim().toLowerCase() != 'null' &&
+        url.contains('http') &&
+        !url.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab');
+
+    if (isValidUrl) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(50.0),
+        child: CachedNetworkImage(
+          imageUrl: url.trim(),
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.person,
+              size: size * 0.5,
+              color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.person,
+              size: size * 0.5,
+              color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+            ),
+          ),
+        ),
+      );
+    }
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        Icons.person,
+        size: size * 0.5,
+        color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+      ),
+    );
+  }
+
+  double _parseRating(dynamic rating) {
+    if (rating == null) return 0.0;
+    if (rating is int) return rating.toDouble();
+    if (rating is double) return rating;
+    if (rating is String) {
+      try {
+        return double.parse(rating);
+      } catch (e) {
+        return 0.0;
+      }
+    }
+    return 0.0;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final ratingValue = _parseRating(rating);
+    final ratingText = ratingValue.toStringAsFixed(1);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50.0),
-              child: Image.network(
-                image.contains('http')
-                    ? image
-                    : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png',
-                width: 14.5.w,
-                height: 14.5.w,
-                fit: BoxFit.cover,
-              ),
-            ),
+            _buildReviewAvatar(image, 14.5.w, context),
             SizedBox(
               width: 2.w,
             ),
@@ -373,7 +439,7 @@ class UserRatingWidget extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Text(rating,
+                      Text(ratingText,
                           style: CustomTextStyles.lightTextStyle(
                               color: ThemeUtil.isDarkMode(context)
                                   ? null
@@ -385,7 +451,7 @@ class UserRatingWidget extends StatelessWidget {
                       RatingBar.builder(
                         tapOnlyMode: true,
                         itemSize: 15,
-                        initialRating: double.parse(rating) ?? 0,
+                        initialRating: ratingValue,
                         minRating: 1,
                         direction: Axis.horizontal,
                         allowHalfRating: true,
@@ -456,19 +522,44 @@ class MedicineCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
-                      child: CachedNetworkImage(
-                        imageUrl: imgUrl,
-                        width: 12.5.w,
-                        height: 12.5.w,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Center(
-                            child: Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: LoadingWidget(),
-                        )),
-                        errorWidget: (context, url, error) => Center(
-                            child: Icon(Icons.medical_services_outlined)),
-                      ),
+                      child: imgUrl.isEmpty || !imgUrl.contains('http')
+                          ? Container(
+                              width: 12.5.w,
+                              height: 12.5.w,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Icon(
+                                Icons.medical_services_outlined,
+                                size: 6.w,
+                                color: Colors.grey[600],
+                              ),
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: imgUrl,
+                              width: 12.5.w,
+                              height: 12.5.w,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                  child: Padding(
+                                padding: const EdgeInsets.only(top: 20.0),
+                                child: LoadingWidget(),
+                              )),
+                              errorWidget: (context, url, error) => Container(
+                                width: 12.5.w,
+                                height: 12.5.w,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: Icon(
+                                  Icons.medical_services_outlined,
+                                  size: 6.w,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
                     ),
                     SizedBox(
                       width: 2.w,

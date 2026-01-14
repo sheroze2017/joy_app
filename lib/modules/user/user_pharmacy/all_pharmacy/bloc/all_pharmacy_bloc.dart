@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/common/navbar/view/navbar.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_api.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
+import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
-import 'package:joy_app/widgets/dailog/success_dailog.dart';
 
 import '../models/product_purchase_model.dart';
 
@@ -44,7 +43,7 @@ class AllPharmacyController extends GetxController {
     return cartItems.fold(
         0.0,
         (total, item) =>
-            total + (item.cartQuantity! * double.parse(item.price.toString())));
+            total + ((item.cartQuantity ?? 0) * double.parse(item.price?.toString() ?? '0')));
   }
 
   void searchPharmacy(String query) {
@@ -63,33 +62,57 @@ class AllPharmacyController extends GetxController {
     }
     int index =
         cartItems.indexWhere((item) => item.productId == product.productId);
+    
+    // Get current quantity in cart
+    final currentQuantity = index != -1 ? (cartItems[index].cartQuantity ?? 0) : 0;
+    final availableStock = product.quantity ?? 0;
+    
+    // Check if we can add more (don't exceed available stock)
+    if (currentQuantity >= availableStock) {
+      Get.snackbar('Error', 'Cannot add more. Only $availableStock available');
+      return;
+    }
+    
     if (index != -1) {
-      cartItems[index].cartQuantity = cartItems[index].cartQuantity! + 1;
+      // Item already in cart, increment quantity and reassign to trigger reactive update
+      final updatedItem = cartItems[index];
+      updatedItem.cartQuantity = (updatedItem.cartQuantity ?? 0) + 1;
+      cartItems[index] = updatedItem; // Reassign to trigger reactive update
     } else {
+      // New item, add to cart and show message
       product.cartQuantity = 1;
       cartItems.add(product);
       showSuccessMessage(context, '${product.name} added into cart');
     }
-    update();
+    // cartItems is RxList, so changes are automatically reactive
   }
 
   void removeFromCart(PharmacyProductData product) {
     int index =
         cartItems.indexWhere((item) => item.productId == product.productId);
     if (index != -1) {
-      cartItems[index].cartQuantity = cartItems[index].cartQuantity! - 1;
-      if (cartItems[index].cartQuantity! <= 0) {
-        cartItems.removeAt(index);
+      final currentQuantity = cartItems[index].cartQuantity ?? 0;
+      // Don't allow quantity to go below 0
+      if (currentQuantity > 0) {
+        final updatedItem = cartItems[index];
+        updatedItem.cartQuantity = currentQuantity - 1;
+        // Remove from cart if quantity reaches 0
+        if (updatedItem.cartQuantity! <= 0) {
+          cartItems.removeAt(index);
+        } else {
+          // Reassign to trigger reactive update
+          cartItems[index] = updatedItem;
+        }
       }
     }
-    update();
+    // cartItems is RxList, so changes are automatically reactive
   }
 
   int getQuantityOfProduct(PharmacyProductData product) {
     int quantity = 0;
-    for (var item in cartItems.value) {
+    for (var item in cartItems) {
       if (item.productId == product.productId) {
-        quantity = item.cartQuantity!;
+        quantity = item.cartQuantity ?? 0;
         break;
       }
     }
@@ -142,28 +165,24 @@ class AllPharmacyController extends GetxController {
 
     try {
       pharmacyProducts.clear();
+      searchPharmacyProducts.clear();
       PharmacyProductModel response = await pharmacyApi.getAllPharmacyProducts(
           isUser ? userId : currentUser!.userId.toString());
-      if (response.data != null) {
-        response.data!.forEach((element) {
-          pharmacyProducts.add(element);
-        });
-        allProductLoader.value = false;
-
-        //showSuccessMessage(context, response.message.toString());
+      if (response.data != null && response.data!.isNotEmpty) {
+        // Use assignAll to update the list atomically instead of forEach + add
+        pharmacyProducts.assignAll(response.data!);
+        searchPharmacyProducts.assignAll(response.data!);
+        print('Loaded ${pharmacyProducts.length} products');
       } else {
-        allProductLoader.value = false;
-
-        //showErrorMessage(context, response.message.toString());
+        print('No products in response data');
       }
+      allProductLoader.value = false;
       return response;
     } catch (error) {
+      print('Error loading products: $error');
       allProductLoader.value = false;
-
-      throw (error);
-    } finally {
-      allProductLoader.value = false;
-      searchPharmacyProducts.value = pharmacyProducts;
+      // Don't throw, just return empty response
+      return PharmacyProductModel();
     }
   }
 
@@ -193,12 +212,13 @@ class AllPharmacyController extends GetxController {
 
   void searchByProduct(String query) {
     if (query.isEmpty) {
-      searchPharmacyProducts.value = pharmacyProducts;
+      searchPharmacyProducts.assignAll(pharmacyProducts);
+    } else {
+      searchPharmacyProducts.assignAll(pharmacyProducts
+          .where((product) =>
+              product.name!.toLowerCase().contains(query.toLowerCase()))
+          .toList());
     }
-    searchPharmacyProducts.value = pharmacyProducts
-        .where((product) =>
-            product.name!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
   }
 
   Future<ProductPurchaseModel> placeOrderPharmacy(context, grandTotal, status,
@@ -222,36 +242,34 @@ class AllPharmacyController extends GetxController {
         pharmacyId.toString(),
       );
       if (response.data != null) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomDialog(
-              pharmacyId: pharmacyId.toString(),
-              isPharmacyCheckout: true,
-              title: 'Congratulations!',
-              content: 'Your Order has been placed !',
-              showButton: true,
-              isBookAppointment: false,
-            );
-          },
-        );
-
-        // showSuccessMessage(context, response.message.toString());
-
+        // Clear cart after successful order
+        cartItems.clear();
+        
         placeOrderLoader.value = false;
-        // Get.offAll(NavBarScreen(
-        //   isUser: true,
-        // ));
+        
+        // Close the cart screen first
+        Get.back();
+        
+        // Wait a bit for navigation to complete, then show success message
+        Future.delayed(Duration(milliseconds: 300), () {
+          Get.snackbar(
+            'Success',
+            'Your Order has been placed successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: AppColors.darkGreenColor,
+            colorText: Colors.white,
+            duration: Duration(seconds: 3),
+          );
+        });
       } else {
-        showErrorMessage(context, response.message.toString());
+        placeOrderLoader.value = false;
+        showErrorMessage(context, response.message?.toString() ?? 'Failed to place order');
       }
       return response;
     } catch (error) {
       placeOrderLoader.value = false;
-
-      throw (error);
-    } finally {
-      placeOrderLoader.value = false;
+      showErrorMessage(context, 'Failed to place order: ${error.toString()}');
+      return ProductPurchaseModel(); // Return empty model on error
     }
   }
 }

@@ -27,13 +27,15 @@ class UserHiveAdapter extends TypeAdapter<UserHive> {
       phone: fields[7] as String,
       lastName: fields[8] as String,
       deviceToken: fields[9] as String,
+      token: fields[10] as String?,
+      gender: fields[11] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserHive obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
@@ -53,7 +55,11 @@ class UserHiveAdapter extends TypeAdapter<UserHive> {
       ..writeByte(8)
       ..write(obj.lastName)
       ..writeByte(9)
-      ..write(obj.deviceToken);
+      ..write(obj.deviceToken)
+      ..writeByte(10)
+      ..write(obj.token)
+      ..writeByte(11)
+      ..write(obj.gender);
   }
 
   @override

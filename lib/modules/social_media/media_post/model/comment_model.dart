@@ -26,12 +26,12 @@ class Comment {
 }
 
 class Data {
-  int? commentId;
-  int? userId;
+  dynamic commentId; // Changed to dynamic to handle MongoDB _id (string) or comment_id (int)
+  dynamic userId; // Changed to dynamic to handle MongoDB string IDs
   String? comment;
   String? status;
   String? createdAt;
-  int? postId;
+  dynamic postId; // Changed to dynamic to handle MongoDB string IDs
 
   Data(
       {this.commentId,
@@ -42,22 +42,41 @@ class Data {
       this.postId});
 
   Data.fromJson(Map<String, dynamic> json) {
-    commentId = json['comment_id'];
-    userId = json['user_id'];
-    comment = json['comment'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    postId = json['post_id'];
+    // Handle both _id (MongoDB) and comment_id (legacy)
+    if (json['_id'] != null) {
+      commentId = json['_id'].toString();
+    } else {
+      commentId = json['comment_id']?.toString() ?? json['comment_id'];
+    }
+    
+    // Handle user_id - can be string (MongoDB) or int (legacy)
+    if (json['user_id'] != null) {
+      userId = json['user_id'].toString();
+    } else {
+      userId = null;
+    }
+    
+    comment = json['comment']?.toString() ?? '';
+    status = json['status']?.toString() ?? '';
+    createdAt = json['created_at']?.toString() ?? '';
+    
+    // Handle post_id - can be string (MongoDB) or int (legacy)
+    if (json['post_id'] != null) {
+      postId = json['post_id'].toString();
+    } else {
+      postId = null;
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['comment_id'] = this.commentId;
-    data['user_id'] = this.userId;
+    data['_id'] = this.commentId?.toString();
+    data['comment_id'] = this.commentId?.toString();
+    data['user_id'] = this.userId?.toString();
     data['comment'] = this.comment;
     data['status'] = this.status;
     data['created_at'] = this.createdAt;
-    data['post_id'] = this.postId;
+    data['post_id'] = this.postId?.toString();
     return data;
   }
 }

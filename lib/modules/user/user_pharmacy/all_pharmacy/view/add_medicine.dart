@@ -10,6 +10,7 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/common/utils/file_selector.dart';
 import 'package:joy_app/widgets/textfield/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
@@ -30,6 +31,7 @@ class _AddMedicineState extends State<AddMedicine> {
   final TextEditingController _stockController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _discountController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
 
   final TextEditingController _descController = TextEditingController();
@@ -62,7 +64,7 @@ class _AddMedicineState extends State<AddMedicine> {
   @override
   Widget build(BuildContext context) {
     productsController.categoriesList.forEach((element) {
-      category!.add(element.name!);
+      category.add(element.name ?? '');
     });
     if (widget.isEdit == true) {
       final data = widget.productDetail!;
@@ -71,8 +73,18 @@ class _AddMedicineState extends State<AddMedicine> {
       _dosageController.setText(data.dosage.toString());
       _stockController.setText(data.quantity.toString());
       _priceController.setText(data.price!);
-      _categoryController.setText(
-          category[data.productId!.toInt() > 3 ? 1 : data.productId!.toInt()]);
+      _discountController.setText(data.discount ?? '0');
+      // Fix: Handle productId as string (MongoDB ID) - use category from product or default
+      if (data.category != null && category.isNotEmpty) {
+        // Try to find category in list, otherwise use first category
+        final categoryIndex = category.indexWhere((cat) => 
+          cat.toUpperCase() == data.category!.toUpperCase());
+        _categoryController.setText(categoryIndex >= 0 
+          ? category[categoryIndex] 
+          : (category.isNotEmpty ? category[0] : ''));
+      } else {
+        _categoryController.setText(category.isNotEmpty ? category[0] : '');
+      }
       _selectedImage = data.image.toString();
     }
 
@@ -248,6 +260,23 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  RoundedBorderTextField(
+                      controller: _discountController,
+                      hintText: 'Discount',
+                      icon: '',
+                      textInputType: TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter discount (use 0 if no discount)';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid discount';
+                        }
+                        return null;
+                      }),
+                  SizedBox(
+                    height: 2.h,
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -279,23 +308,50 @@ class _AddMedicineState extends State<AddMedicine> {
                                           .toString(),
                                       context);
                                 } else {
-                                  productsController.createProduct(
+                                  // Get current user for pharmacy_id
+                                  getCurrentUser().then((currentUser) async {
+                                    if (currentUser == null) {
+                                      Get.snackbar('Error', 'User not found');
+                                      return;
+                                    }
+
+                                    // Get selected category name
+                                    final selectedCategory = _categoryController.text.isNotEmpty
+                                        ? _categoryController.text
+                                        : category.isNotEmpty ? category.first : '';
+
+                                    if (selectedCategory.isEmpty) {
+                                      Get.snackbar('Error', 'Please select a category');
+                                      return;
+                                    }
+
+                                    // Use createProductWithCategory to match edit product format
+                                    final response = await productsController.createProductWithCategory(
                                       _nameController.text.toString(),
                                       _descController.text.toString(),
-                                      (category.indexOf(_categoryController
-                                                      .text) +
-                                                  1)
-                                              .toString() ??
-                                          '0',
+                                      selectedCategory, // Use category name as string
                                       _priceController.text.toString(),
-                                      '0',
-                                      '',
+                                      _discountController.text.toString().isEmpty 
+                                          ? '0' 
+                                          : _discountController.text.toString(),
+                                      currentUser.userId.toString(),
                                       _stockController.text.toString(),
                                       _dosageController.text.toString(),
                                       _selectedImage.toString().contains('http')
                                           ? _selectedImage.toString()
                                           : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
-                                      context);
+                                      context,
+                                    );
+
+                                    if (response != null) {
+                                      // Close the screen first
+                                      Get.back();
+                                      // Wait a bit for the screen to close
+                                      await Future.delayed(Duration(milliseconds: 300));
+                                      // Show success message after screen is closed
+                                      Get.snackbar('Success', 'Product created successfully');
+                                    }
+                                  });
                                 }
                               }
                               // showDialog(

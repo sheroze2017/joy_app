@@ -49,11 +49,16 @@ class FriendRequest {
       this.friendDetails});
 
   FriendRequest.fromJson(Map<String, dynamic> json) {
-    friendsId = json['friends_id'] ?? json['_id'];
-    // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
-    userId = json['_id'] ?? json['user_id'];
-    friendId = json['friend_id'] ?? json['_id'];
+    // _id is the request ID, friends_id is legacy
+    friendsId = json['_id'] ?? json['friends_id'];
+    // user_id is the person who sent the request
+    userId = json['user_id'] ?? json['_id'];
+    // friend_id is the person who received the request (current user)
+    friendId = json['friend_id'];
     // Convert to String if they're not already
+    if (friendsId != null && friendsId is! String) {
+      friendsId = friendsId.toString();
+    }
     if (userId != null && userId is! String) {
       userId = userId.toString();
     }

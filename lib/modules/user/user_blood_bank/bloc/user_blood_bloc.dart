@@ -5,6 +5,7 @@ import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/blood_bank/model/all_blood_request_model.dart';
+import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_api.dart';
 import 'package:joy_app/modules/user/user_blood_bank/model/all_bloodbank_model.dart';
 import 'package:joy_app/widgets/dailog/success_dailog.dart';
@@ -18,12 +19,17 @@ class UserBloodBankController extends GetxController {
   RxList<BloodRequest> allBloodRequest = <BloodRequest>[].obs;
   RxList<BloodRequest> allPlasmaRequest = <BloodRequest>[].obs;
   RxList<BloodRequest> allMyRequest = <BloodRequest>[].obs;
+  
+  // Get all requests (both blood and plasma) for counting OPEN status
+  List<BloodRequest> get allRequests => [...allBloodRequest, ...allPlasmaRequest];
 
   var showLoader = false.obs;
   RxList<BloodBank> bloodbank = <BloodBank>[].obs;
   RxList<BloodBank> searchResults = <BloodBank>[].obs;
   RxString searchQuery = ''.obs;
   var fetchBloodBank = false.obs;
+  RxList<BloodDonor> allDonors = <BloodDonor>[].obs;
+  RxList<BloodDonor> searchedDonors = <BloodDonor>[].obs;
 
   @override
   void onInit() async {
@@ -36,10 +42,10 @@ class UserBloodBankController extends GetxController {
 
   void searchBloodBanks(String query) {
     searchQuery.value = query;
-    searchResults.value = bloodbank.value
+    searchResults.assignAll(bloodbank
         .where((bloodBank) =>
             bloodBank.name!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+        .toList());
   }
 
   Future<bool> createDonorUser(
@@ -51,7 +57,9 @@ class UserBloodBankController extends GetxController {
       bool response = await userBloodBankApi.CreateDonor(name, bloodGroup,
           location, gender, city, currentUser!.userId.toString(), type);
       if (response == true) {
-        showLoader.value = true;
+        showLoader.value = false;
+        // Reload donors list after successful registration
+        await getAllDonors();
 
         showDialog(
           context: context,
@@ -66,16 +74,17 @@ class UserBloodBankController extends GetxController {
           },
         );
       } else {
-        showLoader.value = true;
-
+        showLoader.value = false;
         showErrorMessage(context, 'Error in creating you a donor');
       }
-      showLoader.value = false;
 
       return response;
     } catch (error) {
+      showLoader.value = false;
       throw (error);
-    } finally {}
+    } finally {
+      showLoader.value = false;
+    }
   }
 
   Future<bool> createBloodAppeal(name, date, time, units, bloodGroup, gender,
@@ -96,6 +105,11 @@ class UserBloodBankController extends GetxController {
           currentUser!.userId.toString(),
           bloodType);
       if (response == true) {
+        showLoader.value = false;
+        // Reload donors and blood requests after successful submission
+        await getAllDonors();
+        await getAllBloodRequest();
+
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -109,10 +123,9 @@ class UserBloodBankController extends GetxController {
             );
           },
         );
-        showLoader.value = false;
       } else {
-        showErrorMessage(context, 'Error creating ${bloodType} appeal');
         showLoader.value = false;
+        showErrorMessage(context, 'Error creating ${bloodType} appeal');
       }
       return response;
     } catch (error) {
@@ -153,19 +166,145 @@ class UserBloodBankController extends GetxController {
       AllBloodRequest response = await bloodBankApi.getAllBloodRequest();
       if (response.data != null) {
         response.data!.forEach((element) {
-          if (currentUser!.userId.toString() == element.userId.toString()) {
-            allMyRequest.add(element);
-          }
-          if (element.type == 'Plasma') {
-            allPlasmaRequest.add(element);
-          } else {
-            allBloodRequest.add(element);
+          try {
+            if (currentUser != null && currentUser.userId.toString() == element.userId?.toString()) {
+              allMyRequest.add(element);
+            }
+            // Categorize by type: PLASMA goes to plasma, everything else (URGENT, NORMAL, PLATELET, REQUEST) goes to blood
+            if (element.type?.toUpperCase() == 'PLASMA') {
+              allPlasmaRequest.add(element);
+            } else {
+              // All other types (URGENT, NORMAL, PLATELET, REQUEST) are blood requests
+              allBloodRequest.add(element);
+            }
+          } catch (e) {
+            print('❌ [getAllBloodRequest] Error processing element: $e');
+            print('   Element data: ${element.toJson()}');
           }
         });
       } else {}
       return response;
     } catch (error) {
-      throw (error);
+      print('❌ [getAllBloodRequest] Error: $error');
+      rethrow;
     } finally {}
+  }
+
+  Future<AllDonor> getAllDonors() async {
+    allDonors.clear();
+    try {
+      AllDonor response = await bloodBankApi.getAllDonor();
+      if (response.data != null) {
+        response.data!.forEach((element) {
+          allDonors.add(element);
+        });
+      }
+      searchedDonors.assignAll(allDonors);
+      return response;
+    } catch (error) {
+      throw (error);
+    }
+  }
+
+  void searchDonors(String query) {
+    if (query.isEmpty) {
+      searchedDonors.assignAll(allDonors);
+    } else {
+      searchedDonors.assignAll(allDonors
+          .where((donor) =>
+              donor.name!.toLowerCase().contains(query.toLowerCase()) ||
+              donor.bloodGroup!.toLowerCase().contains(query.toLowerCase()) ||
+              donor.location!.toLowerCase().contains(query.toLowerCase()) ||
+              donor.city!.toLowerCase().contains(query.toLowerCase()))
+          .toList());
+    }
+  }
+
+  Future<bool> deleteBloodRequest(String bloodId, BuildContext context) async {
+    showLoader.value = true;
+    try {
+      bool response = await bloodBankApi.deleteBloodRequest(bloodId);
+      if (response == true) {
+        showLoader.value = false;
+        // Remove from all lists
+        allBloodRequest.removeWhere((req) => req.bloodId?.toString() == bloodId);
+        allPlasmaRequest.removeWhere((req) => req.bloodId?.toString() == bloodId);
+        allMyRequest.removeWhere((req) => req.bloodId?.toString() == bloodId);
+        
+        showSuccessMessage(context, 'Blood request deleted successfully');
+        return true;
+      } else {
+        showLoader.value = false;
+        showErrorMessage(context, 'Error deleting blood request');
+        return false;
+      }
+    } catch (error) {
+      showLoader.value = false;
+      showErrorMessage(context, 'Error deleting blood request: ${error.toString()}');
+      return false;
+    } finally {
+      showLoader.value = false;
+    }
+  }
+
+  Future<bool> attachDonorToBloodRequest(String bloodRequestId, BuildContext context) async {
+    showLoader.value = true;
+    UserHive? currentUser = await getCurrentUser();
+    try {
+      if (currentUser == null) {
+        showLoader.value = false;
+        showErrorMessage(context, 'User not logged in');
+        return false;
+      }
+      
+      bool response = await bloodBankApi.attachDonorToBloodRequest(
+        bloodRequestId,
+        currentUser.userId.toString(),
+      );
+      if (response == true) {
+        showLoader.value = false;
+        showSuccessMessage(context, 'You have been attached as a donor successfully');
+        // Reload blood requests to get updated data
+        await getAllBloodRequest();
+        return true;
+      } else {
+        showLoader.value = false;
+        showErrorMessage(context, 'Error attaching donor');
+        return false;
+      }
+    } catch (error) {
+      showLoader.value = false;
+      showErrorMessage(context, 'Error attaching donor: ${error.toString()}');
+      return false;
+    } finally {
+      showLoader.value = false;
+    }
+  }
+
+  Future<bool> detachDonorFromBloodRequest(String bloodRequestId, String userId, BuildContext context) async {
+    showLoader.value = true;
+    try {
+      bool response = await bloodBankApi.detachDonorFromBloodRequest(
+        bloodRequestId,
+        userId,
+      );
+      if (response == true) {
+        showLoader.value = false;
+        showSuccessMessage(context, 'Donor attachment cancelled successfully');
+        // Reload blood requests to get updated data
+        await getAllBloodRequest();
+        return true;
+      } else {
+        showLoader.value = false;
+        showErrorMessage(context, 'Error detaching donor');
+        return false;
+      }
+    } catch (error) {
+      showLoader.value = false;
+      showErrorMessage(context, 'Error detaching donor: ${error.toString()}');
+      return false;
+    } finally {
+      showLoader.value = false;
+    }
   }
 }

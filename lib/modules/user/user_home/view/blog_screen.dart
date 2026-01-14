@@ -15,10 +15,16 @@ import 'package:joy_app/modules/social_media/chat/view/chats.dart';
 import 'package:sizer/sizer.dart';
 import '../../../social_media/media_post/bloc/medai_posts_bloc.dart';
 import '../../user_doctor/bloc/user_doctor_bloc.dart';
+import 'package:joy_app/widgets/drawer/user_drawer.dart';
 
-class UserBlogScreen extends StatelessWidget {
+class UserBlogScreen extends StatefulWidget {
   UserBlogScreen({super.key});
 
+  @override
+  State<UserBlogScreen> createState() => _UserBlogScreenState();
+}
+
+class _UserBlogScreenState extends State<UserBlogScreen> {
   final mediaController = Get.put(MediaPostController());
   final TextEditingController imageurl = TextEditingController();
   ProfileController _profileController = Get.put(ProfileController());
@@ -32,30 +38,28 @@ class UserBlogScreen extends StatelessWidget {
       Get.put(FriendsSocialController());
 
   @override
+  void initState() {
+    super.initState();
+    // Load posts when screen is first displayed
+    // Use addPostFrameCallback to ensure this runs after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print('📱 [UserBlogScreen] initState - Loading posts...');
+      mediaController.getAllPost();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: UserDrawer(),
         appBar: HomeAppBar(
           isImage: true,
           leading: Text(''),
           showBottom: true,
           title: '',
           actions: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: ThemeUtil.isDarkMode(context)
-                    ? Color(0xff191919)
-                    : Color(0xffF3F4F6),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Center(
-                  child: SvgPicture.asset('Assets/icons/search-normal.svg'),
-                ),
-              ),
-            ),
             Padding(
-              padding: const EdgeInsets.only(right: 22.56, left: 8),
+              padding: const EdgeInsets.only(right: 22.56),
               child: InkWell(
                 onTap: () {
                   Get.to(AllChats(), transition: Transition.native);
@@ -182,6 +186,15 @@ class UserBlogScreen extends StatelessWidget {
                               itemBuilder: ((context, index) {
                                 final data = mediaController.allPost.reversed
                                     .toList()[index];
+                                final creatorName =
+                                    data.createdByUser?.name ?? data.name ?? '';
+                                final creatorImage = data.createdByUser?.image ??
+                                    data.user_image ??
+                                    '';
+                                final creatorId = data.createdByUser?.userId ??
+                                    data.createdBy?.toString() ??
+                                    data.userId ??
+                                    '';
                                 return Column(
                                   children: [
                                     Obx(() => MyCustomWidget(
@@ -192,7 +205,7 @@ class UserBlogScreen extends StatelessWidget {
                                           postIndex: index,
                                           postId: data.postId.toString(),
                                           postTime: data.createdAt.toString(),
-                                          id: data.createdBy.toString(),
+                                          id: creatorId,
                                           imgPath: data.image.toString(),
                                           isLiked: data.isMyLike ?? false, // Use is_my_like from API response
                                           isReply: false,
@@ -200,9 +213,9 @@ class UserBlogScreen extends StatelessWidget {
                                                   data.image!.isEmpty)
                                               ? false
                                               : true,
-                                          postName: data.name.toString(),
+                                          postName: creatorName,
                                           text: data.description.toString(),
-                                          userImage: data.user_image.toString(),
+                                          userImage: creatorImage,
                                         )),
                                   ],
                                 );
@@ -211,6 +224,8 @@ class UserBlogScreen extends StatelessWidget {
               ),
             ),
           ),
-        ));
+        ),
+      );
   }
 }
+

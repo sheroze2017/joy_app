@@ -1,6 +1,7 @@
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/user/user_doctor/model/all_doctor_model.dart';
+import 'package:joy_app/modules/user/user_doctor/model/doctor_categories_model.dart';
 
 import '../model/all_user_appointment.dart';
 
@@ -10,15 +11,13 @@ class UserDoctorApi {
   UserDoctorApi(this._dioClient);
 
   Future<bool> CreateReview(
-    String given_to,
-    String given_by,
+    String appointmentId,
     String rating,
     String review,
   ) async {
     try {
       final result = await _dioClient.post(Endpoints.giveReview, data: {
-        "given_to": given_to,
-        "given_by": given_by,
+        "appointment_id": appointmentId,
         "rating": rating,
         "review": review
       });
@@ -35,9 +34,31 @@ class UserDoctorApi {
   Future<AllDoctor> getAllDoctors() async {
     try {
       final result = await _dioClient.get(Endpoints.getAllDoctors);
+      print('📋 [UserDoctorApi] getAllDoctors response: ${result.toString()}');
+      // Check if data is nested
+      if (result['data'] != null && result['data'] is Map && result['data'].containsKey('doctors')) {
+        print('📋 [UserDoctorApi] Found nested doctors structure');
+        // Extract first doctor to check reviews
+        final doctors = result['data']['doctors'];
+        if (doctors is List && doctors.isNotEmpty) {
+          print('📋 [UserDoctorApi] First doctor reviews: ${doctors[0]['reviews']}');
+        }
+      }
       return AllDoctor.fromJson(result);
     } catch (e) {
-      print(e.toString());
+      print('❌ [UserDoctorApi] Error: ${e.toString()}');
+      throw e;
+    }
+  }
+
+  Future<DoctorCategoriesWithDoctors> getDoctorCategoriesWithDoctors() async {
+    try {
+      print('📋 [UserDoctorApi] getDoctorCategoriesWithDoctors - Calling: ${Endpoints.baseUrl}${Endpoints.getDoctorCategoriesWithDoctors}');
+      final result = await _dioClient.get(Endpoints.getDoctorCategoriesWithDoctors);
+      print('📋 [UserDoctorApi] getDoctorCategoriesWithDoctors response received');
+      return DoctorCategoriesWithDoctors.fromJson(result);
+    } catch (e) {
+      print('❌ [UserDoctorApi] getDoctorCategoriesWithDoctors Error: ${e.toString()}');
       throw e;
     }
   }
@@ -46,6 +67,17 @@ class UserDoctorApi {
     try {
       final result = await _dioClient
           .get(Endpoints.getAllUserAppointment + '?user_id=${userId}');
+      return AllUserAppointment.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<AllUserAppointment> getUserAppointmentsByStatus(userId) async {
+    try {
+      final result = await _dioClient
+          .get(Endpoints.getUserAppointmentsByStatus + '?user_id=${userId}');
       return AllUserAppointment.fromJson(result);
     } catch (e) {
       print(e.toString());
@@ -62,7 +94,27 @@ class UserDoctorApi {
         "status": status,
         "remarks": remarks,
       });
-      if (result['sucess'] == true) {
+      if (result['sucess'] == true || result['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<bool> rescheduleAppointment(
+      String appointmentId, String date, String time) async {
+    try {
+      final result =
+          await _dioClient.post(Endpoints.rescheduleAppointment, data: {
+        "appointment_id": appointmentId,
+        "date": date,
+        "time": time,
+      });
+      if (result['sucess'] == true || result['success'] == true) {
         return true;
       } else {
         return false;
@@ -87,7 +139,7 @@ class UserDoctorApi {
       String patientName,
       String certificateUrl) async {
     try {
-      final result = await _dioClient.post(Endpoints.createAppointment, data: {
+      final payload = {
         "user_id": userId,
         "doctor_id": doctorId,
         "date": date,
@@ -100,7 +152,11 @@ class UserDoctorApi {
         "gender": gender,
         "patient_name": patientName,
         "certificate": certificateUrl
-      });
+      };
+      print('📡 [UserDoctorApi] POST ${Endpoints.createAppointment}');
+      print('📤 [UserDoctorApi] Payload: $payload');
+      final result = await _dioClient.post(Endpoints.createAppointment, data: payload);
+      print('📥 [UserDoctorApi] Response: $result');
       if (result['sucess'] == true) {
         return true;
       } else {

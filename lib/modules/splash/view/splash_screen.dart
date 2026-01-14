@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/auth/bloc/auth_bloc.dart';
 import 'package:joy_app/modules/auth/utils/route.dart';
 import 'package:joy_app/common/onboarding/onboarding_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -24,6 +25,9 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       UserHive? currentUser = await getCurrentUser();
       if (currentUser != null) {
+        final authController = Get.find<AuthController>();
+        await authController.updateDeviceTokenForUser(
+            currentUser.userId.toString());
         Timer(Duration(seconds: 5),
             () => handleUserRoleNavigation(currentUser.userRole));
       } else {

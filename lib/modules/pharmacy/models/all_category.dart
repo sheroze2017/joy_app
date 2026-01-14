@@ -31,9 +31,9 @@ class AllCategory {
 }
 
 class Category {
-  int? categoryId;
+  dynamic categoryId; // Changed to dynamic to handle both _id (MongoDB) and category_id (legacy)
   String? name;
-  Null? createdAt;
+  dynamic createdAt;
   String? status;
   int? parentCategoryId;
 
@@ -45,10 +45,15 @@ class Category {
       this.parentCategoryId});
 
   Category.fromJson(Map<String, dynamic> json) {
-    categoryId = json['category_id'];
-    name = json['name'];
+    // Handle both '_id' (MongoDB) and 'category_id' (legacy) fields
+    if (json['_id'] != null) {
+      categoryId = json['_id'].toString(); // Store as string for MongoDB IDs
+    } else {
+      categoryId = json['category_id'];
+    }
+    name = json['name']?.toString();
     createdAt = json['created_at'];
-    status = json['status'];
+    status = json['status']?.toString();
     parentCategoryId = json['parent_category_id'];
   }
 

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/map/bloc/location_controller.dart';
-import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 import 'package:joy_app/modules/user/user_doctor/view/manage_booking.dart';
 import 'package:joy_app/modules/user/user_hospital/bloc/user_hospital_bloc.dart';
@@ -13,14 +12,18 @@ import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/user/user_doctor/view/all_doctor_screen.dart';
 import 'package:joy_app/modules/home/components/hospital_card_shimmer.dart';
-import 'package:joy_app/modules/home/components/hospital_card_widget.dart';
 import 'package:joy_app/modules/hospital/view/home_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:joy_app/modules/user/user_hospital/view/all_hospital_screen.dart';
 import 'package:joy_app/modules/pharmacy/view/pharmacy_product_screen.dart';
-import 'package:joy_app/widgets/appbar/location_appbar.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/user_all_order.dart';
+import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
 import '../../user_blood_bank/bloc/user_blood_bloc.dart';
+import '../../user_home/bloc/nearby_services_bloc.dart';
+import '../../user_home/view/widgets/nearby_service_card.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/widgets/drawer/user_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -47,67 +50,24 @@ class _HomeScreenState extends State<HomeScreen> {
   final _bloodBankController = Get.put(UserBloodBankController());
   final _userHospitalController = Get.put(UserHospitalController());
   final locationController = Get.find<LocationController>();
+  final nearbyServicesController = Get.put(NearbyServicesController());
+  final _profileController = Get.find<ProfileController>();
 
   @override
   void initState() {
     super.initState();
-    pharmacyController.getAllPharmacy();
-    _userdoctorController.getAllDoctors();
-    _userdoctorController.getAllUserAppointment();
-    _bloodBankController.getAllBloodBank();
-    _userHospitalController.getAllHospitals();
-    _bloodBankController.getAllBloodRequest();
+    // Use unified API that returns all data (pharmacies, hospitals, doctors, blood donors, bookings)
+    nearbyServicesController.getNearbyServicesAndBookings();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: LocationAppBar(
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Location',
-                style: CustomTextStyles.lightTextStyle(
-                    color: ThemeUtil.isDarkMode(context)
-                        ? Color(0xffAAAAAA)
-                        : null),
-              ),
-              SizedBox(height: 1.w),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MapScreen()),
-                      ).then((value) {
-                        if (value != null) {
-                          locationController.setLocation(value['latitude'],
-                              value['longitude'], value['searchValue']);
-                        }
-                      });
-                    },
-                    child: SvgPicture.asset(
-                      'Assets/icons/pindrop.svg',
-                      color: ThemeUtil.isDarkMode(context)
-                          ? Color(0xffC5D3E3)
-                          : Color(0xff1C2A3A),
-                    ),
-                  ),
-                  SizedBox(width: 1.w),
-                  Obx(
-                    () => Text(
-                      locationController.location.value,
-                      style: CustomTextStyles.w600TextStyle(
-                          size: 14, color: Color(0xff374151)),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 1.h),
-            ],
-          ),
+        drawer: UserDrawer(),
+        appBar: HomeAppBar(
+          isImage: true,
+          title: '',
+          leading: Container(),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 16),
@@ -128,10 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: RefreshIndicator(
           onRefresh: () async {
-            pharmacyController.getAllPharmacy();
-            _bloodBankController.getAllBloodBank();
-            _userHospitalController.getAllHospitals();
-            _bloodBankController.getAllBloodRequest();
+            // Use unified API that returns all data
+            await nearbyServicesController.getNearbyServicesAndBookings();
           },
           child: SingleChildScrollView(
             child: Padding(
@@ -266,6 +224,76 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 1.h,
                   ),
+                  // Scrollable Content Sections
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16, left: 16),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildScrollableContentCard(
+                            context,
+                            'Consult Doctors Online',
+                            'Find and appoint skilled doctors',
+                            Icons.medical_services,
+                            Colors.blue,
+                            () {
+                              Get.to(
+                                AllDoctorsScreen(appBarText: 'All Doctors'),
+                                transition: Transition.native,
+                              );
+                            },
+                          ),
+                          SizedBox(width: 2.w),
+                          _buildScrollableContentCard(
+                            context,
+                            'Search for Hospitals',
+                            'Find nearby medical centers',
+                            Icons.local_hospital,
+                            Colors.green,
+                            () {
+                              Get.to(
+                                AllHospitalScreen(
+                                  appBarText: 'All Hospitals',
+                                  isHospital: true,
+                                ),
+                                transition: Transition.native,
+                              );
+                            },
+                          ),
+                          SizedBox(width: 2.w),
+                          _buildScrollableContentCard(
+                            context,
+                            'Check Medical History',
+                            'View your bookings and history',
+                            Icons.history,
+                            Colors.orange,
+                            () {
+                              Get.to(
+                                ManageAllAppointmentUser(),
+                                transition: Transition.native,
+                              );
+                            },
+                          ),
+                          SizedBox(width: 2.w),
+                          _buildScrollableContentCard(
+                            context,
+                            'My Pharmacy Orders',
+                            'View your pharmacy orders',
+                            Icons.shopping_bag,
+                            Colors.purple,
+                            () {
+                              Get.to(
+                                UserAllOrderScreen(),
+                                transition: Transition.native,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
                   Padding(
                     padding: const EdgeInsets.only(right: 16, left: 16),
                     child: Row(
@@ -296,12 +324,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 1.h,
+                    height: 0.5.h, // Reduced from 1.h to minimize space below title
                   ),
                   Obx(
                     () => Container(
-                      height: 70.w,
-                      child: pharmacyController.fetchPharmacyLoader.value
+                      height: 65.w, // Reduced from 70.w to minimize empty space
+                      child: nearbyServicesController.fetchLoader.value
                           ? ListView.builder(
                               padding: const EdgeInsets.only(left: 16.0),
                               scrollDirection: Axis.horizontal,
@@ -316,13 +344,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           : ListView.builder(
                               padding: const EdgeInsets.only(left: 16.0),
                               scrollDirection: Axis.horizontal,
-                              itemCount:
-                                  pharmacyController.pharmacies.length < 5
-                                      ? pharmacyController.pharmacies.length
-                                      : 4,
+                              itemCount: nearbyServicesController.pharmacies.length > 4
+                                  ? 4
+                                  : nearbyServicesController.pharmacies.length,
                               itemBuilder: (context, index) {
                                 final data =
-                                    pharmacyController.pharmacies[index];
+                                    nearbyServicesController.pharmacies[index];
                                 return Padding(
                                   padding:
                                       const EdgeInsets.only(right: 8, left: 0),
@@ -333,14 +360,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 PharmacyProductScreen(
-                                                  userId:
-                                                      data.userId.toString(),
+                                                  userId: data.id.toString(),
                                                 )),
                                       );
                                     },
-                                    child: HosipitalCardWidget(
-                                      pharmacyData: data,
-                                      isPharmacy: true,
+                                    child: NearbyServiceCard(
+                                      pharmacy: data,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PharmacyProductScreen(
+                                                    userId: data.id.toString(),
+                                                  )),
+                                        );
+                                      },
                                     ),
                                   ),
                                 );
@@ -349,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 3.h,
+                    height: 1.5.h, // Reduced from 3.h to minimize space between sections
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 16, left: 16),
@@ -381,12 +416,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 1.h,
+                    height: 0.5.h, // Reduced from 1.h to minimize space below title
                   ),
                   Obx(
                     () => Container(
-                      height: 70.w,
-                      child: _userHospitalController.fetchHospital.value
+                      height: 65.w, // Reduced from 70.w to minimize empty space
+                      child: nearbyServicesController.fetchLoader.value
                           ? ListView.builder(
                               padding: const EdgeInsets.only(left: 16.0),
                               scrollDirection: Axis.horizontal,
@@ -398,35 +433,66 @@ class _HomeScreenState extends State<HomeScreen> {
                           : ListView.builder(
                               padding: const EdgeInsets.only(left: 16.0),
                               scrollDirection: Axis.horizontal,
-                              itemCount: _userHospitalController
-                                          .hospitalList.length <
-                                      5
-                                  ? _userHospitalController.hospitalList.length
-                                  : 4,
+                              itemCount: nearbyServicesController.hospitals.length > 4
+                                  ? 4
+                                  : nearbyServicesController.hospitals.length,
                               itemBuilder: (context, index) {
                                 final hospitaldata =
-                                    _userHospitalController.hospitalList[index];
+                                    nearbyServicesController.hospitals[index];
                                 return Padding(
                                   padding:
                                       const EdgeInsets.only(right: 8, left: 0),
-                                  child: InkWell(
+                                      child: InkWell(
                                       onTap: () {
+                                        final hospitalId = hospitaldata.id?.toString();
+                                        if (hospitalId == null || hospitalId == 'null' || hospitalId.isEmpty) {
+                                          Get.snackbar(
+                                            'Error',
+                                            'Invalid hospital ID. Please try again.',
+                                            snackPosition: SnackPosition.BOTTOM,
+                                            backgroundColor: Colors.red,
+                                            colorText: Colors.white,
+                                            duration: Duration(seconds: 2),
+                                            icon: Icon(Icons.error, color: Colors.white),
+                                          );
+                                          return;
+                                        }
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   HospitalHomeScreen(
-                                                    //   hospitalDetail: hospitaldata,
-                                                    hospitalId: hospitaldata
-                                                        .userId
-                                                        .toString(),
+                                                    hospitalId: hospitalId,
                                                     isUser: true,
                                                   )),
                                         );
                                       },
-                                      child: HosipitalCardWidget(
-                                        isHospital: true,
-                                        hospitalData: hospitaldata,
+                                      child: NearbyServiceCard(
+                                        hospital: hospitaldata,
+                                        onTap: () {
+                                          final hospitalId = hospitaldata.id?.toString();
+                                          if (hospitalId == null || hospitalId == 'null' || hospitalId.isEmpty) {
+                                            Get.snackbar(
+                                              'Error',
+                                              'Invalid hospital ID. Please try again.',
+                                              snackPosition: SnackPosition.BOTTOM,
+                                              backgroundColor: Colors.red,
+                                              colorText: Colors.white,
+                                              duration: Duration(seconds: 2),
+                                              icon: Icon(Icons.error, color: Colors.white),
+                                            );
+                                            return;
+                                          }
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HospitalHomeScreen(
+                                                      hospitalId: hospitalId,
+                                                      isUser: true,
+                                                    )),
+                                          );
+                                        },
                                       )),
                                 );
                               },
@@ -434,14 +500,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 3.h,
+                    height: 1.5.h, // Reduced from 3.h to minimize space between sections
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 16, left: 16),
                     child: Row(
                       children: [
                         Text(
-                          'Nearby Blood Bank',
+                          'Blood Bank',
                           style: CustomTextStyles.darkHeadingTextStyle(
                               color: ThemeUtil.isDarkMode(context)
                                   ? AppColors.whiteColor
@@ -466,12 +532,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 1.h,
+                    height: 0.5.h, // Reduced from 1.h to minimize space below title
                   ),
                   Obx(
                     () => Container(
-                      height: 70.w, // Set a fixed height
-                      child: _bloodBankController.fetchBloodBank.value
+                      height: 65.w, // Reduced from 70.w to minimize empty space
+                      child: nearbyServicesController.fetchLoader.value
                           ? ListView.builder(
                               padding: const EdgeInsets.only(left: 16.0),
                               scrollDirection: Axis.horizontal,
@@ -482,20 +548,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           : ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount:
-                                  _bloodBankController.bloodbank.length < 5
-                                      ? _bloodBankController.bloodbank.length
-                                      : 4,
+                              itemCount: nearbyServicesController.bloodDonors.length > 4
+                                  ? 4
+                                  : nearbyServicesController.bloodDonors.length,
                               padding: const EdgeInsets.only(left: 16.0),
                               itemBuilder: (context, index) {
                                 final data =
-                                    _bloodBankController.bloodbank[index];
+                                    nearbyServicesController.bloodDonors[index];
                                 return Padding(
                                   padding:
                                       const EdgeInsets.only(right: 8, left: 0),
-                                  child: HosipitalCardWidget(
-                                    bloodBankData: data,
-                                    isBloodBank: true,
+                                  child: NearbyServiceCard(
+                                    bloodDonor: data,
                                   ),
                                 );
                               },
@@ -507,5 +571,110 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ));
+  }
+
+  Widget _buildScrollableContentCard(
+    BuildContext context,
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 70.w,
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 32),
+            SizedBox(height: 1.h),
+            Text(
+              title,
+              style: CustomTextStyles.darkHeadingTextStyle(
+                color: ThemeUtil.isDarkMode(context)
+                    ? AppColors.whiteColor
+                    : null,
+                size: 16,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 0.5.h),
+            Text(
+              subtitle,
+              style: CustomTextStyles.lightTextStyle(
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xffAAAAAA)
+                    : Color(0xff6B7280),
+                size: 12,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DrawerItem extends StatelessWidget {
+  final bool isBooking;
+  final String bookingText;
+  final String bookingAsset;
+  final isBloodBank;
+  const DrawerItem({
+    required this.isBooking,
+    required this.bookingText,
+    required this.bookingAsset,
+    required this.isBloodBank,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(62),
+        color: isBooking
+            ? Colors.white
+            : isBloodBank
+                ? AppColors.redColor
+                : AppColors.darkBlueColor,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              child: SvgPicture.asset(
+                bookingAsset,
+              ),
+              height: 6.w,
+              width: 6.w,
+            ),
+            SizedBox(width: 3.w),
+            Text(
+              bookingText,
+              style: CustomTextStyles.w600TextStyle(
+                  size: 16,
+                  color: isBooking ? Color(0xff1F1F29) : Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

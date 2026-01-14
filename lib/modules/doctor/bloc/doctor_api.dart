@@ -105,7 +105,27 @@ class DoctorApi {
         "status": status,
         "remarks": remarks,
       });
-      if (result['sucess'] == true) {
+      if (result['sucess'] == true || result['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<bool> rescheduleAppointment(
+      String appointmentId, String date, String time) async {
+    try {
+      final result =
+          await _dioClient.post(Endpoints.rescheduleAppointment, data: {
+        "appointment_id": appointmentId,
+        "date": date,
+        "time": time,
+      });
+      if (result['sucess'] == true || result['success'] == true) {
         return true;
       } else {
         return false;
@@ -123,6 +143,26 @@ class DoctorApi {
         "appointment_id": appointmentId,
         "diagnosis": diagnosis,
         "medications": medication,
+      });
+      if (result['sucess'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<bool> giveMedicationWithTime(
+      String appointmentId, String diagnosis, String medication, String timeTaken) async {
+    try {
+      final result = await _dioClient.post(Endpoints.giveMedication, data: {
+        "appointment_id": appointmentId,
+        "diagnosis": diagnosis,
+        "medications": medication,
+        "time_taken": "$timeTaken minutes",
       });
       if (result['sucess'] == true) {
         return true;

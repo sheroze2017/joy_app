@@ -43,9 +43,18 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               : null,
       centerTitle: isImage ? false : true,
       title: isImage
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22.56),
-              child: SvgPicture.asset('Assets/icons/joy-icon-small.svg'),
+          ? Builder(
+              builder: (BuildContext context) {
+                return InkWell(
+                  onTap: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 22.56),
+                    child: SvgPicture.asset('Assets/icons/joy-icon-small.svg'),
+                  ),
+                );
+              },
             )
           : Text(
               title,

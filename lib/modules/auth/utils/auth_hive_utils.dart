@@ -58,7 +58,7 @@ Future<Box<UserHive>> _openUserBoxSafely() async {
   }
 }
 
-void saveUser(UserHive user) async {
+Future<void> saveUser(UserHive user) async {
   final userBox = await _openUserBoxSafely();
   await userBox.put('current_user', user);
 }
@@ -75,6 +75,17 @@ Future<UserHive?> getCurrentUser() async {
       print('   - Name: ${user.firstName}');
       print('   - Email: ${user.email}');
       print('   - Role: ${user.userRole}');
+      print('   - Token: ${user.token != null ? (user.token!.length > 20 ? "${user.token!.substring(0, 20)}..." : user.token) : "null"}');
+      print('   - Gender: ${user.gender ?? "null"}');
+      
+      // If user exists but token is null, this might be an old schema issue
+      // Clear the box to force fresh login with new schema
+      if (user.token == null || user.token!.isEmpty) {
+        print('⚠️ [getCurrentUser] User exists but token is null - this might be an old schema. Clearing box to force fresh login.');
+        await userBox.clear();
+        print('✅ [getCurrentUser] Cleared Hive box - user needs to login again');
+        return null;
+      }
     } else {
       print('⚠️ [getCurrentUser] No user found in Hive');
     }

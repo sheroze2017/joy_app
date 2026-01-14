@@ -93,17 +93,13 @@ class _AddNewFriendState extends State<AddNewFriend> {
                                             transition: Transition.native);
                                       },
                                       child: FriendRequestWidget(
-                                        profileImage: data.friendDetails!.image!
-                                                .contains('http')
-                                            ? data.friendDetails!.image
-                                                .toString()
-                                            : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                        profileImage: data.friendDetails!.image ?? '',
                                         userName:
                                             data.friendDetails!.name.toString(),
                                         mutualFriends: data
                                             .friendDetails!.mutualFriends!
                                             .map((friend) =>
-                                                friend.mutualFriendImage!)
+                                                friend.mutualFriendImage ?? '')
                                             .toList(),
                                         mutualFriendsCount: data.friendDetails!
                                             .mutualFriends!.length,
@@ -150,10 +146,7 @@ class _AddNewFriendState extends State<AddNewFriend> {
                                                         .AddFriend(data.userId,
                                                             context);
                                                   },
-                                                  profileImage: data.image!
-                                                          .contains('http')
-                                                      ? data.image.toString()
-                                                      : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
+                                                  profileImage: data.image ?? '',
                                                   userName:
                                                       data.name.toString(),
                                                   mutualFriends: [],
@@ -204,6 +197,53 @@ class NewFriendRequestWidget extends StatelessWidget {
     required this.onAddFriend,
   }) : super(key: key);
 
+  Widget _buildAvatarWidget(String? url, double radius, BuildContext context) {
+    final isValidUrl = url != null &&
+        url.trim().isNotEmpty &&
+        url.trim().toLowerCase() != 'null' &&
+        url.contains('http') &&
+        !url.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab');
+
+    if (isValidUrl) {
+      return ClipOval(
+        child: Image.network(
+          url.trim(),
+          width: radius * 2,
+          height: radius * 2,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: radius * 2,
+              height: radius * 2,
+              decoration: BoxDecoration(
+                color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.person,
+                size: radius,
+                color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+              ),
+            );
+          },
+        ),
+      );
+    }
+    return Container(
+      width: radius * 2,
+      height: radius * 2,
+      decoration: BoxDecoration(
+        color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        Icons.person,
+        size: radius,
+        color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -218,14 +258,7 @@ class NewFriendRequestWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Rounded Image
-            ClipOval(
-              child: Image.network(
-                profileImage,
-                width: 6.6.h,
-                height: 6.6.h,
-                fit: BoxFit.cover,
-              ),
-            ),
+            _buildAvatarWidget(profileImage, 3.3.h, context),
             SizedBox(width: 3.w),
             Expanded(
               child: Column(
@@ -243,33 +276,44 @@ class NewFriendRequestWidget extends StatelessWidget {
 
                   SizedBox(height: 0.5.h),
                   // Mutual Friends
-                  Row(
-                    children: [
-                      Row(
-                        children: List.generate(
-                          mutualFriends.length,
-                          (index) => ClipOval(
-                            child: Image.network(
-                              mutualFriends[index],
-                              width: 1.9.h,
-                              height: 1.9.h,
-                              fit: BoxFit.cover,
+                  if (mutualFriendsCount > 0)
+                    Row(
+                      children: [
+                        Row(
+                          children: List.generate(
+                            mutualFriends.length > 3 ? 3 : mutualFriends.length,
+                            (index) => Padding(
+                              padding: EdgeInsets.only(left: index > 0 ? -8.0 : 0),
+                              child: ClipOval(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: ThemeUtil.isDarkMode(context)
+                                          ? Color(0xff121212)
+                                          : Color(0xffFAFAFA),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: _buildAvatarWidget(
+                                      mutualFriends[index], 9.5, context),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 2.w,
-                      ),
-                      Expanded(
-                        child: Text(
-                          '$mutualFriendsCount mutual friends',
-                          style: CustomTextStyles.lightTextStyle(
-                              size: 9.4, color: Color(0xff99A1BE)),
+                        SizedBox(
+                          width: 2.w,
                         ),
-                      ),
-                    ],
-                  ),
+                        Expanded(
+                          child: Text(
+                            '$mutualFriendsCount mutual friends',
+                            style: CustomTextStyles.lightTextStyle(
+                                size: 9.4, color: Color(0xff99A1BE)),
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),

@@ -9,6 +9,7 @@ import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/modules/pharmacy/view/review_screen.dart';
 import 'package:joy_app/modules/user/user_blood_bank/model/all_bloodbank_model.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/blood_donation_appeal.dart';
+import 'package:joy_app/modules/user/user_hospital/view/all_hospital_screen.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -132,18 +133,18 @@ class CustomDialog extends StatelessWidget {
                                     : isBloodRequest
                                         ? {
                                             Get.back(),
-                                            Get.off(AllDonorScreen())
+                                            Get.off(AllHospitalScreen(
+                                              isBloodBank: true,
+                                              appBarText: 'All Blood Bank',
+                                            ))
                                           }
                                         : isRegisterDonor
                                             ? {
                                                 Get.back(),
-                                                Get.off(
-                                                    BloodDonationAppealUser(
-                                                      isBloodDontate: true,
-                                                      isUser: true,
-                                                    ),
-                                                    transition:
-                                                        Transition.native)
+                                                Get.off(AllHospitalScreen(
+                                                  isBloodBank: true,
+                                                  appBarText: 'All Blood Bank',
+                                                ))
                                               }
                                             : isBookAppointment
                                                 ? {

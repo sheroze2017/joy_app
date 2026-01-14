@@ -26,14 +26,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await Firebase.initializeApp();
-  // await Firebase.initializeApp(
-  //     options: FirebaseOptions(
-  //   apiKey: 'AIzaSyD9VoJD6i_LQ6dFH3JQsZO_z4RlPYki4rk',
-  //   appId: '1:850638861206:android:98362d7a24d2c2dc2de3b7',
-  //   messagingSenderId: '850638861206',
-  //   projectId: 'joyapp-34878',
-  // ));
-  // await FirebaseApi().initNotification();
+  await FirebaseApi().initNotification();
 
   await Hive.initFlutter();
   Hive.registerAdapter(UserHiveAdapter());

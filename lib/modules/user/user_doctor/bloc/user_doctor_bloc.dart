@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
@@ -12,6 +10,7 @@ import 'package:joy_app/modules/doctor/models/doctor_detail_model.dart';
 import 'package:joy_app/widgets/dailog/success_dailog.dart';
 import '../model/all_doctor_model.dart';
 import '../model/all_user_appointment.dart';
+import '../model/doctor_categories_model.dart';
 import 'user_doctor_api.dart';
 // ignore: depend_on_referenced_packages
 
@@ -24,12 +23,15 @@ class UserDoctorController extends GetxController {
   var createAppointmentLoader = false.obs;
   var appointmentLoader = false.obs;
   var detailLoader = false.obs;
+  var rescheduleLoader = false.obs;
   final _doctorDetail = Rxn<DoctorDetail>();
   var val = 0.0.obs;
 
   DoctorDetail? get doctorDetail => _doctorDetail.value;
   RxList<Doctor> doctorsList = <Doctor>[].obs;
   RxList<Doctor> searchDoctorsList = <Doctor>[].obs;
+  RxList<DoctorCategory> doctorCategories = <DoctorCategory>[].obs;
+  Rxn<DoctorCategory> selectedCategory = Rxn<DoctorCategory>();
   final Rx<List<List<String>>> daysAvailable = Rx<List<List<String>>>([]);
 
   var doctorAvailabilityText = 'No dates available'.obs;
@@ -56,7 +58,6 @@ class UserDoctorController extends GetxController {
 
   List<List<String>> storeAvailabilityTimes() {
     daysAvailable.value = [];
-    List<List<String>> availabilityTimes = [];
 
     _doctorDetail.value!.data!.availability!.forEach((availability) {
       if (availability.times!.isNotEmpty) {
@@ -105,18 +106,51 @@ class UserDoctorController extends GetxController {
     } finally {}
   }
 
-  Future<bool> createReview(String given_to, String given_by, String rating,
+  Future<AllUserAppointment> getUserAppointmentsByStatus() async {
+    UserHive? currentUser = await getCurrentUser();
+    appointmentLoader.value = true;
+    userAppointment.clear();
+    try {
+      AllUserAppointment response = await userDoctorApi
+          .getUserAppointmentsByStatus(currentUser!.userId.toString());
+      if (response.data != null) {
+        response.data!.forEach((element) {
+          userAppointment.add(element);
+        });
+      } else {}
+      appointmentLoader.value = false;
+      return response;
+    } catch (error) {
+      appointmentLoader.value = false;
+      throw (error);
+    } finally {
+      appointmentLoader.value = false;
+    }
+  }
+
+  Future<bool> createReview(String appointmentId, String rating,
       String review, context) async {
     reviewLoader.value = true;
-    UserHive? currentUser = await getCurrentUser();
     try {
       bool response = await userDoctorApi.CreateReview(
-          given_to, currentUser!.userId.toString(), rating, review);
+          appointmentId, rating, review);
       if (response == true) {
+        final ratingValue = int.tryParse(rating) ??
+            double.tryParse(rating) ??
+            rating;
+        final index = userAppointment.indexWhere(
+            (element) => element.appointmentId.toString() == appointmentId.toString());
+        if (index != -1) {
+          userAppointment[index].rating = ratingValue;
+          userAppointment[index].review = review;
+          userAppointment[index].reviewCreatedAt =
+              DateTime.now().toIso8601String();
+          userAppointment.refresh();
+        }
         showSuccessMessage(context, 'Review created sucessfully !');
-        Get.offAll(NavBarScreen(
-          isUser: true,
-        ));
+        // Refresh appointments to show the new review
+        getUserAppointmentsByStatus();
+        Get.back(); // Go back to bookings screen
         reviewLoader.value = false;
       } else {
         showErrorMessage(context, 'Error creating review !');
@@ -140,7 +174,13 @@ class UserDoctorController extends GetxController {
 
       if (response == true) {
         showSuccessMessage(context, 'Appointment ${status}');
-        getAllUserAppointment();
+        // Remove cancelled appointments from the list
+        if (status.toUpperCase() == 'CANCELLED') {
+          userAppointment.removeWhere(
+              (element) => element.appointmentId?.toString() == appointmentId);
+        } else {
+          getUserAppointmentsByStatus();
+        }
       } else {
         showErrorMessage(context, 'Error updating appointment');
       }
@@ -149,6 +189,52 @@ class UserDoctorController extends GetxController {
       throw (error);
     } finally {
       appointmentLoader.value = false;
+    }
+  }
+
+  Future<bool> rescheduleAppointment(
+      String appointmentId, String date, String time, BuildContext context) async {
+    rescheduleLoader.value = true;
+    try {
+      final response = await userDoctorApi.rescheduleAppointment(appointmentId, date, time);
+      if (response) {
+        showSuccessMessage(context, 'Appointment rescheduled successfully!');
+        getUserAppointmentsByStatus(); // Refresh appointments list
+        return true;
+      } else {
+        showErrorMessage(context, 'Error rescheduling appointment');
+        return false;
+      }
+    } catch (error) {
+      rescheduleLoader.value = false;
+      showErrorMessage(context, 'Error rescheduling appointment: ${error.toString()}');
+      return false;
+    } finally {
+      rescheduleLoader.value = false;
+    }
+  }
+
+  Future<bool> cancelAppointment(
+      String appointmentId, BuildContext context) async {
+    try {
+      final response = await userDoctorApi.updateAppointmentStatus(
+        appointmentId,
+        'CANCELLED',
+        'Appointment cancelled by user.',
+      );
+      if (response) {
+        showSuccessMessage(context, 'Appointment cancelled successfully!');
+        // Remove cancelled appointment from the list
+        userAppointment.removeWhere(
+            (element) => element.appointmentId?.toString() == appointmentId);
+        return true;
+      } else {
+        showErrorMessage(context, 'Error cancelling appointment');
+        return false;
+      }
+    } catch (error) {
+      showErrorMessage(context, 'Error cancelling appointment: ${error.toString()}');
+      return false;
     }
   }
 
@@ -238,10 +324,22 @@ class UserDoctorController extends GetxController {
   }
 
   avgrating() async {
-    doctorDetail!.data!.reviews!.forEach((element) {
-      val.value = val.value +
-          (double.parse(element.rating!) / doctorDetail!.data!.reviews!.length);
-    });
+    if (doctorDetail?.data?.reviews != null && doctorDetail!.data!.reviews!.isNotEmpty) {
+      val.value = 0.0; // Reset value before calculating
+      doctorDetail!.data!.reviews!.forEach((element) {
+        if (element.rating != null) {
+          try {
+            final ratingValue = element.rating is int 
+                ? (element.rating as int).toDouble() 
+                : double.parse(element.rating.toString());
+            val.value = val.value + (ratingValue / doctorDetail!.data!.reviews!.length);
+          } catch (e) {
+            // Skip invalid ratings
+            print('Error parsing rating: $e');
+          }
+        }
+      });
+    }
   }
 
   void searchByName(String docName) {
@@ -252,5 +350,41 @@ class UserDoctorController extends GetxController {
         .where((doctor) =>
             doctor.name!.toLowerCase().contains(docName.toLowerCase()))
         .toList();
+  }
+
+  Future<DoctorCategoriesWithDoctors> getDoctorCategoriesWithDoctors() async {
+    try {
+      showLoader.value = true;
+      DoctorCategoriesWithDoctors response = await userDoctorApi.getDoctorCategoriesWithDoctors();
+      if (response.data != null) {
+        doctorCategories.clear();
+        // Filter only ACTIVE categories
+        final activeCategories = response.data!.where((cat) => cat.status == 'ACTIVE').toList();
+        doctorCategories.assignAll(activeCategories);
+        
+        // If no category is selected, select the first one with doctors
+        if (selectedCategory.value == null && activeCategories.isNotEmpty) {
+          final categoryWithDoctors = activeCategories.firstWhere(
+            (cat) => cat.doctors != null && cat.doctors!.isNotEmpty,
+            orElse: () => activeCategories.first,
+          );
+          selectCategory(categoryWithDoctors);
+        }
+      }
+      showLoader.value = false;
+      return response;
+    } catch (error) {
+      showLoader.value = false;
+      throw (error);
+    }
+  }
+
+  void selectCategory(DoctorCategory category) {
+    selectedCategory.value = category;
+    doctorsList.clear();
+    if (category.doctors != null && category.doctors!.isNotEmpty) {
+      doctorsList.assignAll(category.doctors!);
+    }
+    searchDoctorsList.assignAll(doctorsList);
   }
 }

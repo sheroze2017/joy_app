@@ -8,7 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/onboarding/onboarding_screen.dart';
 import 'package:joy_app/core/network/utils/extra.dart';
-import 'package:joy_app/core/routes/routes.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/auth/utils/route.dart';
@@ -17,22 +16,36 @@ class FirebaseApi {
   final _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initNotification() async {
-    await _firebaseMessaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+    try {
+      await _firebaseMessaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+    } catch (error) {
+      debugPrint('FCM permission error: $error');
+    }
 
-    final fcmToken = await _firebaseMessaging.getToken();
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    setToken(fcmToken.toString());
-    initLocalNotification();
-    initPushNotification();
-    print('fcmtoken ${fcmToken}');
+    String? fcmToken;
+    try {
+      fcmToken = await _firebaseMessaging.getToken();
+    } catch (error) {
+      debugPrint('FCM token error: $error');
+    }
+
+    if (fcmToken != null && fcmToken.isNotEmpty) {
+      setToken(fcmToken);
+      debugPrint('fcmtoken $fcmToken');
+    } else {
+      debugPrint('FCM token unavailable, continuing without it.');
+    }
+
+    await initLocalNotification();
+    await initPushNotification();
   }
 }
 
@@ -50,6 +63,17 @@ void handleMessage(RemoteMessage? message) async {
     handleUserRoleNavigation(currentUser.userRole);
   } else {
     Get.offAll(OnboardingScreen());
+  }
+}
+
+// Top-level function for background notification tap handler
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) async {
+  final String? payload = notificationResponse.payload;
+  if (payload != null) {
+    debugPrint('notification payload: $payload');
+    // Handle the notification tap here
+    // You can navigate or process the payload as needed
   }
 }
 
@@ -94,17 +118,15 @@ Future initLocalNotification() async {
     iOS: initializationSettingsDarwin,
   );
 
-  await _localNotification.initialize(initializationSettings,
-      onDidReceiveBackgroundNotificationResponse: (notificationResponse) async {
-    final String? payload = notificationResponse.payload;
-    if (notificationResponse.payload != null) {
-      debugPrint('notification payload: $payload');
-    }
-    final platform = _localNotification.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+  // Create notification channel for Android
+  final androidPlatform = _localNotification.resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>();
+  await androidPlatform?.createNotificationChannel(androidChannel);
 
-    await platform?.createNotificationChannel(androidChannel);
-  });
+  await _localNotification.initialize(
+    initializationSettings,
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+  );
 }
 
 final androidChannel = const AndroidNotificationChannel(

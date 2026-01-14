@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
-import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 
 import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
@@ -48,9 +47,10 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   List<DateTime> _blackoutDates = [];
   List<List<String>> availabilityTimes = [];
   void selectionChanged(DateRangePickerSelectionChangedArgs args) {
-    SchedulerBinding.instance!.addPostFrameCallback((duration) {
+    SchedulerBinding.instance.addPostFrameCallback((duration) {
       setState(() {
-        _date = DateFormat('MMMM dd, yyyy').format(args.value).toString();
+        // Format date as YYYY-MM-DD for API
+        _date = DateFormat('yyyy-MM-dd').format(args.value).toString();
         selectedDate = args.value;
       });
       setState(() {});
@@ -104,11 +104,9 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   List<DateTime> _getAvailableDates() {
     List<DateTime> availableDates = [];
     for (var availability in widget.doctorDetail.data!.availability!.toList()) {
-      if (availability.times.toString().contains('AM') ||
-          availability.times.toString().contains('PM')) {
-        print('dd');
+      if (availability.times != null && availability.times!.isNotEmpty) {
         availableDates.addAll(_parseDates(availability.day.toString()));
-      } else {}
+      }
     }
     return availableDates;
   }
@@ -150,6 +148,79 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       default:
         return 0;
     }
+  }
+
+  List<String> _getTimeSlotsForDate(DateTime date) {
+    List<String> timeSlots = [];
+    final dayName = DateFormat('EEEE').format(date);
+
+    // Find availability for the selected day
+    for (var availability in widget.doctorDetail.data!.availability!) {
+      if (availability.day != null &&
+          availability.day!.toLowerCase() == dayName.toLowerCase()) {
+        if (availability.times != null && availability.times!.isNotEmpty) {
+          // Parse times like "09:00-12:00" or "14:00-17:00"
+          final times =
+              availability.times!.split(',').map((t) => t.trim()).toList();
+          for (var timeRange in times) {
+            if (timeRange.contains('-')) {
+              final parts = timeRange.split('-');
+              if (parts.length == 2) {
+                final startTime = _formatTime(parts[0].trim());
+                final endTime = _formatTime(parts[1].trim());
+                timeSlots.add('$startTime - $endTime');
+              }
+            }
+          }
+        }
+        break;
+      }
+    }
+    return timeSlots;
+  }
+
+  Set<String> _getBookedTimeSlotsForDate(DateTime date) {
+    final bookedTimes = <String>{};
+    final dateKey = DateFormat('yyyy-MM-dd').format(date);
+    final bookings = widget.doctorDetail.data?.bookings ?? [];
+    for (final booking in bookings) {
+      if (booking.date == dateKey && booking.times != null) {
+        for (final time in booking.times!) {
+          bookedTimes.add(_formatTimeRange(time));
+        }
+      }
+    }
+    return bookedTimes;
+  }
+
+  String _formatTimeRange(String timeRange) {
+    if (!timeRange.contains('-')) {
+      return timeRange;
+    }
+    final parts = timeRange.split('-');
+    if (parts.length != 2) {
+      return timeRange;
+    }
+    final startTime = _formatTime(parts[0].trim());
+    final endTime = _formatTime(parts[1].trim());
+    return '$startTime - $endTime';
+  }
+
+  String _formatTime(String time24) {
+    try {
+      // Parse 24-hour format (e.g., "09:00" or "14:00")
+      final parts = time24.split(':');
+      if (parts.length == 2) {
+        int hour = int.parse(parts[0]);
+        int minute = int.parse(parts[1]);
+        String period = hour >= 12 ? 'PM' : 'AM';
+        int hour12 = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+        return '$hour12:${minute.toString().padLeft(2, '0')} $period';
+      }
+    } catch (e) {
+      // If parsing fails, return as is
+    }
+    return time24;
   }
 
   // void selectionChanged(DateRangePickerSelectionChangedArgs args) {
@@ -237,8 +308,10 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
               TimeSelector(
                 times: selectedDate == null
                     ? []
-                    : _doctorController
-                        .daysAvailable.value[selectedDate!.weekday - 1],
+                    : _getTimeSlotsForDate(selectedDate!),
+                bookedTimes: selectedDate == null
+                    ? <String>{}
+                    : _getBookedTimeSlotsForDate(selectedDate!),
                 onTimeSelected: (value) {
                   setState(() {
                     timeSelection = value;
@@ -249,57 +322,59 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Stack(
-        alignment: new FractionalOffset(.5, 1.0),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Obx(
-                    () => RoundedButtonSmall(
-                        showLoader:
-                            _doctorController.createAppointmentLoader.value,
-                        text: "Confirm",
-                        onPressed: () {
-                          if (timeSelection == null || _date.isEmpty) {
-                            showErrorMessage(
-                                context, 'Please select date and time');
-                          } else {
-                            if (availabilityTimes[selectedDate!.weekday - 1]
-                                .contains(timeSelection)) {
-                              _doctorController.createAppoinemntWithDoctor(
-                                  '',
-                                  widget.doctorDetail.data!.userId.toString(),
-                                  _date,
-                                  timeSelection,
-                                  widget.complain,
-                                  widget.symptoms,
-                                  widget.location,
-                                  'Pending',
-                                  widget.age,
-                                  widget.gender,
-                                  widget.patientName,
-                                  widget.certificateUrl,
-                                  widget.doctorDetail.data!.name.toString(),
-                                  context);
-                            } else {
-                              showErrorMessage(context, 'Doctor not available');
-                            }
-                          }
-
-                          // // showPaymentBottomSheet(context, true, false);
-                        },
-                        backgroundColor: AppColors.darkBlueColor,
-                        textColor: AppColors.whiteColor),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(bottom: 24.0, top: 8.0, left: 16.0, right: 16.0),
+        child: Obx(
+          () => RoundedButtonSmall(
+            showLoader: _doctorController.createAppointmentLoader.value,
+            text: "Confirm",
+            onPressed: () {
+              if (timeSelection == null || _date.isEmpty) {
+                showErrorMessage(context, 'Please select date and time');
+              } else {
+                final selectedTimeSlots = _getTimeSlotsForDate(selectedDate!);
+                if (selectedTimeSlots.contains(timeSelection)) {
+                  // Extract just the time part (e.g., "9:00 AM" from "9:00 AM - 12:00 PM")
+                  String timeForApi = timeSelection!.split(' - ')[0];
+                  
+                  // Convert gender to uppercase (Male -> MALE, Female -> FEMALE)
+                  String genderForApi = widget.gender;
+                  if (genderForApi.toLowerCase() == 'male') {
+                    genderForApi = 'MALE';
+                  } else if (genderForApi.toLowerCase() == 'female') {
+                    genderForApi = 'FEMALE';
+                  }
+                  
+                  // Get doctor ID - use _id from API response
+                  final doctorId = widget.doctorDetail.data!.userId?.toString() ?? '';
+                  if (doctorId.isEmpty || doctorId == 'null') {
+                    showErrorMessage(context, 'Doctor ID is missing');
+                    return;
+                  }
+                  
+                  _doctorController.createAppoinemntWithDoctor(
+                    '',
+                    doctorId,
+                    _date, // Already in YYYY-MM-DD format
+                    timeForApi, // Just the start time
+                    widget.complain,
+                    widget.symptoms,
+                    widget.location,
+                    'PENDING', // Use uppercase as per API
+                    widget.age,
+                    genderForApi, // Uppercase format (MALE/FEMALE)
+                    widget.patientName,
+                    widget.certificateUrl,
+                    widget.doctorDetail.data!.name.toString(),
+                    context);
+                } else {
+                  showErrorMessage(context, 'Doctor not available');
+                }
+              }
+            },
+            backgroundColor: AppColors.darkBlueColor,
+            textColor: AppColors.whiteColor),
+        ),
       ),
     );
   }
@@ -307,10 +382,14 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
 
 class TimeSelector extends StatefulWidget {
   final List<String> times;
+  final Set<String> bookedTimes;
   final Function(String) onTimeSelected; // Callback function to notify parent
 
   const TimeSelector(
-      {Key? key, required this.times, required this.onTimeSelected})
+      {Key? key,
+      required this.times,
+      required this.bookedTimes,
+      required this.onTimeSelected})
       : super(key: key);
 
   @override
@@ -343,30 +422,59 @@ class _TimeSelectorState extends State<TimeSelector> {
                 children: List.generate(widget.times.length, (index) {
                   String time = widget.times[index];
                   bool isSelected = _selectedTime == time;
+                  final isBooked = widget.bookedTimes.contains(time);
 
                   return GestureDetector(
-                    onTap: () {
+                    onTap: isBooked
+                        ? null
+                        : () {
                       setState(() {
                         _selectedTime = time;
                       });
                       widget.onTimeSelected(
                           time); // Notify parent of selected time
                     },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14.0, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.darkBlueColor
-                            : AppColors.whiteColorf9f,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Text(time,
-                          style: CustomTextStyles.w600TextStyle(
-                              size: 14,
-                              color: isSelected
-                                  ? AppColors.whiteColor
-                                  : Color(0xff6b7280))),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 14.0, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: isBooked
+                                ? AppColors.lightGreyColor
+                                : isSelected
+                                    ? AppColors.darkBlueColor
+                                    : AppColors.whiteColorf9f,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Text(time,
+                              style: CustomTextStyles.w600TextStyle(
+                                  size: 14,
+                                  color: isBooked
+                                      ? AppColors.borderColor
+                                      : isSelected
+                                          ? AppColors.whiteColor
+                                          : Color(0xff6b7280))),
+                        ),
+                        if (isBooked)
+                          Positioned(
+                            top: -6,
+                            right: -6,
+                            child: Container(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: AppColors.redColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.close,
+                                size: 10,
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   );
                 }),

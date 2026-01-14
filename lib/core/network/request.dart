@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
+import 'package:joy_app/core/network/utils/token.dart';
 
 class DioClient {
   static final DioClient _singletonRequest = DioClient._internal();
@@ -21,7 +24,56 @@ class DioClient {
   );
 
   static Dio createDio() {
-    return Dio(opts);
+    final dio = Dio(opts);
+    return addInterceptors(dio);
+  }
+
+  static Dio addInterceptors(Dio dio) {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          try {
+            // Ensure headers map exists
+            if (options.headers == null) {
+              options.headers = <String, dynamic>{};
+            }
+            
+            var token = await getToken();
+            print('🔑 [DioClient Interceptor] Checking token for: ${options.uri}');
+            print('🔑 [DioClient Interceptor] Token exists: ${token != null && token.isNotEmpty}');
+            if (token != null) {
+              print('🔑 [DioClient Interceptor] Token value: ${token.length > 20 ? "${token.substring(0, 20)}..." : token}');
+            }
+            
+            if (token != null && token.isNotEmpty) {
+              // Always set Authorization header, even if it already exists
+              options.headers['Authorization'] = 'Bearer $token';
+              print('🔑 [DioClient Interceptor] ✅ Added Bearer token to request: ${options.uri}');
+              print('🔑 [DioClient Interceptor] Headers after adding token: ${options.headers}');
+            } else {
+              print('⚠️ [DioClient Interceptor] ❌ No token available for request: ${options.uri}');
+              print('⚠️ [DioClient Interceptor] Current headers: ${options.headers}');
+              print('⚠️ [DioClient Interceptor] ⚠️ Request will fail with 401 if endpoint requires authentication');
+            }
+          } catch (e) {
+            print('❌ [DioClient Interceptor] Error adding token: $e');
+            print('❌ [DioClient Interceptor] Stack trace: ${StackTrace.current}');
+            // Ensure headers map exists even on error
+            if (options.headers == null) {
+              options.headers = <String, dynamic>{};
+            }
+          }
+          handler.next(options);
+        },
+        onError: (error, handler) async {
+          print('❌ [DioClient Interceptor] Request error: ${error.requestOptions.uri}');
+          print('❌ [DioClient Interceptor] Error response: ${error.response?.data}');
+          print('❌ [DioClient Interceptor] Request headers: ${error.requestOptions.headers}');
+          handler.next(error);
+        },
+      ),
+    );
+    return dio;
   }
 
   // static Dio addInterceptors(Dio dio) {
@@ -137,15 +189,75 @@ class DioClient {
   static final dio = createDio();
   // static final baseAPI = addInterceptors(dio);
 
+  String _escapeShell(String value) {
+    return value.replaceAll("'", "'\"'\"'");
+  }
+
+  String _buildFullUrl(String url, {Map<String, dynamic>? queryParameters}) {
+    final base = Endpoints.baseUrl;
+    final uri = Uri.parse('$base$url');
+    if (queryParameters == null || queryParameters.isEmpty) {
+      return uri.toString();
+    }
+    final params = <String, String>{};
+    queryParameters.forEach((key, value) {
+      if (value != null) {
+        params[key] = value.toString();
+      }
+    });
+    return uri.replace(queryParameters: params).toString();
+  }
+
+  String _buildCurlCommand(
+      String method, String url, Map<String, String> headers, String? body) {
+    final buffer = StringBuffer('curl -X $method ');
+    buffer.write("'${_escapeShell(url)}'");
+    headers.forEach((key, value) {
+      buffer.write(" -H '${_escapeShell('$key: $value')}'");
+    });
+    if (body != null && body.isNotEmpty) {
+      buffer.write(" -d '${_escapeShell(body)}'");
+    }
+    return buffer.toString();
+  }
+
+  Future<void> _logCurl(
+      String method, String url, Map<String, dynamic>? queryParameters,
+      {dynamic data}) async {
+    final fullUrl = _buildFullUrl(url, queryParameters: queryParameters);
+    final headers = <String, String>{};
+    final token = await getToken();
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    if (method != 'GET') {
+      headers['Content-Type'] = 'application/json';
+    }
+    String? body;
+    if (data != null) {
+      if (data is String) {
+        body = data;
+      } else {
+        try {
+          body = jsonEncode(data);
+        } catch (_) {
+          body = data.toString();
+        }
+      }
+    }
+    final curlCommand = _buildCurlCommand(method, fullUrl, headers, body);
+    print('📡 [CURL] $curlCommand');
+  }
+
   Future<dynamic> get(String url, {dynamic queryParameters}) async {
     try {
-      //  baseAPI.options.baseUrl = Endpoints.baseUrl;
-      //dio.options.headers['marketplace_id'] = getMarketplaceId();
-      final fullUrl = '${Endpoints.baseUrl}$url';
+      dio.options.baseUrl = Endpoints.baseUrl;
+      final fullUrl = _buildFullUrl(url, queryParameters: queryParameters);
       print('📡 [GET] Request URL: $fullUrl');
       if (queryParameters != null) {
         print('📤 [GET] Query Parameters: $queryParameters');
       }
+      await _logCurl('GET', url, queryParameters);
 
       final response = await dio.get(url, queryParameters: queryParameters);
 
@@ -165,13 +277,20 @@ class DioClient {
   Future<dynamic> post(String url, {dynamic data}) async {
     try {
       dio.options.baseUrl = Endpoints.baseUrl;
-      dio.options.headers['Content-Type'] = 'application/json';
-      // dio.options.headers['marketplace_id'] = getMarketplaceId();
+      // Don't set headers directly on dio.options - let interceptor handle Authorization
+      // Content-Type will be set automatically by Dio based on data type
       final fullUrl = '${Endpoints.baseUrl}$url';
       print('📡 [POST] Request URL: $fullUrl');
       print('📤 [POST] Request Data: $data');
+      await _logCurl('POST', url, null, data: data);
 
-      final response = await dio.post(url, data: data);
+      // Use Options to set Content-Type per request, not globally
+      final options = Options(
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      final response = await dio.post(url, data: data, options: options);
 
       print('✅ [POST] Response Status: ${response.statusCode}');
       print('📥 [POST] Response Data: ${response.data}');
@@ -202,12 +321,18 @@ class DioClient {
   Future<dynamic> put(String url, {dynamic data}) async {
     try {
       dio.options.baseUrl = Endpoints.baseUrl;
-      // dio.options.headers['marketplace_id'] = getMarketplaceId();
       final fullUrl = '${Endpoints.baseUrl}$url';
       print('📡 [PUT] Request URL: $fullUrl');
       print('📤 [PUT] Request Data: $data');
+      await _logCurl('PUT', url, null, data: data);
 
-      final response = await dio.put(url, data: data);
+      // Use Options to set Content-Type per request
+      final options = Options(
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      final response = await dio.put(url, data: data, options: options);
 
       print('✅ [PUT] Response Status: ${response.statusCode}');
       print('📥 [PUT] Response Data: ${response.data}');
@@ -232,6 +357,7 @@ class DioClient {
       if (data != null) {
         print('📤 [DELETE] Request Data: $data');
       }
+      await _logCurl('DELETE', url, null, data: data);
 
       final response = await dio.delete(url, data: data);
 

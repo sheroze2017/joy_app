@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
+import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/theme.dart';
-import 'package:joy_app/modules/pharmacy/view/checkout/checkout_detail.dart';
 import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
+import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
 class MyCartScreen extends StatefulWidget {
@@ -21,6 +24,73 @@ class MyCartScreen extends StatefulWidget {
 final pharmacyController = Get.find<AllPharmacyController>();
 
 class _MyCartScreenState extends State<MyCartScreen> {
+  final locationController = Get.find<LocationController>();
+  final TextEditingController _locationController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final currentLocation = locationController.location.value;
+    if (currentLocation.isNotEmpty && currentLocation != 'Select Location') {
+      _locationController.text = currentLocation;
+    }
+  }
+
+  @override
+  void dispose() {
+    _locationController.dispose();
+    super.dispose();
+  }
+
+  // Calculate total quantity from all cart items
+  int _calculateTotalQuantity() {
+    return pharmacyController.cartItems.fold(
+      0,
+      (sum, item) => sum + (item.cartQuantity ?? 0),
+    );
+  }
+
+  Future<void> _placeOrder() async {
+    if (pharmacyController.cartItems.isEmpty) {
+      Get.snackbar('Error', 'Cart is empty');
+      return;
+    }
+    final enteredLocation = _locationController.text.trim();
+    if (enteredLocation.isEmpty) {
+      Get.snackbar('Error', 'Please enter delivery location');
+      return;
+    }
+
+    // Get location data
+    final lat = locationController.latitude.value;
+    final lng = locationController.longitude.value;
+    
+    // Calculate totals
+    final grandTotal = pharmacyController.calculateGrandTotal() + 100; // Including delivery charges
+    final totalQuantity = _calculateTotalQuantity();
+    final pharmacyId = pharmacyController.cartItems[0].pharmacyId?.toString() ?? '';
+    
+    // Use default values if location is not available
+    final finalLat = lat != 0.0 ? lat : 24.8607; // Default Karachi coordinates
+    final finalLng = lng != 0.0 ? lng : 67.0011;
+    final finalLocation = enteredLocation;
+    final placeId = 'place-123'; // Default place ID
+
+    // Call place order API
+    await pharmacyController.placeOrderPharmacy(
+      context,
+      grandTotal.toString(),
+      'PENDING',
+      totalQuantity.toString(),
+      finalLocation,
+      finalLat.toString(),
+      finalLng.toString(),
+      placeId,
+      pharmacyController.cartItemsToJson(),
+      pharmacyId,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,14 +165,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12.0),
-                                    child: Image.network(
-                                      data.image.toString().contains('http')
-                                          ? data.image.toString()
-                                          : 'https://i.guim.co.uk/img/media/20491572b80293361199ca2fc95e49dfd85e1f42/0_236_5157_3094/master/5157.jpg?width=1200&height=900&quality=85&auto=format&fit=crop&s=80ea7ebecd3f10fe721bd781e02184c3',
-                                      width: 12.5.w,
-                                      height: 12.5.w,
-                                      fit: BoxFit.cover,
-                                    ),
+                                    child: _buildProductImage(data.image ?? ''),
                                   ),
                                   SizedBox(
                                     width: 2.w,
@@ -255,6 +318,22 @@ class _MyCartScreenState extends State<MyCartScreen> {
                       medName: 'Delivery Charges',
                       charges: '100\Rs',
                     ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Delivery Location',
+                        style: CustomTextStyles.w600TextStyle(
+                            size: 14, color: AppColors.blackColor151),
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
+                    RoundedBorderTextField(
+                      controller: _locationController,
+                      hintText: 'Enter delivery location',
+                      icon: '',
+                      showLabel: false,
+                    ),
+                    SizedBox(height: 2.h),
                     Obx(
                       () => NameCharges(
                         medName: 'Grand Total',
@@ -271,25 +350,32 @@ class _MyCartScreenState extends State<MyCartScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: RoundedButtonSmall(
-                            isBold: true,
-                            isSmall: true,
-                            text: 'Proceed to Check Out',
-                            onPressed: () {
-                              Get.to(
-                                  CheckoutForm(
-                                    pharmacyId: pharmacyController
-                                        .cartItems[0].pharmacyId
-                                        .toString(),
+                          child: Obx(
+                            () => pharmacyController.cartItems.isEmpty
+                                ? RoundedButtonSmall(
+                                    isBold: true,
+                                    isSmall: true,
+                                    text: 'Place Order',
+                                    onPressed: () {
+                                      Get.snackbar('Error', 'Cart is empty');
+                                    },
+                                    backgroundColor: Colors.grey,
+                                    textColor: Colors.white,
+                                  )
+                                : RoundedButtonSmall(
+                                    isBold: true,
+                                    isSmall: true,
+                                    text: 'Place Order',
+                                    onPressed: () {
+                                      _placeOrder();
+                                    },
+                                    backgroundColor: ThemeUtil.isDarkMode(context)
+                                        ? AppColors.lightGreenColoreb1
+                                        : AppColors.darkGreenColor,
+                                    textColor: ThemeUtil.isDarkMode(context)
+                                        ? Color(0xff1F2228)
+                                        : Color(0xffFFFFFF),
                                   ),
-                                  transition: Transition.native);
-                            },
-                            backgroundColor: ThemeUtil.isDarkMode(context)
-                                ? AppColors.lightGreenColoreb1
-                                : AppColors.darkGreenColor,
-                            textColor: ThemeUtil.isDarkMode(context)
-                                ? Color(0xff1F2228)
-                                : Color(0xffFFFFFF),
                           ),
                         ),
                       ],
@@ -304,6 +390,67 @@ class _MyCartScreenState extends State<MyCartScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  // Helper method to build product image with proper error handling
+  Widget _buildProductImage(String imageUrl) {
+    // Check if image URL is valid
+    final isValidUrl = imageUrl.isNotEmpty &&
+        imageUrl.contains('http') &&
+        !imageUrl.contains('example.com') &&
+        (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'));
+
+    if (!isValidUrl) {
+      // Show default medicine icon
+      return Container(
+        width: 27.w,
+        height: 27.w,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Icon(
+          Icons.medical_services_outlined,
+          size: 8.w,
+          color: Colors.grey[600],
+        ),
+      );
+    }
+
+    // Use CachedNetworkImage for valid URLs
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      width: 27.w,
+      height: 27.w,
+      fit: BoxFit.cover,
+      placeholder: (context, url) => Container(
+        width: 27.w,
+        height: 27.w,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Center(
+          child: LoadingWidget(),
+        ),
+      ),
+      errorWidget: (context, url, error) {
+        // Always show default medicine icon on error
+        return Container(
+          width: 27.w,
+          height: 27.w,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Icon(
+            Icons.medical_services_outlined,
+            size: 8.w,
+            color: Colors.grey[600],
+          ),
+        );
+      },
     );
   }
 }

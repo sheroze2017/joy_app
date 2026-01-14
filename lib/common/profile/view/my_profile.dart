@@ -18,9 +18,10 @@ import 'package:joy_app/widgets/button/rounded_button.dart';
 import 'package:joy_app/widgets/loader/loader.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../modules/home/all_photos_screen.dart';
 import '../../../modules/home/all_posts_screen.dart';
 import '../../../widgets/appbar/custom_appbar.dart';
+import '../../../common/navbar/controller/navbar_controller.dart';
+import '../../../widgets/drawer/user_drawer.dart';
 
 class MyProfileScreen extends StatefulWidget {
   bool myProfile;
@@ -38,26 +39,170 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       Get.find<FriendsSocialController>();
   ProfileController _profileController = Get.put(ProfileController());
 
+  bool _hasLoadedData = false;
+
   @override
   void initState() {
-    _friendsController.getSearchUserProfileData(
-        widget.myProfile, !widget.myProfile ? '' : widget.friendId, context);
+    super.initState();
+    // Don't load data in initState - wait until screen is actually visible
+    // This prevents API calls when screen is in IndexedStack but not visible
   }
 
+  void _checkAndLoadData() {
+    if (!_hasLoadedData && mounted) {
+      if (widget.myProfile) {
+        // Friend profile - load immediately
+        _hasLoadedData = true;
+        _friendsController.getSearchUserProfileData(
+            widget.myProfile, widget.friendId ?? '', context);
+      } else {
+        // Own profile - check if we're on the profile tab
+        try {
+          final navbarController = Get.find<NavBarController>();
+          // Profile screen is at index 4 for users (0: Blog, 1: AddFriend, 2: Home, 3: Notifications, 4: Profile)
+          if (navbarController.tabIndex == 4) {
+            _hasLoadedData = true;
+            _friendsController.getSearchUserProfileData(
+                widget.myProfile, '', context);
+          }
+        } catch (e) {
+          // If NavBarController not found, load anyway (might be navigating directly)
+          _hasLoadedData = true;
+          _friendsController.getSearchUserProfileData(
+              widget.myProfile, '', context);
+        }
+      }
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkAndLoadData();
+  }
+
+  @override
   void dispose() {
-    _friendsController.getSearchUserProfileData(
-        false, !widget.myProfile ? '' : widget.friendId, context);
+    _hasLoadedData = false;
     super.dispose();
   }
 
   final _chatController = Get.find<ChatController>();
 
+  Widget _buildProfileAvatar(String? imageUrl, double radius) {
+    final isValidUrl = imageUrl != null &&
+        imageUrl.trim().isNotEmpty &&
+        imageUrl.trim().toLowerCase() != 'null' &&
+        imageUrl.contains('http') &&
+        !imageUrl.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'); // Exclude default broken image URL
+    
+    if (isValidUrl) {
+      return ClipOval(
+        child: Image.network(
+          imageUrl.trim(),
+          width: radius * 2,
+          height: radius * 2,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // Silently handle error without logging
+            return CircleAvatar(
+              radius: radius,
+              backgroundColor: ThemeUtil.isDarkMode(context)
+                  ? Color(0xff2A2A2A)
+                  : Color(0xffE5E5E5),
+              child: Icon(
+                Icons.person,
+                size: radius,
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff5A5A5A)
+                    : Color(0xffA5A5A5),
+              ),
+            );
+          },
+        ),
+      );
+    }
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: ThemeUtil.isDarkMode(context)
+          ? Color(0xff2A2A2A)
+          : Color(0xffE5E5E5),
+      child: Icon(
+        Icons.person,
+        size: radius,
+        color: ThemeUtil.isDarkMode(context)
+            ? Color(0xff5A5A5A)
+            : Color(0xffA5A5A5),
+      ),
+    );
+  }
+
+  static Widget _buildFriendAvatarStatic(BuildContext context, String imageUrl, double radius) {
+    final isValidUrl = imageUrl.trim().isNotEmpty &&
+        imageUrl.trim().toLowerCase() != 'null' &&
+        imageUrl.contains('http') &&
+        !imageUrl.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'); // Exclude default broken image URL
+    
+    if (isValidUrl) {
+      return ClipOval(
+        child: Image.network(
+          imageUrl.trim(),
+          width: radius * 2,
+          height: radius * 2,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: radius * 2,
+              height: radius * 2,
+              decoration: BoxDecoration(
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff2A2A2A)
+                    : Color(0xffE5E5E5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.person,
+                size: radius,
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xff5A5A5A)
+                    : Color(0xffA5A5A5),
+              ),
+            );
+          },
+        ),
+      );
+    }
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: ThemeUtil.isDarkMode(context)
+          ? Color(0xff2A2A2A)
+          : Color(0xffE5E5E5),
+      child: Icon(
+        Icons.person,
+        size: radius,
+        color: ThemeUtil.isDarkMode(context)
+            ? Color(0xff5A5A5A)
+            : Color(0xffA5A5A5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Check if we should load data (only once)
+    if (!_hasLoadedData) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkAndLoadData();
+      });
+    }
+    
     return Scaffold(
+        drawer: widget.myProfile ? null : UserDrawer(),
         appBar: HomeAppBar(
+          isImage: widget.myProfile ? false : true,
           showIcon: false,
           title: widget.myProfile ? 'Profile' : 'My Profile',
+          leading: widget.myProfile ? Icon(Icons.arrow_back) : Text(''),
           actions: [
             widget.myProfile
                 ? Container()
@@ -92,7 +237,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     ),
                   )
           ],
-          leading: InkWell(onTap: () {}, child: Icon(Icons.arrow_back)),
         ),
         body: RefreshIndicator(
           onRefresh: () async {
@@ -128,7 +272,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                       child: Stack(
                                         children: [
                                           Positioned(
-                                              bottom: 0,
+                                              bottom: 2.h,
                                               left: 0,
                                               right: 0,
                                               child: Container(
@@ -160,11 +304,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                               .center,
                                                       children: [
                                                         Text(
-                                                          _friendsController
-                                                              .userPostById
-                                                              .length
-                                                              .toString(),
-                                                          style: CustomTextStyles.darkHeadingTextStyle(
+                                                          (_friendsController.userProfileData.value?.posts?.length ?? _friendsController.userPostById.length).toString(),
+                                                          style: CustomTextStyles.w600TextStyle(
                                                               color: ThemeUtil
                                                                       .isDarkMode(
                                                                           context)
@@ -199,7 +340,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                               .getAllUserNames()
                                                               .length
                                                               .toString(),
-                                                          style: CustomTextStyles.darkHeadingTextStyle(
+                                                          style: CustomTextStyles.w600TextStyle(
                                                               color: ThemeUtil
                                                                       .isDarkMode(
                                                                           context)
@@ -235,23 +376,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                             right: 0,
                                             child: Column(
                                               children: [
-                                                CircleAvatar(
-                                                    radius: 65,
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                      _friendsController
-                                                              .userProfileData
-                                                              .value!
-                                                              .image!
-                                                              .contains('http')
-                                                          ? _friendsController
-                                                              .userProfileData
-                                                              .value!
-                                                              .image!
-                                                          : "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png",
-                                                    )),
+                                                _buildProfileAvatar(
+                                                    _friendsController
+                                                        .userProfileData
+                                                        .value!
+                                                        .image,
+                                                    65),
                                                 SizedBox(
-                                                  height: 1.h,
+                                                  height: 1.5.h,
                                                 ),
                                                 Text(
                                                   _friendsController
@@ -394,7 +526,29 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     // ),
 
                                     SizedBox(height: 2.h),
-                                    Heading(
+                                    // About me section - show above My Friends
+                                    Obx(() => _friendsController.userProfileData.value?.aboutMe != null &&
+                                            _friendsController.userProfileData.value!.aboutMe!.isNotEmpty
+                                        ? Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              SubHeading(
+                                                title: 'About me',
+                                              ),
+                                              SizedBox(height: 1.h),
+                                              Text(
+                                                _friendsController.userProfileData.value!.aboutMe!,
+                                                textAlign: TextAlign.justify,
+                                                style: CustomTextStyles.lightTextStyle(
+                                                    color: ThemeUtil.isDarkMode(context)
+                                                        ? Color(0xffAAAAAA)
+                                                        : null),
+                                              ),
+                                              SizedBox(height: 2.h),
+                                            ],
+                                          )
+                                        : SizedBox.shrink()),
+                                    SubHeading(
                                       title: widget.myProfile
                                           ? '${_friendsController.userProfileData.value!.name.toString()} Friends'
                                           : 'My Friends',
@@ -408,71 +562,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                       userIds:
                                           _friendsController.getAllUserId(),
                                     ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          widget.myProfile
-                                              ? 'Photos'
-                                              : 'My Photos',
-                                          style: CustomTextStyles
-                                              .darkHeadingTextStyle(
-                                                  color: ThemeUtil.isDarkMode(
-                                                          context)
-                                                      ? Color(0xffC5D3E3)
-                                                      : null),
-                                        ),
-                                        Spacer(),
-                                        InkWell(
-                                          onTap: () {
-                                            Get.to(AllPhotoScreen(),
-                                                transition: Transition.native);
-                                          },
-                                          child: Text(
-                                            'See All',
-                                            style: CustomTextStyles
-                                                .lightSmallTextStyle(),
-                                          ),
-                                        ),
-                                      ],
+                                    SizedBox(height: 2.h),
+                                    SubHeading(
+                                      title: widget.myProfile
+                                          ? 'Posts'
+                                          : 'My Posts',
                                     ),
                                     SizedBox(height: 1.h),
-                                    MyPhotosWidget(
-                                      imgList: _friendsController
-                                          .getAllProfileImagesUser(),
-                                    ),
-                                    SizedBox(
-                                      height: 2.h,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          widget.myProfile
-                                              ? 'Posts'
-                                              : 'My Posts',
-                                          style: CustomTextStyles
-                                              .darkHeadingTextStyle(
-                                                  color: ThemeUtil.isDarkMode(
-                                                          context)
-                                                      ? Color(0xffC5D3E3)
-                                                      : null),
-                                        ),
-                                        Spacer(),
-                                        InkWell(
-                                          onTap: () {
-                                            Get.to(AllPostScreen(),
-                                                transition: Transition.native);
-                                          },
-                                          child: Text(
-                                            'See All',
-                                            style: CustomTextStyles
-                                                .lightSmallTextStyle(),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 1.h,
-                                    ),
                                     Obx(() => ListView.builder(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
@@ -481,28 +577,47 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                         itemBuilder: ((context, index) {
                                           final data = _friendsController
                                               .userPostById.value[index];
+                                          final creatorName = data
+                                                  .createdByUser?.name ??
+                                              _friendsController
+                                                  .userProfileData.value!.name
+                                                  .toString();
+                                          final creatorImage = data
+                                                  .createdByUser?.image ??
+                                              data.userImage ??
+                                              _friendsController
+                                                  .userProfileData
+                                                  .value!
+                                                  .image
+                                                  .toString();
+                                          final creatorId = data
+                                                  .createdByUser?.userId ??
+                                              data.createdBy?.toString() ??
+                                              data.userId ??
+                                              _friendsController
+                                                  .userProfileData
+                                                  .value!
+                                                  .userId
+                                                  .toString();
                                           return Padding(
                                             padding: EdgeInsets.only(top: 12.0),
                                             child: MyCustomWidget(
-                                              userImage:
-                                                  data.userImage.toString(),
-                                              cm: [],
+                                              userImage: creatorImage,
+                                              cm: data.comments ?? [],
                                               postIndex: index,
                                               postId: data.postId.toString(),
                                               imgPath: data.image.toString(),
-                                              isLiked: true,
+                                              isLiked: false, // TODO: Add isMyLike to Post model if needed
                                               isReply: false,
                                               showImg: (data.image == null ||
                                                       data.image!.isEmpty)
                                                   ? false
                                                   : true,
-                                              postName: _friendsController
-                                                  .userProfileData.value!.name
-                                                  .toString(),
+                                              postName: creatorName,
                                               text: data.description.toString(),
                                               postTime:
                                                   data.createdAt.toString(),
-                                              id: data.createdBy.toString(),
+                                              id: creatorId,
                                             ),
                                           );
                                         }))),
@@ -526,124 +641,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             ],
           ),
         ));
-  }
-}
-
-class MyPhotosWidget extends StatelessWidget {
-  List<String> imgList;
-  MyPhotosWidget({
-    required this.imgList,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          imgList.first.isEmpty
-              ? Container()
-              : Container(
-                  width: 49.52.w,
-                  height: 47.9.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      topLeft: Radius.circular(12),
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      topLeft: Radius.circular(12),
-                    ),
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: imgList[0],
-                      placeholder: (context, url) => Center(
-                          child: Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: LoadingWidget(),
-                      )),
-                      errorWidget: (context, url, error) => Center(
-                          child: Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: ErorWidget(),
-                      )),
-                    ),
-                  ),
-                ),
-          Column(
-            children: [
-              imgList[1].isEmpty
-                  ? Container()
-                  : Container(
-                      width: 35.5.w,
-                      height: 22.8.w,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(12),
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(12),
-                        ),
-                        child: CachedNetworkImage(
-                          fit: BoxFit.fill,
-                          imageUrl: imgList[1],
-                          placeholder: (context, url) => Center(
-                              child: Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: LoadingWidget(),
-                          )),
-                          errorWidget: (context, url, error) => Center(
-                              child: Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: ErorWidget(),
-                          )),
-                        ),
-                      ),
-                    ),
-              SizedBox(
-                height: 1.h,
-              ),
-              imgList[2].isEmpty
-                  ? Container()
-                  : Container(
-                      width: 35.5.w,
-                      height: 22.8.w,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(12),
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(12),
-                        ),
-                        child: CachedNetworkImage(
-                          fit: BoxFit.fill,
-                          imageUrl: imgList[2],
-                          placeholder: (context, url) => Center(
-                              child: Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: LoadingWidget(),
-                          )),
-                          errorWidget: (context, url, error) => Center(
-                              child: Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: ErorWidget(),
-                          )),
-                        ),
-                      ),
-                    )
-            ],
-          )
-        ],
-      ),
-    );
   }
 }
 
@@ -766,8 +763,8 @@ class SubHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: CustomTextStyles.lightSmallTextStyle(
-          size: 14,
+      style: CustomTextStyles.w600TextStyle(
+          size: 20,
           color: ThemeUtil.isDarkMode(context)
               ? Color(0xffC8D3E0)
               : Color(0xff1F2A37)),
@@ -800,7 +797,7 @@ class NotificationWidget extends StatelessWidget {
 class UserSlider extends StatelessWidget {
   final List<String> userNames;
   final List<String> userAssets;
-  final List<int> userIds;
+  final List<String> userIds;
 
   const UserSlider({
     Key? key,
@@ -826,31 +823,14 @@ class UserSlider extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(right: 8.0),
-                  child: InkWell(
-                    onTap: () {
-                      Get.to(
-                          MyProfileScreen(
-                            isFriend: true,
-                            myProfile: true,
-                            friendId: userIds[index].toString(),
-                          ),
-                          transition: Transition.native);
-                    },
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 28,
-                          backgroundImage: NetworkImage(userAssets[index]
-                                  .contains('http')
-                              ? userAssets[index]
-                              : 'http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png'),
-                        ),
-                        SizedBox(height: 1.h),
-                        Text(userNames[index],
-                            style: CustomTextStyles.lightSmallTextStyle(
-                                size: 9.4, color: Color(0xff99A1BE))),
-                      ],
-                    ),
+                  child: Column(
+                    children: [
+                      _MyProfileScreenState._buildFriendAvatarStatic(context, userAssets[index], 28),
+                      SizedBox(height: 1.h),
+                      Text(userNames[index],
+                          style: CustomTextStyles.lightSmallTextStyle(
+                              size: 9.4, color: Color(0xff99A1BE))),
+                    ],
                   ),
                 );
               },

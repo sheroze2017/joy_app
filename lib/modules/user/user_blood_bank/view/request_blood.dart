@@ -10,6 +10,9 @@ import 'package:joy_app/widgets/textfield/custom_textfield.dart';
 import 'package:joy_app/widgets/textfield/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/auth/models/user.dart';
+import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
 
 class RequestBlood extends StatefulWidget {
   bool isRegister;
@@ -43,7 +46,58 @@ class _RequestBloodState extends State<RequestBlood> {
   final _formKey = GlobalKey<FormState>();
 
   UserBloodBankController _userBloodBankController =
-      Get.find<UserBloodBankController>();
+      Get.put(UserBloodBankController());
+  FriendsSocialController _friendsController = Get.find<FriendsSocialController>();
+  bool _isLoadingProfile = true;
+  String? _userGender;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      // Get user name and gender from stored user object
+      UserHive? currentUser = await getCurrentUser();
+      if (currentUser != null) {
+        // Pre-fill name from stored user
+        _fnameController.text = currentUser.firstName;
+        
+        // Get gender from stored user object (from login response)
+        if (widget.isRegister && currentUser.gender != null && currentUser.gender!.isNotEmpty) {
+          // Use gender from stored user object
+          String genderUpper = currentUser.gender!.toUpperCase();
+          _genderController.text = genderUpper;
+          print('✅ [RequestBlood] Gender loaded from stored user: $genderUpper');
+        } else if (widget.isRegister) {
+          // Fallback: Try to fetch from profile API if not in stored user
+          try {
+            await _friendsController.getSearchUserProfileData(false, '', context);
+            if (_friendsController.userProfileData.value != null) {
+              _userGender = _friendsController.userProfileData.value!.gender;
+              if (_userGender != null && _userGender!.isNotEmpty) {
+                // Convert to uppercase format (MALE/FEMALE) for the API
+                String genderUpper = _userGender!.toUpperCase();
+                _genderController.text = genderUpper;
+                print('✅ [RequestBlood] Gender loaded from profile API: $genderUpper');
+              }
+            }
+          } catch (e) {
+            print('⚠️ [RequestBlood] Could not fetch gender from profile API: $e');
+            // Gender will remain empty, user will see validation error if they try to submit
+          }
+        }
+      }
+    } catch (e) {
+      print('❌ [RequestBlood] Error loading user data: $e');
+    } finally {
+      setState(() {
+        _isLoadingProfile = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +121,7 @@ class _RequestBloodState extends State<RequestBlood> {
                         nextFocusNode: _focusNode2,
                         hintText: 'Enter Name',
                         icon: '',
+                        isenable: false, // Make name field non-editable
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your name';
@@ -114,26 +169,21 @@ class _RequestBloodState extends State<RequestBlood> {
                       SizedBox(
                         height: 2.h,
                       ),
-                      SearchSingleDropdown(
+                      // Gender field - fixed text (not dropdown) for Register as Donor
+                      RoundedBorderTextField(
+                        controller: _genderController,
+                        focusNode: _focusNode4,
+                        nextFocusNode: _focusNode5,
                         hintText: 'Gender',
-                        items: ['Male', 'Female'],
-                        value: '',
-                        onChanged: (String? value) {
-                          _genderController.setText(value.toString());
-                        },
                         icon: '',
-                      ),
-                      SizedBox(
-                        height: 2.h,
-                      ),
-                      SearchSingleDropdown(
-                        hintText: 'Blood type',
-                        items: ['Blood', 'Plasma'],
-                        value: '',
-                        onChanged: (String? value) {
-                          _bloodTypeController.setText(value.toString());
+                        isenable: false, // Make gender field non-editable
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Gender is required';
+                          } else {
+                            return null;
+                          }
                         },
-                        icon: '',
                       ),
                       SizedBox(
                         height: 2.h,
@@ -170,12 +220,9 @@ class _RequestBloodState extends State<RequestBlood> {
                                   } else {
                                     if (_genderController.text.isEmpty) {
                                       showErrorMessage(
-                                          context, 'Please select gender');
-                                    } else if (_bloodTypeController
-                                        .text.isEmpty) {
-                                      showErrorMessage(
-                                          context, 'Please select blood type');
+                                          context, 'Gender is required');
                                     } else {
+                                      // For register donor, type is always "VOLUNTARY"
                                       _userBloodBankController.createDonorUser(
                                           _fnameController.text,
                                           _bloodGroupController.text,
@@ -184,7 +231,7 @@ class _RequestBloodState extends State<RequestBlood> {
                                           _cityController.text,
                                           '',
                                           context,
-                                          _bloodTypeController.text);
+                                          'VOLUNTARY');
                                     }
                                   }
                                 },
@@ -291,7 +338,7 @@ class _RequestBloodState extends State<RequestBlood> {
                       ),
                       SearchSingleDropdown(
                         hintText: 'Gender',
-                        items: ['Male', 'Female'],
+                        items: ['MALE', 'FEMALE'],
                         value: '',
                         onChanged: (String? value) {
                           _genderController.setText(value.toString());
@@ -302,7 +349,7 @@ class _RequestBloodState extends State<RequestBlood> {
                         height: 2.h,
                       ),
                       SearchSingleDropdown(
-                        hintText: 'Blood type',
+                        hintText: 'Request Type',
                         items: ['Blood', 'Plasma'],
                         value: '',
                         onChanged: (String? value) {
@@ -364,10 +411,13 @@ class _RequestBloodState extends State<RequestBlood> {
                                       } else if (_timeController.text.isEmpty) {
                                         showErrorMessage(
                                             context, 'Please select time');
+                                      } else if (_bloodTypeController.text.isEmpty) {
+                                        showErrorMessage(
+                                            context, 'Please select request type');
                                       } else {
-                                        String date = await _timeController.text
+                                        String date = _timeController.text
                                             .split('-')[0];
-                                        String time = await _timeController.text
+                                        String time = _timeController.text
                                             .split('-')[1];
 
                                         _userBloodBankController

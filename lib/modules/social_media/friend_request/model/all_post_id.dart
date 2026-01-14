@@ -33,12 +33,12 @@ class AllUserPostModel {
 }
 
 class Post {
-  int? postId;
+  dynamic postId;
   String? image;
   String? title;
   String? description;
-  Null? likes;
-  int? createdBy;
+  dynamic likes;
+  dynamic createdBy;
   String? createdAt;
   String? status;
   dynamic userId; // Changed to dynamic to handle both String (_id from MongoDB) and int (legacy)
@@ -46,6 +46,7 @@ class Post {
   String? userImage;
   String? phone;
   List<Comments>? comments;
+  PostUser? createdByUser;
 
   Post(
       {this.postId,
@@ -60,25 +61,45 @@ class Post {
       this.name,
       this.userImage,
       this.phone,
-      this.comments});
+      this.comments,
+      this.createdByUser});
 
   Post.fromJson(Map<String, dynamic> json) {
-    postId = json['post_id'];
+    // Handle both '_id' (MongoDB) and 'post_id' (legacy) fields
+    final postIdValue = json['_id'] ?? json['post_id'];
+    if (postIdValue != null) {
+      if (postIdValue is String) {
+        postId = postIdValue;
+      } else if (postIdValue is int) {
+        postId = postIdValue;
+      } else {
+        postId = postIdValue.toString();
+      }
+    }
     image = json['image'] ?? '';
     title = json['title'] ?? '';
     description = json['description'] ?? '';
     likes = json['likes'];
-    createdBy = json['created_by'];
+    // Handle both scalar and object for created_by
+    final createdByData = json['created_by'];
+    if (createdByData is Map<String, dynamic>) {
+      createdByUser = PostUser.fromJson(createdByData);
+      createdBy = createdByUser?.userId ?? createdBy;
+    } else {
+      createdBy = json['created_by']?.toString();
+    }
     createdAt = json['created_at'];
     status = json['status'] ?? '';
     // Handle both '_id' (MongoDB) and 'user_id' (legacy) fields
-    userId = json['_id'] ?? json['user_id'];
+    userId = json['_id'] ??
+        json['user_id'] ??
+        createdByUser?.userId;
     // Convert to String if it's not already
     if (userId != null && userId is! String) {
       userId = userId.toString();
     }
-    name = json['name'] ?? '';
-    userImage = json['user_image'] ?? '';
+    name = json['name'] ?? createdByUser?.name ?? '';
+    userImage = json['user_image'] ?? createdByUser?.image ?? '';
     phone = json['phone'] ?? '';
     if (json['comments'] != null) {
       comments = <Comments>[];

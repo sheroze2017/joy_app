@@ -14,6 +14,6 @@ class CustomConstant {
   static const String onboardDesc3 =
       ' Explore and connect with patients just like you, and get to know how they are doing. ';
 
-  static const nullUserImage =
-      "http://194.233.69.219/joy-Images//c894ac58-b8cd-47c0-94d1-3c4cea7dadab.png";
+  // Removed nullUserImage - use default user icon (Icons.person) instead
+  // static const nullUserImage = ""; // Deprecated - do not use
 }

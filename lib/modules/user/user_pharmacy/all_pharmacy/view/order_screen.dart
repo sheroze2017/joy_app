@@ -5,6 +5,7 @@ import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/order_detail_screen.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
+import 'package:joy_app/Widgets/button/rounded_button.dart';
 
 import '../../../../doctor/view/home_screen.dart';
 
@@ -59,7 +60,7 @@ class _MyOrderScreenState extends State<MyOrderScreen>
               Tab(
                 text: 'Pending',
               ),
-              Tab(text: 'On the way'),
+              Tab(text: 'Confirmed'),
               Tab(text: 'Delivered'),
             ],
           ),
@@ -86,47 +87,89 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                           : ListView.builder(
                               itemCount: ordersController.pendingOrders.length,
                               itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    Get.to(
-                                        OrderDetailScreen(
-                                          orderDetail: ordersController
-                                              .pendingOrders[index],
+                                final order =
+                                    ordersController.pendingOrders[index];
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 3.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Get.to(
+                                          OrderDetailScreen(
+                                            orderDetail: order,
+                                          ),
+                                          transition: Transition.native);
+                                    },
+                                    child: Column(
+                                      children: [
+                                        MeetingCallScheduler(
+                                          // Hide default pharmacy button so we can show
+                                          // separate Accept / Reject buttons
+                                          isActive: false,
+                                          isPharmacy: true,
+                                          buttonColor:
+                                              ThemeUtil.isDarkMode(context)
+                                                  ? AppColors.lightGreenColoreb1
+                                                  : AppColors.darkGreenColor,
+                                          bgColor: AppColors.lightGreenColor,
+                                          nextMeeting: true,
+                                          imgPath: '',
+                                          name: 'Order Id: ' +
+                                              order.orderId.toString(),
+                                          time: '',
+                                          location:
+                                              order.location.toString(),
+                                          category: order.quantity.toString() +
+                                              ' Tablets',
                                         ),
-                                        transition: Transition.native);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 3.0),
-                                    child: MeetingCallScheduler(
-                                      onPressed: () {
-                                        ordersController.updateOrderStatus(
-                                            ordersController
-                                                .pendingOrders[index].orderId
-                                                .toString(),
-                                            'On the way',
-                                            context);
-                                      },
-                                      pharmacyButtonText: 'Marked as Shipped',
-                                      isPharmacy: true,
-                                      buttonColor: ThemeUtil.isDarkMode(context)
-                                          ? AppColors.lightGreenColoreb1
-                                          : AppColors.darkGreenColor,
-                                      bgColor: AppColors.lightGreenColor,
-                                      nextMeeting: true,
-                                      imgPath: '',
-                                      name: 'Order Id: ' +
-                                          ordersController
-                                              .pendingOrders[index].orderId
-                                              .toString(),
-                                      time: '',
-                                      location: ordersController
-                                          .pendingOrders[index].location
-                                          .toString(),
-                                      category: ordersController
-                                              .pendingOrders[index].quantity
-                                              .toString() +
-                                          ' Tablets',
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: RoundedButtonSmall(
+                                                text: 'Accept',
+                                                onPressed: () {
+                                                  ordersController
+                                                      .updateOrderStatus(
+                                                          order.orderId
+                                                              .toString(),
+                                                          'CONFIRMED',
+                                                          context);
+                                                },
+                                                backgroundColor:
+                                                    ThemeUtil.isDarkMode(
+                                                            context)
+                                                        ? AppColors
+                                                            .lightGreenColoreb1
+                                                        : AppColors
+                                                            .darkGreenColor,
+                                                textColor: AppColors.whiteColor,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: RoundedButtonSmall(
+                                                text: 'Reject',
+                                                onPressed: () {
+                                                  ordersController
+                                                      .updateOrderStatus(
+                                                          order.orderId
+                                                              .toString(),
+                                                          'CANCELLED',
+                                                          context);
+                                                },
+                                                backgroundColor:
+                                                    ThemeUtil.isDarkMode(
+                                                            context)
+                                                        ? Color(0xff4B5563)
+                                                        : Color(0xffE5E7EB),
+                                                textColor:
+                                                    AppColors.darkBlueColor,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ),
                                 );
@@ -134,7 +177,7 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                             ),
                     ),
 
-              // On the way Tab
+              // Confirmed Tab
               ordersController.changeStatusLoader.value
                   ? Center(
                       child: CircularProgressIndicator(
@@ -143,22 +186,24 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                   : Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 10),
-                      child: ordersController.onTheWayOrders.length == 0
+                      child: ordersController.confirmedOrders.length == 0
                           ? Center(
                               child: Text(
-                                "No order on the way",
+                                "No confirmed orders found",
                                 style: CustomTextStyles.lightTextStyle(),
                               ),
                             )
                           : ListView.builder(
-                              itemCount: ordersController.onTheWayOrders.length,
+                              itemCount:
+                                  ordersController.confirmedOrders.length,
                               itemBuilder: (context, index) {
+                                final order =
+                                    ordersController.confirmedOrders[index];
                                 return InkWell(
                                   onTap: () {
                                     Get.to(
                                         OrderDetailScreen(
-                                          orderDetail: ordersController
-                                              .onTheWayOrders[index],
+                                          orderDetail: order,
                                         ),
                                         transition: Transition.native);
                                   },
@@ -166,13 +211,12 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 3.0),
                                     child: MeetingCallScheduler(
-                                      pharmacyButtonText: 'Marked as Deliverd',
+                                      pharmacyButtonText:
+                                          'Marked as Out for delivery',
                                       onPressed: () {
                                         ordersController.updateOrderStatus(
-                                            ordersController
-                                                .onTheWayOrders[index].orderId
-                                                .toString(),
-                                            'Delivered',
+                                            order.orderId.toString(),
+                                            'OUT_FOR_DELIVERY',
                                             context);
                                       },
                                       isPharmacy: true,
@@ -183,17 +227,13 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                                       nextMeeting: true,
                                       imgPath: '',
                                       name: 'Order Id: ' +
-                                          ordersController
-                                              .onTheWayOrders[index].orderId
-                                              .toString(),
+                                          order.orderId.toString(),
                                       time: '',
-                                      location: ordersController
-                                          .onTheWayOrders[index].location
-                                          .toString(),
-                                      category: ordersController
-                                              .onTheWayOrders[index].quantity
-                                              .toString() +
-                                          ' Tablets',
+                                      location:
+                                          order.location.toString(),
+                                      category:
+                                          order.quantity.toString() +
+                                              ' Tablets',
                                     ),
                                   ),
                                 );
@@ -201,11 +241,12 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                             ),
                     ),
 
-              // Delivered Tab
+              // Delivered Tab (shows OUT_FOR_DELIVERY and DELIVERED)
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                child: ordersController.deliveredOrders.length == 0
+                child: (ordersController.onTheWayOrders.length == 0 &&
+                        ordersController.deliveredOrders.length == 0)
                     ? Center(
                         child: Text(
                           "No order delivered yet",
@@ -213,23 +254,49 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                         ),
                       )
                     : ListView.builder(
-                        itemCount: ordersController.deliveredOrders.length,
+                        itemCount: ordersController.onTheWayOrders.length +
+                            ordersController.deliveredOrders.length,
                         itemBuilder: (context, index) {
+                          final bool isOutForDelivery =
+                              index < ordersController.onTheWayOrders.length;
+                          final order = isOutForDelivery
+                              ? ordersController.onTheWayOrders[index]
+                              : ordersController.deliveredOrders[
+                                  index - ordersController.onTheWayOrders.length];
+
                           return InkWell(
                             onTap: () {
                               Get.to(
                                   OrderDetailScreen(
-                                      orderDetail: ordersController
-                                          .deliveredOrders[index]),
+                                      orderDetail: order),
                                   transition: Transition.native);
                             },
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 3.0),
                               child: MeetingCallScheduler(
-                                isDeliverd: true,
+                                isDeliverd:
+                                    (order.status?.toUpperCase() == 'DELIVERED'),
                                 isPharmacy: true,
-                                isActive: false,
+                                // If order is still out for delivery, show button to mark delivered
+                                isActive: order.status?.toUpperCase() ==
+                                        'OUT_FOR_DELIVERY'
+                                    ? true
+                                    : false,
+                                pharmacyButtonText: order.status
+                                            ?.toUpperCase() ==
+                                        'OUT_FOR_DELIVERY'
+                                    ? 'Marked as Delivered'
+                                    : '',
+                                onPressed: order.status?.toUpperCase() ==
+                                        'OUT_FOR_DELIVERY'
+                                    ? () {
+                                        ordersController.updateOrderStatus(
+                                            order.orderId.toString(),
+                                            'DELIVERED',
+                                            context);
+                                      }
+                                    : null,
                                 buttonColor: ThemeUtil.isDarkMode(context)
                                     ? AppColors.lightGreenColoreb1
                                     : AppColors.darkGreenColor,
@@ -237,17 +304,11 @@ class _MyOrderScreenState extends State<MyOrderScreen>
                                 nextMeeting: true,
                                 imgPath: '',
                                 name: 'Order Id: ' +
-                                    ordersController
-                                        .deliveredOrders[index].orderId
-                                        .toString(),
+                                    order.orderId.toString(),
                                 time: '',
-                                location: ordersController
-                                    .deliveredOrders[index].location
-                                    .toString(),
-                                category: ordersController
-                                        .deliveredOrders[index].quantity
-                                        .toString() +
-                                    ' Tablets',
+                                location: order.location.toString(),
+                                category:
+                                    order.quantity.toString() + ' Tablets',
                               ),
                             ),
                           );
