@@ -17,10 +17,12 @@ import 'package:sizer/sizer.dart';
 
 class MedicineDetailScreen extends StatefulWidget {
   final bool isPharmacyAdmin;
+  final bool isHospital;
   PharmacyProductData product;
   final String productId;
   MedicineDetailScreen(
       {required this.isPharmacyAdmin,
+      this.isHospital = false,
       required this.productId,
       required this.product});
   @override
@@ -49,7 +51,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
             // width: .w,
             color: ThemeUtil.isDarkMode(context) ? Color(0xffE8E8E8) : null,
           ),
-          actions: widget.isPharmacyAdmin
+          actions: (widget.isPharmacyAdmin || widget.isHospital)
               ? []
               : [
                   Padding(
@@ -162,7 +164,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                         ),
                                         SizedBox(height: 1.h),
                                         Text(
-                                          "${pharmacyController.productDetail[0].quantity ?? 10} Tablets for ${pharmacyController.productDetail[0].price ?? 5}\$",
+                                          "${pharmacyController.productDetail[0].quantity ?? 10} Tablets for ${pharmacyController.productDetail[0].price ?? 5}Rs",
                                           style: CustomTextStyles.w600TextStyle(
                                               size: 16,
                                               color:
@@ -174,7 +176,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                       ],
                                     ),
                                   ),
-                                  widget.isPharmacyAdmin
+                                  (widget.isPharmacyAdmin || widget.isHospital)
                                       ? Container()
                                       : Row(
                                           children: [
@@ -314,53 +316,55 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                         )
                                       ],
                                     )
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: RoundedButtonSmall(
-                                              text: "Add to Cart",
-                                              onPressed: () {
-                                                pharmacyController.addToCart(
-                                                    widget.product, context);
-                                              },
-                                              backgroundColor:
-                                                  ThemeUtil.isDarkMode(context)
-                                                      ? Color(0xff1F2228)
-                                                      : AppColors
-                                                          .lightGreyColor,
-                                              textColor: ThemeUtil.isDarkMode(
-                                                      context)
-                                                  ? AppColors.lightGreenColoreb1
-                                                  : AppColors.darkGreenColor),
+                                  : widget.isHospital
+                                      ? Container() // Hide buttons for hospital mode
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: RoundedButtonSmall(
+                                                  text: "Add to Cart",
+                                                  onPressed: () {
+                                                    pharmacyController.addToCart(
+                                                        widget.product, context);
+                                                  },
+                                                  backgroundColor:
+                                                      ThemeUtil.isDarkMode(context)
+                                                          ? Color(0xff1F2228)
+                                                          : AppColors
+                                                              .lightGreyColor,
+                                                  textColor: ThemeUtil.isDarkMode(
+                                                          context)
+                                                      ? AppColors.lightGreenColoreb1
+                                                      : AppColors.darkGreenColor),
+                                            ),
+                                            SizedBox(
+                                              width: 4.w,
+                                            ),
+                                            Expanded(
+                                              child: RoundedButtonSmall(
+                                                  text: "Buy Now",
+                                                  onPressed: () {
+                                                    pharmacyController.addToCart(
+                                                        widget.product, context);
+                                                    Get.to(MyCartScreen(),
+                                                        transition:
+                                                            Transition.native);
+                                                  },
+                                                  backgroundColor:
+                                                      ThemeUtil.isDarkMode(context)
+                                                          ? AppColors
+                                                              .lightGreenColoreb1
+                                                          : AppColors
+                                                              .darkGreenColor,
+                                                  textColor:
+                                                      ThemeUtil.isDarkMode(context)
+                                                          ? AppColors.blackColor
+                                                          : AppColors.whiteColor),
+                                            )
+                                          ],
                                         ),
-                                        SizedBox(
-                                          width: 4.w,
-                                        ),
-                                        Expanded(
-                                          child: RoundedButtonSmall(
-                                              text: "Buy Now",
-                                              onPressed: () {
-                                                pharmacyController.addToCart(
-                                                    widget.product, context);
-                                                Get.to(MyCartScreen(),
-                                                    transition:
-                                                        Transition.native);
-                                              },
-                                              backgroundColor:
-                                                  ThemeUtil.isDarkMode(context)
-                                                      ? AppColors
-                                                          .lightGreenColoreb1
-                                                      : AppColors
-                                                          .darkGreenColor,
-                                              textColor:
-                                                  ThemeUtil.isDarkMode(context)
-                                                      ? AppColors.blackColor
-                                                      : AppColors.whiteColor),
-                                        )
-                                      ],
-                                    ),
                             ],
                           ),
                         ),

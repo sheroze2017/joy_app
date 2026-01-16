@@ -217,6 +217,21 @@ class _EditProductSheetState extends State<EditProductSheet> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SizedBox(height: 2.h),
+                    // Product Name Label
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Product Name',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
                     RoundedBorderTextField(
                       controller: _nameController,
                       hintText: 'Product Name',
@@ -229,6 +244,21 @@ class _EditProductSheetState extends State<EditProductSheet> {
                       },
                     ),
                     SizedBox(height: 2.h),
+                    // Description Label
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Description',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
                     RoundedBorderTextField(
                       controller: _descController,
                       hintText: 'Short Description',
@@ -242,6 +272,21 @@ class _EditProductSheetState extends State<EditProductSheet> {
                       },
                     ),
                     SizedBox(height: 2.h),
+                    // Category Label
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Category',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
                     categoryOptions.isEmpty
                         ? Container(
                             padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
@@ -277,6 +322,21 @@ class _EditProductSheetState extends State<EditProductSheet> {
                             icon: '',
                           ),
                     SizedBox(height: 2.h),
+                    // Price Label
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Price',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
                     RoundedBorderTextField(
                       controller: _priceController,
                       hintText: 'Price',
@@ -293,6 +353,21 @@ class _EditProductSheetState extends State<EditProductSheet> {
                       },
                     ),
                     SizedBox(height: 2.h),
+                    // Discount Label
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Discount',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
                     RoundedBorderTextField(
                       controller: _discountController,
                       hintText: 'Discount',
@@ -309,6 +384,21 @@ class _EditProductSheetState extends State<EditProductSheet> {
                       },
                     ),
                     SizedBox(height: 2.h),
+                    // Quantity Label
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Quantity (Stock)',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
                     RoundedBorderTextField(
                       controller: _stockController,
                       hintText: 'Quantity (Stock)',
@@ -325,6 +415,21 @@ class _EditProductSheetState extends State<EditProductSheet> {
                       },
                     ),
                     SizedBox(height: 2.h),
+                    // Dosage Label
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Dosage',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: ThemeUtil.isDarkMode(context)
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
                     RoundedBorderTextField(
                       controller: _dosageController,
                       hintText: 'Dosage',

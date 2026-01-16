@@ -38,6 +38,9 @@ class DoctorDetailScreen2 extends StatefulWidget {
 
 class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
   UserDoctorController _doctorController = Get.find<UserDoctorController>();
+  int _selectedDayIndex = 0; // 0 = Monday, 6 = Sunday
+  final List<String> _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  final List<String> _fullDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   @override
   void initState() {
@@ -45,6 +48,23 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
     if (widget.doctorId.isNotEmpty && widget.doctorId != 'null') {
       _doctorController.getDoctorDetail(widget.doctorId);
     }
+  }
+
+  // Get times for selected day
+  List<String> _getTimesForDay(String dayName) {
+    if (_doctorController.doctorDetail?.data?.availability == null) {
+      return [];
+    }
+    
+    for (var availability in _doctorController.doctorDetail!.data!.availability!) {
+      if (availability.day != null && 
+          availability.day!.toLowerCase().contains(dayName.toLowerCase())) {
+        if (availability.times != null && availability.times!.isNotEmpty) {
+          return availability.times!.split(',').map((t) => t.trim()).toList();
+        }
+      }
+    }
+    return [];
   }
 
   Widget _buildDoctorAvatar(String? url, double size, BuildContext context) {
@@ -347,13 +367,144 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                                       Heading(
                                         title: 'Working Time',
                                       ),
-                                      SizedBox(height: 1.h),
-                                      Obx(() => Text(
-                                          _doctorController
-                                              .doctorAvailabilityText.value,
-                                          style:
-                                              CustomTextStyles.lightTextStyle(
-                                                  size: 14))),
+                                      SizedBox(height: 2.h),
+                                      // Day tabs
+                                      Obx(() {
+                                        if (_doctorController.doctorDetail?.data?.availability == null) {
+                                          return Text(
+                                            'No availability information',
+                                            style: CustomTextStyles.lightTextStyle(size: 14),
+                                          );
+                                        }
+                                        
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            // Day tabs
+                                            Container(
+                                              height: 5.h,
+                                              child: ListView.builder(
+                                                scrollDirection: Axis.horizontal,
+                                                itemCount: _days.length,
+                                                itemBuilder: (context, index) {
+                                                  final isSelected = _selectedDayIndex == index;
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _selectedDayIndex = index;
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      margin: EdgeInsets.only(right: 1.w),
+                                                      padding: EdgeInsets.symmetric(
+                                                        horizontal: 4.w,
+                                                        vertical: 1.h,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: isSelected
+                                                            ? (ThemeUtil.isDarkMode(context)
+                                                                ? AppColors.lightGreenColoreb1
+                                                                : AppColors.darkBlueColor)
+                                                            : (ThemeUtil.isDarkMode(context)
+                                                                ? Color(0xff2A2A2A)
+                                                                : Color(0xffF3F4F6)),
+                                                        borderRadius: BorderRadius.circular(8),
+                                                        border: Border.all(
+                                                          color: isSelected
+                                                              ? (ThemeUtil.isDarkMode(context)
+                                                                  ? AppColors.lightGreenColoreb1
+                                                                  : AppColors.darkBlueColor)
+                                                              : (ThemeUtil.isDarkMode(context)
+                                                                  ? Color(0xff3A3A3A)
+                                                                  : Color(0xffE5E7EB)),
+                                                          width: 1,
+                                                        ),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          _days[index],
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            fontWeight: isSelected
+                                                                ? FontWeight.w600
+                                                                : FontWeight.w500,
+                                                            color: isSelected
+                                                                ? (ThemeUtil.isDarkMode(context)
+                                                                    ? AppColors.blackColor
+                                                                    : AppColors.whiteColor)
+                                                                : (ThemeUtil.isDarkMode(context)
+                                                                    ? AppColors.whiteColor
+                                                                    : Color(0xff4B5563)),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            SizedBox(height: 2.h),
+                                            // Time slots for selected day
+                                            Builder(
+                                              builder: (context) {
+                                                final selectedDay = _fullDays[_selectedDayIndex];
+                                                final times = _getTimesForDay(selectedDay);
+                                                
+                                                if (times.isEmpty) {
+                                                  return Container(
+                                                    padding: EdgeInsets.symmetric(vertical: 3.h),
+                                                    child: Center(
+                                                      child: Text(
+                                                        'No available times for ${selectedDay}',
+                                                        style: CustomTextStyles.lightTextStyle(
+                                                          size: 14,
+                                                          color: ThemeUtil.isDarkMode(context)
+                                                              ? Color(0xff9CA3AF)
+                                                              : Color(0xff6B7280),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                
+                                                return Wrap(
+                                                  spacing: 2.w,
+                                                  runSpacing: 1.5.h,
+                                                  children: times.map((time) {
+                                                    return Container(
+                                                      padding: EdgeInsets.symmetric(
+                                                        horizontal: 3.w,
+                                                        vertical: 1.2.h,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: ThemeUtil.isDarkMode(context)
+                                                            ? Color(0xff2A2A2A)
+                                                            : Color(0xffF3F4F6),
+                                                        borderRadius: BorderRadius.circular(8),
+                                                        border: Border.all(
+                                                          color: ThemeUtil.isDarkMode(context)
+                                                              ? Color(0xff3A3A3A)
+                                                              : Color(0xffE5E7EB),
+                                                          width: 1,
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        time,
+                                                        style: CustomTextStyles.w600TextStyle(
+                                                          size: 13,
+                                                          color: ThemeUtil.isDarkMode(context)
+                                                              ? AppColors.whiteColor
+                                                              : Color(0xff111928),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      }),
                                       SizedBox(height: 1.5.h),
                                       Heading(
                                         title: 'Appointment Cost',

@@ -6,6 +6,7 @@ import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/modules/pharmacy/view/checkout/mycart_screen.dart';
+import 'package:joy_app/modules/pharmacy/view/medicine_detail_screen.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -21,7 +22,8 @@ import 'package:joy_app/widgets/loader/loader.dart';
 class ProductScreen extends StatefulWidget {
   final String userId;
   final bool isAdmin;
-  ProductScreen({required this.userId, required this.isAdmin});
+  final bool isHospital;
+  ProductScreen({required this.userId, required this.isAdmin, this.isHospital = false});
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -74,7 +76,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       )),
                 ),
               )
-            else
+            else if (!widget.isHospital)
               Obx(() => InkWell(
                     onTap: () {
                       Get.to(MyCartScreen(), transition: Transition.native);
@@ -172,30 +174,44 @@ class _ProductScreenState extends State<ProductScreen> {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: widget.isAdmin
-                                  ? MedicineCard(
-                                      isFromHospital: false,
-                                      categoryId: data.categoryId ?? 1,
-                                      isUserProductScreen: true,
-                                      onPressed: () async {
-                                        // Open bottom sheet for editing
-                                        await showModalBottomSheet(
-                                          context: context,
-                                          isScrollControlled: true,
-                                          backgroundColor: Colors.transparent,
-                                          builder: (context) => EditProductSheet(product: data),
+                                  ? InkWell(
+                                      onTap: () {
+                                        // Navigate to product details screen
+                                        Get.to(
+                                          MedicineDetailScreen(
+                                            product: data,
+                                            isPharmacyAdmin: true,
+                                            productId: data.productId?.toString() ?? '',
+                                          ),
+                                          transition: Transition.native,
                                         );
-                                        // Refresh products list when bottom sheet closes
-                                        pharmacyController.getPharmacyProduct(true, widget.userId);
                                       },
-                                      btnText: "Edit",
-                                      imgUrl: data.image ?? '',
-                                      count: data.quantity?.toString() ?? '0',
-                                      cost: data.price ?? '0',
-                                      name: data.name ?? '',
+                                      child: MedicineCard(
+                                        isFromHospital: false,
+                                        categoryId: data.categoryId ?? 1,
+                                        isUserProductScreen: true,
+                                        onPressed: () async {
+                                          // Open bottom sheet for editing
+                                          await showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            backgroundColor: Colors.transparent,
+                                            builder: (context) => EditProductSheet(product: data),
+                                          );
+                                          // Refresh products list when bottom sheet closes
+                                          pharmacyController.getPharmacyProduct(true, widget.userId);
+                                        },
+                                        btnText: "Edit",
+                                        imgUrl: data.image ?? '',
+                                        count: data.quantity?.toString() ?? '0',
+                                        cost: data.price ?? '0',
+                                        name: data.name ?? '',
+                                      ),
                                     )
                                   : _UserProductCard(
                                       product: data,
                                       pharmacyController: pharmacyController,
+                                      isHospital: widget.isHospital,
                                     ),
                             );
                             });
@@ -212,10 +228,12 @@ class _ProductScreenState extends State<ProductScreen> {
 class _UserProductCard extends StatefulWidget {
   final PharmacyProductData product;
   final AllPharmacyController pharmacyController;
+  final bool isHospital;
 
   const _UserProductCard({
     required this.product,
     required this.pharmacyController,
+    this.isHospital = false,
   });
 
   @override
@@ -232,122 +250,146 @@ class _UserProductCardState extends State<_UserProductCard> {
     final category = ['pills', 'syrupe', 'round_pills', 'capsule', 'injection'];
     final categoryId = widget.product.categoryId ?? 1;
 
-    return Container(
-      width: 43.w,
-      decoration: BoxDecoration(
-          color: Color(0xffE2FFE3), borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Column(
-              children: [
-                Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12.0),
-                      child: _buildProductImage(widget.product.image ?? ''),
-                    ),
-                    SizedBox(width: 2.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: () {
+        // Navigate to product details screen
+        Get.to(
+          MedicineDetailScreen(
+            product: widget.product,
+            isPharmacyAdmin: false,
+            isHospital: widget.isHospital,
+            productId: widget.product.productId?.toString() ?? '',
+          ),
+          transition: Transition.native,
+        );
+      },
+      child: Container(
+        width: 43.w,
+        decoration: BoxDecoration(
+            color: Color(0xffE2FFE3), borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: _buildProductImage(widget.product.image ?? ''),
+                      ),
+                      SizedBox(width: 2.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.product.name ?? '',
+                              style: CustomTextStyles.darkHeadingTextStyle(),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              '${widget.product.quantity ?? 0} ${category[categoryId - 1]} for ${widget.product.price ?? '0'}\Rs',
+                              style: CustomTextStyles.w600TextStyle(
+                                  size: 13, color: Color(0xff4B5563)),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 2.w),
+                  Divider(
+                    color: Color(0xff6B7280),
+                    thickness: 0.05.h,
+                  ),
+                ],
+              ),
+            // Quantity controls and Add to Cart button - Hide in hospital mode
+            widget.isHospital
+                ? Container() // Hide cart controls in hospital mode
+                : Obx(() {
+              final cartQuantity = getQuantity();
+              return cartQuantity > 0
+                  ? GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {}, // Stop event propagation to parent InkWell
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            widget.product.name ?? '',
-                            style: CustomTextStyles.darkHeadingTextStyle(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                          InkWell(
+                            onTap: () {
+                              // Remove from cart (will handle not going below 0)
+                              widget.pharmacyController.removeFromCart(widget.product);
+                            },
+                            child: Container(
+                              width: 8.w,
+                              height: 8.w,
+                              decoration: BoxDecoration(
+                                color: AppColors.darkGreenColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.remove,
+                                color: Colors.white,
+                                size: 4.w,
+                              ),
+                            ),
                           ),
                           Text(
-                            '${widget.product.quantity ?? 0} ${category[categoryId - 1]} for ${widget.product.price ?? '0'}\Rs',
-                            style: CustomTextStyles.w600TextStyle(
-                                size: 13, color: Color(0xff4B5563)),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            cartQuantity.toString(),
+                            style: CustomTextStyles.darkHeadingTextStyle(
+                                size: 16),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              // Add to cart (validation is handled in the bloc method)
+                              widget.pharmacyController.addToCart(
+                                  widget.product, context);
+                            },
+                            child: Container(
+                              width: 8.w,
+                              height: 8.w,
+                              decoration: BoxDecoration(
+                                color: AppColors.darkGreenColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 4.w,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 2.w),
-                Divider(
-                  color: Color(0xff6B7280),
-                  thickness: 0.05.h,
-                ),
-              ],
-            ),
-            // Quantity controls and Add to Cart button
-            Obx(() {
-              final cartQuantity = getQuantity();
-              return cartQuantity > 0
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            // Remove from cart (will handle not going below 0)
-                            widget.pharmacyController.removeFromCart(widget.product);
-                          },
-                          child: Container(
-                            width: 8.w,
-                            height: 8.w,
-                            decoration: BoxDecoration(
-                              color: AppColors.darkGreenColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              Icons.remove,
-                              color: Colors.white,
-                              size: 4.w,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          cartQuantity.toString(),
-                          style: CustomTextStyles.darkHeadingTextStyle(
-                              size: 16),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            // Add to cart (validation is handled in the bloc method)
-                            widget.pharmacyController.addToCart(
-                                widget.product, context);
-                          },
-                          child: Container(
-                            width: 8.w,
-                            height: 8.w,
-                            decoration: BoxDecoration(
-                              color: AppColors.darkGreenColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 4.w,
-                            ),
-                          ),
-                        ),
-                      ],
                     )
-                  : RoundedButtonSmall(
-                      isSmall: true,
-                      text: "Add to Cart",
-                      onPressed: () {
-                        widget.pharmacyController.addToCart(
-                            widget.product, context);
-                      },
-                      backgroundColor: ThemeUtil.isDarkMode(context)
-                          ? Color(0xff1DAA61)
-                          : AppColors.darkGreenColor,
-                      textColor: ThemeUtil.isDarkMode(context)
-                          ? AppColors.blackColor
-                          : AppColors.whiteColor);
+                  : GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {}, // Stop event propagation to parent InkWell
+                      child: RoundedButtonSmall(
+                        isSmall: true,
+                        text: "Add to Cart",
+                        onPressed: () {
+                          widget.pharmacyController.addToCart(
+                              widget.product, context);
+                        },
+                        backgroundColor: ThemeUtil.isDarkMode(context)
+                            ? Color(0xff1DAA61)
+                            : AppColors.darkGreenColor,
+                        textColor: ThemeUtil.isDarkMode(context)
+                            ? AppColors.blackColor
+                            : AppColors.whiteColor),
+                    );
             }),
           ],
         ),
+      ),
       ),
     );
   }

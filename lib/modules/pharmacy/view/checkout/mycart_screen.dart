@@ -204,7 +204,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                         isBold: true,
                                         isSmall: true,
                                         text:
-                                            "Total ${double.parse(data.price.toString()) * data.cartQuantity!.toInt()}\$",
+                                            "Total ${double.parse(data.price.toString()) * data.cartQuantity!.toInt()}Rs",
                                         onPressed: () {},
                                         backgroundColor:
                                             ThemeUtil.isDarkMode(context)

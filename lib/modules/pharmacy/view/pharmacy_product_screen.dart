@@ -136,17 +136,16 @@ class _PharmacyProductScreenState extends State<PharmacyProductScreen> {
                                           const EdgeInsets.only(bottom: 8.0),
                                       child: InkWell(
                                         onTap: () {
-                                          widget.isHospital
-                                              ? null
-                                              : Get.to(
-                                                  MedicineDetailScreen(
-                                                    product: data,
-                                                    isPharmacyAdmin: false,
-                                                    productId: data.productId
-                                                        .toString(),
-                                                  ),
-                                                  transition:
-                                                      Transition.native);
+                                          Get.to(
+                                              MedicineDetailScreen(
+                                                product: data,
+                                                isPharmacyAdmin: false,
+                                                isHospital: widget.isHospital,
+                                                productId: data.productId
+                                                    .toString(),
+                                              ),
+                                              transition:
+                                                  Transition.native);
                                         },
                                         child: MedicineCard(
                                           isFromHospital: widget.isHospital,

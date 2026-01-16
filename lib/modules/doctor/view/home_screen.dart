@@ -4,13 +4,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/custom_message/flutter_toast_message.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_bloc.dart';
-import 'package:joy_app/modules/social_media/chat/view/chats.dart';
-import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/doctor/view/all_appointment.dart';
 import 'package:joy_app/modules/doctor/view/manage_appointment.dart';
 import 'package:joy_app/modules/user/user_hospital/view/hospital_detail_screen.dart';
-import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
@@ -80,117 +77,17 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         _lastTabIndex = navController.tabIndex;
         
         return Scaffold(
-      appBar: HomeAppBar(
-          showBottom: true,
-          title: '',
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: SvgPicture.asset('Assets/icons/joy-icon-small.svg'),
-          ),
-          actions: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: ThemeUtil.isDarkMode(context)
-                    ? Color(0xff191919)
-                    : Color(0xffF3F4F6),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Center(
-                  child: SvgPicture.asset('Assets/icons/search-normal.svg'),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0, left: 8),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: ThemeUtil.isDarkMode(context)
-                      ? Color(0xff191919)
-                      : Color(0xffF3F4F6),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Center(
-                      child: InkWell(
-                    onTap: () {
-                      Get.to(AllChats(), transition: Transition.native);
-                    },
-                    child: SvgPicture.asset('Assets/icons/sms.svg'),
-                  )),
-                ),
-              ),
-            )
-          ],
-          showIcon: true),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+          padding: EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 60.0, // Add 60 margin for iOS dynamic island
+            bottom: 0,
+          ),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => CreatePostModal(),
-                        );
-                      },
-                      child: TextField(
-                        enabled: false,
-                        maxLines: null,
-                        cursorColor: AppColors.borderColor,
-                        style: CustomTextStyles.lightTextStyle(
-                            color: AppColors.borderColor),
-                        decoration: InputDecoration(
-                          enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          focusedBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          border:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          fillColor: Colors.transparent,
-                          hintText: "What's on your mind?",
-                          hintStyle: CustomTextStyles.lightTextStyle(
-                              color: AppColors.borderColor),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(54),
-                      color: ThemeUtil.isDarkMode(context)
-                          ? Color(0xff121212)
-                          : AppColors.whiteColorf9f,
-                    ),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset('Assets/icons/camera.svg'),
-                          SizedBox(width: 2.w),
-                          Text(
-                            "Photo",
-                            style: CustomTextStyles.lightTextStyle(
-                              color: AppColors.borderColor,
-                              size: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 1.5.h,
-              ),
+              // Appointments and Patient History cards at the top
               Row(
                 children: [
                   Expanded(

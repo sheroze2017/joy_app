@@ -713,7 +713,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                             docName: doctorName,
                                                             location: doctorLocation,
                                                             Category: doctorCategory,
-                                                            isFromHospital: false, // Set to false to show "Book Appointment" button
+                                                            isFromHospital: true, // Hospital mode - hide "Book Appointment" button
                                                           ),
                                                           transition: Transition.rightToLeft,
                                                         );
@@ -990,8 +990,8 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                   Get.to(
                                                     ProductScreen(
                                                       userId: pharmacyId,
-                                                      isAdmin:
-                                                          false, // User mode, not admin
+                                                      isAdmin: false, // User mode, not admin
+                                                      isHospital: true, // Hospital mode - view only
                                                     ),
                                                     transition:
                                                         Transition.rightToLeft,

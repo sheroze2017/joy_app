@@ -169,6 +169,21 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  // Product Name Label
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Product Name',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
                   RoundedBorderTextField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -186,6 +201,21 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  // Description Label
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Description',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
                   RoundedBorderTextField(
                     maxlines: true,
                     controller: _descController,
@@ -204,6 +234,21 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  // Category Label
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Category',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
                   SearchSingleDropdown(
                     hintText: 'Select Category',
                     items: category,
@@ -216,6 +261,21 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  // Dosage Label
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Dosage',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
                   RoundedBorderTextField(
                     controller: _dosageController,
                     focusNode: _focusNode4,
@@ -233,6 +293,21 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  // Stock Label
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Quantity (Stock)',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
                   RoundedBorderTextField(
                     controller: _stockController,
                     focusNode: _focusNode5,
@@ -250,6 +325,21 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  // Price Label
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Price',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
                   RoundedBorderTextField(
                       controller: _priceController,
                       focusNode: _focusNode6,
@@ -260,6 +350,21 @@ class _AddMedicineState extends State<AddMedicine> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  // Discount Label
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Discount',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: ThemeUtil.isDarkMode(context)
+                            ? AppColors.whiteColor
+                            : AppColors.blackColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
                   RoundedBorderTextField(
                       controller: _discountController,
                       hintText: 'Discount',
