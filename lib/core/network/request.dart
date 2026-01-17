@@ -39,21 +39,10 @@ class DioClient {
             }
             
             var token = await getToken();
-            print('🔑 [DioClient Interceptor] Checking token for: ${options.uri}');
-            print('🔑 [DioClient Interceptor] Token exists: ${token != null && token.isNotEmpty}');
-            if (token != null) {
-              print('🔑 [DioClient Interceptor] Token value: ${token.length > 20 ? "${token.substring(0, 20)}..." : token}');
-            }
             
             if (token != null && token.isNotEmpty) {
               // Always set Authorization header, even if it already exists
               options.headers['Authorization'] = 'Bearer $token';
-              print('🔑 [DioClient Interceptor] ✅ Added Bearer token to request: ${options.uri}');
-              print('🔑 [DioClient Interceptor] Headers after adding token: ${options.headers}');
-            } else {
-              print('⚠️ [DioClient Interceptor] ❌ No token available for request: ${options.uri}');
-              print('⚠️ [DioClient Interceptor] Current headers: ${options.headers}');
-              print('⚠️ [DioClient Interceptor] ⚠️ Request will fail with 401 if endpoint requires authentication');
             }
           } catch (e) {
             print('❌ [DioClient Interceptor] Error adding token: $e');
@@ -66,9 +55,6 @@ class DioClient {
           handler.next(options);
         },
         onError: (error, handler) async {
-          print('❌ [DioClient Interceptor] Request error: ${error.requestOptions.uri}');
-          print('❌ [DioClient Interceptor] Error response: ${error.response?.data}');
-          print('❌ [DioClient Interceptor] Request headers: ${error.requestOptions.headers}');
           handler.next(error);
         },
       ),

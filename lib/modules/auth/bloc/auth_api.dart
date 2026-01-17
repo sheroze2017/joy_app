@@ -68,15 +68,86 @@ class AuthApi {
         "user_id": userId,
         "device_token": deviceToken,
       };
-      print('📡 [AuthApi] updateDeviceToken() called');
-      print('📤 [AuthApi] updateDeviceToken() Payload: $requestData');
+      
+      print('');
+      print('📡 [AuthApi] ========== UPDATE DEVICE TOKEN API CALL ==========');
+      print('📡 [AuthApi] URL: ${Endpoints.baseUrl}${Endpoints.updateDeviceToken}');
+      print('📡 [AuthApi] Method: POST');
+      print('📡 [AuthApi] Device Token: $deviceToken');
+      print('📡 [AuthApi] User ID: $userId');
+      print('📡 [AuthApi] ==================================================');
+      print('');
+      
       final result =
           await _dioClient.post(Endpoints.updateDeviceToken, data: requestData);
-      print('📥 [AuthApi] updateDeviceToken() Response: $result');
-      return result['sucess'] == true || result['success'] == true;
+      
+      print('');
+      print('📥 [AuthApi] ========== UPDATE DEVICE TOKEN API RESPONSE ==========');
+      print('📥 [AuthApi] Status: ${result['code'] ?? "unknown"}');
+      print('📥 [AuthApi] Success: ${result['sucess'] ?? result['success'] ?? "unknown"}');
+      print('📥 [AuthApi] Message: ${result['message'] ?? "unknown"}');
+      print('📥 [AuthApi] ======================================================');
+      print('');
+      
+      final success = result['sucess'] == true || result['success'] == true;
+      return success;
     } catch (e) {
-      print('❌ [AuthApi] updateDeviceToken() error: $e');
+      print('');
+      print('❌ [AuthApi] ========== UPDATE DEVICE TOKEN API ERROR ==========');
+      print('❌ [AuthApi] Error: $e');
+      print('❌ [AuthApi] ===================================================');
+      print('');
       return false;
+    }
+  }
+
+  Future<LoginModel> socialAuth({
+    required bool isGoogle,
+    String? email,
+    String? name,
+    String? image,
+    String? appleToken,
+    String? deviceToken,
+  }) async {
+    try {
+      print('🔐 [AuthApi] socialAuth() called');
+      print('   - isGoogle: $isGoogle');
+      print('   - email: $email');
+      print('   - name: $name');
+      print('   - image: $image');
+      print('   - appleToken: ${appleToken != null ? "${appleToken.substring(0, 20)}..." : "null"}');
+      print('   - deviceToken: ${deviceToken != null ? "${deviceToken.substring(0, 20)}..." : "null"}');
+      
+      final requestData = {
+        "google": isGoogle,
+        if (isGoogle) ...{
+          "email": email,
+          "name": name,
+          "image": image,
+        },
+        if (!isGoogle) ...{
+          "token": appleToken,
+        },
+        if (deviceToken != null && deviceToken.isNotEmpty) "device_token": deviceToken,
+      };
+      
+      print('📤 [AuthApi] socialAuth() Request Payload: $requestData');
+      
+      final result = await _dioClient.post(Endpoints.socialAuthApi, data: requestData);
+      
+      print('✅ [AuthApi] socialAuth() success');
+      print('📥 [AuthApi] socialAuth() Response: $result');
+      final loginModel = LoginModel.fromJson(result);
+      print('📥 [AuthApi] socialAuth() Parsed Response:');
+      print('   - Token: ${loginModel.data?.token != null ? "***" : "null"}');
+      print('   - UserId: ${loginModel.data?.user?.userId}');
+      print('   - Role: ${loginModel.data?.user?.userRole}');
+      print('   - Success: ${loginModel.sucess}');
+      print('   - Message: ${loginModel.message}');
+      return loginModel;
+    } catch (e) {
+      print('❌ [AuthApi] socialAuth() error: $e');
+      throw e;
     }
   }
 
@@ -724,6 +795,25 @@ class AuthApi {
       return hospitalModel;
     } catch (e) {
       print('❌ [AuthApi] hospitalRegister() error: $e');
+      throw e;
+    }
+  }
+
+  Future<Map<String, dynamic>> getNotifications(String userId) async {
+    try {
+      print('🔔 [AuthApi] getNotifications() called');
+      print('🔔 [AuthApi] User ID: $userId');
+      
+      final result = await _dioClient.get(
+        '${Endpoints.getNotifications}?user_id=$userId',
+      );
+      
+      print('✅ [AuthApi] getNotifications() success');
+      print('📥 [AuthApi] getNotifications() Response: $result');
+      
+      return result;
+    } catch (e) {
+      print('❌ [AuthApi] getNotifications() error: $e');
       throw e;
     }
   }

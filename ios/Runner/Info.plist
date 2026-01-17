@@ -31,25 +31,24 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.850638861206-4e95p62umm26n4gitu3sdvgh0boupaj4</string>
+				<string>com.googleusercontent.apps.192582349912-ebobn6keup8r2isv1rocoijqalic6qlc</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>GIDClientID</key>
-	<string>850638861206-4e95p62umm26n4gitu3sdvgh0boupaj4.apps.googleusercontent.com</string>
+	<string>192582349912-ebobn6keup8r2isv1rocoijqalic6qlc.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open and in the background.</string>
-    
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Joy is using this access to upload images for posting feature</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Joy is using this access to upload images for posting feature</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

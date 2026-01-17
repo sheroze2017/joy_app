@@ -23,18 +23,53 @@ class _SplashScreenState extends State<SplashScreen> {
 
   checkUserAndRoute() async {
     try {
+      print('');
+      print('🚀 [SplashScreen] ========== SPLASH SCREEN - CHECKING USER ==========');
+      print('🚀 [SplashScreen] App started, checking for logged in user...');
+      
       UserHive? currentUser = await getCurrentUser();
       if (currentUser != null) {
+        print('✅ [SplashScreen] User found:');
+        print('   - User ID: ${currentUser.userId}');
+        print('   - Name: ${currentUser.firstName}');
+        print('   - Email: ${currentUser.email}');
+        print('   - Role: ${currentUser.userRole}');
+        print('   - Current Device Token: ${currentUser.deviceToken}');
+        print('');
+        print('');
+        print('🔄 [SplashScreen] ========== CALLING updateDeviceTokenForUser() ==========');
+        print('🔄 [SplashScreen] Updating device token on backend...');
+        print('🔄 [SplashScreen] User ID: ${currentUser.userId}');
+        print('🔄 [SplashScreen] ======================================================');
+        print('');
+        
         final authController = Get.find<AuthController>();
         await authController.updateDeviceTokenForUser(
             currentUser.userId.toString());
+        
+        print('');
+        print('✅ [SplashScreen] ========== updateDeviceTokenForUser() RETURNED ==========');
+        print('✅ [SplashScreen] Device token update process completed');
+        print('✅ [SplashScreen] Check logs above for success/failure details');
+        print('✅ [SplashScreen] ========================================================');
+        print('');
+        print('🚀 [SplashScreen] Navigating to user dashboard in 5 seconds...');
+        print('🚀 [SplashScreen] =================================================');
+        print('');
+        
         Timer(Duration(seconds: 5),
             () => handleUserRoleNavigation(currentUser.userRole));
       } else {
+        print('ℹ️ [SplashScreen] No user found, redirecting to onboarding');
+        print('🚀 [SplashScreen] =================================================');
+        print('');
         Timer(Duration(seconds: 5), () => Get.offAll(OnboardingScreen()));
       }
     } catch (e) {
+      print('');
+      print('❌ [SplashScreen] ========== ERROR IN SPLASH SCREEN ==========');
       print('❌ [SplashScreen] Error checking user: $e');
+      print('❌ [SplashScreen] Error type: ${e.runtimeType}');
       // If there's a Hive corruption error, clear data and go to onboarding
       if (e.toString().contains('is not a subtype') || 
           e.toString().contains('type cast') ||
@@ -42,6 +77,8 @@ class _SplashScreenState extends State<SplashScreen> {
         print('⚠️ [SplashScreen] Hive data corruption detected, clearing and redirecting to onboarding');
         clearUserInformation();
       }
+      print('❌ [SplashScreen] ===========================================');
+      print('');
       Timer(Duration(seconds: 5), () => Get.offAll(OnboardingScreen()));
     }
   }

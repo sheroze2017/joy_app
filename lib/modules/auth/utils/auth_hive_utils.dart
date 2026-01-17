@@ -78,13 +78,10 @@ Future<UserHive?> getCurrentUser() async {
       print('   - Token: ${user.token != null ? (user.token!.length > 20 ? "${user.token!.substring(0, 20)}..." : user.token) : "null"}');
       print('   - Gender: ${user.gender ?? "null"}');
       
-      // If user exists but token is null, this might be an old schema issue
-      // Clear the box to force fresh login with new schema
+      // Note: Token can be null for newly registered users (only login provides a token)
+      // This is expected behavior - user can still use the app after registration
       if (user.token == null || user.token!.isEmpty) {
-        print('⚠️ [getCurrentUser] User exists but token is null - this might be an old schema. Clearing box to force fresh login.');
-        await userBox.clear();
-        print('✅ [getCurrentUser] Cleared Hive box - user needs to login again');
-        return null;
+        print('ℹ️ [getCurrentUser] User found but token is null (user may have just registered - this is normal)');
       }
     } else {
       print('⚠️ [getCurrentUser] No user found in Hive');
