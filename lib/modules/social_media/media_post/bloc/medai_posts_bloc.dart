@@ -239,17 +239,18 @@ class MediaPostController extends GetxController {
           await mediaPosts.createPost('', desc, userIdPost, imgPath);
       if (response.sucess == true) {
         showSuccessMessage(context, 'Post posted successfully');
-        getAllPost();
-        Get.back();
+        Get.back(); // Close modal first
         postUpload.value = false;
+        // Reload posts after modal closes to show new post at top
+        await getAllPost();
       } else {
         showErrorMessage(context, 'Error adding post');
         postUpload.value = false;
       }
     } catch (error) {
       postUpload.value = false;
-
-      throw (error);
+      showErrorMessage(context, 'Error creating post: ${error.toString()}');
+      // Don't throw error, just show message
     } finally {
       postUpload.value = false;
     }
@@ -365,8 +366,43 @@ class MediaPostController extends GetxController {
       
       if (isSuccess == true && responseCode == 200) {
         print('✅ [MediaPostController] Like toggled successfully');
-        // Refresh posts to get updated like count
-        await getAllPost();
+        
+        // Update local post state without fetching all posts
+        // Note: postIndex is from reversed list, so actual index is (length - 1 - postIndex)
+        final actualIndex = allPost.length - 1 - postIndex;
+        if (actualIndex >= 0 && actualIndex < allPost.length) {
+          final post = allPost[actualIndex];
+          
+          // Get updated data from response
+          final responseData = result['data'];
+          if (responseData != null) {
+            // Update likes count
+            if (responseData['likes'] != null) {
+              post.likes = responseData['likes'].toString();
+            }
+            
+            // Update isMyLike status
+            if (responseData['is_my_like'] != null) {
+              post.isMyLike = responseData['is_my_like'];
+            } else if (responseData['isMyLike'] != null) {
+              post.isMyLike = responseData['isMyLike'];
+            } else {
+              // Toggle the current state if API doesn't return it
+              post.isMyLike = !(post.isMyLike ?? false);
+            }
+          } else {
+            // Fallback: toggle the current state and increment/decrement likes
+            final currentLikes = int.tryParse(post.likes ?? '0') ?? 0;
+            final wasLiked = post.isMyLike ?? false;
+            post.isMyLike = !wasLiked;
+            post.likes = wasLiked ? (currentLikes - 1).toString() : (currentLikes + 1).toString();
+          }
+          
+          // Trigger UI update
+          allPost.refresh();
+          update();
+        }
+        
         return true;
       } else {
         String errorMessage = result['message'] ?? 'Failed to toggle like';

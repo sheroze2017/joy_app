@@ -64,15 +64,15 @@ class BloodBankController extends GetxController {
 
   Future<AllDonor> getallDonor() async {
     allDonors.clear();
+    searchedDonors.clear();
     try {
       AllDonor response = await bloodBankApi.getAllDonor();
       print('🩸 [BloodBankController] getallDonor() - Response received');
       print('🩸 [BloodBankController] Response data: ${response.data?.length ?? 0} donors');
       if (response.data != null && response.data!.isNotEmpty) {
         print('🩸 [BloodBankController] Adding ${response.data!.length} donors to allDonors');
-        response.data!.forEach((element) {
-          allDonors.add(element);
-        });
+        // Use assignAll instead of forEach/add to prevent duplicates
+        allDonors.assignAll(response.data!);
         print('🩸 [BloodBankController] allDonors length after adding: ${allDonors.length}');
       } else {
         print('🩸 [BloodBankController] No donors in response data');

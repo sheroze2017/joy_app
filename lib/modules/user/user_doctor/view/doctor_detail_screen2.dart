@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/profile/view/my_profile.dart';
+import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/user/user_doctor/bloc/user_doctor_bloc.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/user/user_doctor/view/your_profileform_screen.dart';
@@ -38,6 +39,7 @@ class DoctorDetailScreen2 extends StatefulWidget {
 
 class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
   UserDoctorController _doctorController = Get.find<UserDoctorController>();
+  final ProfileController _profileController = Get.find<ProfileController>();
   int _selectedDayIndex = 0; // 0 = Monday, 6 = Sunday
   final List<String> _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   final List<String> _fullDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -583,45 +585,52 @@ class _DoctorDetailScreen2State extends State<DoctorDetailScreen2> {
                     ),
                   ),
       ),
-      bottomNavigationBar: !widget
-              .isFromHospital // Replace this with your condition
-          ? Container(
-              padding: EdgeInsets.only(bottom: 24.0, top: 8.0, left: 16.0, right: 16.0),
-              child: RoundedButton(
-                  text: widget.isDoctor
-                      ? 'Edit Profile'
-                      : "Book Appointment",
-                  onPressed: () {
-                    _doctorController.doctorDetail == null
-                        ? null
-                        : widget.isDoctor
-                            ? Get.to(
-                                DoctorFormScreen(
-                                  email: _doctorController
-                                      .doctorDetail!.data!.email
-                                      .toString(),
-                                  password: _doctorController
-                                      .doctorDetail!.data!.password
-                                      .toString(),
-                                  name: _doctorController
-                                      .doctorDetail!.data!.name
-                                      .toString(),
-                                  details: _doctorController
-                                      .doctorDetail!.data,
-                                  isEdit: true,
-                                ),
-                                transition: Transition.native)
-                            : Get.to(
-                                ProfileFormScreen(
-                                  doctorDetail:
-                                      _doctorController.doctorDetail!,
-                                ),
-                                transition: Transition.native);
-                  },
-                  backgroundColor: AppColors.darkBlueColor,
-                  textColor: AppColors.whiteColor),
-            )
-          : null, // Hides bottomNavigationBar when the condition is false
+      bottomNavigationBar: Obx(() {
+        // Show "Book Appointment" button only for USER role, not for HOSPITAL or DOCTOR
+        final userRole = _profileController.userRole.value;
+        final shouldShowButton = !widget.isDoctor && userRole == 'USER';
+        
+        if (!shouldShowButton) {
+          return SizedBox.shrink(); // Hide button when user is not a USER
+        }
+        
+        return Container(
+          padding: EdgeInsets.only(bottom: 24.0, top: 8.0, left: 16.0, right: 16.0),
+          child: RoundedButton(
+              text: widget.isDoctor
+                  ? 'Edit Profile'
+                  : "Book Appointment",
+              onPressed: () {
+                _doctorController.doctorDetail == null
+                    ? null
+                    : widget.isDoctor
+                        ? Get.to(
+                            DoctorFormScreen(
+                              email: _doctorController
+                                  .doctorDetail!.data!.email
+                                  .toString(),
+                              password: _doctorController
+                                  .doctorDetail!.data!.password
+                                  .toString(),
+                              name: _doctorController
+                                  .doctorDetail!.data!.name
+                                  .toString(),
+                              details: _doctorController
+                                  .doctorDetail!.data,
+                              isEdit: true,
+                            ),
+                            transition: Transition.native)
+                        : Get.to(
+                            ProfileFormScreen(
+                              doctorDetail:
+                                  _doctorController.doctorDetail!,
+                            ),
+                            transition: Transition.native);
+              },
+              backgroundColor: AppColors.darkBlueColor,
+              textColor: AppColors.whiteColor),
+        );
+      }),
     );
   }
 }

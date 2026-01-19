@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -34,7 +33,7 @@ class MyProfileScreen extends StatefulWidget {
   State<MyProfileScreen> createState() => _MyProfileScreenState();
 }
 
-class _MyProfileScreenState extends State<MyProfileScreen> {
+class _MyProfileScreenState extends State<MyProfileScreen> with WidgetsBindingObserver {
   FriendsSocialController _friendsController =
       Get.find<FriendsSocialController>();
   ProfileController _profileController = Get.put(ProfileController());
@@ -44,12 +43,16 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Don't load data in initState - wait until screen is actually visible
     // This prevents API calls when screen is in IndexedStack but not visible
   }
 
   void _checkAndLoadData() {
     if (!_hasLoadedData && mounted) {
+      // Refresh friends/requests/suggestions whenever screen is focused
+      _friendsController.getFriendRequestsAndSuggestions();
+      
       if (widget.myProfile) {
         // Friend profile - load immediately
         _hasLoadedData = true;
@@ -81,8 +84,21 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     _checkAndLoadData();
   }
 
+  // Get friendship status from profile data
+  String? _getFriendshipStatus() {
+    if (!widget.myProfile) return null;
+    return _friendsController.userProfileData.value?.friendshipStatus;
+  }
+
+  // Check if users are friends
+  bool _isFriend() {
+    final status = _getFriendshipStatus();
+    return status == 'FRIENDS';
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _hasLoadedData = false;
     super.dispose();
   }
@@ -240,7 +256,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         ),
         body: RefreshIndicator(
           onRefresh: () async {
-            _friendsController.getSearchUserProfileData(widget.myProfile,
+            // Refresh friends/requests/suggestions
+            await _friendsController.getFriendRequestsAndSuggestions();
+            // Refresh profile data
+            await _friendsController.getSearchUserProfileData(widget.myProfile,
                 !widget.myProfile ? '' : widget.friendId, context);
           },
           child: Stack(
@@ -263,251 +282,260 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             child: Container(
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                                    const EdgeInsets.fromLTRB(20, 24, 20, 0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      height: 45.w,
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                              bottom: 2.h,
-                                              left: 0,
-                                              right: 0,
-                                              child: Container(
-                                                width: 100.w,
-                                                height: 23.58.w,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
+                                    Stack(
+                                      clipBehavior: Clip.none,
+                                      alignment: Alignment.topCenter,
+                                      children: [
+                                        // Card container
+                                        Container(
+                                          width: double.infinity,
+                                          margin: EdgeInsets.only(top: 50), // Space for overlapping circle
+                                          decoration: BoxDecoration(
+                                            color: ThemeUtil.isDarkMode(context)
+                                                ? Color(0xff121212)
+                                                : Color(0xffFAFAFA),
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: ThemeUtil.isDarkMode(context)
+                                                  ? Colors.transparent
+                                                  : Color(0xffF3F4F6),
+                                            ),
+                                          ),
+                                          padding: EdgeInsets.only(
+                                            top: 60, // Space for profile picture + margin
+                                            bottom: 1.5.h,
+                                            left: 4.w,
+                                            right: 4.w,
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              // Name with margin from top
+                                              Text(
+                                                _friendsController
+                                                    .userProfileData
+                                                    .value!
+                                                    .name
+                                                    .toString(),
+                                                style: CustomTextStyles
+                                                    .darkHeadingTextStyle(
                                                         color: ThemeUtil
                                                                 .isDarkMode(
                                                                     context)
-                                                            ? Colors.transparent
-                                                            : Color(
-                                                                0xffF3F4F6)),
-                                                    color: ThemeUtil.isDarkMode(
-                                                            context)
-                                                        ? Color(0xff121212)
-                                                        : Color(0xffFAFAFA),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12)),
-                                                child: Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 4.w,
-                                                    ),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          (_friendsController.userProfileData.value?.posts?.length ?? _friendsController.userPostById.length).toString(),
-                                                          style: CustomTextStyles.w600TextStyle(
-                                                              color: ThemeUtil
-                                                                      .isDarkMode(
-                                                                          context)
-                                                                  ? AppColors
-                                                                      .whiteColor
-                                                                  : Color(
-                                                                      0xff000000),
-                                                              size: 15.41),
-                                                        ),
-                                                        Text(
-                                                          'Posts',
-                                                          style: CustomTextStyles.lightTextStyle(
-                                                              color: ThemeUtil
-                                                                      .isDarkMode(
-                                                                          context)
-                                                                  ? AppColors
-                                                                      .whiteColor
-                                                                  : Color(
-                                                                      0xff000000),
-                                                              size: 13.21),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Spacer(),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          _friendsController
-                                                              .getAllUserNames()
-                                                              .length
-                                                              .toString(),
-                                                          style: CustomTextStyles.w600TextStyle(
-                                                              color: ThemeUtil
-                                                                      .isDarkMode(
-                                                                          context)
-                                                                  ? AppColors
-                                                                      .whiteColor
-                                                                  : Color(
-                                                                      0xff000000),
-                                                              size: 15.41),
-                                                        ),
-                                                        Text(
-                                                          'Friends',
-                                                          style: CustomTextStyles.lightTextStyle(
-                                                              color: ThemeUtil
-                                                                      .isDarkMode(
-                                                                          context)
-                                                                  ? AppColors
-                                                                      .whiteColor
-                                                                  : Color(
-                                                                      0xff000000),
-                                                              size: 13.21),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      width: 4.w,
-                                                    ),
-                                                  ],
-                                                ),
-                                              )),
-                                          Positioned(
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            child: Column(
-                                              children: [
-                                                _buildProfileAvatar(
-                                                    _friendsController
-                                                        .userProfileData
-                                                        .value!
-                                                        .image,
-                                                    65),
-                                                SizedBox(
-                                                  height: 1.5.h,
-                                                ),
-                                                Text(
-                                                  _friendsController
-                                                      .userProfileData
-                                                      .value!
-                                                      .name
-                                                      .toString(),
-                                                  style: CustomTextStyles
-                                                      .darkHeadingTextStyle(
-                                                          color: ThemeUtil
-                                                                  .isDarkMode(
-                                                                      context)
-                                                              ? Color(
-                                                                  0xffC8D3E0)
-                                                              : null,
-                                                          size: 14),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                                            ? Color(0xffC8D3E0)
+                                                            : null,
+                                                        size: 14),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // Profile picture overlapping on top - larger size
+                                        Positioned(
+                                          top: 0,
+                                          child: _buildProfileAvatar(
+                                              _friendsController
+                                                  .userProfileData
+                                                  .value!
+                                                  .image,
+                                              50),
+                                        ),
+                                        // Posts count - top left corner
+                                        Positioned(
+                                          top: 55, // Position in card top corner
+                                          left: 4.w,
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                (_friendsController.userProfileData.value?.posts?.length ?? _friendsController.userPostById.length).toString(),
+                                                style: CustomTextStyles.w600TextStyle(
+                                                    color: ThemeUtil
+                                                            .isDarkMode(
+                                                                context)
+                                                        ? AppColors
+                                                            .whiteColor
+                                                        : Color(
+                                                            0xff000000),
+                                                    size: 15.41),
+                                              ),
+                                              Text(
+                                                'Posts',
+                                                style: CustomTextStyles.lightTextStyle(
+                                                    color: ThemeUtil
+                                                            .isDarkMode(
+                                                                context)
+                                                        ? AppColors
+                                                            .whiteColor
+                                                        : Color(
+                                                            0xff000000),
+                                                    size: 13.21),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        // Friends count - top right corner
+                                        Positioned(
+                                          top: 55, // Position in card top corner
+                                          right: 4.w,
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                _friendsController
+                                                    .getAllUserNames()
+                                                    .length
+                                                    .toString(),
+                                                style: CustomTextStyles.w600TextStyle(
+                                                    color: ThemeUtil
+                                                            .isDarkMode(
+                                                                context)
+                                                        ? AppColors
+                                                            .whiteColor
+                                                        : Color(
+                                                            0xff000000),
+                                                    size: 15.41),
+                                              ),
+                                              Text(
+                                                'Friends',
+                                                style: CustomTextStyles.lightTextStyle(
+                                                    color: ThemeUtil
+                                                            .isDarkMode(
+                                                                context)
+                                                        ? AppColors
+                                                            .whiteColor
+                                                        : Color(
+                                                            0xff000000),
+                                                    size: 13.21),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     SizedBox(
                                       height: 2.h,
                                     ),
                                     widget.myProfile == true
-                                        ? Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: RoundedButtonSmall(
-                                                      isSmall: true,
-                                                      text: "Message",
-                                                      onPressed: () {
-                                                        Get.to(
-                                                            DirectMessageScreen(
-                                                          userName:
-                                                              _friendsController
-                                                                  .userProfileData
-                                                                  .value!
-                                                                  .name
-                                                                  .toString(),
-                                                          friendId:
-                                                              _friendsController
-                                                                  .userProfileData
-                                                                  .value!
-                                                                  .userId
-                                                                  .toString(),
-
-                                                          userId:
-                                                              _profileController
-                                                                  .userId.value,
-                                                          userAsset:
-                                                              _profileController
-                                                                  .image
-                                                                  .toString(),
-                                                          // Adjust types when chatting with non-user entities
-                                                          senderType: 'user',
-                                                          receiverType: 'user',
-                                                          // conversationId:
-                                                          //     result.data!.sId.toString(),
-                                                        ));
-
-                                                        // _chatController.createConvo(
-                                                        //     _friendsController
-                                                        //             .userProfileData
-                                                        //             .value!
-                                                        //             .userId ??
-                                                        //         0,
-                                                        //     _friendsController
-                                                        //         .userProfileData
-                                                        //         .value!
-                                                        //         .name
-                                                        //         .toString());
-                                                      },
-                                                      backgroundColor: ThemeUtil
-                                                              .isDarkMode(
-                                                                  context)
-                                                          ? Color(0XFF1F2228)
-                                                          : Color(0xffE5E7EB),
-                                                      textColor: ThemeUtil
-                                                              .isDarkMode(
-                                                                  context)
-                                                          ? Color(0XFFC5D3E3)
-                                                          : Color(0xff1C2A3A)),
-                                                ),
-                                                SizedBox(
-                                                  width: 4.w,
-                                                ),
-                                                Expanded(
-                                                  child: RoundedButtonSmall(
-                                                      isSmall: true,
-                                                      text: widget.isFriend
-                                                          ? 'Friend'
-                                                          : "Add Friend",
-                                                      onPressed: () {
-                                                        widget.isFriend
-                                                            ? print('')
-                                                            : _friendsController
-                                                                .AddFriend(
-                                                                    widget
-                                                                        .friendId,
-                                                                    context);
-                                                      },
-                                                      backgroundColor: ThemeUtil
-                                                              .isDarkMode(
-                                                                  context)
-                                                          ? Color(0XFFC5D3E3)
-                                                          : Color(0xff1C2A3A),
-                                                      textColor: ThemeUtil
-                                                              .isDarkMode(
-                                                                  context)
-                                                          ? AppColors.blackColor
-                                                          : Color(0xffFFFFFF)),
-                                                )
-                                              ],
-                                            ),
-                                          )
+                                        ? Obx(() {
+                                            final friendshipStatus = _getFriendshipStatus();
+                                            final isFriend = _isFriend();
+                                            
+                                            // Determine button text and action based on friendship status
+                                            String buttonText = "Add Friend";
+                                            VoidCallback? buttonAction;
+                                            
+                                            if (friendshipStatus == 'FRIENDS') {
+                                              buttonText = 'Unfollow';
+                                              buttonAction = () {
+                                                final friendsId = _friendsController.userProfileData.value?.friendsId?.toString();
+                                                if (friendsId != null && widget.friendId != null) {
+                                                  _friendsController.unfollow(friendsId, widget.friendId!, context);
+                                                }
+                                              };
+                                            } else if (friendshipStatus == 'REQUEST_RECEIVED') {
+                                              buttonText = 'Accept Request';
+                                              buttonAction = () {
+                                                final friendsId = _friendsController.userProfileData.value?.friendsId?.toString();
+                                                if (friendsId != null && widget.friendId != null) {
+                                                  _friendsController.acceptFriendRequest(friendsId, widget.friendId!, context);
+                                                }
+                                              };
+                                            } else if (friendshipStatus == 'REQUEST_SENT_BY_ME') {
+                                              buttonText = 'Delete Request';
+                                              buttonAction = () {
+                                                final friendsId = _friendsController.userProfileData.value?.friendsId?.toString();
+                                                if (friendsId != null && widget.friendId != null) {
+                                                  _friendsController.deleteFriendRequest(friendsId, widget.friendId!, context);
+                                                }
+                                              };
+                                            } else {
+                                              // NONE or null - Add Friend / Follow
+                                              buttonText = 'Follow';
+                                              buttonAction = () {
+                                                if (widget.friendId != null) {
+                                                  _friendsController.addFriend(widget.friendId!, context);
+                                                }
+                                              };
+                                            }
+                                            
+                                            return Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 16.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  // Chat button - only show if friends
+                                                  if (isFriend)
+                                                    Expanded(
+                                                      child: RoundedButtonSmall(
+                                                          isSmall: true,
+                                                          text: "Message",
+                                                          onPressed: () {
+                                                            Get.to(
+                                                                DirectMessageScreen(
+                                                              userName:
+                                                                  _friendsController
+                                                                      .userProfileData
+                                                                      .value!
+                                                                      .name
+                                                                      .toString(),
+                                                              friendId:
+                                                                  _friendsController
+                                                                      .userProfileData
+                                                                      .value!
+                                                                      .userId
+                                                                      .toString(),
+                                                              userId:
+                                                                  _profileController
+                                                                      .userId.value,
+                                                              userAsset:
+                                                                  _profileController
+                                                                      .image
+                                                                      .toString(),
+                                                              senderType: 'user',
+                                                              receiverType: 'user',
+                                                            ));
+                                                          },
+                                                          backgroundColor: ThemeUtil
+                                                                  .isDarkMode(
+                                                                      context)
+                                                              ? Color(0XFF1F2228)
+                                                              : Color(0xffE5E7EB),
+                                                          textColor: ThemeUtil
+                                                                  .isDarkMode(
+                                                                      context)
+                                                              ? Color(0XFFC5D3E3)
+                                                              : Color(0xff1C2A3A)),
+                                                    ),
+                                                  if (isFriend)
+                                                    SizedBox(
+                                                      width: 4.w,
+                                                    ),
+                                                  // Action button (Unfollow/Follow/Accept/Delete)
+                                                  Expanded(
+                                                    child: RoundedButtonSmall(
+                                                        isSmall: true,
+                                                        text: buttonText,
+                                                        onPressed: buttonAction,
+                                                        backgroundColor: ThemeUtil
+                                                                .isDarkMode(
+                                                                    context)
+                                                            ? Color(0XFFC5D3E3)
+                                                            : Color(0xff1C2A3A),
+                                                        textColor: ThemeUtil
+                                                                .isDarkMode(
+                                                                    context)
+                                                            ? AppColors.blackColor
+                                                            : Color(0xffFFFFFF)),
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          })
                                         : Container(),
                                     // widget.myProfile == true
                                     //     ? SizedBox(height: 2.h)

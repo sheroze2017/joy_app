@@ -181,7 +181,6 @@ class NearbyServiceCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 0.5.h),
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: Row(
@@ -206,7 +205,6 @@ class NearbyServiceCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 0.5.h),
           if (bloodDonor != null && bloodGroup != null)
             Padding(
               padding: const EdgeInsets.only(left: 8, right: 8),

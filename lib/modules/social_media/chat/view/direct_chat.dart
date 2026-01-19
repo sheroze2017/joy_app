@@ -45,12 +45,98 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
   String? _loadError;
   // ChatController not needed in new flow
   
-  // Helper function to normalize IDs for comparison (handle both string and number formats)
-  String _normalizeId(dynamic id) {
-    if (id == null) return '';
-    final str = id.toString().trim();
-    // Remove any ObjectId wrapper if present and normalize to lowercase
-    return str.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '').toLowerCase();
+  // Helper function to check if sender ID matches current user ID
+  // When senderId is null/empty/NaN, we use receiverId or optimistic messages to determine ownership
+  bool _isSenderCurrentUser(dynamic senderId, String senderType, {String? messageBody, String? receiverId}) {
+    final currentUserIdStr = widget.userId.toString().trim();
+    
+    if (senderId == null) {
+      print('⚠️ [Chat] _isSenderCurrentUser: senderId is null');
+      
+      // Strategy 1: Check receiverId - if receiverId matches our userId, message was sent TO us (from other person)
+      if (receiverId != null && receiverId.isNotEmpty) {
+        final receiverIdStr = receiverId.toString().trim();
+        if (receiverIdStr == currentUserIdStr || receiverIdStr.toLowerCase() == currentUserIdStr.toLowerCase()) {
+          print('✅ [Chat] _isSenderCurrentUser: senderId is null but receiverId matches current user, message is FROM other person');
+          return false; // Message was sent TO us, so it's FROM the other person
+        }
+      }
+      
+      // Strategy 2: Check if we have an optimistic message with same body (we just sent it)
+      if (messageBody != null && messageBody.isNotEmpty) {
+        final hasOptimisticMessage = messageWidgets.any((msg) => 
+          msg.msgText == messageBody && 
+          msg.user == true && 
+          msg.sending == true
+        );
+        if (hasOptimisticMessage) {
+          print('✅ [Chat] _isSenderCurrentUser: senderId is null but found optimistic message, assuming current user');
+          return true;
+        }
+      }
+      
+      // Strategy 3: If receiverId doesn't match us and no optimistic message, assume it's NOT from current user
+      print('⚠️ [Chat] _isSenderCurrentUser: senderId is null, receiverId check failed, no optimistic message - assuming NOT current user');
+      return false;
+    }
+    
+    final senderIdStr = senderId.toString().trim();
+    
+    // Handle "NaN" or empty sender_id
+    if (senderIdStr.toLowerCase() == 'nan' || senderIdStr.isEmpty || senderIdStr == 'null') {
+      // Strategy 1: Check receiverId - if receiverId matches our userId, message was sent TO us (from other person)
+      if (receiverId != null && receiverId.isNotEmpty) {
+        final receiverIdStr = receiverId.toString().trim();
+        if (receiverIdStr == currentUserIdStr || receiverIdStr.toLowerCase() == currentUserIdStr.toLowerCase()) {
+          print('✅ [Chat] _isSenderCurrentUser: sender_id is NaN/null but receiverId matches current user, message is FROM other person');
+          return false; // Message was sent TO us, so it's FROM the other person
+        }
+      }
+      
+      // Strategy 2: Check if we have an optimistic message with same body
+      if (messageBody != null && messageBody.isNotEmpty) {
+        final hasOptimisticMessage = messageWidgets.any((msg) => 
+          msg.msgText == messageBody && 
+          msg.user == true && 
+          msg.sending == true
+        );
+        if (hasOptimisticMessage) {
+          print('✅ [Chat] _isSenderCurrentUser: sender_id is NaN/null but found optimistic message, assuming current user');
+          return true;
+        }
+      }
+      
+      // DO NOT rely on senderType alone when senderId is missing - this causes false positives
+      print('⚠️ [Chat] _isSenderCurrentUser: sender_id is NaN/null, receiverId check failed, no optimistic message - assuming NOT current user');
+      return false;
+    }
+    
+    // Direct string comparison first (most common case)
+    if (senderIdStr == currentUserIdStr) {
+      print('✅ [Chat] _isSenderCurrentUser: Direct match - "$senderIdStr" == "$currentUserIdStr"');
+      return true;
+    }
+    
+    // Case-insensitive comparison
+    if (senderIdStr.toLowerCase() == currentUserIdStr.toLowerCase()) {
+      print('✅ [Chat] _isSenderCurrentUser: Case-insensitive match - "$senderIdStr" == "$currentUserIdStr"');
+      return true;
+    }
+    
+    // Also check if they're numeric and equal
+    try {
+      final senderNum = int.parse(senderIdStr);
+      final currentNum = int.parse(currentUserIdStr);
+      if (senderNum == currentNum) {
+        print('✅ [Chat] _isSenderCurrentUser: Numeric match - $senderNum == $currentNum');
+        return true;
+      }
+    } catch (e) {
+      // Not numeric, continue
+    }
+    
+    print('❌ [Chat] _isSenderCurrentUser: No match - sender: "$senderIdStr", current: "$currentUserIdStr"');
+    return false;
   }
 
   @override
@@ -105,6 +191,8 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
         final senderIdRaw = data['senderId'] ?? data['sender_id'];
         final senderId = senderIdRaw?.toString() ?? '';
         final senderType = (data['senderType'] ?? data['sender_type'])?.toString() ?? '';
+        final receiverIdRaw = data['receiverId'] ?? data['receiver_id'];
+        final receiverId = receiverIdRaw?.toString() ?? '';
         final conversationIdFromMsg = (data['conversationId'] ?? data['conversation_id'])?.toString() ?? '';
         final body = data['body']?.toString() ?? '';
         
@@ -114,30 +202,10 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
           return;
         }
         
-        // Handle "NaN" sender_id case - if sender_id is "NaN" or invalid, check sender_type
-        bool isCurrentUser = false;
-        String normalizedSenderId = '';
-        String normalizedUserId = '';
+        // Check if message is from current user - pass messageBody and receiverId to help with null senderId cases
+        final isCurrentUser = _isSenderCurrentUser(senderId, senderType, messageBody: body, receiverId: receiverId);
         
-        if (senderId.toLowerCase() == 'nan' || senderId.isEmpty) {
-          // If sender_id is NaN, check if sender_type matches and assume it's our message if type matches
-          // This is a workaround for backend issue where sender_id is "NaN"
-          if (senderType.toLowerCase() == widget.senderType.toLowerCase()) {
-            isCurrentUser = true;
-            print('⚠️ [Chat] Socket: sender_id is "NaN", but sender_type matches, assuming current user message');
-          }
-          normalizedSenderId = senderId;
-          normalizedUserId = widget.userId;
-        } else {
-          // Normalize IDs for comparison (handle both string and number formats)
-          normalizedSenderId = _normalizeId(senderId);
-          normalizedUserId = _normalizeId(widget.userId);
-          isCurrentUser = normalizedSenderId.isNotEmpty && 
-                         normalizedUserId.isNotEmpty && 
-                         normalizedSenderId == normalizedUserId;
-        }
-        
-        print('📨 [Chat] Real-time message - id: $messageId, sender: "$normalizedSenderId" (raw: "$senderId"), current user: "$normalizedUserId" (raw: "${widget.userId}"), isCurrentUser: $isCurrentUser, body: $body');
+        print('📨 [Chat] Real-time message - id: $messageId, sender: "$senderId", current user: "${widget.userId}", isCurrentUser: $isCurrentUser, body: $body');
         
         // Check if message already exists (avoid duplicates)
         bool messageExists = false;
@@ -585,27 +653,13 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
         final senderIdRaw = item['senderId'] ?? item['sender_id'];
         final senderId = senderIdRaw?.toString() ?? '';
         final senderType = (item['senderType'] ?? item['sender_type'])?.toString() ?? '';
+        final receiverIdRaw = item['receiverId'] ?? item['receiver_id'];
+        final receiverId = receiverIdRaw?.toString() ?? '';
         final body = item['body']?.toString() ?? '';
         final status = item['status']?.toString() ?? 'sent';
         
-        // Handle "NaN" sender_id case - if sender_id is "NaN" or invalid, check sender_type
-        // If sender_type matches current user type, it's likely our message
-        bool isCurrentUser = false;
-        if (senderId.toLowerCase() == 'nan' || senderId.isEmpty) {
-          // If sender_id is NaN, check if sender_type matches and assume it's our message if type matches
-          // This is a workaround for backend issue where sender_id is "NaN"
-          if (senderType.toLowerCase() == widget.senderType.toLowerCase()) {
-            isCurrentUser = true;
-            print('⚠️ [Chat] History: sender_id is "NaN", but sender_type matches, assuming current user message');
-          }
-        } else {
-          // Normalize IDs for comparison (handle both string and number formats)
-          final normalizedSenderId = _normalizeId(senderId);
-          final normalizedUserId = _normalizeId(widget.userId);
-          isCurrentUser = normalizedSenderId.isNotEmpty && 
-                         normalizedUserId.isNotEmpty && 
-                         normalizedSenderId == normalizedUserId;
-        }
+        // Check if message is from current user - pass messageBody and receiverId to help with null senderId cases
+        final isCurrentUser = _isSenderCurrentUser(senderId, senderType, messageBody: body, receiverId: receiverId);
         
         print('📥 [Chat] History message - id: $messageId, sender: "$senderId" (type: ${senderIdRaw.runtimeType}), sender_type: "$senderType", current user: "${widget.userId}", isCurrentUser: $isCurrentUser, body: $body, status: $status');
         

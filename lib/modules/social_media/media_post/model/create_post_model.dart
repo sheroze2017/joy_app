@@ -26,12 +26,12 @@ class CreatePostModel {
 }
 
 class Data {
-  int? postId;
+  dynamic postId; // Handle both String (_id) and int
   String? image;
   String? title;
   String? description;
-  Null? likes;
-  int? createdBy;
+  dynamic likes; // Handle int (0) and other types
+  dynamic createdBy; // Handle both String (ObjectId) and int
   String? createdAt;
   String? status;
 
@@ -46,11 +46,12 @@ class Data {
       this.status});
 
   Data.fromJson(Map<String, dynamic> json) {
-    postId = json['post_id'];
+    // Handle both '_id' (MongoDB) and 'post_id' (legacy)
+    postId = json['_id'] ?? json['post_id'];
     image = json['image'];
     title = json['title'];
     description = json['description'];
-    likes = json['likes'];
+    likes = json['likes']; // Can be int (0) or other types
     createdBy = json['created_by'];
     createdAt = json['created_at'];
     status = json['status'];

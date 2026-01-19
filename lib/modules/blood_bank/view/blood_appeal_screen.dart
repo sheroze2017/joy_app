@@ -235,6 +235,7 @@ class _BloodDonationAppealState extends State<BloodDonationAppeal> with TickerPr
                               donorDetails: data.donorDetails,
                               donorUserId: data.donorUserId,
                               isBloodBank: true, // Indicate this is blood bank mode
+                              status: data.status, // Pass status to check if completed
                             ),
                           );
                         });

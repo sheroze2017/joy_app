@@ -6,6 +6,7 @@ import 'package:joy_app/common/map/bloc/location_controller.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/user/user_blood_bank/bloc/user_blood_bloc.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/blood_bank_detail.dart';
+import 'package:joy_app/modules/user/user_blood_bank/view/blood_bank_details_screen.dart';
 import 'package:joy_app/modules/user/user_blood_bank/view/my_appeals.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/location_widget.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/reviewbar_widget.dart';
@@ -615,11 +616,27 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                         return InkWell(
                           onTap: () {
                             if (widget.isPharmacy) {
+                              final pharmacyId = pharmacyController
+                                  .searchResults[index].userId
+                                  .toString();
+                              
+                              // Check if cart is empty or same pharmacy
+                              if (!pharmacyController.canNavigateToPharmacy(pharmacyId)) {
+                                Get.snackbar(
+                                  'Cart Restriction',
+                                  'Please empty the cart first to add from other pharmacy',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.orange,
+                                  colorText: Colors.white,
+                                  duration: Duration(seconds: 3),
+                                  icon: Icon(Icons.shopping_cart, color: Colors.white),
+                                );
+                                return;
+                              }
+                              
                               Get.to(
                                 ProductScreen(
-                                  userId: pharmacyController
-                                      .searchResults[index].userId
-                                      .toString(),
+                                  userId: pharmacyId,
                                   isAdmin: false, // User mode, not admin
                                 ),
                                 transition: Transition.rightToLeft,
@@ -652,10 +669,24 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                                 transition: Transition.rightToLeft,
                               );
                             } else {
+                              // For blood banks, get the userId from PharmacyModelData
+                              final bloodBankUserId = pharmacyController
+                                  .searchResults[index].userId?.toString();
+                              
+                              if (bloodBankUserId == null || bloodBankUserId.isEmpty) {
+                                Get.snackbar(
+                                  'Error',
+                                  'Invalid blood bank ID',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
+                              
                               Get.to(
-                                BloodBankDetailScreen(
-                                  donor: bloodBankController
-                                      .searchResults[index],
+                                BloodBankDetailsScreen(
+                                  userId: bloodBankUserId,
                                 ),
                                 transition: Transition.rightToLeft,
                               );

@@ -56,4 +56,23 @@ class HospitalDetailsApi {
       throw e;
     }
   }
+
+  Future<Map<String, dynamic>> linkOrDelinkHospital(
+      String userId, String? hospitalId) async {
+    try {
+      final requestData = <String, dynamic>{
+        "user_id": userId,
+      };
+      if (hospitalId != null) {
+        requestData["hospital_id"] = hospitalId;
+      }
+      final result = await _dioClient.post(
+          Endpoints.linkOrDelinkHospital,
+          data: requestData);
+      return result;
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
 }

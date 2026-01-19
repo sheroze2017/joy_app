@@ -595,9 +595,9 @@ class MedicineCard extends StatelessWidget {
                       ),
               ],
             ),
-            isFromHospital
-                ? Container()
-                : Row(
+            // Show button for user product screens (including hospital pharmacies)
+            isUserProductScreen
+                ? Row(
                     children: [
                       Expanded(
                         child: RoundedButtonSmall(
@@ -605,9 +605,7 @@ class MedicineCard extends StatelessWidget {
                             text: btnText,
                             onPressed: onPressed,
                             backgroundColor: ThemeUtil.isDarkMode(context)
-                                ? isUserProductScreen
-                                    ? Color(0xff1DAA61)
-                                    : AppColors.lightGreenColoreb1
+                                ? Color(0xff1DAA61)
                                 : AppColors.darkGreenColor,
                             textColor: ThemeUtil.isDarkMode(context)
                                 ? AppColors.blackColor
@@ -615,6 +613,7 @@ class MedicineCard extends StatelessWidget {
                       )
                     ],
                   )
+                : Container()
           ],
         ),
       ),

@@ -258,13 +258,17 @@ class _AllChatsState extends State<AllChats> {
                       await _chatController.getMyConversations();
                     },
                     child: Obx(() {
+                      print('🔄 [Chats UI] Obx rebuild - isLoading: ${_chatController.isLoadingConversations.value}, conversations count: ${_chatController.myConversations.length}');
+                      
                       if (_chatController.isLoadingConversations.value) {
                         return Center(
                           child: CircularProgressIndicator(),
                         );
                       }
                       
+                      print('📊 [Chats UI] Conversations list length: ${_chatController.myConversations.length}');
                       if (_chatController.myConversations.length == 0) {
+                        print('⚠️ [Chats UI] No conversations found, showing empty state');
                         return Center(
                           child: Padding(
                             padding: EdgeInsets.all(20.0),
@@ -275,6 +279,8 @@ class _AllChatsState extends State<AllChats> {
                           ),
                         );
                       }
+                      
+                      print('✅ [Chats UI] Building list with ${_chatController.myConversations.length} conversations');
 
                       return ListView.builder(
                         shrinkWrap: true,

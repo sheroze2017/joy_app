@@ -36,6 +36,7 @@ class DonationApproval extends StatelessWidget {
   DonorDetails? donorDetails; // Add donorDetails parameter
   dynamic donorUserId; // Add donorUserId parameter
   bool isBloodBank; // Add isBloodBank parameter
+  String? status; // Add status parameter to check if request is completed
 
   DonationApproval(
       {this.isBloodDonate = false,
@@ -56,7 +57,8 @@ class DonationApproval extends StatelessWidget {
       this.userDetails,
       this.donorDetails,
       this.donorUserId,
-      this.isBloodBank = false});
+      this.isBloodBank = false,
+      this.status});
   UserBloodBankController _userBloodBankController =
       Get.put(UserBloodBankController());
   final _profileController = Get.find<ProfileController>();
@@ -70,9 +72,36 @@ class DonationApproval extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              date + ' ' + convertTimeFormat(time),
-              style: CustomTextStyles.darkHeadingTextStyle(size: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    date + ' ' + convertTimeFormat(time),
+                    style: CustomTextStyles.darkHeadingTextStyle(size: 14),
+                  ),
+                ),
+                // Show FULFILLED status badge if request is completed
+                if (status?.toUpperCase() == 'FULFILLED' || status?.toUpperCase() == 'COMPLETED')
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.green,
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      'FULFILLED',
+                      style: CustomTextStyles.w600TextStyle(
+                        size: 11,
+                        color: Colors.green.shade700,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             Divider(
               color: Color(0xffE5E7EB),
@@ -280,56 +309,115 @@ class DonationApproval extends StatelessWidget {
                     donorDetails != null && donorUserId != null;
                 final isCurrentUserDonor =
                     isDonorAttached && donorUserId.toString() == currentUserId;
+                // Check if request is completed (FULFILLED status)
+                final isCompleted = status?.toUpperCase() == 'FULFILLED' || status?.toUpperCase() == 'COMPLETED';
 
                 // Button logic:
-                // 1. If isOld (My Requests): Show Cancel button
-                // 2. If donor attached AND I am the donor: Show Cancel and Contact, hide Donate
-                // 3. If donor attached AND I am NOT the donor: Show only Contact, hide Donate
-                // 4. If no donor attached: Show Donate and Contact
+                // 1. If request is completed: Hide all buttons
+                // 2. If isOld (My Requests): Show Cancel button
+                // 3. If donor attached AND I am the donor: Show Cancel and Contact, hide Donate
+                // 4. If donor attached AND I am NOT the donor: Show only Contact, hide Donate
+                // 5. If no donor attached: Show Donate and Contact
 
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // If request is completed, don't show any buttons
+                if (isCompleted) {
+                  return SizedBox.shrink();
+                }
+
+                return Column(
                   children: [
-                    // Show Cancel button if: isOld OR (donor attached AND I am the donor)
-                    if (isOld || (isDonorAttached && isCurrentUserDonor)) ...[
-                      Expanded(
-                        child: RoundedButtonSmall(
-                            text: 'Cancel',
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Show Cancel button if: isOld OR (donor attached AND I am the donor)
+                        if (isOld || (isDonorAttached && isCurrentUserDonor)) ...[
+                          Expanded(
+                            child: RoundedButtonSmall(
+                                text: 'Cancel',
                             onPressed: () {
+                              // In "My Requests" tab: if donor is attached, detach donor; otherwise delete request
                               if (isOld && bloodId != null) {
-                                // Show confirmation alert for cancel request
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext dialogContext) {
-                                    return AlertDialog(
-                                      title: Text('Cancel Request'),
-                                      content: Text(
-                                          'Are you sure you want to cancel this blood request?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(dialogContext).pop();
-                                          },
-                                          child: Text('No'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            Navigator.of(dialogContext).pop();
-                                            // Delete the request
-                                            await _userBloodBankController
-                                                .deleteBloodRequest(
-                                              bloodId.toString(),
-                                              context,
-                                            );
-                                          },
-                                          child: Text('Yes',
-                                              style: TextStyle(
-                                                  color: AppColors.redColor)),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                if (isDonorAttached) {
+                                  // Show confirmation alert for detach donor from my request
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext dialogContext) {
+                                      return AlertDialog(
+                                        title: Text('Remove Donor'),
+                                        content: Text(
+                                            'Are you sure you want to remove the attached donor from this blood request?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(dialogContext).pop();
+                                            },
+                                            child: Text('No'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              Navigator.of(dialogContext).pop();
+                                              // Detach donor using logged-in user's ID (request owner)
+                                              final currentUserId = _profileController.userId.value;
+                                              await _userBloodBankController
+                                                  .detachDonorFromBloodRequest(
+                                                bloodId.toString(),
+                                                currentUserId,
+                                                context,
+                                              );
+                                              
+                                              // If viewing from blood bank role, also refresh BloodBankController's list
+                                              if (isBloodBank) {
+                                                try {
+                                                  final bloodBankController = Get.find<BloodBankController>();
+                                                  await bloodBankController.getAllBloodRequest();
+                                                } catch (e) {
+                                                  print('Error refreshing BloodBankController: $e');
+                                                }
+                                              }
+                                            },
+                                            child: Text('Yes',
+                                                style: TextStyle(
+                                                    color: AppColors.redColor)),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  // No donor attached, delete the request
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext dialogContext) {
+                                      return AlertDialog(
+                                        title: Text('Cancel Request'),
+                                        content: Text(
+                                            'Are you sure you want to cancel this blood request?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(dialogContext).pop();
+                                            },
+                                            child: Text('No'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              Navigator.of(dialogContext).pop();
+                                              // Delete the request
+                                              await _userBloodBankController
+                                                  .deleteBloodRequest(
+                                                bloodId.toString(),
+                                                context,
+                                              );
+                                            },
+                                            child: Text('Yes',
+                                                style: TextStyle(
+                                                    color: AppColors.redColor)),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
                               } else if (isDonorAttached &&
                                   isCurrentUserDonor &&
                                   bloodId != null) {
@@ -360,6 +448,16 @@ class DonationApproval extends StatelessWidget {
                                                 donorDetails!.id.toString(),
                                                 context,
                                               );
+                                              
+                                              // If viewing from blood bank role, also refresh BloodBankController's list
+                                              if (isBloodBank) {
+                                                try {
+                                                  final bloodBankController = Get.find<BloodBankController>();
+                                                  await bloodBankController.getAllBloodRequest();
+                                                } catch (e) {
+                                                  print('Error refreshing BloodBankController: $e');
+                                                }
+                                              }
                                             } else {
                                               showErrorMessage(context,
                                                   'Donor details not available');
@@ -658,8 +756,74 @@ class DonationApproval extends StatelessWidget {
                                     : AppColors.yellowColor),
                       ),
                     ],
+                    ],
+                  ),
+                  // Show Complete Request button if: isOld (My Requests) AND donor is attached
+                  if (isOld && isDonorAttached && bloodId != null) ...[
+                    SizedBox(height: 1.h),
+                    RoundedButtonSmall(
+                      text: 'Complete Request',
+                      onPressed: () {
+                        // Show confirmation alert for complete request
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext dialogContext) {
+                            return AlertDialog(
+                              title: Text('Complete Request'),
+                              content: Text(
+                                  'Are you sure you want to mark this blood request as complete?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop();
+                                  },
+                                  child: Text('No'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(dialogContext).pop();
+                                    // Mark request as complete using logged-in user's ID (request owner)
+                                    final currentUserId = _profileController.userId.value;
+                                    await _userBloodBankController
+                                        .markBloodRequestComplete(
+                                      bloodId.toString(),
+                                      currentUserId,
+                                      context,
+                                    );
+                                    
+                                    // Refresh the appropriate controller's list based on mode
+                                    if (isBloodBank) {
+                                      // If viewing from blood bank role, refresh BloodBankController's list
+                                      try {
+                                        final bloodBankController = Get.find<BloodBankController>();
+                                        await bloodBankController.getAllBloodRequest();
+                                      } catch (e) {
+                                        print('Error refreshing BloodBankController: $e');
+                                      }
+                                    } else {
+                                      // If in user mode, refresh UserBloodBankController's list
+                                      try {
+                                        await _userBloodBankController.getAllBloodRequest();
+                                      } catch (e) {
+                                        print('Error refreshing UserBloodBankController: $e');
+                                      }
+                                    }
+                                  },
+                                  child: Text('Yes',
+                                      style: TextStyle(
+                                          color: AppColors.redColor)),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      backgroundColor: AppColors.redColor,
+                      textColor: AppColors.whiteColor,
+                    ),
                   ],
-                );
+                ],
+              );
               },
             ),
           ],

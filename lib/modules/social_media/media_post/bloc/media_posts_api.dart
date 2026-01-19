@@ -76,8 +76,10 @@ class MediaPosts {
       }
 
       String fileName = imagePath.split('/').last;
+      // Use 'file' field name for post images (as per API spec), 'image' for profile
+      String fieldName = userId != null ? 'image' : 'file';
       FormData formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(
+        fieldName: await MultipartFile.fromFile(
           imagePath,
           filename: fileName,
         ),

@@ -6,6 +6,7 @@ import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart
 import 'package:joy_app/modules/user/user_doctor/view/doctor_detail_screen2.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/location_widget.dart';
 import 'package:joy_app/modules/user/user_hospital/view/widgets/reviewbar_widget.dart';
+import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/all_pharmacy_model.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -92,35 +93,54 @@ class _AllDocPharmacyState extends State<AllDocPharmacy> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          widget.isSelectable
-                              ? showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return ConfirmationDailog(
-                                      link_to_user_id:
-                                          filteredList[index].userId.toString(),
-                                    );
-                                  },
-                                )
-                              : widget.isPharmacy
-                                  ? Get.to(
-                                      PharmacyProductScreen(
-                                          isHospital: widget.isFromHosipital,
-                                          userId: filteredList[index]
-                                              .userId
-                                              .toString()),
-                                      transition: Transition.native)
-                                  : Get.to(
-                                      DoctorDetailScreen2(
-                                        isFromHospital: widget.isFromHosipital,
-                                        doctorId: filteredList[index]
-                                            .userId
-                                            .toString(),
-                                        docName: 'Dr. David Patel',
-                                        location: 'Golden Cardiology Center',
-                                        Category: 'Cardiologist',
-                                      ),
-                                      transition: Transition.native);
+                          if (widget.isSelectable) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ConfirmationDailog(
+                                  link_to_user_id:
+                                      filteredList[index].userId.toString(),
+                                );
+                              },
+                            );
+                          } else if (widget.isPharmacy) {
+                            final pharmacyController = Get.find<AllPharmacyController>();
+                            final pharmacyId = filteredList[index]
+                                .userId
+                                .toString();
+                            
+                            // Check if cart is empty or same pharmacy
+                            if (!pharmacyController.canNavigateToPharmacy(pharmacyId)) {
+                              Get.snackbar(
+                                'Cart Restriction',
+                                'Please empty the cart first to add from other pharmacy',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.orange,
+                                colorText: Colors.white,
+                                duration: Duration(seconds: 3),
+                                icon: Icon(Icons.shopping_cart, color: Colors.white),
+                              );
+                              return;
+                            }
+                            
+                            Get.to(
+                              PharmacyProductScreen(
+                                  isHospital: widget.isFromHosipital,
+                                  userId: pharmacyId),
+                              transition: Transition.native);
+                          } else {
+                            Get.to(
+                              DoctorDetailScreen2(
+                                isFromHospital: widget.isFromHosipital,
+                                doctorId: filteredList[index]
+                                    .userId
+                                    .toString(),
+                                docName: 'Dr. David Patel',
+                                location: 'Golden Cardiology Center',
+                                Category: 'Cardiologist',
+                              ),
+                              transition: Transition.native);
+                          }
                         },
                         child: Stack(
                           children: [

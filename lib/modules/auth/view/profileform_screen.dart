@@ -9,6 +9,10 @@ import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/modules/auth/components/calendar_dob.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
+import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/auth/models/user.dart';
+import 'package:joy_app/modules/splash/view/splash_screen.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
@@ -80,16 +84,76 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   ProfileController _profileController = Get.put(ProfileController());
+  FriendsSocialController? _friendsController;
 
   @override
   void initState() {
     super.initState();
     if (widget.isEdit) {
+      _loadUserProfileData();
+    } else {
+      _nameController.setText(widget.name);
+    }
+  }
+
+  Future<void> _loadUserProfileData() async {
+    try {
+      // Get basic data from ProfileController
       _selectedImage = _profileController.image.value;
       _nameController.setText(_profileController.firstName.toString());
       _phoneController.setText(_profileController.phone.toString());
-    } else {
-      _nameController.setText(widget.name);
+
+      // Fetch full profile data using getMyProfile API
+      UserHive? currentUser = await getCurrentUser();
+      if (currentUser != null) {
+        _friendsController = Get.find<FriendsSocialController>();
+        final response = await _friendsController!.friendApi.getMyProfile(currentUser.userId.toString());
+        
+        if (response.singleData != null || (response.data != null && response.data!.isNotEmpty)) {
+          final profileData = response.singleData ?? response.data!.first;
+          
+          // Populate all fields from profile data
+          if (profileData.name != null) {
+            _nameController.text = profileData.name!;
+          }
+          if (profileData.image != null && profileData.image!.isNotEmpty) {
+            _selectedImage = profileData.image!;
+          }
+          
+          // Get profile data (location, dob, gender, aboutMe) from nested structure
+          if (profileData.location != null && profileData.location!.isNotEmpty) {
+            _locationController.text = profileData.location!;
+          }
+          
+          if (profileData.dob != null && profileData.dob!.isNotEmpty) {
+            _dobController.text = profileData.dob!;
+          }
+          
+          if (profileData.gender != null && profileData.gender!.isNotEmpty) {
+            _genderController.text = profileData.gender!;
+            selectedValue = profileData.gender!; // For dropdown
+          } else if (currentUser.gender != null && currentUser.gender!.isNotEmpty) {
+            _genderController.text = currentUser.gender!;
+            selectedValue = currentUser.gender!;
+          }
+          
+          if (profileData.aboutMe != null && profileData.aboutMe!.isNotEmpty) {
+            _aboutMeController.text = profileData.aboutMe!;
+          }
+        }
+      }
+    } catch (e) {
+      print('Error loading profile data: $e');
+      // Fallback to basic data from ProfileController
+      if (_selectedImage == null) {
+        _selectedImage = _profileController.image.value;
+      }
+      if (_nameController.text.isEmpty) {
+        _nameController.setText(_profileController.firstName.toString());
+      }
+      if (_phoneController.text.isEmpty) {
+        _phoneController.setText(_profileController.phone.toString());
+      }
     }
   }
 
@@ -234,9 +298,12 @@ class _FormScreenState extends State<FormScreen> {
                   SearchSingleDropdown(
                     hintText: 'Gender',
                     items: ['Male', 'Female'],
-                    value: '',
+                    value: selectedValue ?? '',
                     onChanged: (String? value) {
-                      _genderController.text = value.toString();
+                      setState(() {
+                        selectedValue = value;
+                      });
+                      _genderController.text = value ?? '';
                     },
                     icon: '',
                   ),
@@ -356,21 +423,24 @@ class _FormScreenState extends State<FormScreen> {
                                         _selectedImage.toString(),
                                         _aboutMeController.text);
                                 if (success == true) {
-                                  widget.isEdit
-                                      ? {_profileController.updateUserDetal()}
-                                      : showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return Obx(() => CustomDialog(
-                                                  isUser: true,
-                                                  showButton: !authController
-                                                      .registerLoader.value,
-                                                  title: 'Congratulations!',
-                                                  content:
-                                                      'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
-                                                ));
-                                          },
-                                        );
+                                  if (widget.isEdit) {
+                                    // Redirect to splash screen to refresh user object
+                                    Get.offAll(() => SplashScreen(), transition: Transition.fade);
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Obx(() => CustomDialog(
+                                              isUser: true,
+                                              showButton: !authController
+                                                  .registerLoader.value,
+                                              title: 'Congratulations!',
+                                              content:
+                                                  'Your account is ready to use. You will be redirected to the dashboard in a few seconds...',
+                                            ));
+                                      },
+                                    );
+                                  }
                                 }
                               }
                             },

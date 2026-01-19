@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/modules/hospital/view/all_doc_pharmacy.dart';
+import 'package:joy_app/modules/user/user_doctor/view/all_doctor_screen.dart';
 import 'package:joy_app/modules/hospital/model/hospital_detail_model.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/view/bottom_modal_post.dart';
@@ -29,9 +30,10 @@ import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
 import '../../../common/profile/view/my_profile.dart';
 import '../../user/user_hospital/view/hospital_detail_screen.dart';
-import '../../social_media/chat/view/chats.dart';
 import 'doctor_all_post.dart';
 import '../../../common/profile/bloc/profile_bloc.dart';
+import '../../../modules/auth/utils/auth_hive_utils.dart';
+import '../../../modules/auth/models/user.dart';
 
 class HospitalHomeScreen extends StatefulWidget {
   bool isHospital;
@@ -213,6 +215,13 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                             return Stack(
                               children: <Widget>[
                                 Positioned.fill(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (hasValidImage) {
+                                        _showFullImageSheet(
+                                            context, hospitalData!.image!);
+                                      }
+                                    },
                                   child: hasValidImage
                                       ? Image.network(
                                           hospitalData!.image!,
@@ -245,6 +254,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                             color: ThemeUtil.isDarkMode(context)
                                                 ? Color(0xff5A5A5A)
                                                 : Color(0xffA5A5A5),
+                                            ),
                                           ),
                                         ),
                                 ),
@@ -289,37 +299,6 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                     'Assets/icons/joy-icon-small.svg'),
                                               ),
                                               Spacer(),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 16.0, left: 8),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                    color: ThemeUtil.isDarkMode(
-                                                            context)
-                                                        ? Color(0xff191919)
-                                                        : Color(0xffF3F4F6),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10.0),
-                                                    child: Center(
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          Get.to(AllChats(),
-                                                              transition: Transition
-                                                                  .rightToLeft);
-                                                        },
-                                                        child: SvgPicture.asset(
-                                                            'Assets/icons/sms.svg'),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
                                             ],
                                           )
                                         : Container(),
@@ -652,253 +631,112 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                               .hospitald.value?.doctors ??
                                           [];
                                       final isEmpty = doctors.isEmpty;
+                                      final isHospitalRole = _profileController.userRole.value == 'HOSPITAL';
 
-                                      return isEmpty
-                                          ? Center(
-                                              child: Text('No Doctors Found'),
-                                            )
-                                          : Container(
+                                      // Build list items
+                                      final List<Widget> doctorItems = [];
+                                      
+                                      // Add "+" button for hospital role
+                                      if (isHospitalRole) {
+                                        doctorItems.add(
+                                          _buildAddButton(
+                                            context: context,
+                                            text: 'Add Doctors',
+                                            onTap: () {
+                                              // Navigate to add doctors screen or show dialog
+                                              Get.to(
+                                                AllDoctorsScreen(
+                                                  isSelectable: true,
+                                                  isHospital: true,
+                                                  appBarText: 'Select Doctor',
+                                                ),
+                                                transition: Transition.rightToLeft,
+                                              );
+                                            },
+                                            width: 55.w,
                                               height: 60.w,
-                                              child: ListView.separated(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16.0),
-                                                shrinkWrap: true,
-                                                separatorBuilder:
-                                                    (context, index) =>
-                                                        SizedBox(width: 2.w),
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount: doctors.length,
-                                                itemBuilder: (context, index) {
+                                          ),
+                                        );
+                                      }
+
+                                      // Add existing doctor cards
+                                      for (int index = 0; index < doctors.length; index++) {
                                                   final doctorIndex = index;
-                                                  final doctorData = doctors[
-                                                          doctorIndex]
-                                                      as Map<String, dynamic>;
-                                                  final doctorImage =
-                                                      doctorData['image']
-                                                              ?.toString() ??
-                                                          '';
-                                                  final doctorName =
-                                                      doctorData['name']
-                                                              ?.toString() ??
-                                                          '';
-                                                  final doctorLocation =
-                                                      doctorData['location']
-                                                              ?.toString() ??
-                                                          'N/a';
-                                                  final hasValidImage = doctorImage
-                                                          .isNotEmpty &&
-                                                      doctorImage
-                                                          .contains('http') &&
-                                                      !doctorImage.contains(
-                                                          'c894ac58-b8cd-47c0-94d1-3c4cea7dadab');
-                                                  
-                                                  // Extract doctor ID from the map
+                                        final doctorData = doctors[doctorIndex] as Map<String, dynamic>;
+                                        final doctorImage = doctorData['image']?.toString() ?? '';
+                                        final doctorName = doctorData['name']?.toString() ?? '';
+                                        final doctorLocation = doctorData['location']?.toString() ?? 'N/a';
+                                        final hasValidImage = doctorImage.isNotEmpty &&
+                                            doctorImage.contains('http') &&
+                                            !doctorImage.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab');
+                                        
                                                   final doctorId = doctorData['_id']?.toString() ?? 
                                                                   doctorData['user_id']?.toString() ?? 
                                                                   doctorData['doctor_id']?.toString() ?? 
                                                                   doctorData['userId']?.toString() ?? '';
                                                   final doctorCategory = doctorData['expertise']?.toString() ?? 
                                                                         doctorData['category']?.toString() ?? 
-                                                                        doctorData['specialization']?.toString() ?? 
-                                                                        '';
+                                                              doctorData['specialization']?.toString() ?? '';
 
-                                                  return InkWell(
-                                                    onTap: () {
-                                                      if (doctorId.isNotEmpty && doctorId != 'null') {
-                                                        Get.to(
-                                                          DoctorDetailScreen2(
+                                        doctorItems.add(
+                                          _buildDoctorCard(
+                                            context: context,
                                                             doctorId: doctorId,
-                                                            docName: doctorName,
-                                                            location: doctorLocation,
-                                                            Category: doctorCategory,
-                                                            isFromHospital: true, // Hospital mode - hide "Book Appointment" button
-                                                          ),
-                                                          transition: Transition.rightToLeft,
-                                                        );
-                                                      } else {
-                                                        Get.snackbar(
-                                                          'Error',
-                                                          'Invalid doctor ID. Please try again.',
-                                                          snackPosition: SnackPosition.BOTTOM,
-                                                          backgroundColor: Colors.red,
-                                                          colorText: Colors.white,
-                                                          duration: Duration(seconds: 2),
-                                                          icon: Icon(Icons.error, color: Colors.white),
-                                                        );
-                                                      }
-                                                    },
-                                                    child: Stack(
-                                                      children: [
-                                                        Container(
-                                                          width: 55.w,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: ThemeUtil
-                                                                    .isDarkMode(
-                                                                        context)
-                                                                ? AppColors
-                                                                    .purpleBlueColor
-                                                                : Color(
-                                                                    0xffEEF5FF),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(12),
-                                                          ),
-                                                          child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(12.0),
-                                                          child: Column(
-                                                            children: [
-                                                              ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12.0),
-                                                                child: hasValidImage
-                                                                    ? Image.network(
-                                                                        doctorImage,
-                                                                        width:
-                                                                            51.28.w,
-                                                                        height:
-                                                                            25.w,
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                        errorBuilder: (context,
-                                                                            error,
-                                                                            stackTrace) {
-                                                                          return Container(
-                                                                            width:
-                                                                                51.28.w,
-                                                                            height:
-                                                                                25.w,
-                                                                            color: ThemeUtil.isDarkMode(context)
-                                                                                ? Color(0xff2A2A2A)
-                                                                                : Color(0xffE5E5E5),
-                                                                            child:
-                                                                                Icon(
-                                                                              Icons.person,
-                                                                              size: 30,
-                                                                              color: ThemeUtil.isDarkMode(context) ? Color(0xff5A5A5A) : Color(0xffA5A5A5),
-                                                                            ),
-                                                                          );
-                                                                        },
+                                            doctorName: doctorName,
+                                            doctorLocation: doctorLocation,
+                                            doctorCategory: doctorCategory,
+                                            doctorImage: doctorImage,
+                                            hasValidImage: hasValidImage,
+                                            isHospitalRole: isHospitalRole,
+                                            onRemove: () async {
+                                              // Show confirmation dialog
+                                              final confirmed = await showDialog<bool>(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: Text('Remove Doctor'),
+                                                  content: Text('Do you want to remove this doctor?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(context, false),
+                                                      child: Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(context, true),
+                                                      child: Text('Remove', style: TextStyle(color: Colors.red)),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                              
+                                              if (confirmed == true && doctorId.isNotEmpty) {
+                                                UserHive? currentUser = await getCurrentUser();
+                                                if (currentUser != null) {
+                                                  await _hospitalDetailController.linkOrDelinkDoctorOrPharmacy(
+                                                    doctorId,
+                                                    null, // null to delink
+                                                    context,
+                                                  );
+                                                }
+                                              }
+                                            },
+                                          ),
+                                        );
+                                      }
+
+                                      return isEmpty && !isHospitalRole
+                                          ? Center(
+                                              child: Text('No Doctors Found'),
                                                                       )
                                                                     : Container(
-                                                                        width:
-                                                                            51.28.w,
-                                                                        height:
-                                                                            25.w,
-                                                                        color: ThemeUtil.isDarkMode(context)
-                                                                            ? Color(0xff2A2A2A)
-                                                                            : Color(0xffE5E5E5),
-                                                                        child:
-                                                                            Icon(
-                                                                          Icons
-                                                                              .person,
-                                                                          size:
-                                                                              30,
-                                                                          color: ThemeUtil.isDarkMode(context)
-                                                                              ? Color(0xff5A5A5A)
-                                                                              : Color(0xffA5A5A5),
-                                                                        ),
-                                                                      ),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: 2.w),
-                                                              Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .fromLTRB(
-                                                                          8,
-                                                                          8,
-                                                                          0,
-                                                                          0),
-                                                                      child:
-                                                                          Column(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceEvenly,
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Text(
-                                                                            doctorName,
-                                                                            style:
-                                                                                CustomTextStyles.darkHeadingTextStyle(),
-                                                                          ),
-                                                                          Divider(
-                                                                            color:
-                                                                                Color(0xff6B7280),
-                                                                            thickness:
-                                                                                0.05.h,
-                                                                          ),
-                                                                          Text(
-                                                                            '',
-                                                                            style:
-                                                                                CustomTextStyles.w600TextStyle(size: 14, color: Color(0xff4B5563)),
-                                                                          ),
-                                                                          Row(
-                                                                            children: [
-                                                                              SvgPicture.asset('Assets/icons/location.svg'),
-                                                                              SizedBox(width: 0.5.w),
-                                                                              Expanded(
-                                                                                child: Text(
-                                                                                  doctorLocation,
-                                                                                  style: CustomTextStyles.lightTextStyle(
-                                                                                    color: Color(0xff4B5563),
-                                                                                    size: 14,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          Row(
-                                                                            children: [
-                                                                              RatingBar.builder(
-                                                                                itemSize: 15,
-                                                                                initialRating: 6,
-                                                                                minRating: 1,
-                                                                                direction: Axis.horizontal,
-                                                                                allowHalfRating: true,
-                                                                                itemCount: 1,
-                                                                                itemPadding: EdgeInsets.symmetric(horizontal: 0.0),
-                                                                                itemBuilder: (context, _) => Icon(
-                                                                                  Icons.star,
-                                                                                  color: Colors.amber,
-                                                                                ),
-                                                                                onRatingUpdate: (rating) {
-                                                                                  print(rating);
-                                                                                },
-                                                                              ),
-                                                                              Text(
-                                                                                '0.0',
-                                                                                style: CustomTextStyles.lightTextStyle(color: Color(0xff4B5563), size: 12),
-                                                                              ),
-                                                                              SizedBox(width: 0.5.w),
-                                                                              Text(
-                                                                                ' | 0 Reviews',
-                                                                                style: CustomTextStyles.lightTextStyle(color: Color(0xff6B7280), size: 10.8),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
+                                              height: 60.w,
+                                              child: ListView.separated(
+                                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                                shrinkWrap: true,
+                                                separatorBuilder: (context, index) => SizedBox(width: 2.w),
+                                                scrollDirection: Axis.horizontal,
+                                                itemCount: doctorItems.length,
+                                                itemBuilder: (context, index) {
+                                                  return doctorItems[index];
                                                 },
                                               ),
                                             );
@@ -920,14 +758,13 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                     SizedBox(height: 1.h),
                                     SizedBox(height: 1.h),
                                     Obx(() {
-                                      final hospital = _hospitalDetailController
-                                          .hospitald.value;
-                                      final pharmacies =
-                                          hospital?.pharmacies ?? [];
+                                      final hospital = _hospitalDetailController.hospitald.value;
+                                      final pharmacies = hospital?.pharmacies ?? [];
+                                      final isHospitalRole = _profileController.userRole.value == 'HOSPITAL';
 
                                       if (pharmacies.isEmpty &&
-                                          _hospitalDetailController
-                                              .hospitalPharmacies.isEmpty) {
+                                          _hospitalDetailController.hospitalPharmacies.isEmpty &&
+                                          !isHospitalRole) {
                                         return Center(
                                           child: Padding(
                                             padding: const EdgeInsets.all(16.0),
@@ -936,13 +773,9 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                         );
                                       }
 
-                                      final displayPharmacies =
-                                          pharmacies.isNotEmpty
+                                      final displayPharmacies = pharmacies.isNotEmpty
                                               ? pharmacies
-                                              : _hospitalDetailController
-                                                  .hospitalPharmacies
-                                                  .map((p) {
-                                                  // Convert PharmacyModelData to HospitalPharmacy for display
+                                          : _hospitalDetailController.hospitalPharmacies.map((p) {
                                                   return HospitalPharmacy(
                                                     pharmacyId: p.userId,
                                                     name: p.name,
@@ -950,8 +783,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                     location: p.location,
                                                     phone: p.phone,
                                                     image: p.image,
-                                                    details:
-                                                        HospitalPharmacyDetails(
+                                                details: HospitalPharmacyDetails(
                                                       placeId: p.placeId,
                                                       lat: p.lat,
                                                       lng: p.lng,
@@ -960,190 +792,102 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                   );
                                                 }).toList();
 
-                                      return Container(
-                                        height: 75.w,
-                                        child: ListView.separated(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0),
-                                          shrinkWrap: true,
-                                          separatorBuilder: (context, index) =>
-                                              SizedBox(width: 2.w),
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: displayPharmacies.length,
-                                          itemBuilder: (context, index) {
-                                            final pharmacy =
-                                                displayPharmacies[index];
-                                            final pharmacyId = pharmacy
-                                                    is HospitalPharmacy
-                                                ? pharmacy.pharmacyId
-                                                    ?.toString()
-                                                : (pharmacy
-                                                        as PharmacyModelData)
-                                                    .userId
-                                                    ?.toString();
-
-                                            return InkWell(
+                                      // Build list items
+                                      final List<Widget> pharmacyItems = [];
+                                      
+                                      // Add "+" button for hospital role
+                                      if (isHospitalRole) {
+                                        pharmacyItems.add(
+                                          _buildAddButton(
+                                            context: context,
+                                            text: 'Add Pharmacy',
                                               onTap: () {
-                                                if (pharmacyId != null &&
-                                                    pharmacyId.isNotEmpty &&
-                                                    pharmacyId != 'null') {
+                                              // Navigate to add pharmacy screen or show dialog
+                                              // Navigate to pharmacy selection screen
+                                              // First fetch all pharmacies, then show selection screen
+                                              _hospitalDetailController.getAllDoctorPharmacies(
+                                                true,
+                                                _profileController.userId.value,
+                                                context,
+                                              ).then((_) {
                                                   Get.to(
-                                                    ProductScreen(
-                                                      userId: pharmacyId,
-                                                      isAdmin: false, // User mode, not admin
-                                                      isHospital: true, // Hospital mode - view only
-                                                    ),
-                                                    transition:
-                                                        Transition.rightToLeft,
-                                                  );
-                                                } else {
-                                                  Get.snackbar(
-                                                    'Error',
-                                                    'Invalid pharmacy ID. Please try again.',
-                                                    snackPosition:
-                                                        SnackPosition.BOTTOM,
-                                                    backgroundColor: Colors.red,
-                                                    colorText: Colors.white,
-                                                    duration:
-                                                        Duration(seconds: 2),
-                                                    icon: Icon(Icons.error,
-                                                        color: Colors.white),
-                                                  );
-                                                }
-                                              },
-                                              child: Container(
-                                                width: 55.w,
-                                                decoration: BoxDecoration(
-                                                  color: Color(0xffE2FFE3),
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      12.0),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12.0),
-                                                        child:
-                                                            _buildPharmacyImageForHorizontal(
-                                                                pharmacy,
-                                                                context),
-                                                      ),
-                                                      SizedBox(height: 2.w),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .fromLTRB(
-                                                                8, 8, 0, 8),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              pharmacy
-                                                                      is HospitalPharmacy
-                                                                  ? pharmacy
-                                                                          .name ??
-                                                                      'Pharmacy'
-                                                                  : (pharmacy as PharmacyModelData)
-                                                                          .name ??
-                                                                      'Pharmacy',
-                                                              style: CustomTextStyles
-                                                                  .darkHeadingTextStyle(),
-                                                            ),
-                                                            SizedBox(
-                                                                height: 0.5.h),
-                                                            Divider(
-                                                              color: Color(
-                                                                  0xff6B7280),
-                                                              thickness: 0.05.h,
-                                                            ),
-                                                            SizedBox(
-                                                                height: 0.5.h),
-                                                            Row(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              2.0),
-                                                                  child: SvgPicture
-                                                                      .asset(
-                                                                          'Assets/icons/location.svg'),
-                                                                ),
-                                                                SizedBox(
-                                                                    width:
-                                                                        0.5.w),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    pharmacy
-                                                                            is HospitalPharmacy
-                                                                        ? (pharmacy.details?.location ??
-                                                                            pharmacy
-                                                                                .location ??
-                                                                            'N/a')
-                                                                        : (pharmacy as PharmacyModelData).location ??
-                                                                            'N/a',
-                                                                    style: CustomTextStyles
-                                                                        .lightTextStyle(
-                                                                      color: Color(
-                                                                          0xff4B5563),
-                                                                      size: 12,
-                                                                    ),
-                                                                    maxLines: 2,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                                height: 0.5.h),
-                                                            Row(
-                                                              children: [
-                                                                SvgPicture.asset(
-                                                                    'Assets/icons/pharmacy.svg'),
-                                                                SizedBox(
-                                                                    width:
-                                                                        0.5.w),
-                                                                Text(
-                                                                  'Pharmacy',
-                                                                  style: CustomTextStyles.lightTextStyle(
-                                                                      color: Color(
-                                                                          0xff6B7280),
-                                                                      size:
-                                                                          10.8),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
+                                                  AllDocPharmacy(
+                                                    appBarText: 'Select Pharmacy',
+                                                    isSelectable: true,
+                                                    isPharmacy: true,
+                                                    dataList: _hospitalDetailController.hospitalPharmacies.toList(),
+                                                    isFromHosipital: true,
                                                   ),
-                                                ),
-                                              ),
-                                            );
+                                                  transition: Transition.rightToLeft,
+                                                );
+                                              });
+                                            },
+                                                width: 55.w,
+                                            height: 60.w, // reduced height for add pharmacy card
+                                          ),
+                                        );
+                                      }
+
+                                      // Add existing pharmacy cards
+                                      for (int index = 0; index < displayPharmacies.length; index++) {
+                                        final pharmacy = displayPharmacies[index];
+                                        final pharmacyId = pharmacy is HospitalPharmacy
+                                            ? pharmacy.pharmacyId?.toString()
+                                            : (pharmacy as PharmacyModelData).userId?.toString();
+
+                                        pharmacyItems.add(
+                                          _buildPharmacyCard(
+                                            context: context,
+                                            pharmacy: pharmacy,
+                                            pharmacyId: pharmacyId ?? '',
+                                            isHospitalRole: isHospitalRole,
+                                            onRemove: () async {
+                                              // Show confirmation dialog
+                                              final confirmed = await showDialog<bool>(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: Text('Remove Pharmacy'),
+                                                  content: Text('Do you want to remove this pharmacy?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(context, false),
+                                                      child: Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(context, true),
+                                                      child: Text('Remove', style: TextStyle(color: Colors.red)),
+                                                                ),
+                                                              ],
+                                                            ),
+                                              );
+                                              
+                                              if (confirmed == true && pharmacyId != null && pharmacyId.isNotEmpty) {
+                                                await _hospitalDetailController.linkOrDelinkDoctorOrPharmacy(
+                                                  pharmacyId,
+                                                  null, // null to delink
+                                                  context,
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        );
+                                      }
+
+                                      return Container(
+                                        height: 60.w, // reduced height for pharmacy cards
+                                        child: ListView.separated(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                                shrinkWrap: true,
+                                          separatorBuilder: (context, index) => SizedBox(width: 2.w),
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: pharmacyItems.length,
+                                                itemBuilder: (context, index) {
+                                            return pharmacyItems[index];
                                           },
                                         ),
                                       );
                                     }),
+                                    SizedBox(height: 2.h),
                                     SizedBox(height: 1.h),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -1511,5 +1255,482 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                   ),
       ),
     ));
+  }
+
+  // Helper method to build "+" button with dashed border
+  Widget _buildAddButton({
+    required BuildContext context,
+    required String text,
+    required VoidCallback onTap,
+    required double width,
+    required double height,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: ThemeUtil.isDarkMode(context)
+                ? Color(0xff5A5A5A)
+                : Color(0xffD1D5DB),
+            width: 2,
+            style: BorderStyle.solid,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.transparent,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add,
+                size: 30,
+                color: ThemeUtil.isDarkMode(context)
+                    ? Color(0xffC8D3E0)
+                    : Color(0xff6B7280),
+              ),
+              SizedBox(height: 1.h),
+              Text(
+                text,
+                style: CustomTextStyles.w600TextStyle(
+                  size: 14,
+                  color: ThemeUtil.isDarkMode(context)
+                      ? Color(0xffC8D3E0)
+                      : Color(0xff6B7280),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Helper method to build doctor card with remove button for hospital role
+  Widget _buildDoctorCard({
+    required BuildContext context,
+    required String doctorId,
+    required String doctorName,
+    required String doctorLocation,
+    required String doctorCategory,
+    required String doctorImage,
+    required bool hasValidImage,
+    required bool isHospitalRole,
+    required VoidCallback onRemove,
+  }) {
+    return InkWell(
+      onTap: () {
+        if (doctorId.isNotEmpty && doctorId != 'null') {
+          Get.to(
+            DoctorDetailScreen2(
+              doctorId: doctorId,
+              docName: doctorName,
+              location: doctorLocation,
+              Category: doctorCategory,
+              isFromHospital: true,
+            ),
+            transition: Transition.rightToLeft,
+          );
+        } else {
+          Get.snackbar(
+            'Error',
+            'Invalid doctor ID. Please try again.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 2),
+            icon: Icon(Icons.error, color: Colors.white),
+          );
+        }
+      },
+      child: Stack(
+        children: [
+          Container(
+            width: 55.w,
+            decoration: BoxDecoration(
+              color: ThemeUtil.isDarkMode(context)
+                  ? AppColors.purpleBlueColor
+                  : Color(0xffEEF5FF),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: hasValidImage
+                        ? Image.network(
+                            doctorImage,
+                            width: 51.28.w,
+                            height: 25.w,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 51.28.w,
+                                height: 25.w,
+                                color: ThemeUtil.isDarkMode(context)
+                                    ? Color(0xff2A2A2A)
+                                    : Color(0xffE5E5E5),
+                                child: Icon(
+                                  Icons.person,
+                                  size: 30,
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? Color(0xff5A5A5A)
+                                      : Color(0xffA5A5A5),
+                                ),
+                              );
+                            },
+                          )
+                        : Container(
+                            width: 51.28.w,
+                            height: 25.w,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff2A2A2A)
+                                : Color(0xffE5E5E5),
+                            child: Icon(
+                              Icons.person,
+                              size: 30,
+                              color: ThemeUtil.isDarkMode(context)
+                                  ? Color(0xff5A5A5A)
+                                  : Color(0xffA5A5A5),
+                            ),
+                          ),
+                  ),
+                  SizedBox(width: 2.w),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                doctorName,
+                                style: CustomTextStyles.darkHeadingTextStyle(),
+                              ),
+                              Divider(
+                                color: Color(0xff6B7280),
+                                thickness: 0.05.h,
+                              ),
+                              Text(
+                                '',
+                                style: CustomTextStyles.w600TextStyle(
+                                    size: 14, color: Color(0xff4B5563)),
+                              ),
+                              Row(
+                                children: [
+                                  SvgPicture.asset('Assets/icons/location.svg'),
+                                  SizedBox(width: 0.5.w),
+                                  Expanded(
+                                    child: Text(
+                                      doctorLocation,
+                                      style: CustomTextStyles.lightTextStyle(
+                                        color: Color(0xff4B5563),
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  RatingBar.builder(
+                                    itemSize: 15,
+                                    initialRating: 6,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 1,
+                                    itemPadding:
+                                        EdgeInsets.symmetric(horizontal: 0.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      print(rating);
+                                    },
+                                  ),
+                                  Text(
+                                    '0.0',
+                                    style: CustomTextStyles.lightTextStyle(
+                                        color: Color(0xff4B5563), size: 12),
+                                  ),
+                                  SizedBox(width: 0.5.w),
+                                  Text(
+                                    ' | 0 Reviews',
+                                    style: CustomTextStyles.lightTextStyle(
+                                        color: Color(0xff6B7280), size: 10.8),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+          // Red view with "-" icon for hospital role
+          if (isHospitalRole)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: InkWell(
+                onTap: onRemove,
+                child: Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.remove,
+                    color: Colors.white,
+                    size: 4.w,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // Helper method to build pharmacy card with remove button for hospital role
+  Widget _buildPharmacyCard({
+    required BuildContext context,
+    required dynamic pharmacy,
+    required String pharmacyId,
+    required bool isHospitalRole,
+    required VoidCallback onRemove,
+  }) {
+    final pharmacyName = pharmacy is HospitalPharmacy
+        ? pharmacy.name ?? 'Pharmacy'
+        : (pharmacy as PharmacyModelData).name ?? 'Pharmacy';
+    final pharmacyLocation = pharmacy is HospitalPharmacy
+        ? pharmacy.location ?? 'N/A'
+        : (pharmacy as PharmacyModelData).location ?? 'N/A';
+    final pharmacyImage = pharmacy is HospitalPharmacy
+        ? pharmacy.image
+        : (pharmacy as PharmacyModelData).image;
+
+    final hasValidImage = pharmacyImage != null &&
+        pharmacyImage.isNotEmpty &&
+        pharmacyImage.contains('http') &&
+        !pharmacyImage.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab');
+
+    return InkWell(
+      onTap: () {
+        if (pharmacyId.isNotEmpty && pharmacyId != 'null') {
+          Get.to(
+            ProductScreen(
+              userId: pharmacyId,
+              isAdmin: false,
+              isHospital: true,
+            ),
+            transition: Transition.rightToLeft,
+          );
+        } else {
+          Get.snackbar(
+            'Error',
+            'Invalid pharmacy ID. Please try again.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 2),
+            icon: Icon(Icons.error, color: Colors.white),
+          );
+        }
+      },
+      child: Stack(
+        children: [
+          Container(
+            width: 55.w,
+            height: 60.w,
+            decoration: BoxDecoration(
+              color: Color(0xffE2FFE3),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: hasValidImage
+                        ? Image.network(
+                            pharmacyImage,
+                            width: 51.28.w,
+                            height: 30.w,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildPharmacyImage(pharmacy, context);
+                            },
+                          )
+                        : _buildPharmacyImage(pharmacy, context),
+                  ),
+                  SizedBox(height: 0.8.h),
+                  Text(
+                    pharmacyName,
+                    style: CustomTextStyles.darkHeadingTextStyle(),
+                  ),
+                  Divider(
+                    color: Color(0xff6B7280),
+                    thickness: 0.05.h,
+                  ),
+                  Row(
+                    children: [
+                      SvgPicture.asset('Assets/icons/location.svg'),
+                      SizedBox(width: 0.5.w),
+                      Expanded(
+                        child: Text(
+                          pharmacyLocation,
+                          style: CustomTextStyles.lightTextStyle(
+                            color: Color(0xff4B5563),
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 0.3.h),
+                  Row(
+                    children: [
+                      SvgPicture.asset('Assets/icons/pills.svg'),
+                      SizedBox(width: 0.5.w),
+                      Text(
+                        'Pharmacy',
+                        style: CustomTextStyles.lightTextStyle(
+                          color: Color(0xff4B5563),
+                          size: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Red view with "-" icon for hospital role
+          if (isHospitalRole)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: InkWell(
+                onTap: onRemove,
+                child: Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.remove,
+                    color: Colors.white,
+                    size: 4.w,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _showFullImageSheet(BuildContext context, String imageUrl) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        final screenHeight = MediaQuery.of(context).size.height;
+        final screenWidth = MediaQuery.of(context).size.width;
+        final sheetHeight = screenHeight * 0.75; // 75% of screen height
+        final sheetWidth = screenWidth * 0.9; // 90% of screen width
+        
+        return Center(
+          child: Container(
+            height: sheetHeight,
+            width: sheetWidth,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: InteractiveViewer(
+                      minScale: 0.5,
+                      maxScale: 4.0,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[900],
+                            child: Icon(
+                              Icons.error_outline,
+                              color: Colors.white,
+                              size: 50,
+                            ),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                              color: Colors.white,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

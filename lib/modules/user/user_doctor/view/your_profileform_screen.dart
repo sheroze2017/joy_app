@@ -415,7 +415,7 @@ class _FormScreenState extends State<ProfileFormScreen> {
                         },
                         hintText: certificateUrl != null && certificateUrl!.isNotEmpty
                             ? 'Certificate uploaded'
-                            : 'Attach Medical Certificate (Optional)',
+                            : 'Add Medical Certificate',
                         icon: 'Assets/icons/attach-icon.svg',
                       ),
                     ),

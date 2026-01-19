@@ -249,7 +249,10 @@ class _BloodDonationAppealUserState extends State<BloodDonationAppealUser>
                                 priority: data.responseTime ?? '', // Pass response_time as priority
                                 bloodId: data.bloodId, // Pass bloodId
                                 donorDetails: data.donorDetails, // Pass donorDetails
-                                donorUserId: data.donorUserId), // Pass donorUserId
+                                donorUserId: data.donorUserId, // Pass donorUserId
+                                userDetails: data.userDetails, // Pass userDetails
+                                status: data.status, // Pass status to check if completed
+                                isBloodBank: false), // User mode, not blood bank mode
                           );
                         });
                   }),

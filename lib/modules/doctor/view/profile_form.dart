@@ -387,7 +387,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                             // Document is optional, no validation needed
                             return null;
                           },
-                          hintText: 'Attach File of Medical Certificate',
+                          hintText: 'Add Medical Certificate',
                           icon: 'Assets/icons/attach-icon.svg',
                         ),
                       )),

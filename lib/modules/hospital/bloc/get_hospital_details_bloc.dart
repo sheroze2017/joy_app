@@ -101,16 +101,20 @@ class HospitalDetailController extends GetxController {
     try {
       var hospitalId = currentUser!.userId.toString();
 
-      Map<String, dynamic> response =
-          await hospitalDetailsApi.linkHospital(hospitalId, link_to_user_id);
-      if (response['data'] != null && response['code'] == 200) {
+      // Use new linkOrDelinkHospital API
+      bool success = await linkOrDelinkDoctorOrPharmacy(
+          link_to_user_id, hospitalId, context);
+      if (success) {
+        // Close the confirmation dialog
         Get.back();
-        showSuccessMessage(context, 'Profile Link Successfully');
-        linkLoader.value = false;
-      } else {
+        // Navigate back from the selection screen (AllDoctorsScreen or AllDocPharmacy)
         Get.back();
-        showErrorMessage(context, response['message']);
-        linkLoader.value = false;
+        // Show success message after navigation completes
+        Future.delayed(Duration(milliseconds: 300), () {
+          if (Get.context != null) {
+            showSuccessMessage(Get.context!, 'Linked successfully');
+          }
+        });
       }
     } catch (error) {
       showErrorMessage(context, error.toString());
@@ -123,21 +127,20 @@ class HospitalDetailController extends GetxController {
 
   Future<void> unLinkProfile(
       String link_to_user_id, BuildContext context) async {
-    UserHive? currentUser = await getCurrentUser();
     unlinkLoader.value = true;
     try {
-      var hospitalId = currentUser!.userId.toString();
-
-      Map<String, dynamic> response =
-          await hospitalDetailsApi.linkHospital(hospitalId, link_to_user_id);
-      if (response['data'] != null && response['code'] == 200) {
+      // Use new linkOrDelinkHospital API with null hospital_id to delink
+      bool success = await linkOrDelinkDoctorOrPharmacy(
+          link_to_user_id, null, context);
+      if (success) {
+        // Close the confirmation dialog
         Get.back();
-        showSuccessMessage(context, 'Profile Unlinked Successfully');
-        unlinkLoader.value = false;
-      } else {
-        showErrorMessage(context, response['message']);
-        Get.back();
-        unlinkLoader.value = false;
+        // Show success message after dialog closes
+        Future.delayed(Duration(milliseconds: 300), () {
+          if (Get.context != null) {
+            showSuccessMessage(Get.context!, 'Unlinked successfully');
+          }
+        });
       }
     } catch (error) {
       showErrorMessage(context, error.toString());
@@ -145,6 +148,39 @@ class HospitalDetailController extends GetxController {
       throw (error);
     } finally {
       unlinkLoader.value = false;
+    }
+  }
+
+  Future<bool> linkOrDelinkDoctorOrPharmacy(
+      String userId, String? hospitalId, BuildContext context) async {
+    UserHive? currentUser = await getCurrentUser();
+    linkLoader.value = true;
+    try {
+      final response =
+          await hospitalDetailsApi.linkOrDelinkHospital(userId, hospitalId);
+
+      // Backend sometimes returns "sucess" instead of "success"
+      final bool isSuccessFlag =
+          (response['success'] ?? response['sucess'] ?? false) == true;
+
+      if (response['code'] == 200 && isSuccessFlag) {
+        // Refresh hospital details to get updated list
+        await getHospitalDetails(
+            true, currentUser!.userId.toString(), context);
+        // Success message will be shown in linkProfile/unLinkProfile after navigation
+        linkLoader.value = false;
+        return true;
+      } else {
+        showErrorMessage(context, response['message'] ?? 'Operation failed');
+        linkLoader.value = false;
+        return false;
+      }
+    } catch (error) {
+      showErrorMessage(context, error.toString());
+      linkLoader.value = false;
+      return false;
+    } finally {
+      linkLoader.value = false;
     }
   }
 }

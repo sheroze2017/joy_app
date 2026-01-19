@@ -1,3 +1,5 @@
+import 'package:joy_app/modules/blood_bank/model/blood_bank_details_model.dart';
+
 class AllBloodBank {
   int? code;
   bool? sucess;
@@ -31,6 +33,7 @@ class AllBloodBank {
 }
 
 class BloodBank {
+  dynamic id; // _id from API (MongoDB ObjectId)
   int? userId;
   String? name;
   String? email;
@@ -45,10 +48,12 @@ class BloodBank {
   String? placeId;
   String? lat;
   String? lng;
+  BloodBankDetailsData? details; // Nested details object
   List<Reviews>? reviews;
 
   BloodBank(
-      {this.userId,
+      {this.id,
+      this.userId,
       this.name,
       this.email,
       this.password,
@@ -62,23 +67,58 @@ class BloodBank {
       this.placeId,
       this.lat,
       this.lng,
+      this.details,
       this.reviews});
 
   BloodBank.fromJson(Map<String, dynamic> json) {
+    // Handle _id (MongoDB) or user_id (legacy)
+    id = json['_id'] ?? json['id'];
     userId = json['user_id'];
     name = json['name'];
     email = json['email'];
     password = json['password'];
-    image = json['image'].toString();
+    image = json['image']?.toString() ?? '';
     userRole = json['user_role'];
     authType = json['auth_type'];
     phone = json['phone'];
     deviceToken = json['device_token'];
     bloodBankDetailId = json['blood_bank_detail_id'];
-    location = json['location']?? '';
-    placeId = json['place_id']?? '';
-    lat = json['lat']?? '';
-    lng = json['lng']?? '';
+    location = json['location']?.toString();
+    placeId = json['place_id']?.toString();
+    lat = json['lat']?.toString();
+    lng = json['lng']?.toString();
+    
+    // Parse nested details object if present
+    details = json['details'] != null
+        ? BloodBankDetailsData.fromJson(json['details'])
+        : null;
+    
+    // Use location from details if main location is empty or null
+    if (details?.location != null) {
+      final loc = location;
+      if (loc == null || loc.isEmpty || loc == 'null') {
+        location = details!.location;
+      }
+    }
+    if (details?.placeId != null) {
+      final pid = placeId;
+      if (pid == null || pid.isEmpty || pid == 'null') {
+        placeId = details!.placeId;
+      }
+    }
+    if (details?.lat != null) {
+      final latVal = lat;
+      if (latVal == null || latVal.isEmpty || latVal == 'null') {
+        lat = details!.lat;
+      }
+    }
+    if (details?.lng != null) {
+      final lngVal = lng;
+      if (lngVal == null || lngVal.isEmpty || lngVal == 'null') {
+        lng = details!.lng;
+      }
+    }
+    
     if (json['reviews'] != null) {
       reviews = <Reviews>[];
       json['reviews'].forEach((v) {
@@ -91,6 +131,7 @@ class BloodBank {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.id;
     data['user_id'] = this.userId;
     data['name'] = this.name;
     data['email'] = this.email;

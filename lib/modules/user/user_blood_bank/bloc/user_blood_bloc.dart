@@ -274,7 +274,14 @@ class UserBloodBankController extends GetxController {
       }
     } catch (error) {
       showLoader.value = false;
-      showErrorMessage(context, 'Error attaching donor: ${error.toString()}');
+      // Extract the actual error message from the exception
+      String errorMessage = 'Error attaching donor';
+      if (error is Exception) {
+        errorMessage = error.toString().replaceAll('Exception: ', '');
+      } else if (error.toString().isNotEmpty) {
+        errorMessage = error.toString();
+      }
+      showErrorMessage(context, errorMessage);
       return false;
     } finally {
       showLoader.value = false;
@@ -302,6 +309,33 @@ class UserBloodBankController extends GetxController {
     } catch (error) {
       showLoader.value = false;
       showErrorMessage(context, 'Error detaching donor: ${error.toString()}');
+      return false;
+    } finally {
+      showLoader.value = false;
+    }
+  }
+
+  Future<bool> markBloodRequestComplete(String bloodRequestId, String userId, BuildContext context) async {
+    showLoader.value = true;
+    try {
+      bool response = await bloodBankApi.markBloodRequestComplete(
+        bloodRequestId,
+        userId,
+      );
+      if (response == true) {
+        showLoader.value = false;
+        showSuccessMessage(context, 'Blood request marked as complete successfully');
+        // Reload blood requests to get updated data
+        await getAllBloodRequest();
+        return true;
+      } else {
+        showLoader.value = false;
+        showErrorMessage(context, 'Error marking request as complete');
+        return false;
+      }
+    } catch (error) {
+      showLoader.value = false;
+      showErrorMessage(context, 'Error marking request as complete: ${error.toString()}');
       return false;
     } finally {
       showLoader.value = false;

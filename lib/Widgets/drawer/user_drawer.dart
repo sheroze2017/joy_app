@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/user/user_blood_bank/view/all_blood_banks_screen.dart';
 import 'package:joy_app/modules/user/user_doctor/view/manage_booking.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/user_all_order.dart';
 import 'package:joy_app/styles/colors.dart';
@@ -150,6 +151,35 @@ class UserDrawer extends StatelessWidget {
                   bookingAsset: 'Assets/icons/calendar.svg',
                 ),
               ),
+              // Only show Blood Banks option for USER role, not for DOCTOR
+              Obx(() {
+                if (_profileController.userRole.value == 'USER') {
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 3.h,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          Get.to(
+                            AllBloodBanksScreen(),
+                            transition: Transition.rightToLeft,
+                          );
+                        },
+                        child: DrawerItem(
+                          isBloodBank: true,
+                          isBooking: true,
+                          bookingText: 'Blood Banks',
+                          bookingAsset: 'Assets/icons/blood.svg',
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              }),
             ],
           ),
         ),
@@ -174,6 +204,7 @@ class DrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity, // Make all buttons the same width
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(62),
         color: isBooking

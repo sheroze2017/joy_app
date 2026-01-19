@@ -80,8 +80,9 @@ class FriendRequestsAndSuggestionsData {
 }
 
 class Suggestion {
-  dynamic id; // _id from API
+  dynamic id; // _id from API (user_id)
   dynamic userId;
+  dynamic friendsId; // friends_id from friends list (relationship ID)
   String? name;
   String? location;
   String? userRole;
@@ -90,6 +91,7 @@ class Suggestion {
   Suggestion(
       {this.id,
       this.userId,
+      this.friendsId,
       this.name,
       this.location,
       this.userRole,
@@ -101,6 +103,11 @@ class Suggestion {
       userId = userId.toString();
     }
     id = userId;
+    // friends_id is the relationship ID for friends list (used for unfollow)
+    friendsId = json['friends_id'];
+    if (friendsId != null && friendsId is! String) {
+      friendsId = friendsId.toString();
+    }
     name = json['name']?.toString() ?? '';
     location = json['location']?.toString() ?? '';
     userRole = json['user_role']?.toString() ?? '';

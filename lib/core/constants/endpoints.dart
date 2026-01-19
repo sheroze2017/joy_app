@@ -11,12 +11,12 @@ class Endpoints {
 //       return 'http://localhost:1006';
 //     } else if (Platform.isAndroid) {
 //       // Android Emulator uses 10.0.2.2 to access host machine's localhost
-//     //   return 'http://10.0.2.2:1006';
-//         return 'http://localhost:1006';
+//       //   return 'http://10.0.2.2:1006';
+//       return 'http://localhost:1006';
 //     } else {
 //       // iOS Simulator - use 127.0.0.1 which is more reliable than localhost
-//       return 'http://192.168.100.20:1006';
-//         // return 'http://localhost:1006';
+//       //   return 'http://192.168.100.20:1006';
+//       return 'http://localhost:1006';
 //     }
 //   }
 
@@ -64,6 +64,7 @@ class Endpoints {
   static String getAllHospital = '/hospital/getAllHospitals';
   static String getHospitalDetail = '/hospital/getHospitalDetails';
   static String linkHospital = '/auth/linkUserToUser';
+  static String linkOrDelinkHospital = '/auth/linkOrDelinkHospital';
 
   //Social Media
   static String getAllPosts = '/auth/getAllPosts';
@@ -83,6 +84,7 @@ class Endpoints {
   static String getAllFriendWithStatus = '/user/getAllFriends';
   static String getAllSearchUserDetail = '/user/getSearchedUserDetails';
   static String getMyProfile = '/user/getMyProfile';
+  static String getAnotherUserProfile = '/user/getAnotherUserProfile';
   static String getFriendRequestsAndSuggestions =
       '/user/getFriendRequestsAndSuggestions';
 
@@ -120,8 +122,11 @@ class Endpoints {
       '/bloodbank/attachDonorToBloodRequest';
   static String detachDonorFromBloodRequest =
       '/bloodbank/detachDonorFromBloodRequest';
+  static String markBloodRequestComplete =
+      '/bloodbank/markBloodRequestComplete';
   static String editBloodBank = '/bloodbank/editBloodBank';
-  static String getAllBloodBanks = '/bloodbank/getAllBloodBanks';
+  static String getAllBloodBanks = '/bloodbank/getAllBloodbanks';
+  static String getDonorDetails = '/bloodbank/getDonorDetails';
   static String updateAbout = '/bloodbank/updateAbout';
   static String updateTimings = '/bloodbank/updateTimings';
 

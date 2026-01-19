@@ -48,9 +48,12 @@ class UserProfileData {
   String? aboutMe; // profile.demographics.about_me
   String? gender; // profile.demographics.gender
   String? dob; // profile.demographics.dob
+  String? location; // location from top level or profile.demographics.location
   List<Post>? posts;
   List<AllFriends>? allFriends;
   List<AllFriends>? friends; // new API
+  String? friendshipStatus; // FRIENDS, NONE, REQUEST_RECEIVED, REQUEST_SENT_BY_ME
+  dynamic friendsId; // The friends relationship ID if exists
 
   UserProfileData(
       {this.userId,
@@ -61,7 +64,10 @@ class UserProfileData {
       this.aboutMe,
       this.gender,
       this.dob,
-      this.friends});
+      this.location,
+      this.friends,
+      this.friendshipStatus,
+      this.friendsId});
 
   UserProfileData.fromJson(Map<String, dynamic> json) {
     userId = json['_id'] ?? json['user_id'];
@@ -71,6 +77,9 @@ class UserProfileData {
     name = json['name'];
     image = json['image']?.toString() ?? '';
 
+    // Get location from top level first, then from profile.demographics
+    location = json['location']?.toString();
+    
     // profile.demographics.about_me, gender, dob
     if (json['profile'] != null && json['profile'] is Map<String, dynamic>) {
       final profile = json['profile'] as Map<String, dynamic>;
@@ -80,6 +89,10 @@ class UserProfileData {
         aboutMe = demographics['about_me']?.toString() ?? '';
         gender = demographics['gender']?.toString() ?? '';
         dob = demographics['dob']?.toString() ?? '';
+        // Use location from demographics if top-level location is empty
+        if ((location == null || location!.isEmpty) && demographics['location'] != null) {
+          location = demographics['location']?.toString();
+        }
       }
     }
 
@@ -108,6 +121,13 @@ class UserProfileData {
       });
     } else {
       allFriends = [];
+    }
+
+    // Parse friendship_status and friends_id from getAnotherUserProfile response
+    friendshipStatus = json['friendship_status']?.toString();
+    friendsId = json['friends_id'];
+    if (friendsId != null && friendsId is! String) {
+      friendsId = friendsId.toString();
     }
   }
 

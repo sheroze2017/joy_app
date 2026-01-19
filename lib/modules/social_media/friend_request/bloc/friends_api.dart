@@ -24,10 +24,14 @@ class FreindsApi {
 
   Future<bool> addFriend(userId, friendId) async {
     try {
+      print('🔵 [FriendsApi] POST ${Endpoints.addFriend}');
+      print('📤 [FriendsApi] Request body: {"user_id": "$userId", "friend_id": "$friendId"}');
       final result = await _dioClient.post(Endpoints.addFriend,
           data: {"user_id": userId, "friend_id": friendId});
+      print('✅ [FriendsApi] addFriend response: code=${result['code']}, success=${result['sucess'] ?? result['success']}');
       return result['code'] == 200 ? result['sucess'] : result['success'];
     } catch (e) {
+      print('❌ [FriendsApi] addFriend error: $e');
       return false;
     } finally {}
   }
@@ -71,12 +75,34 @@ class FreindsApi {
     }
   }
 
-  Future<bool> updateFriendRequest(String status, String friendId) async {
+  Future<SearchUserProfileDetail> getAnotherUserProfile(String myUserId, String userId) async {
     try {
+      final url = Endpoints.getAnotherUserProfile;
+      print("🌐 [FriendsApi] POST $url");
+      print("📤 [FriendsApi] Request body: my_user_id=$myUserId, user_id=$userId");
+      final result = await _dioClient.post(url, data: {
+        "my_user_id": myUserId,
+        "user_id": userId
+      });
+      print("✅ [FriendsApi] Another user profile response: code=${result['code']}, success=${result['sucess'] ?? result['success']}, message=${result['message']}");
+      print("📥 [FriendsApi] Friendship status: ${result['data']?['friendship_status']}, friends_id: ${result['data']?['friends_id']}");
+      return SearchUserProfileDetail.fromJson(result);
+    } catch (e) {
+      print('❌ [FriendsApi] getAnotherUserProfile error: $e');
+      throw e;
+    }
+  }
+
+  Future<bool> updateFriendRequest(String status, String friendsId) async {
+    try {
+      print('🔵 [FriendsApi] POST ${Endpoints.updateFriendRequest}');
+      print('📤 [FriendsApi] Request body: {"friends_id": "$friendsId", "status": "$status"}');
       final result = await _dioClient.post(Endpoints.updateFriendRequest,
-          data: {"friends_id": friendId, "status": status});
+          data: {"friends_id": friendsId, "status": status});
+      print('✅ [FriendsApi] updateFriendRequest response: code=${result['code']}, success=${result['sucess'] ?? result['success']}');
       return result['code'] == 200 ? result['sucess'] : result['success'];
     } catch (e) {
+      print('❌ [FriendsApi] updateFriendRequest error: $e');
       return false;
     } finally {}
   }
@@ -88,6 +114,20 @@ class FreindsApi {
     } catch (e) {
       print(e.toString());
       throw e;
+    }
+  }
+
+  Future<bool> linkUserToUser(String linkedUser, String linkedToUser) async {
+    try {
+      final result = await _dioClient.post(Endpoints.linkHospital, // Same endpoint as linkHospital
+          data: {
+            "linked_user": linkedUser,
+            "linked_to_user": linkedToUser
+          });
+      return result['code'] == 200 ? (result['sucess'] ?? result['success'] ?? false) : false;
+    } catch (e) {
+      print('❌ [FriendsApi] linkUserToUser error: $e');
+      return false;
     }
   }
 

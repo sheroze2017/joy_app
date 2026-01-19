@@ -30,7 +30,13 @@ class ChatApi {
 
   Future<List<dynamic>> getMyConversations(String userId, String userType) async {
     try {
-      final url = '${Endpoints.chatRestBase}${Endpoints.chatMyConversations}?user_id=$userId&user_type=$userType';
+      // Use relative path since DioClient already has baseUrl configured
+      final endpoint = Endpoints.chatMyConversations; // Just '/chat/myConversations'
+      final queryParams = {
+        'user_id': userId,
+        'user_type': userType,
+      };
+      final fullUrl = '${Endpoints.chatRestBase}$endpoint?user_id=$userId&user_type=$userType';
       
       // Get actual token for cURL logging
       String? actualToken;
@@ -42,23 +48,37 @@ class ChatApi {
       
       // Log complete cURL command with actual token
       print('📡 [ChatApi] ========== cURL for getMyConversations ==========');
-      print('curl --location --request GET \'$url\' \\');
+      print('curl --location --request GET \'$fullUrl\' \\');
       if (actualToken != null) {
         print('  --header \'Authorization: Bearer $actualToken\'');
       } else {
         print('  --header \'Authorization: Bearer {YOUR_TOKEN}\'');
       }
       print('📡 [ChatApi] ==================================================');
-      print('🌐 [ChatApi] GET $url');
+      print('🌐 [ChatApi] GET $endpoint with query params: $queryParams');
+      print('🌐 [ChatApi] Full URL would be: $fullUrl');
       
-      final result = await _dioClient.get(url);
+      // Use relative path with query parameters - DioClient will prepend baseUrl automatically
+      final result = await _dioClient.get(endpoint, queryParameters: queryParams);
+      print('✅ [ChatApi] My conversations response type: ${result.runtimeType}');
       print('✅ [ChatApi] My conversations response: ${result}');
       
       if (result is Map && result['data'] != null) {
-        return List.from(result['data']);
+        final dataList = result['data'];
+        print('📥 [ChatApi] Extracted data list type: ${dataList.runtimeType}');
+        print('📥 [ChatApi] Extracted data list length: ${dataList is List ? dataList.length : 'not a list'}');
+        if (dataList is List) {
+          print('📥 [ChatApi] Returning ${dataList.length} conversations');
+          return List.from(dataList);
+        } else {
+          print('⚠️ [ChatApi] Data is not a list, returning empty list');
+          return [];
+        }
       } else if (result is List) {
+        print('📥 [ChatApi] Result is directly a list, returning ${result.length} conversations');
         return List.from(result);
       }
+      print('⚠️ [ChatApi] No data found in response, returning empty list');
       return [];
     } catch (e) {
       print('❌ [ChatApi] Error getting conversations: $e');

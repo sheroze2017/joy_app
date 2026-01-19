@@ -170,12 +170,18 @@ class _CreatePostModalState extends State<CreatePostModal> {
       setState(() {
         showLoader = true;
       });
-      String profileImg =
-          await mediaController.uploadProfilePhoto(path, context);
-      setState(() {
-        showLoader = false;
-        _selectedImage = profileImg;
-      });
+      // Use uploadPhoto for post images (no user_id), not uploadProfilePhoto
+      bool success = await mediaController.uploadPhoto(path, context);
+      if (success) {
+        setState(() {
+          showLoader = false;
+          _selectedImage = mediaController.imgUrl.value;
+        });
+      } else {
+        setState(() {
+          showLoader = false;
+        });
+      }
     }
   }
 }

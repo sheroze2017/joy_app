@@ -29,15 +29,26 @@ class ChatController extends GetxController {
       final userId = _profileController.userId.value;
       if (userId.isEmpty) {
         print('⚠️ [ChatController] User ID is empty');
+        isLoadingConversations.value = false;
         return;
       }
+      print('📡 [ChatController] Fetching conversations for user: $userId');
       final conversations = await chatApi.getMyConversations(userId, 'user');
-      myConversations.value = conversations;
-      print('✅ [ChatController] Loaded ${conversations.length} conversations');
+      print('📥 [ChatController] Received ${conversations.length} conversations from API');
+      print('📥 [ChatController] Conversations data: $conversations');
+      
+      // Clear and assign conversations to ensure reactivity
+      myConversations.clear();
+      myConversations.addAll(conversations);
+      
+      print('✅ [ChatController] Assigned ${myConversations.length} conversations to reactive list');
+      print('✅ [ChatController] First conversation (if any): ${myConversations.isNotEmpty ? myConversations.first : 'none'}');
     } catch (e) {
       print('❌ [ChatController] Error loading conversations: $e');
+      print('❌ [ChatController] Error stack trace: ${StackTrace.current}');
     } finally {
       isLoadingConversations.value = false;
+      print('✅ [ChatController] Loading state set to false');
     }
   }
 

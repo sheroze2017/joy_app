@@ -6,7 +6,6 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/blood_bank/view/component/blood_donation_widget.dart';
-import 'package:joy_app/modules/doctor/view/all_appointment.dart';
 import 'package:sizer/sizer.dart';
 
 class MyBloodAppeals extends StatefulWidget {
@@ -63,6 +62,13 @@ class _MyBloodAppealsState extends State<MyBloodAppeals> {
                         count: data.unitsOfBlood.toString(),
                         time: data.time.toString(),
                         phoneNo: data.phone.toString(),
+                        priority: data.responseTime ?? '', // Pass response_time as priority
+                        bloodId: data.bloodId, // Pass bloodId for Complete Request button
+                        donorDetails: data.donorDetails, // Pass donorDetails
+                        donorUserId: data.donorUserId, // Pass donorUserId
+                        userDetails: data.userDetails, // Pass userDetails
+                        status: data.status, // Pass status to check if completed
+                        isBloodBank: false, // User mode, not blood bank mode
                       ),
                     );
                   })),

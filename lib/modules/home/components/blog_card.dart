@@ -54,14 +54,31 @@ class MyCustomWidget extends StatefulWidget {
 }
 
 final _profileController = Get.find<ProfileController>();
-final TextEditingController comment = TextEditingController();
 final mediaController = Get.find<MediaPostController>();
 
 int? showCommentIndex;
 bool? showComment;
 
+// Map to store comment controllers per post ID
+final Map<String, TextEditingController> _commentControllers = {};
+
 class _MyCustomWidgetState extends State<MyCustomWidget> {
   static const String _defaultPostImage = 'Assets/images/app-icon.png';
+  
+  // Get or create a controller for this specific post
+  TextEditingController get _commentController {
+    if (!_commentControllers.containsKey(widget.postId)) {
+      _commentControllers[widget.postId] = TextEditingController();
+    }
+    return _commentControllers[widget.postId]!;
+  }
+  
+  @override
+  void dispose() {
+    // Don't dispose here as the controller is shared and might be used by other instances
+    // The controller will be disposed when the post is removed from the list
+    super.dispose();
+  }
 
   bool _isValidImageUrl(String? url) {
     return url != null &&
@@ -307,34 +324,40 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
         SizedBox(height: 2.h),
         Row(
           children: [
-            InkWell(
-              onTap: () async {
-                // Call togglePostLike API
-                final mediaController = Get.find<MediaPostController>();
-                bool success = await mediaController.toggleLike(
-                  widget.postId,
-                  widget.postIndex,
-                  context,
-                );
-                if (success) {
-                  // Update local state after successful API call
-                  widget.isLiked = !widget.isLiked;
-                  setState(() {});
-                }
-              },
-              child: CircleButton(
-                isLikeButton: true,
-                isActive: widget.isLiked,
-                img: 'Assets/images/like.png',
-                color: ThemeUtil.isDarkMode(context)
-                    ? widget.isLiked
-                        ? Color(0xffC5D3E3)
-                        : Color(0xff121212)
-                    : !widget.isLiked
-                        ? Color(0xff121212)
-                        : AppColors.whiteColorf9f,
-              ),
-            ),
+            Obx(() {
+              // Get current like state from controller's reactive list
+              // Note: allPost is reversed in the list, so we need to adjust index
+              final reversedIndex = mediaController.allPost.length - 1 - widget.postIndex;
+              final currentPost = mediaController.allPost.isNotEmpty && 
+                                 reversedIndex >= 0 && 
+                                 reversedIndex < mediaController.allPost.length
+                  ? mediaController.allPost[reversedIndex]
+                  : null;
+              final isCurrentlyLiked = currentPost?.isMyLike ?? widget.isLiked;
+              
+              return InkWell(
+                onTap: () async {
+                  // Call togglePostLike API - UI will update automatically via Obx
+                  await mediaController.toggleLike(
+                    widget.postId,
+                    widget.postIndex,
+                    context,
+                  );
+                },
+                child: CircleButton(
+                  isLikeButton: true,
+                  isActive: isCurrentlyLiked,
+                  img: 'Assets/images/like.png',
+                  color: ThemeUtil.isDarkMode(context)
+                      ? isCurrentlyLiked
+                          ? Color(0xffC5D3E3)
+                          : Color(0xff121212)
+                      : !isCurrentlyLiked
+                          ? Color(0xff121212)
+                          : AppColors.whiteColorf9f,
+                ),
+              );
+            }),
             Spacer(),
             Divider(
               color: Color(0xffE5E7EB),
@@ -345,17 +368,17 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
           height: 1.h,
         ),
         RoundedCommentTextField(
-          controller: comment,
+          controller: _commentController,
           hintText: 'Add comment',
           onSendPressed: () async {
             FocusScope.of(context).unfocus();
             mediaController
                 .commentAdd(
-                    widget.postId, comment.text, context, widget.postIndex)
+                    widget.postId, _commentController.text, context, widget.postIndex)
                 .then((value) {
               setState(() {});
             });
-            comment.clear();
+            _commentController.clear();
           },
         ),
         SizedBox(

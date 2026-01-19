@@ -310,10 +310,8 @@ class _UserProductCardState extends State<_UserProductCard> {
                   ),
                 ],
               ),
-            // Quantity controls and Add to Cart button - Hide in hospital mode
-            widget.isHospital
-                ? Container() // Hide cart controls in hospital mode
-                : Obx(() {
+            // Quantity controls and Add to Cart button - Always show for users
+            Obx(() {
               final cartQuantity = getQuantity();
               return cartQuantity > 0
                   ? GestureDetector(

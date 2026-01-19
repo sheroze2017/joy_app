@@ -316,9 +316,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                         )
                                       ],
                                     )
-                                  : widget.isHospital
-                                      ? Container() // Hide buttons for hospital mode
-                                      : Row(
+                                  : Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [

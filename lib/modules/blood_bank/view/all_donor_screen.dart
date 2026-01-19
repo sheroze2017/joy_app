@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
-import 'package:joy_app/modules/blood_bank/view/donor_detail_screen.dart';
+import 'package:joy_app/modules/user/user_blood_bank/view/donor_detail_api_screen.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
@@ -19,17 +19,23 @@ class AllDonorScreen extends StatefulWidget {
 }
 
 class _AllDonorScreenState extends State<AllDonorScreen> {
-  BloodBankController _bloodBankController = Get.put(BloodBankController());
+  late final BloodBankController _bloodBankController;
 
   @override
   void initState() {
     super.initState();
+    // Use Get.find if exists, otherwise Get.put to create it
+    _bloodBankController = Get.isRegistered<BloodBankController>()
+        ? Get.find<BloodBankController>()
+        : Get.put(BloodBankController());
+    
     // Defer observable updates to avoid setState during build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Load donors if not already loaded
+      // Load donors if not already loaded - but don't reload if already populated
       if (_bloodBankController.allDonors.isEmpty) {
         _bloodBankController.getallDonor();
       } else {
+        // Just ensure searchedDonors is synced with allDonors
         _bloodBankController.searchedDonors.assignAll(_bloodBankController.allDonors);
       }
     });
@@ -110,13 +116,22 @@ class _VerticalDonorsList extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 8.0,
         mainAxisSpacing: 8,
-        childAspectRatio: 0.75, // Set the aspect ratio of the children
+        childAspectRatio: 0.85, // Increased to reduce empty space below
       ),
       itemCount: donors.length,
       itemBuilder: (context, index) {
-        return InkWell(
+        final donor = donors[index];
+        // Get userId from donor - use userId or donorId as fallback
+        final userId = donor.userId?.toString() ?? donor.donorId?.toString();
+        
+        return GestureDetector(
           onTap: () {
-            Get.to(DonorDetailScreen(donor: donors[index]));
+            print('🩸 [AllDonorScreen] Donor card tapped - userId: $userId, donorId: ${donor.donorId}, name: ${donor.name}');
+            if (userId != null && userId.isNotEmpty && userId != 'null') {
+              Get.to(DonorDetailApiScreen(userId: userId));
+            } else {
+              print('⚠️ [AllDonorScreen] Invalid userId: $userId');
+            }
           },
           child: DonorsCardWidget(
             color: donors[index].type == 'Plasma' ? bgColors[1] : bgColors[0],

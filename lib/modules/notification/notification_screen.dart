@@ -24,6 +24,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   List<Map<String, dynamic>> _notifications = [];
   bool isPharmacyMode = false;
   bool isBloodBankMode = false;
+  bool isHospitalMode = false;
   bool _isLoading = true;
   int _unreadCount = 0;
   late AuthApi _authApi;
@@ -105,6 +106,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       setState(() {
         isPharmacyMode = currentUser.userRole == 'PHARMACY';
         isBloodBankMode = currentUser.userRole == 'BLOODBANK';
+        isHospitalMode = currentUser.userRole == 'HOSPITAL';
       });
     }
   }
@@ -124,7 +126,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: widget.showBackIcon ? null : UserDrawer(),
-      appBar: (isPharmacyMode || isBloodBankMode)
+      appBar: (isPharmacyMode || isBloodBankMode || isHospitalMode)
           ? AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -203,7 +205,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       padding: EdgeInsets.only(
                         left: 24.0,
                         right: 24.0,
-                        top: (isPharmacyMode || isBloodBankMode) ? 60.0 : 24.0,
+                        top: (isPharmacyMode || isBloodBankMode || isHospitalMode) ? 60.0 : 24.0,
                         bottom: 24.0,
                       ),
                       child: ListView.separated(

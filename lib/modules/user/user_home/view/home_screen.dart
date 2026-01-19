@@ -23,6 +23,7 @@ import '../../user_blood_bank/bloc/user_blood_bloc.dart';
 import '../../user_home/bloc/nearby_services_bloc.dart';
 import '../../user_home/view/widgets/nearby_service_card.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/blood_bank/view/all_donor_screen.dart';
 import 'package:joy_app/widgets/drawer/user_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -355,24 +356,58 @@ class _HomeScreenState extends State<HomeScreen> {
                                       const EdgeInsets.only(right: 8, left: 0),
                                   child: InkWell(
                                     onTap: () {
+                                      final pharmacyController = Get.find<AllPharmacyController>();
+                                      final pharmacyId = data.id.toString();
+                                      
+                                      // Check if cart is empty or same pharmacy
+                                      if (!pharmacyController.canNavigateToPharmacy(pharmacyId)) {
+                                        Get.snackbar(
+                                          'Cart Restriction',
+                                          'Please empty the cart first to add from other pharmacy',
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: Colors.orange,
+                                          colorText: Colors.white,
+                                          duration: Duration(seconds: 3),
+                                          icon: Icon(Icons.shopping_cart, color: Colors.white),
+                                        );
+                                        return;
+                                      }
+                                      
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 PharmacyProductScreen(
-                                                  userId: data.id.toString(),
+                                                  userId: pharmacyId,
                                                 )),
                                       );
                                     },
                                     child: NearbyServiceCard(
                                       pharmacy: data,
                                       onTap: () {
+                                        final pharmacyController = Get.find<AllPharmacyController>();
+                                        final pharmacyId = data.id.toString();
+                                        
+                                        // Check if cart is empty or same pharmacy
+                                        if (!pharmacyController.canNavigateToPharmacy(pharmacyId)) {
+                                          Get.snackbar(
+                                            'Cart Restriction',
+                                            'Please empty the cart first to add from other pharmacy',
+                                            snackPosition: SnackPosition.BOTTOM,
+                                            backgroundColor: Colors.orange,
+                                            colorText: Colors.white,
+                                            duration: Duration(seconds: 3),
+                                            icon: Icon(Icons.shopping_cart, color: Colors.white),
+                                          );
+                                          return;
+                                        }
+                                        
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   PharmacyProductScreen(
-                                                    userId: data.id.toString(),
+                                                    userId: pharmacyId,
                                                   )),
                                         );
                                       },
@@ -507,7 +542,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       children: [
                         Text(
-                          'Blood Bank',
+                          'All Donors',
                           style: CustomTextStyles.darkHeadingTextStyle(
                               color: ThemeUtil.isDarkMode(context)
                                   ? AppColors.whiteColor
@@ -517,9 +552,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         InkWell(
                           onTap: () {
                             Get.to(
-                                AllHospitalScreen(
-                                    appBarText: 'All Blood Banks',
-                                    isBloodBank: true),
+                                AllDonorScreen(),
                                 transition: Transition.native);
                           },
                           child: Text(
@@ -531,9 +564,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 0.5.h, // Reduced from 1.h to minimize space below title
-                  ),
+                 
                   Obx(
                     () => Container(
                       height: 65.w, // Reduced from 70.w to minimize empty space

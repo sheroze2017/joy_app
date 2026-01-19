@@ -188,6 +188,130 @@ class FriendsSocialController extends GetxController {
     }
   }
 
+  // Add Friend - Send friend request (for NONE status)
+  Future<void> addFriend(String friendId, BuildContext context) async {
+    updateRequestLoader.value = true;
+    try {
+      UserHive? currentUser = await getCurrentUser();
+      if (currentUser == null) {
+        showErrorMessage(context, 'User not logged in');
+        updateRequestLoader.value = false;
+        return;
+      }
+
+      bool response = await friendApi.addFriend(currentUser.userId, friendId);
+      if (response == true) {
+        showSuccessMessage(context, 'Friend request sent successfully');
+        // Remove from suggestions
+        suggestions.removeWhere((suggestion) => suggestion.id.toString() == friendId.toString());
+        suggestions.refresh();
+        // Refresh profile data to get updated friendship status
+        if (userProfileData.value != null && friendId.isNotEmpty) {
+          await getSearchUserProfileData(true, friendId, context);
+        }
+        // Refresh friends/requests/suggestions to get latest data
+        getFriendRequestsAndSuggestions();
+        updateRequestLoader.value = false;
+      } else {
+        showErrorMessage(context, 'Failed to send friend request');
+        updateRequestLoader.value = false;
+      }
+    } catch (error) {
+      showErrorMessage(context, 'Error: ${error.toString()}');
+      updateRequestLoader.value = false;
+    } finally {
+      updateRequestLoader.value = false;
+    }
+  }
+
+  // Unfollow/Unfriend - Delete friendship (for FRIENDS status)
+  Future<void> unfollow(String friendsId, String friendUserId, BuildContext context) async {
+    updateRequestLoader.value = true;
+    try {
+      bool response = await friendApi.updateFriendRequest('Rejected', friendsId);
+      if (response == true) {
+        showSuccessMessage(context, 'Unfollowed successfully');
+        // Remove from friends list
+        friends.removeWhere((friend) => 
+          friend.id?.toString() == friendUserId.toString() ||
+          friend.userId?.toString() == friendUserId.toString()
+        );
+        filteredFriends.removeWhere((friend) => 
+          friend.id?.toString() == friendUserId.toString() ||
+          friend.userId?.toString() == friendUserId.toString()
+        );
+        // Trigger reactive update
+        friends.refresh();
+        filteredFriends.refresh();
+        // Refresh profile data to get updated friendship status
+        if (userProfileData.value != null && friendUserId.isNotEmpty) {
+          await getSearchUserProfileData(true, friendUserId, context);
+        }
+        // Refresh friends/requests/suggestions to get latest data
+        getFriendRequestsAndSuggestions();
+        updateRequestLoader.value = false;
+      } else {
+        showErrorMessage(context, 'Failed to unfollow');
+        updateRequestLoader.value = false;
+      }
+    } catch (error) {
+      showErrorMessage(context, 'Error: ${error.toString()}');
+      updateRequestLoader.value = false;
+    } finally {
+      updateRequestLoader.value = false;
+    }
+  }
+
+  Future<void> acceptFriendRequest(String friendsId, String friendUserId, BuildContext context) async {
+    updateRequestLoader.value = true;
+    try {
+      bool response = await friendApi.updateFriendRequest('Accepted', friendsId);
+      if (response == true) {
+        showSuccessMessage(context, 'Friend request accepted');
+        // Refresh profile data to get updated friendship status
+        if (userProfileData.value != null) {
+          await getSearchUserProfileData(true, friendUserId, context);
+        }
+        // Refresh friends/requests/suggestions
+        getFriendRequestsAndSuggestions();
+        updateRequestLoader.value = false;
+      } else {
+        showErrorMessage(context, 'Failed to accept friend request');
+        updateRequestLoader.value = false;
+      }
+    } catch (error) {
+      showErrorMessage(context, 'Error: ${error.toString()}');
+      updateRequestLoader.value = false;
+    } finally {
+      updateRequestLoader.value = false;
+    }
+  }
+
+  Future<void> deleteFriendRequest(String friendsId, String friendUserId, BuildContext context) async {
+    updateRequestLoader.value = true;
+    try {
+      bool response = await friendApi.updateFriendRequest('Rejected', friendsId);
+      if (response == true) {
+        showSuccessMessage(context, 'Friend request deleted');
+        // Refresh profile data to get updated friendship status
+        if (userProfileData.value != null) {
+          await getSearchUserProfileData(true, friendUserId, context);
+        }
+        // Refresh friends/requests/suggestions
+        getFriendRequestsAndSuggestions();
+        updateRequestLoader.value = false;
+      } else {
+        showErrorMessage(context, 'Failed to delete friend request');
+        updateRequestLoader.value = false;
+      }
+    } catch (error) {
+      showErrorMessage(context, 'Error: ${error.toString()}');
+      updateRequestLoader.value = false;
+    } finally {
+      updateRequestLoader.value = false;
+    }
+  }
+
   Future<SearchUserProfileDetail> getSearchUserProfileData(
       bool myProfile, friendId, BuildContext context) async {
     UserHive? currentUser = await getCurrentUser();
@@ -196,9 +320,9 @@ class FriendsSocialController extends GetxController {
       profileScreenLoader.value = true;
       SearchUserProfileDetail response;
       
-      // Use getMyProfile API for both own profile and friend profiles
+      // Use getAnotherUserProfile for friend profiles, getMyProfile for own profile
       if (myProfile) {
-        // Viewing friend's profile - use their user_id
+        // Viewing friend's profile - use getAnotherUserProfile API
         if (friendId == null || friendId.toString().isEmpty) {
           print('❌ [FriendsSocialController] Invalid friendId: $friendId');
           userProfileData.value = null;
@@ -206,7 +330,14 @@ class FriendsSocialController extends GetxController {
           return SearchUserProfileDetail(
               code: 400, sucess: false, message: 'Invalid user ID');
         }
-        response = await friendApi.getMyProfile(friendId.toString());
+        if (currentUser == null) {
+          print('❌ [FriendsSocialController] No current user found');
+          userProfileData.value = null;
+          profileScreenLoader.value = false;
+          return SearchUserProfileDetail(
+              code: 400, sucess: false, message: 'User not logged in');
+        }
+        response = await friendApi.getAnotherUserProfile(currentUser.userId, friendId.toString());
       } else if (currentUser != null) {
         // Viewing own profile - use logged-in user_id
         response = await friendApi.getMyProfile(currentUser.userId);
@@ -220,17 +351,18 @@ class FriendsSocialController extends GetxController {
 
       // Populate posts for the screen
       userPostById.clear();
-      if (!myProfile) {
-        // Own profile: use posts nested in getMyProfile response
-        final postsFromProfile = response.singleData?.posts ??
-            (response.data != null && response.data!.isNotEmpty
-                ? response.data!.first.posts
-                : []);
-        if (postsFromProfile != null) {
-          userPostById.addAll(postsFromProfile);
-        }
+      
+      // Try to get posts from getMyProfile response first (works for both own and friend profiles)
+      final postsFromProfile = response.singleData?.posts ??
+          (response.data != null && response.data!.isNotEmpty
+              ? response.data!.first.posts
+              : []);
+      
+      if (postsFromProfile != null && postsFromProfile.isNotEmpty) {
+        // Use posts from getMyProfile response
+        userPostById.addAll(postsFromProfile);
       } else {
-        // Viewing friend's profile: fallback to posts-by-id API
+        // Fallback to posts-by-id API only if posts are not in getMyProfile response
         await getAllPostById(myProfile, friendId);
       }
 

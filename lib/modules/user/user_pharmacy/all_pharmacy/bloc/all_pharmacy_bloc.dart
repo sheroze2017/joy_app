@@ -48,18 +48,55 @@ class AllPharmacyController extends GetxController {
 
   void searchPharmacy(String query) {
     searchQuery.value = query;
-    searchResults.value = pharmacies.value
+    searchResults.value = pharmacies
         .where((pharma) =>
             pharma.name!.toLowerCase().contains(query.toLowerCase()))
         .toList();
   }
 
   void addToCart(PharmacyProductData product, context) {
+    print('🛒 [Cart] ========== ADD TO CART ==========');
+    print('🛒 [Cart] Product Details:');
+    print('   - Product ID: ${product.productId}');
+    print('   - Product Name: ${product.name}');
+    print('   - Price: ${product.price} Rs');
+    print('   - Available Quantity: ${product.quantity}');
+    print('   - Pharmacy ID: ${product.pharmacyId}');
+    print('   - Category: ${product.category ?? "N/A"}');
+    print('   - Dosage: ${product.dosage ?? "N/A"}');
+    
+    // Log current cart state before adding
+    print('🛒 [Cart] Current Cart State:');
+    print('   - Total Items in Cart: ${cartItems.length}');
     if (cartItems.isNotEmpty) {
-      if (cartItems.any((item) => item.pharmacyId != product.pharmacyId)) {
-        cartItems.clear();
+      print('   - Current Cart Items:');
+      for (int i = 0; i < cartItems.length; i++) {
+        final item = cartItems[i];
+        print('     ${i + 1}. ${item.name} (ID: ${item.productId}) - Qty: ${item.cartQuantity ?? 0} - Price: ${item.price} Rs');
+      }
+    } else {
+      print('   - Cart is empty');
+    }
+    
+    // Check if cart has items from a different pharmacy
+    if (cartItems.isNotEmpty) {
+      final currentPharmacyId = cartItems.first.pharmacyId;
+      if (currentPharmacyId != product.pharmacyId) {
+        print('❌ [Cart] Different pharmacy detected!');
+        print('   - Current pharmacy in cart: $currentPharmacyId');
+        print('   - New product pharmacy: ${product.pharmacyId}');
+        print('   - Cannot add product from different pharmacy');
+        Get.snackbar(
+          'Error',
+          'You already have items in cart with another pharmacy. Please empty the cart first to add from other pharmacy.',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 3),
+        );
+        print('🛒 [Cart] ======================================');
+        return; // Exit early, don't add the product
       }
     }
+    
     int index =
         cartItems.indexWhere((item) => item.productId == product.productId);
     
@@ -67,23 +104,48 @@ class AllPharmacyController extends GetxController {
     final currentQuantity = index != -1 ? (cartItems[index].cartQuantity ?? 0) : 0;
     final availableStock = product.quantity ?? 0;
     
+    print('🛒 [Cart] Quantity Check:');
+    print('   - Current quantity in cart: $currentQuantity');
+    print('   - Available stock: $availableStock');
+    
     // Check if we can add more (don't exceed available stock)
     if (currentQuantity >= availableStock) {
+      print('❌ [Cart] Cannot add more - Stock limit reached');
+      print('   - Current in cart: $currentQuantity');
+      print('   - Available stock: $availableStock');
       Get.snackbar('Error', 'Cannot add more. Only $availableStock available');
       return;
     }
     
     if (index != -1) {
       // Item already in cart, increment quantity and reassign to trigger reactive update
+      print('➕ [Cart] Item already in cart - Incrementing quantity');
       final updatedItem = cartItems[index];
-      updatedItem.cartQuantity = (updatedItem.cartQuantity ?? 0) + 1;
+      final oldQuantity = updatedItem.cartQuantity ?? 0;
+      updatedItem.cartQuantity = oldQuantity + 1;
       cartItems[index] = updatedItem; // Reassign to trigger reactive update
+      print('✅ [Cart] Quantity updated: $oldQuantity → ${updatedItem.cartQuantity}');
     } else {
       // New item, add to cart and show message
+      print('🆕 [Cart] New item - Adding to cart');
       product.cartQuantity = 1;
       cartItems.add(product);
+      print('✅ [Cart] Product added to cart');
       showSuccessMessage(context, '${product.name} added into cart');
     }
+    
+    // Log final cart state
+    print('🛒 [Cart] Final Cart State:');
+    print('   - Total Items in Cart: ${cartItems.length}');
+    if (cartItems.isNotEmpty) {
+      print('   - Cart Items:');
+      for (int i = 0; i < cartItems.length; i++) {
+        final item = cartItems[i];
+        print('     ${i + 1}. ${item.name} (ID: ${item.productId}) - Qty: ${item.cartQuantity ?? 0} - Price: ${item.price} Rs - Total: ${(item.cartQuantity ?? 0) * double.parse(item.price?.toString() ?? '0')} Rs');
+      }
+      print('   - Grand Total: ${calculateGrandTotal()} Rs');
+    }
+    print('🛒 [Cart] ======================================');
     // cartItems is RxList, so changes are automatically reactive
   }
 
@@ -121,6 +183,29 @@ class AllPharmacyController extends GetxController {
 
   void removeproductCart(PharmacyProductData product) {
     cartItems.removeWhere((element) => element.productId == product.productId);
+  }
+
+  // Check if cart is empty
+  bool isCartEmpty() {
+    return cartItems.isEmpty;
+  }
+
+  // Get the pharmacy ID of items currently in cart (returns null if cart is empty)
+  String? getCartPharmacyId() {
+    if (cartItems.isEmpty) {
+      return null;
+    }
+    return cartItems.first.pharmacyId?.toString();
+  }
+
+  // Check if user can navigate to a pharmacy (cart must be empty or same pharmacy)
+  bool canNavigateToPharmacy(String pharmacyId) {
+    if (cartItems.isEmpty) {
+      return true; // Cart is empty, can navigate to any pharmacy
+    }
+    // Cart has items, can only navigate to the same pharmacy
+    final currentPharmacyId = getCartPharmacyId();
+    return currentPharmacyId == pharmacyId;
   }
 
   List<Map<String, dynamic>> cartItemsToJson() {

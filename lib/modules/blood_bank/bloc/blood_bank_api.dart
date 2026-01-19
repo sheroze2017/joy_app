@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:joy_app/core/constants/endpoints.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/auth/models/doctor_register_model.dart';
 import 'package:joy_app/modules/blood_bank/model/all_blood_request_model.dart';
 import 'package:joy_app/modules/blood_bank/model/all_donors_model.dart';
 import 'package:joy_app/modules/blood_bank/model/blood_bank_details_model.dart';
+import 'package:joy_app/modules/user/user_blood_bank/model/donor_details_model.dart';
 
 class BloodBankApi {
   final DioClient _dioClient;
@@ -25,6 +27,17 @@ class BloodBankApi {
       final result = await _dioClient
           .get(Endpoints.getBloodBankDetails + '?user_id=${userId}');
       return BloodBankDetails.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<DonorDetailsResponse> getDonorDetails(userId) async {
+    try {
+      final result = await _dioClient
+          .get(Endpoints.getDonorDetails + '?user_id=${userId}');
+      return DonorDetailsResponse.fromJson(result);
     } catch (e) {
       print(e.toString());
       throw e;
@@ -74,9 +87,21 @@ class BloodBankApi {
       if (result['sucess'] == true || result['success'] == true) {
         return true;
       } else {
+        // Extract error message from response if available
+        String? errorMessage = result['message'];
+        if (errorMessage != null && errorMessage.isNotEmpty) {
+          throw Exception(errorMessage);
+        }
         return false;
       }
     } catch (e) {
+      // If it's a DioException with error response, extract the message
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        final errorData = e.response!.data;
+        if (errorData is Map && errorData['message'] != null) {
+          throw Exception(errorData['message']);
+        }
+      }
       print(e.toString());
       throw e;
     }
@@ -85,6 +110,23 @@ class BloodBankApi {
   Future<bool> detachDonorFromBloodRequest(String bloodRequestId, String userId) async {
     try {
       final result = await _dioClient.post(Endpoints.detachDonorFromBloodRequest, data: {
+        'blood_request_id': bloodRequestId,
+        'user_id': userId,
+      });
+      if (result['sucess'] == true || result['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<bool> markBloodRequestComplete(String bloodRequestId, String userId) async {
+    try {
+      final result = await _dioClient.post(Endpoints.markBloodRequestComplete, data: {
         'blood_request_id': bloodRequestId,
         'user_id': userId,
       });

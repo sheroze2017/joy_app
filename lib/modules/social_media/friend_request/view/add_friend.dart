@@ -442,6 +442,7 @@ class AddFriend extends StatelessWidget {
                                       profileImage: data.image ?? '',
                                       userName: data.name ?? '',
                                       friendId: data.id.toString(),
+                                      friendsId: data.friendsId?.toString(),
                                       userRole: data.userRole ?? '',
                                     ),
                                   );
@@ -1045,6 +1046,7 @@ class FriendWidget extends StatelessWidget {
   final String profileImage;
   final String userName;
   final String friendId;
+  final String? friendsId; // Relationship ID for unfollow
   final String userRole;
 
   const FriendWidget({
@@ -1052,6 +1054,7 @@ class FriendWidget extends StatelessWidget {
     required this.profileImage,
     required this.userName,
     required this.friendId,
+    this.friendsId,
     required this.userRole,
   }) : super(key: key);
 
@@ -1246,14 +1249,9 @@ class FriendWidget extends StatelessWidget {
                       );
 
                       if (confirmed == true) {
-                        // Call updateFriendRequest with REJECTED status
-                        await _friendsController.updateFriendRequest(
-                          friendId,
-                          'REJECTED',
-                          context,
-                        );
-                        // Refresh friends list
-                        await _friendsController.getFriendRequestsAndSuggestions();
+                        // Use friendsId (relationship ID) for unfollow, fallback to friendId if not available
+                        final relationshipId = friendsId ?? friendId;
+                        await _friendsController.unfollow(relationshipId, friendId, context);
                       }
                     },
                           backgroundColor: ThemeUtil.isDarkMode(context)
