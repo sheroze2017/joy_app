@@ -18,6 +18,7 @@ class RoundedBorderTextField extends StatelessWidget {
   TextInputType textInputType;
   final FormFieldValidator<String>? validator;
   bool showLabel;
+  bool readOnly;
 
   RoundedBorderTextField({
     this.isLocation = false,
@@ -34,6 +35,7 @@ class RoundedBorderTextField extends StatelessWidget {
     this.isenable = true,
     this.textInputType = TextInputType.text,
     this.validator,
+    this.readOnly = false,
   });
 
   @override
@@ -43,10 +45,12 @@ class RoundedBorderTextField extends StatelessWidget {
       keyboardType: textInputType,
       focusNode: focusNode,
       enabled: isenable,
+      readOnly: readOnly,
       style: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
       cursorColor: const Color(0xffD1D5DB),
       maxLines: maxlines == false ? 1 : null,
       controller: controller,
+      enableInteractiveSelection: !readOnly,
       decoration: InputDecoration(
         label: showLabel ? Text(hintText) : null,
         contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
@@ -81,8 +85,12 @@ class RoundedBorderTextField extends StatelessWidget {
         // fillColor: Color(0xffF9FAFB),
       ),
       onFieldSubmitted: (value) {
-        focusNode!.unfocus();
-        FocusScope.of(context).requestFocus(nextFocusNode);
+        if (focusNode != null) {
+          focusNode!.unfocus();
+        }
+        if (nextFocusNode != null) {
+          FocusScope.of(context).requestFocus(nextFocusNode);
+        }
       },
     );
   }

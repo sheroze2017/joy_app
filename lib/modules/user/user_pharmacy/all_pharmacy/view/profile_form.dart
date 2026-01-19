@@ -20,6 +20,10 @@ import 'package:sizer/sizer.dart';
 import '../../../../../common/profile/bloc/profile_bloc.dart';
 import '../../../../auth/bloc/auth_bloc.dart';
 import '../../../../auth/utils/auth_utils.dart';
+import '../../../../auth/utils/auth_hive_utils.dart';
+import '../../../../../core/network/request.dart';
+import '../../../../../core/constants/endpoints.dart';
+import '../../../../../styles/custom_textstyle.dart';
 
 class PharmacyFormScreen extends StatefulWidget {
   final String email;
@@ -47,6 +51,7 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
   final TextEditingController _availabilityController = TextEditingController();
   final TextEditingController _prescriptionController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   List<Set<String>> dateAvailability = [];
 
   final FocusNode _focusNode1 = FocusNode();
@@ -67,6 +72,14 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
 
   double latitude = 0;
   double longitude = 0;
+  
+  // Store original values for comparison
+  String? _originalName;
+  String? _originalPhone;
+  String? _originalLocation;
+  String? _originalPassword;
+  String? _originalImage;
+  List<Map<String, dynamic>>? _originalAvailability;
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
     if (paths.isNotEmpty) {
@@ -79,15 +92,139 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
     }
   }
 
+  // Convert timings from API format to availability format
+  List<Map<String, dynamic>> _convertTimingsToAvailability(List<dynamic>? timings) {
+    if (timings == null || timings.isEmpty) return [];
+    
+    final List<Map<String, dynamic>> availability = [];
+    for (var timing in timings) {
+      if (timing is Map<String, dynamic>) {
+        final day = timing['day'] as String?;
+        final times = timing['times'] as List<dynamic>?;
+        if (day != null && times != null && times.isNotEmpty) {
+          availability.add({
+            "day": day,
+            "times": times.map((t) => t.toString()).toList()
+          });
+        }
+      }
+    }
+    return availability;
+  }
+
+  // Convert availability to List<Set<String>> for dialog
+  List<Set<String>> _convertAvailabilityToDialogFormat(List<Map<String, dynamic>>? availability) {
+    final List<Set<String>> result = List.generate(7, (_) => <String>{});
+    if (availability == null || availability.isEmpty) return result;
+    
+    final List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    
+    for (var avail in availability) {
+      final day = avail['day'] as String?;
+      final times = avail['times'] as List<dynamic>?;
+      if (day != null && times != null) {
+        final dayIndex = daysOfWeek.indexWhere((d) => d.toLowerCase() == day.toLowerCase());
+        if (dayIndex != -1) {
+          result[dayIndex] = times.map((t) => t.toString()).toSet();
+        }
+      }
+    }
+    return result;
+  }
+
+  // Fetch pharmacy profile and load data
+  Future<void> _loadPharmacyProfile() async {
+    try {
+      final currentUser = await getCurrentUser();
+      if (currentUser == null) return;
+      
+      // Call getProfile API to get full pharmacy details
+      // This will update Hive, but we also need the raw response to get details.timings
+      await authController.fetchAndUpdateUserProfile(currentUser.userId.toString());
+      
+      // Now get the raw response to access details.timings and details.location
+      // We'll use the core network request directly
+      final coreNetwork = DioClient.getInstance();
+      final rawResponse = await coreNetwork.post(
+        Endpoints.getProfile,
+        data: {"user_id": currentUser.userId.toString()}
+      );
+      
+      if (rawResponse['code'] == 200 && rawResponse['data'] != null) {
+        final data = rawResponse['data'] as Map<String, dynamic>;
+        final details = data['details'] as Map<String, dynamic>?;
+        
+        // Load location from details.location (more detailed) or fallback to root location
+        if (details != null && details['location'] != null) {
+          _locationController.text = details['location'].toString();
+          _originalLocation = _locationController.text;
+        } else if (data['location'] != null) {
+          _locationController.text = data['location'].toString();
+          _originalLocation = _locationController.text;
+        }
+        
+        // Load availability from details.timings
+        if (details != null && details['timings'] != null) {
+          final timings = details['timings'] as List<dynamic>?;
+          if (timings != null && timings.isNotEmpty) {
+            _originalAvailability = _convertTimingsToAvailability(timings);
+            dateAvailability = _convertAvailabilityToDialogFormat(_originalAvailability);
+            
+            // Generate formatted string for display
+            if (mounted) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  final String formattedString = generateFormattedString(
+                      dateAvailability, [
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                    'Saturday',
+                    'Sunday'
+                  ]);
+                  _availabilityController.text = formattedString;
+                }
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print('Error loading pharmacy profile: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     if (widget.isEdit) {
+      // Load existing values from ProfileController
       _selectedImage = _profileController.image.value;
-      _nameController.setText(_profileController.firstName.toString());
-      _contactController.setText(_profileController.phone.toString());
+      _originalImage = _selectedImage;
+      
+      _nameController.text = _profileController.firstName.toString();
+      _originalName = _nameController.text;
+      
+      _contactController.text = _profileController.phone.toString();
+      _originalPhone = _contactController.text;
+      
+      // Start with basic location from ProfileController, will be updated by _loadPharmacyProfile
+      _locationController.text = _profileController.location.value.toString();
+      _originalLocation = _locationController.text;
+      
+      // Load password from widget.password
+      _passwordController.text = widget.password;
+      _originalPassword = widget.password == 'null' ? null : widget.password;
+      
+      // Initialize availability as empty, will be loaded by _loadPharmacyProfile
+      _originalAvailability = [];
+      dateAvailability = [];
+      
+      // Fetch full pharmacy profile to get details.location and details.timings
+      _loadPharmacyProfile();
     }
-    ;
   }
 
   @override
@@ -158,28 +295,6 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                                             ),
                                           ),
                                         )),
-                              Positioned(
-                                bottom: 20,
-                                right: 100,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        color: ThemeUtil.isDarkMode(context)
-                                            ? AppColors.lightBlueColor3e3
-                                            : Color(0xff1C2A3A),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10.0),
-                                          topRight: Radius.circular(10.0),
-                                          bottomRight: Radius.circular(10.0),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: SvgPicture.asset(
-                                        'Assets/icons/pen.svg',
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                      ),
-                                    )),
-                              )
                             ],
                           ),
                   ),
@@ -191,6 +306,7 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                     focusNode: _focusNode1,
                     nextFocusNode: _focusNode2,
                     hintText: 'Pharmacy Name',
+                    showLabel: true,
                     icon: '',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -208,6 +324,7 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                     focusNode: _focusNode2,
                     nextFocusNode: _focusNode3,
                     hintText: 'Contact',
+                    showLabel: true,
                     icon: '',
                     validator: validatePhoneNumber,
                   ),
@@ -294,6 +411,44 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
+                  TextFormField(
+                    controller: _passwordController,
+                    focusNode: _focusNode5,
+                    obscureText: true,
+                    enableInteractiveSelection: true,
+                    readOnly: false,
+                    style: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
+                    cursorColor: const Color(0xffD1D5DB),
+                    decoration: InputDecoration(
+                      label: Text('Password'),
+                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                      hintText: 'Password',
+                      hintStyle: CustomTextStyles.lightTextStyle(color: Color(0xff9CA3AF)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Color(0xffD1D5DB)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Color(0xffD1D5DB)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Color(0xffD1D5DB)),
+                      ),
+                    ),
+                    validator: (value) {
+                      // Password is optional in edit mode
+                      return null;
+                    },
+                    onFieldSubmitted: (value) {
+                      _focusNode5.unfocus();
+                      FocusScope.of(context).requestFocus(_focusNode6);
+                    },
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
                   InkWell(
                       onTap: () {
                         pickSingleFile().then((filePaths) {
@@ -309,11 +464,10 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                         () => RoundedBorderTextField(
                           isenable: false,
                           showLabel: true,
-
                           showLoader: mediaController.imgUploaded.value,
                           controller: _prescriptionController,
-                          focusNode: _focusNode5,
-                          nextFocusNode: _focusNode6,
+                          focusNode: _focusNode6,
+                          nextFocusNode: _focusNode7,
                           hintText: 'Attach File of Prescription',
                           icon: 'Assets/icons/attach-icon.svg',
                           // validator: (value) {
@@ -340,13 +494,34 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
 
                               if (!_formKey.currentState!.validate()) {
                               } else {
+                                // Convert availability to API format
+                                List<Map<String, dynamic>> availability = [];
+                                if (dateAvailability.isNotEmpty) {
+                                  final List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                                  for (int i = 0; i < daysOfWeek.length; i++) {
+                                    if (dateAvailability[i].isNotEmpty) {
+                                      availability.add({
+                                        "day": daysOfWeek[i],
+                                        "times": dateAvailability[i].toList()
+                                      });
+                                    }
+                                  }
+                                }
+                                
+                                // Create original values map for comparison
+                                Map<String, dynamic> originalValues = {
+                                  'name': _originalName ?? '',
+                                  'phone': _originalPhone ?? '',
+                                  'location': _originalLocation ?? '',
+                                  'password': _originalPassword ?? '',
+                                  'image': _originalImage ?? '',
+                                };
+                                
                                 bool result = widget.isEdit
                                     ? await authController.editPharmacy(
                                         _nameController.text,
-                                        _profileController.email.value
-                                            .toString(),
-                                        _profileController.password.value
-                                            .toString(),
+                                        _profileController.email.value.toString(),
+                                        _passwordController.text,
                                         _locationController.text,
                                         "",
                                         _contactController.text,
@@ -356,7 +531,9 @@ class _PharmacyFormScreenState extends State<PharmacyFormScreen> {
                                         longitude.toString(),
                                         "ASDA21321312312",
                                         context,
-                                        _selectedImage.toString())
+                                        _selectedImage.toString(),
+                                        availability: availability,
+                                        originalValues: originalValues)
                                     : await authController.PharmacyRegister(
                                         _nameController.text,
                                         widget.email,

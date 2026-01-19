@@ -35,11 +35,10 @@ class DonorsCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: 100.h,
       decoration:
           BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10.0, 10),
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -51,12 +50,12 @@ class DonorsCardWidget extends StatelessWidget {
                           !imgUrl.contains('c894ac58-b8cd-47c0-94d1-3c4cea7dadab'))
                       ? Image.network(
                           imgUrl,
-                          height: 26.w,
+                          height: 22.w,
                           width: 35.71.w,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
-                              height: 26.w,
+                              height: 22.w,
                               width: 35.71.w,
                               decoration: BoxDecoration(
                                 color: ThemeUtil.isDarkMode(context)
@@ -66,7 +65,7 @@ class DonorsCardWidget extends StatelessWidget {
                               ),
                               child: Icon(
                                 Icons.person,
-                                size: 20.w,
+                                size: 16.w,
                                 color: ThemeUtil.isDarkMode(context)
                                     ? Color(0xff5A5A5A)
                                     : Color(0xffA5A5A5),
@@ -75,7 +74,7 @@ class DonorsCardWidget extends StatelessWidget {
                           },
                         )
                       : Container(
-                          height: 26.w,
+                          height: 22.w,
                           width: 35.71.w,
                           decoration: BoxDecoration(
                             color: ThemeUtil.isDarkMode(context)
@@ -85,7 +84,7 @@ class DonorsCardWidget extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.person,
-                            size: 20.w,
+                            size: 16.w,
                             color: ThemeUtil.isDarkMode(context)
                                 ? Color(0xff5A5A5A)
                                 : Color(0xffA5A5A5),
@@ -93,16 +92,17 @@ class DonorsCardWidget extends StatelessWidget {
                         )),
             ),
             SizedBox(
-              height: 1.h,
+              height: 0.8.h,
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Text(
-                    maxLines: 1,
                     docName,
-                    style: CustomTextStyles.darkHeadingTextStyle(size: 15),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: CustomTextStyles.darkHeadingTextStyle(size: 14),
                   ),
                 ),
                 InkWell(
@@ -120,9 +120,11 @@ class DonorsCardWidget extends StatelessWidget {
                     },
                     child: SvgPicture.asset(
                       'Assets/images/sms-notification.svg',
+                      width: 4.w,
+                      height: 4.w,
                     )),
                 SizedBox(
-                  width: 2.w,
+                  width: 1.5.w,
                 ),
                 InkWell(
                     onTap: () {
@@ -130,33 +132,45 @@ class DonorsCardWidget extends StatelessWidget {
                     },
                     child: SvgPicture.asset(
                       'Assets/images/call-add.svg',
+                      width: 4.w,
+                      height: 4.w,
                     ))
               ],
             ),
+            SizedBox(height: 0.3.h),
             Divider(
               color: AppColors.lightGreyColor,
+              thickness: 0.5,
             ),
+            SizedBox(height: 0.3.h),
             Text(
               Category,
               maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: CustomTextStyles.w600TextStyle(
-                  size: 13, color: Color(0xff4B5563)),
+                  size: 12, color: Color(0xff4B5563)),
             ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SvgPicture.asset('Assets/icons/location.svg'),
-                  SizedBox(
-                    width: 0.5.w,
-                  ),
-                  Expanded(
-                    child: Text(loction,
-                        maxLines: 2,
-                        style: CustomTextStyles.lightTextStyle(
-                            color: Color(0xff4B5563), size: 13)),
-                  )
-                ],
-              )
+            SizedBox(height: 0.3.h),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SvgPicture.asset(
+                  'Assets/icons/location.svg',
+                  width: 3.w,
+                  height: 3.w,
+                ),
+                SizedBox(
+                  width: 0.5.w,
+                ),
+                Expanded(
+                  child: Text(loction,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: CustomTextStyles.lightTextStyle(
+                          color: Color(0xff4B5563), size: 11)),
+                )
+              ],
+            ),
           ],
         ),
       ),

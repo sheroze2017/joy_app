@@ -74,19 +74,19 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
     if (hasValidImage) {
       return Image.network(
         imageUrl!,
-        width: 28.w,
-        height: 28.w,
+        width: 51.28.w,
+        height: 25.w,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Container(
-            width: 28.w,
-            height: 28.w,
+            width: 51.28.w,
+            height: 25.w,
             color: ThemeUtil.isDarkMode(context)
                 ? Color(0xff2A2A2A)
                 : Color(0xffE5E5E5),
             child: Icon(
               Icons.local_pharmacy,
-              size: 20,
+              size: 30,
               color: ThemeUtil.isDarkMode(context)
                   ? Color(0xff5A5A5A)
                   : Color(0xffA5A5A5),
@@ -96,14 +96,14 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
       );
     } else {
       return Container(
-        width: 28.w,
-        height: 28.w,
+        width: 51.28.w,
+        height: 25.w,
         color: ThemeUtil.isDarkMode(context)
             ? Color(0xff2A2A2A)
             : Color(0xffE5E5E5),
         child: Icon(
           Icons.local_pharmacy,
-          size: 20,
+          size: 30,
           color: ThemeUtil.isDarkMode(context)
               ? Color(0xff5A5A5A)
               : Color(0xffA5A5A5),
@@ -553,6 +553,19 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                 CrossAxisAlignment.start,
                                             children:
                                                 hospital.timings!.map((timing) {
+                                              // Handle both formats: times array or open/close
+                                              String timingText;
+                                              if (timing.times != null && timing.times!.isNotEmpty) {
+                                                // New format: times array
+                                                timingText = '${timing.day ?? ''}: ${timing.times!.join(' ')}';
+                                              } else if (timing.open != null && timing.close != null) {
+                                                // Old format: open/close
+                                                timingText = '${timing.day ?? ''}: ${timing.open} - ${timing.close}';
+                                              } else {
+                                                // No timing data
+                                                timingText = '${timing.day ?? ''}: -';
+                                              }
+                                              
                                               return Padding(
                                                 padding: const EdgeInsets.only(
                                                     bottom: 8.0),
@@ -560,7 +573,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        '${timing.day ?? ''}: ${timing.open ?? ''} - ${timing.close ?? ''}',
+                                                        timingText,
                                                         style: CustomTextStyles
                                                             .lightTextStyle(
                                                                 color: Color(
@@ -804,12 +817,8 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                               onTap: () {
                                               // Navigate to add pharmacy screen or show dialog
                                               // Navigate to pharmacy selection screen
-                                              // First fetch all pharmacies, then show selection screen
-                                              _hospitalDetailController.getAllDoctorPharmacies(
-                                                true,
-                                                _profileController.userId.value,
-                                                context,
-                                              ).then((_) {
+                                              // First fetch unlinked pharmacies, then show selection screen
+                                              _hospitalDetailController.getUnlinkedPharmacies(context).then((_) {
                                                   Get.to(
                                                   AllDocPharmacy(
                                                     appBarText: 'Select Pharmacy',
@@ -820,6 +829,9 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                   ),
                                                   transition: Transition.rightToLeft,
                                                 );
+                                              }).catchError((error) {
+                                                // Error already handled in getUnlinkedPharmacies
+                                                print('Error loading unlinked pharmacies: $error');
                                               });
                                             },
                                                 width: 55.w,
@@ -846,8 +858,8 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                               final confirmed = await showDialog<bool>(
                                                 context: context,
                                                 builder: (context) => AlertDialog(
-                                                  title: Text('Remove Pharmacy'),
-                                                  content: Text('Do you want to remove this pharmacy?'),
+                                                  title: Text('Delink Pharmacy'),
+                                                  content: Text('Do you want to delink this pharmacy from your hospital?'),
                                                   actions: [
                                                     TextButton(
                                                       onPressed: () => Navigator.pop(context, false),
@@ -855,16 +867,15 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                     ),
                                                     TextButton(
                                                       onPressed: () => Navigator.pop(context, true),
-                                                      child: Text('Remove', style: TextStyle(color: Colors.red)),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                      child: Text('Delink', style: TextStyle(color: Colors.red)),
+                                                    ),
+                                                  ],
+                                                ),
                                               );
                                               
                                               if (confirmed == true && pharmacyId != null && pharmacyId.isNotEmpty) {
-                                                await _hospitalDetailController.linkOrDelinkDoctorOrPharmacy(
+                                                await _hospitalDetailController.delinkPharmacy(
                                                   pharmacyId,
-                                                  null, // null to delink
                                                   context,
                                                 );
                                               }
@@ -1574,7 +1585,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                         ? Image.network(
                             pharmacyImage,
                             width: 51.28.w,
-                            height: 30.w,
+                            height: 25.w,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return _buildPharmacyImage(pharmacy, context);
@@ -1609,7 +1620,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                   SizedBox(height: 0.3.h),
                   Row(
                     children: [
-                      SvgPicture.asset('Assets/icons/pills.svg'),
+                      SvgPicture.asset('Assets/icons/pharmacy.svg'),
                       SizedBox(width: 0.5.w),
                       Text(
                         'Pharmacy',

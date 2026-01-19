@@ -46,7 +46,7 @@ class Data {
   String? updatedAt;
   BloodBankDetailsData? details; // Nested details object
   String? about;
-  String? timings;
+  dynamic timings; // Can be String or List<dynamic>
   int? patientsCount;
   int? experienceYears;
   double? rating;
@@ -108,7 +108,16 @@ class Data {
         ? BloodBankDetailsData.fromJson(json['details'])
         : null;
     about = json['about'];
-    timings = json['timings'];
+    // Handle timings as either String or List
+    if (json['timings'] != null) {
+      if (json['timings'] is List) {
+        timings = json['timings'];
+      } else {
+        timings = json['timings'].toString();
+      }
+    } else {
+      timings = null;
+    }
     patientsCount = json['patients_count'];
     experienceYears = json['experience_years'];
     rating = json['rating']?.toDouble();
@@ -173,14 +182,18 @@ class BloodBankDetailsData {
   String? lat;
   String? lng;
   String? location;
+  String? about;
+  List<dynamic>? timings; // Store timings if present
 
-  BloodBankDetailsData({this.placeId, this.lat, this.lng, this.location});
+  BloodBankDetailsData({this.placeId, this.lat, this.lng, this.location, this.about, this.timings});
 
   BloodBankDetailsData.fromJson(Map<String, dynamic> json) {
     placeId = json['place_id'];
-    lat = json['lat'];
-    lng = json['lng'];
+    lat = json['lat']?.toString();
+    lng = json['lng']?.toString();
     location = json['location'];
+    about = json['about'];
+    timings = json['timings']; // Store timings if present (won't break if missing)
   }
 
   Map<String, dynamic> toJson() {

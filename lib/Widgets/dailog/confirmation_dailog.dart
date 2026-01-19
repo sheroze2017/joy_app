@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
@@ -84,6 +83,51 @@ class ConfirmationUnLinkDailog extends StatelessWidget {
               onPressed: () async {
                 await _hospitalDetailController.unLinkProfile(
                     link_to_user_id, context);
+              },
+              backgroundColor: ThemeUtil.isDarkMode(context)
+                  ? Color(0xffC5D3E3)
+                  : Color(0xff1C2A3A),
+              textColor: ThemeUtil.isDarkMode(context)
+                  ? Color(0xff121212)
+                  : AppColors.whiteColor),
+        )
+      ],
+    );
+  }
+}
+
+class ConfirmationPharmacyLinkDailog extends StatelessWidget {
+  final String pharmacy_id;
+  ConfirmationPharmacyLinkDailog({super.key, required this.pharmacy_id});
+  final _hospitalDetailController = Get.find<HospitalDetailController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Link Pharmacy',
+          style: CustomTextStyles.darkTextStyle(
+              color: ThemeUtil.getCurrentTheme(context).primaryColor)),
+      content:
+          Text('Are you sure you want to link this pharmacy to your hospital?'),
+      actions: <Widget>[
+        RoundedButton(
+            text: 'No',
+            onPressed: () {
+              Get.back();
+            },
+            backgroundColor: ThemeUtil.isDarkMode(context)
+                ? AppColors.blackColor
+                : AppColors.whiteColor,
+            textColor: ThemeUtil.isDarkMode(context)
+                ? AppColors.whiteColor
+                : AppColors.blackColor),
+        Obx(
+          () => RoundedButton(
+              showLoader: _hospitalDetailController.linkLoader.value,
+              text: 'Yes',
+              onPressed: () async {
+                await _hospitalDetailController.linkPharmacy(
+                    pharmacy_id, context);
               },
               backgroundColor: ThemeUtil.isDarkMode(context)
                   ? Color(0xffC5D3E3)

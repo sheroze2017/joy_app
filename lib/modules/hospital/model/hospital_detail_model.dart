@@ -30,13 +30,20 @@ class HospitalTiming {
   String? day;
   String? open;
   String? close;
+  List<String>? times; // Support times array format from API
 
-  HospitalTiming({this.day, this.open, this.close});
+  HospitalTiming({this.day, this.open, this.close, this.times});
 
   HospitalTiming.fromJson(Map<String, dynamic> json) {
     day = json['day'];
     open = json['open'];
     close = json['close'];
+    // Handle times array format (new API format)
+    if (json['times'] != null) {
+      times = json['times'] is List
+          ? (json['times'] as List).map((e) => e.toString()).toList()
+          : null;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -44,6 +51,9 @@ class HospitalTiming {
     data['day'] = this.day;
     data['open'] = this.open;
     data['close'] = this.close;
+    if (times != null) {
+      data['times'] = times;
+    }
     return data;
   }
 }

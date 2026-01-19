@@ -127,11 +127,6 @@ class _FormScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    bottom: 25,
-                    right: 90,
-                    child: SvgPicture.asset('Assets/images/message-edit.svg'),
-                  ),
                 ],
               ),
               SizedBox(

@@ -57,11 +57,11 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
   final TextEditingController _feesController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  final TextEditingController _lnameController = TextEditingController();
   final TextEditingController _fnameController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _availabilityController = TextEditingController();
   final TextEditingController _aboutMeController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   // final TextEditingController _medicalCertificateController =
   //     TextEditingController();
@@ -77,44 +77,160 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
   final FocusNode _focusNode7 = FocusNode();
   final FocusNode _focusNode8 = FocusNode();
   final FocusNode _focusNode9 = FocusNode();
-  final FocusNode _focusNode10 = FocusNode();
-  final FocusNode _focusNode11 = FocusNode();
 
   TextEditingController controller = TextEditingController();
   final authController = Get.find<AuthController>();
   final _formKey = GlobalKey<FormState>();
+  // Convert availability to List<Set<String>> for dialog
+  List<Set<String>> _convertAvailabilityToDialogFormat(List<Map<String, dynamic>>? availability) {
+    final List<Set<String>> result = List.generate(7, (_) => <String>{});
+    if (availability == null || availability.isEmpty) return result;
+    
+    final List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    
+    for (var avail in availability) {
+      final day = avail['day'] as String?;
+      final times = avail['times'] as List<dynamic>?;
+      if (day != null && times != null) {
+        final dayIndex = daysOfWeek.indexWhere((d) => d.toLowerCase() == day.toLowerCase());
+        if (dayIndex != -1) {
+          result[dayIndex] = times.map((t) => t.toString()).toSet();
+        }
+      }
+    }
+    return result;
+  }
+  
+  // Helper function to convert availability to API format
+  List<Map<String, dynamic>> convertAvailabilityToApiFormat(List<Set<String>> dateAvailability) {
+    final List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    final List<Map<String, dynamic>> availability = [];
+    
+    for (int i = 0; i < daysOfWeek.length; i++) {
+      if (dateAvailability[i].isNotEmpty) {
+        availability.add({
+          "day": daysOfWeek[i],
+          "times": dateAvailability[i].toList()
+        });
+      }
+    }
+    return availability;
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
-    if (widget.isEdit) {
-      _selectedImage = widget.details!.image.toString();
-      _fnameController.setText(
-          widget.details == null ? '' : widget.details!.name.toString());
-
-      _genderController.setText(
-          widget.details == null ? '' : widget.details!.gender.toString());
-      _locationController.setText(
-          widget.details == null ? '' : widget.details!.location.toString());
-      _expertiseController.setText(
-          widget.details == null ? '' : widget.details!.expertise.toString());
-      _feesController.setText(widget.details == null
-          ? ''
-          : widget.details!.consultationFee.toString());
-      _qualificationController
-        ..setText(widget.details == null
-            ? ''
-            : widget.details!.qualifications.toString());
-      _phoneController
-        ..setText(
-            widget.details == null ? '' : widget.details!.phone.toString());
-      _selectedImage =
-          widget.details == null ? '' : widget.details!.image.toString();
-    }
     super.initState();
+    if (widget.isEdit && widget.details != null) {
+      final details = widget.details!;
+      
+      // Load existing values
+      _selectedImage = details.image?.toString() ?? '';
+      _originalImage = _selectedImage;
+      
+      _fnameController.text = details.name?.toString() ?? '';
+      _originalName = _fnameController.text;
+      
+      // Set gender from details.gender (normalize to match dropdown values: "Male" or "Female")
+      final genderValue = details.gender?.toString() ?? '';
+      // Normalize gender value to match dropdown options
+      String normalizedGender = '';
+      if (genderValue.toLowerCase().contains('female')) {
+        normalizedGender = 'Female';
+      } else if (genderValue.toLowerCase().contains('male')) {
+        normalizedGender = 'Male';
+      }
+      _genderController.text = normalizedGender;
+      _originalGender = normalizedGender;
+      
+      _locationController.text = details.location?.toString() ?? '';
+      _originalLocation = _locationController.text;
+      
+      _expertiseController.text = details.expertise?.toString() ?? '';
+      _originalExpertise = _expertiseController.text;
+      
+      _feesController.text = details.consultationFee?.toString() ?? '';
+      _originalFees = _feesController.text;
+      
+      _qualificationController.text = details.qualifications?.toString() ?? '';
+      _originalQualification = _qualificationController.text;
+      
+      _phoneController.text = details.phone?.toString() ?? '';
+      _originalPhone = _phoneController.text;
+      
+      _aboutMeController.text = details.aboutMe?.toString() ?? '';
+      _originalAboutMe = _aboutMeController.text;
+      
+      // Load password - initialize as empty in edit mode so user can type new password
+      // Store original password but don't pre-fill the field
+      // Handle "null" string case (when password is passed as string "null")
+      if (widget.password == 'null' || widget.password.isEmpty) {
+        _originalPassword = '';
+      } else {
+        _originalPassword = widget.password;
+      }
+      // Ensure password field is empty and editable - dispose and recreate controller if needed
+      _passwordController.clear();
+      // Force controller to be ready for input
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _passwordController.clear();
+        }
+      });
+      
+      // Document might be in a different field or not available
+      _originalDocument = '';
+      
+      // Load availability from details
+      if (details.availability != null && details.availability!.isNotEmpty) {
+        _originalAvailability = details.availability!.map((avail) {
+          // Handle times as String (comma-separated) or List
+          List<String> timesList = [];
+          if (avail.times != null && avail.times!.isNotEmpty) {
+            // Availability model stores times as comma-separated string
+            timesList = avail.times!.split(',').map((t) => t.trim()).where((t) => t.isNotEmpty).toList();
+          }
+          return {
+            'day': avail.day,
+            'times': timesList
+          };
+        }).toList();
+        dateAvailability = _convertAvailabilityToDialogFormat(_originalAvailability);
+        
+        // Generate formatted string for display
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final String formattedString = generateFormattedString(
+              dateAvailability, [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday'
+          ]);
+          _availabilityController.text = formattedString;
+        });
+      }
+    }
   }
 
   var selectedFilePath = [];
   String? _selectedImage;
+  
+  // Store original values for comparison
+  String? _originalName;
+  String? _originalGender;
+  String? _originalLocation;
+  String? _originalExpertise;
+  String? _originalFees;
+  String? _originalQualification;
+  String? _originalPhone;
+  String? _originalAboutMe;
+  String? _originalImage;
+  String? _originalDocument;
+  String? _originalPassword;
+  List<Map<String, dynamic>>? _originalAvailability;
+  bool _availabilityChanged = false;
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -198,28 +314,6 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                             ),
                                           ),
                                         )),
-                              Positioned(
-                                bottom: 20,
-                                right: 100,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        color: ThemeUtil.isDarkMode(context)
-                                            ? AppColors.lightBlueColor3e3
-                                            : Color(0xff1C2A3A),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10.0),
-                                          topRight: Radius.circular(10.0),
-                                          bottomRight: Radius.circular(10.0),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: SvgPicture.asset(
-                                        'Assets/icons/pen.svg',
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                      ),
-                                    )),
-                              )
                             ],
                           ),
                   ),
@@ -227,32 +321,23 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                    showLabel: true,
                     validator: validateName,
                     controller: _fnameController,
                     focusNode: _focusNode1,
                     nextFocusNode: _focusNode2,
-                    hintText: 'First Name',
+                    hintText: 'Name',
                     icon: '',
                   ),
                   SizedBox(
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
-                    // validator: validateName,
-                    controller: _lnameController,
-                    focusNode: _focusNode2,
-                    nextFocusNode: _focusNode3,
-                    hintText: 'Last Name',
-                    icon: '',
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  RoundedBorderTextField(
+                    showLabel: true,
                     //validator: validateName,
                     controller: _aboutMeController,
-                    focusNode: _focusNode3,
-                    nextFocusNode: _focusNode4,
+                    focusNode: _focusNode2,
+                    nextFocusNode: _focusNode3,
                     hintText: 'About Me',
                     icon: '',
                     maxlines: true,
@@ -260,19 +345,63 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  SearchSingleDropdown(
-                    hintText: 'Gender',
-                    items: ['Male', 'Female'],
-                    value: '',
-                    onChanged: (String? value) {
-                      _genderController.text = value.toString();
-                    },
+                  RoundedBorderTextField(
+                    showLabel: true,
+                    controller: _passwordController,
+                    focusNode: _focusNode3,
+                    nextFocusNode: _focusNode4,
+                    hintText: 'Password',
                     icon: '',
+                    validator: (value) {
+                      if (widget.isEdit && (value == null || value.isEmpty)) {
+                        // Password is optional in edit mode
+                        return null;
+                      }
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
+                        child: Text(
+                          'Gender',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff6B7280)
+                                : Color(0xff4B5563),
+                          ),
+                        ),
+                      ),
+                      SearchSingleDropdown(
+                        hintText: 'Gender',
+                        items: ['Male', 'Female'],
+                        value: _genderController.text.isEmpty ? null : _genderController.text,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            _genderController.text = value;
+                          }
+                        },
+                        icon: '',
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                    showLabel: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter expertise';
@@ -300,12 +429,12 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                           double longitude = value['longitude'];
                           String searchValue = value['searchValue'];
 
-                          _locationController.setText(value['searchValue']);
+                          _locationController.text = value['searchValue'];
                         }
                       });
                     },
                     child: RoundedBorderTextField(
-                      //  showLabel: true,
+                      showLabel: true,
                       isenable: false,
                       focusNode: _focusNode5,
                       nextFocusNode: _focusNode6,
@@ -325,6 +454,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                    showLabel: true,
                     controller: _feesController,
                     focusNode: _focusNode6,
                     nextFocusNode: _focusNode7,
@@ -336,9 +466,10 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                    showLabel: true,
                     controller: _qualificationController,
-                    focusNode: _focusNode7,
-                    nextFocusNode: _focusNode8,
+                    focusNode: _focusNode6,
+                    nextFocusNode: _focusNode7,
                     hintText: 'Qualification',
                     icon: '',
                     validator: (value) {
@@ -353,10 +484,11 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                      showLabel: true,
                       controller: _phoneController,
-                      focusNode: _focusNode8,
-                      nextFocusNode: _focusNode9,
-                      hintText: 'Phone No',
+                      focusNode: _focusNode7,
+                      nextFocusNode: _focusNode8,
+                      hintText: 'Phone Number',
                       icon: '',
                       validator: validatePhoneNumber),
                   SizedBox(
@@ -381,8 +513,8 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                           isenable: false,
                           controller:
                               mediaController.certificateController.value,
-                          focusNode: _focusNode9,
-                          nextFocusNode: _focusNode10,
+                          focusNode: _focusNode8,
+                          nextFocusNode: _focusNode9,
                           validator: (value) {
                             // Document is optional, no validation needed
                             return null;
@@ -436,10 +568,10 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                   onConfirm:
                                       (List<Set<String>> selectedTimes) async {
                                     dateAvailability = selectedTimes;
+                                    _availabilityChanged = true;
                                     setState(() {});
-                                    String result =
-                                        await generateFormattedString(
-                                            selectedTimes, [
+                                    String result = generateFormattedString(
+                                        selectedTimes, [
                                       'Monday',
                                       'Tuesday',
                                       'Wednesday',
@@ -448,7 +580,7 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                       'Saturday',
                                       'Sunday'
                                     ]);
-                                    _availabilityController.setText(result);
+                                    _availabilityController.text = result;
                                   },
                                 );
                               },
@@ -456,14 +588,17 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                           },
                           child: RoundedBorderTextField(
                             maxlines: true,
-                            focusNode: _focusNode10,
-                            nextFocusNode: _focusNode11,
+                            focusNode: _focusNode9,
                             isenable: false,
-                            //showLabel: true,
+                            showLabel: true,
                             controller: _availabilityController,
                             hintText: 'Availability',
                             icon: '',
                             validator: (value) {
+                              // Make availability optional in edit mode if it already exists
+                              if (widget.isEdit && _originalAvailability != null && _originalAvailability!.isNotEmpty) {
+                                return null;
+                              }
                               if (value == null || value.isEmpty) {
                                 return 'Please enter availability';
                               } else {
@@ -529,11 +664,19 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                       );
                                     }
                                   } else {
+                                    // Convert availability to API format if changed
+                                    List<Map<String, dynamic>>? availabilityToSend;
+                                    if (_availabilityChanged || (_originalAvailability == null || _originalAvailability!.isEmpty) && dateAvailability.isNotEmpty) {
+                                      availabilityToSend = convertAvailabilityToApiFormat(dateAvailability);
+                                    }
+                                    
                                     await _doctorUpdateController.updateDoctor(
                                         widget.details!.userId.toString(),
                                         _fnameController.text,
                                         widget.email,
-                                        widget.password,
+                                        _passwordController.text.isEmpty 
+                                            ? _originalPassword ?? widget.password
+                                            : _passwordController.text,
                                         _locationController.text,
                                         await getToken().toString(),
                                         _genderController.text,
@@ -547,7 +690,22 @@ class _DoctorFormScreenState extends State<DoctorFormScreen> {
                                             .certificateController.value.text,
                                         _aboutMeController.text,
                                         context,
-                                        _selectedImage.toString());
+                                        _selectedImage.toString(),
+                                        availability: availabilityToSend,
+                                        originalValues: {
+                                          'name': _originalName,
+                                          'email': widget.email,
+                                          'password': _originalPassword ?? widget.password,
+                                          'location': _originalLocation,
+                                          'gender': _originalGender,
+                                          'phone': _originalPhone,
+                                          'expertise': _originalExpertise,
+                                          'consultation_fee': _originalFees,
+                                          'qualifications': _originalQualification,
+                                          'document': _originalDocument,
+                                          'about_me': _originalAboutMe,
+                                          'image': _originalImage,
+                                        });
                                     final _doctorController =
                                         Get.find<DoctorController>();
                                     _doctorController.getDoctorDetail();

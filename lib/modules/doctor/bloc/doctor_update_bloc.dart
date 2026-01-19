@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/core/network/request.dart';
 import 'package:joy_app/modules/doctor/bloc/doctor_api.dart';
+import 'package:joy_app/modules/splash/view/splash_screen.dart';
 import 'package:joy_app/widgets/custom_message/flutter_toast_message.dart';
 
 class updateDotorController extends GetxController {
@@ -36,7 +37,8 @@ class updateDotorController extends GetxController {
       BuildContext context,
       image,
       {bool profileCompleted = false,
-      List<Map<String, dynamic>>? availability}) async {
+      List<Map<String, dynamic>>? availability,
+      Map<String, dynamic>? originalValues}) async {
     editLoader.value = true;
     try {
       bool response = await doctorApi.updateDoctor(
@@ -57,11 +59,17 @@ class updateDotorController extends GetxController {
           aboutMe,
           image,
           profileCompleted: profileCompleted,
-          availability: availability);
+          availability: availability,
+          originalValues: originalValues);
 
       if (response == true) {
         editLoader.value = false;
         showSuccessMessage(context, 'Profile Updated');
+        
+        // Navigate to splash screen to reload user object
+        Future.delayed(Duration(milliseconds: 1500), () {
+          Get.offAll(() => SplashScreen());
+        });
       } else {
         showErrorMessage(context, 'Error updating Profile');
         editLoader.value = false;

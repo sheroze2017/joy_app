@@ -48,6 +48,25 @@ class HospitalDetailController extends GetxController {
     } finally {}
   }
 
+  Future<PharmacyModel> getUnlinkedPharmacies(BuildContext context) async {
+    hospitalPharmacies.clear();
+
+    try {
+      PharmacyModel response =
+          await hospitalDetailsApi.getUnlinkedPharmacies();
+      if (response.data != null) {
+        response.data!.forEach((element) {
+          hospitalPharmacies.add(element);
+        });
+      } else {}
+      return response;
+    } catch (error) {
+      print('Error fetching unlinked pharmacies: $error');
+      showErrorMessage(context, 'Failed to load pharmacies: ${error.toString()}');
+      throw (error);
+    } finally {}
+  }
+
   Future<PharmacyModel> getAllDoctorHospital(
       bool isHospital, String hospitalId, BuildContext context) async {
     UserHive? currentUser = await getCurrentUser();
@@ -179,6 +198,76 @@ class HospitalDetailController extends GetxController {
       showErrorMessage(context, error.toString());
       linkLoader.value = false;
       return false;
+    } finally {
+      linkLoader.value = false;
+    }
+  }
+
+  Future<void> linkPharmacy(String pharmacyId, BuildContext context) async {
+    UserHive? currentUser = await getCurrentUser();
+
+    linkLoader.value = true;
+    try {
+      // When linking, only send pharmacy_id (isDelink = false)
+      final response = await hospitalDetailsApi.linkOrDelinkPharmacy(pharmacyId, isDelink: false);
+
+      // Backend sometimes returns "sucess" instead of "success"
+      final bool isSuccessFlag =
+          (response['success'] ?? response['sucess'] ?? false) == true;
+
+      if (response['code'] == 200 && isSuccessFlag) {
+        // Refresh hospital details to get updated list
+        await getHospitalDetails(
+            true, currentUser!.userId.toString(), context);
+        // Close the confirmation dialog
+        Get.back();
+        // Navigate back from the selection screen
+        Get.back();
+        // Show success message after navigation completes
+        Future.delayed(Duration(milliseconds: 300), () {
+          if (Get.context != null) {
+            showSuccessMessage(Get.context!, 'Pharmacy linked successfully');
+          }
+        });
+        linkLoader.value = false;
+      } else {
+        showErrorMessage(context, response['message'] ?? 'Operation failed');
+        linkLoader.value = false;
+      }
+    } catch (error) {
+      showErrorMessage(context, error.toString());
+      linkLoader.value = false;
+    } finally {
+      linkLoader.value = false;
+    }
+  }
+
+  Future<void> delinkPharmacy(String pharmacyId, BuildContext context) async {
+    UserHive? currentUser = await getCurrentUser();
+
+    linkLoader.value = true;
+    try {
+      // When delinking, send pharmacy_id and hospital_id: null (isDelink = true)
+      final response = await hospitalDetailsApi.linkOrDelinkPharmacy(pharmacyId, isDelink: true);
+
+      // Backend sometimes returns "sucess" instead of "success"
+      final bool isSuccessFlag =
+          (response['success'] ?? response['sucess'] ?? false) == true;
+
+      if (response['code'] == 200 && isSuccessFlag) {
+        // Refresh hospital details to get updated list
+        await getHospitalDetails(
+            true, currentUser!.userId.toString(), context);
+        // Show success message
+        showSuccessMessage(context, 'Pharmacy delinked successfully');
+        linkLoader.value = false;
+      } else {
+        showErrorMessage(context, response['message'] ?? 'Operation failed');
+        linkLoader.value = false;
+      }
+    } catch (error) {
+      showErrorMessage(context, error.toString());
+      linkLoader.value = false;
     } finally {
       linkLoader.value = false;
     }

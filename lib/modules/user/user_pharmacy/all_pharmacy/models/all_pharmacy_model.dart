@@ -80,10 +80,21 @@ class PharmacyModelData {
     phone = json['phone'] ?? '';
     deviceToken = json['device_token'] ?? '';
     pharmacyDetailId = json['pharmacy_detail_id'] ?? 1;
-    placeId = json['place_id'] ?? '';
-    lat = json['lat'] ?? '';
-    lng = json['lng'] ?? '';
-    location = json['location'];
+    
+    // Handle nested details object (from getUnlinkedPharmacies API)
+    if (json['details'] != null && json['details'] is Map) {
+      final details = json['details'] as Map<String, dynamic>;
+      placeId = details['place_id'] ?? json['place_id'] ?? '';
+      lat = details['lat'] ?? json['lat'] ?? '';
+      lng = details['lng'] ?? json['lng'] ?? '';
+      location = details['location'] ?? json['location'];
+    } else {
+      // Fallback to root level if details not present
+      placeId = json['place_id'] ?? '';
+      lat = json['lat'] ?? '';
+      lng = json['lng'] ?? '';
+      location = json['location'];
+    }
     if (json['reviews'] != null) {
       reviews = <PharReviews>[];
       json['reviews'].forEach((v) {

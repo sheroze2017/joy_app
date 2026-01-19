@@ -48,6 +48,7 @@ class Endpoints {
   //Pharmacy
 
   static String getAllPharmacy = '/pharmacy/getAllPharmacies';
+  static String getUnlinkedPharmacies = '/pharmacy/getUnlinkedPharmacies';
   static String getPharmacyProduct = '/pharmacy/getAllProdcuts';
   static String createProduct = '/pharmacy/createProduct';
   static String getPharmacyProductDetails = '/pharmacy/getProductDetails';
@@ -65,6 +66,7 @@ class Endpoints {
   static String getHospitalDetail = '/hospital/getHospitalDetails';
   static String linkHospital = '/auth/linkUserToUser';
   static String linkOrDelinkHospital = '/auth/linkOrDelinkHospital';
+  static String linkOrDelinkPharmacy = '/hospital/linkOrDelinkPharmacy';
 
   //Social Media
   static String getAllPosts = '/auth/getAllPosts';
@@ -84,6 +86,7 @@ class Endpoints {
   static String getAllFriendWithStatus = '/user/getAllFriends';
   static String getAllSearchUserDetail = '/user/getSearchedUserDetails';
   static String getMyProfile = '/user/getMyProfile';
+  static String getProfile = '/user/getProfile';
   static String getAnotherUserProfile = '/user/getAnotherUserProfile';
   static String getFriendRequestsAndSuggestions =
       '/user/getFriendRequestsAndSuggestions';

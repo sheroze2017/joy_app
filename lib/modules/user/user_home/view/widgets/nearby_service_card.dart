@@ -113,18 +113,24 @@ class NearbyServiceCard extends StatelessWidget {
 
     if (isValidUrl) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
         child: CachedNetworkImage(
           imageUrl: url.trim(),
-          width: 35.71.w,
+          width: double.infinity,
           height: 26.w,
           fit: BoxFit.cover,
           errorWidget: (context, url, error) => Container(
-            width: 35.71.w,
+            width: double.infinity,
             height: 26.w,
             decoration: BoxDecoration(
               color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
             ),
             child: Icon(
               Icons.local_pharmacy,
@@ -136,11 +142,14 @@ class NearbyServiceCard extends StatelessWidget {
       );
     }
     return Container(
-      width: 35.71.w,
+      width: double.infinity,
       height: 26.w,
       decoration: BoxDecoration(
         color: ThemeUtil.isDarkMode(context) ? Color(0xff2A2A2A) : Color(0xffE5E5E5),
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
       ),
       child: Icon(
         Icons.local_pharmacy,
@@ -163,12 +172,8 @@ class NearbyServiceCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min, // Minimize vertical space
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0, bottom: 4.0), // Reduced bottom padding
-              child: _buildAvatarWidget(image, context),
-            ),
-          ),
+          _buildAvatarWidget(image, context),
+          SizedBox(height: 0.5.h),
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: Text(

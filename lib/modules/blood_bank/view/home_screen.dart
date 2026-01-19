@@ -20,6 +20,39 @@ import '../model/blood_bank_details_model.dart';
 class BloodBankHomeScreen extends StatelessWidget {
   BloodBankHomeScreen({super.key});
   BloodBankController _bloodBankController = Get.put(BloodBankController());
+  
+  // Helper method to format timings display (handles both String and List)
+  String _getTimingsDisplayText(dynamic timings) {
+    if (timings == null) {
+      return 'Timings not available';
+    }
+    if (timings is String) {
+      return timings.isNotEmpty ? timings : 'Timings not available';
+    }
+    if (timings is List) {
+      if (timings.isEmpty) {
+        return 'Timings not available';
+      }
+      // Format list of timing objects
+      final List<String> formattedTimings = [];
+      for (var timing in timings) {
+        if (timing is Map) {
+          final day = timing['day']?.toString() ?? '';
+          final times = timing['times'];
+          if (day.isNotEmpty && times != null) {
+            if (times is List) {
+              formattedTimings.add('$day: ${times.join(', ')}');
+            } else {
+              formattedTimings.add('$day: $times');
+            }
+          }
+        }
+      }
+      return formattedTimings.isEmpty ? 'Timings not available' : formattedTimings.join('\n');
+    }
+    return 'Timings not available';
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +96,7 @@ class BloodBankHomeScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                height: 45.w,
+                                height: 35.w,
                                 child: Obx(() => _HorizontalDoctorCategories(
                                   isBloodBank: true,
                                   bloodBankDetail: _bloodBankController.bloodBankDetail?.data,
@@ -247,10 +280,7 @@ class BloodBankHomeScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 0.5.h),
                               Text(
-                                _bloodBankController.bloodBankDetail?.data?.timings != null &&
-                                        _bloodBankController.bloodBankDetail!.data!.timings!.isNotEmpty
-                                    ? _bloodBankController.bloodBankDetail!.data!.timings!
-                                    : 'Timings not available',
+                                _getTimingsDisplayText(_bloodBankController.bloodBankDetail?.data?.timings),
                                 style:
                                     CustomTextStyles.lightTextStyle(size: 14),
                               ),
@@ -373,11 +403,36 @@ class BloodBankHomeScreen extends StatelessWidget {
     Map<int, Set<String>> selectedTimesPerDay = {};
     
     // Initialize with existing timings if available
-    final existingTimings = controller.bloodBankDetail?.data?.timings ?? '';
-    if (existingTimings.isNotEmpty) {
-      // Parse existing timings (simple parsing - can be improved)
-      // Format: "Monday-Friday: 9:00 AM - 6:00 PM, Saturday-Sunday: 10:00 AM - 4:00 PM"
-      // For now, we'll just initialize empty
+    final existingTimings = controller.bloodBankDetail?.data?.timings;
+    if (existingTimings != null) {
+      // Handle timings as either String or List
+      String timingsString = '';
+      if (existingTimings is String && existingTimings.isNotEmpty) {
+        timingsString = existingTimings;
+      } else if (existingTimings is List && existingTimings.isNotEmpty) {
+        // Format list of timing objects
+        final List<String> formattedTimings = [];
+        for (var timing in existingTimings) {
+          if (timing is Map) {
+            final day = timing['day']?.toString() ?? '';
+            final times = timing['times'];
+            if (day.isNotEmpty && times != null) {
+              if (times is List) {
+                formattedTimings.add('$day: ${times.join(', ')}');
+              } else {
+                formattedTimings.add('$day: $times');
+              }
+            }
+          }
+        }
+        timingsString = formattedTimings.join('\n');
+      }
+      
+      if (timingsString.isNotEmpty) {
+        // Parse existing timings (simple parsing - can be improved)
+        // Format: "Monday-Friday: 9:00 AM - 6:00 PM, Saturday-Sunday: 10:00 AM - 4:00 PM"
+        // For now, we'll just initialize empty
+      }
     }
 
     showModalBottomSheet(

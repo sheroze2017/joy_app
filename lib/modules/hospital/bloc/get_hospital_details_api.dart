@@ -21,6 +21,16 @@ class HospitalDetailsApi {
     }
   }
 
+  Future<PharmacyModel> getUnlinkedPharmacies() async {
+    try {
+      final result = await _dioClient.get(Endpoints.getUnlinkedPharmacies);
+      return PharmacyModel.fromJson(result);
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
   Future<PharmacyModel> getAllHospitalDoctors(String hospitalId) async {
     try {
       final result = await _dioClient
@@ -68,6 +78,30 @@ class HospitalDetailsApi {
       }
       final result = await _dioClient.post(
           Endpoints.linkOrDelinkHospital,
+          data: requestData);
+      return result;
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
+  Future<Map<String, dynamic>> linkOrDelinkPharmacy(String pharmacyId, {String? hospitalId, bool isDelink = false}) async {
+    try {
+      final requestData = <String, dynamic>{
+        "pharmacy_id": pharmacyId,
+      };
+      // When linking: only send pharmacy_id
+      // When delinking: send pharmacy_id and hospital_id: null
+      if (isDelink) {
+        requestData["hospital_id"] = null;
+      }
+      // If hospitalId is explicitly provided (not null), include it
+      if (hospitalId != null) {
+        requestData["hospital_id"] = hospitalId;
+      }
+      final result = await _dioClient.post(
+          Endpoints.linkOrDelinkPharmacy,
           data: requestData);
       return result;
     } catch (e) {

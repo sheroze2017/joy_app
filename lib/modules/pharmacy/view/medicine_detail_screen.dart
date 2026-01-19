@@ -6,6 +6,7 @@ import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmacy_bloc.dart';
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -33,11 +34,22 @@ int count = 0;
 
 class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
   final pharmacyController = Get.find<AllPharmacyController>();
+  bool _isHospital = false;
+
+  Future<void> _checkHospitalRole() async {
+    final currentUser = await getCurrentUser();
+    if (mounted) {
+      setState(() {
+        _isHospital = currentUser?.userRole == 'HOSPITAL';
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     pharmacyController.getPharmacyProductDetails(widget.productId);
+    _checkHospitalRole();
   }
 
   @override
@@ -51,7 +63,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
             // width: .w,
             color: ThemeUtil.isDarkMode(context) ? Color(0xffE8E8E8) : null,
           ),
-          actions: (widget.isPharmacyAdmin || widget.isHospital)
+          actions: (widget.isPharmacyAdmin || _isHospital)
               ? []
               : [
                   Padding(
@@ -176,7 +188,7 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                       ],
                                     ),
                                   ),
-                                  (widget.isPharmacyAdmin || widget.isHospital)
+                                  (widget.isPharmacyAdmin || _isHospital)
                                       ? Container()
                                       : Row(
                                           children: [
@@ -316,7 +328,9 @@ class _MedicineDetailScreenState extends State<MedicineDetailScreen> {
                                         )
                                       ],
                                     )
-                                  : Row(
+                                  : _isHospital
+                                      ? SizedBox.shrink() // Hide buttons for HOSPITAL role
+                                      : Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [

@@ -502,38 +502,45 @@ class DoctorCategory extends StatelessWidget {
             color: bgColor, borderRadius: BorderRadius.circular(22.31)),
         child: Padding(
           padding: isBloodBank
-              ? EdgeInsets.fromLTRB(15.44, 15.44, 12, 15.44)
+              ? EdgeInsets.fromLTRB(15.44, 8, 12, 8)
               : EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 decoration: BoxDecoration(
                     color: fgColor, borderRadius: BorderRadius.circular(20)),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(imagePath),
+                  padding: EdgeInsets.all(isBloodBank ? 5.0 : 8.0),
+                  child: SvgPicture.asset(
+                    imagePath,
+                    width: isBloodBank ? 18 : null,
+                    height: isBloodBank ? 18 : null,
+                  ),
                 ),
               ),
+              SizedBox(height: isBloodBank ? 6 : 0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     catrgory,
                     style: CustomTextStyles.w600TextStyle(
                         color: AppColors.blackColor393,
-                        size: isBloodBank ? 16 : 18.86,
+                        size: isBloodBank ? 13 : 18.86,
                         letterspacing: -1),
                   ),
-                  Text(
-                    isBloodBank
-                        ? '${DoctorCount}+ ${isAppeal ? 'Donors Available' : 'Patients waiting'}'
-                        : '${DoctorCount} Doctors',
-                    style: CustomTextStyles.lightTextStyle(
-                        color: AppColors.blackColor393,
-                        size: isBloodBank ? 8 : 15.44),
-                  ),
+                  // Hide the count text for blood bank mode
+                  if (!isBloodBank)
+                    Text(
+                      '${DoctorCount} Doctors',
+                      style: CustomTextStyles.lightTextStyle(
+                          color: AppColors.blackColor393,
+                          size: 15.44),
+                    ),
                 ],
               ),
               // Remove round circles for blood bank mode - only show for user mode and not blood bank

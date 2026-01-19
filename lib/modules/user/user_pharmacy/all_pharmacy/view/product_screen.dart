@@ -7,6 +7,7 @@ import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/bloc/all_pharmac
 import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/models/pharmacy_product_model.dart';
 import 'package:joy_app/modules/pharmacy/view/checkout/mycart_screen.dart';
 import 'package:joy_app/modules/pharmacy/view/medicine_detail_screen.dart';
+import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/theme.dart';
@@ -31,10 +32,21 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   final pharmacyController = Get.find<AllPharmacyController>();
+  bool _isHospitalRole = false;
+
+  Future<void> _checkHospitalRole() async {
+    final currentUser = await getCurrentUser();
+    if (mounted) {
+      setState(() {
+        _isHospitalRole = currentUser?.userRole == 'HOSPITAL';
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _checkHospitalRole();
     // Defer API call until after the first frame to avoid setState during build error
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Clear previous products and load new ones
@@ -76,7 +88,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       )),
                 ),
               )
-            else if (!widget.isHospital)
+            else if (!_isHospitalRole)
               Obx(() => InkWell(
                     onTap: () {
                       Get.to(MyCartScreen(), transition: Transition.native);
@@ -245,6 +257,11 @@ class _UserProductCardState extends State<_UserProductCard> {
     return widget.pharmacyController.getQuantityOfProduct(widget.product);
   }
 
+  Future<bool> _isHospitalRole() async {
+    final currentUser = await getCurrentUser();
+    return currentUser?.userRole == 'HOSPITAL';
+  }
+
   @override
   Widget build(BuildContext context) {
     final category = ['pills', 'syrupe', 'round_pills', 'capsule', 'injection'];
@@ -310,81 +327,90 @@ class _UserProductCardState extends State<_UserProductCard> {
                   ),
                 ],
               ),
-            // Quantity controls and Add to Cart button - Always show for users
-            Obx(() {
-              final cartQuantity = getQuantity();
-              return cartQuantity > 0
-                  ? GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {}, // Stop event propagation to parent InkWell
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              // Remove from cart (will handle not going below 0)
-                              widget.pharmacyController.removeFromCart(widget.product);
-                            },
-                            child: Container(
-                              width: 8.w,
-                              height: 8.w,
-                              decoration: BoxDecoration(
-                                color: AppColors.darkGreenColor,
-                                borderRadius: BorderRadius.circular(8),
+            // Quantity controls and Add to Cart button - Hide for HOSPITAL role
+            FutureBuilder<bool>(
+              future: _isHospitalRole(),
+              builder: (context, snapshot) {
+                final isHospital = snapshot.data ?? false;
+                if (isHospital) {
+                  return SizedBox.shrink(); // Hide buttons for HOSPITAL role
+                }
+                return Obx(() {
+                  final cartQuantity = getQuantity();
+                  return cartQuantity > 0
+                      ? GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {}, // Stop event propagation to parent InkWell
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  // Remove from cart (will handle not going below 0)
+                                  widget.pharmacyController.removeFromCart(widget.product);
+                                },
+                                child: Container(
+                                  width: 8.w,
+                                  height: 8.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.darkGreenColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.remove,
+                                    color: Colors.white,
+                                    size: 4.w,
+                                  ),
+                                ),
                               ),
-                              child: Icon(
-                                Icons.remove,
-                                color: Colors.white,
-                                size: 4.w,
+                              Text(
+                                cartQuantity.toString(),
+                                style: CustomTextStyles.darkHeadingTextStyle(
+                                    size: 16),
                               ),
-                            ),
+                              InkWell(
+                                onTap: () {
+                                  // Add to cart (validation is handled in the bloc method)
+                                  widget.pharmacyController.addToCart(
+                                      widget.product, context);
+                                },
+                                child: Container(
+                                  width: 8.w,
+                                  height: 8.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.darkGreenColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 4.w,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            cartQuantity.toString(),
-                            style: CustomTextStyles.darkHeadingTextStyle(
-                                size: 16),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              // Add to cart (validation is handled in the bloc method)
+                        )
+                      : GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {}, // Stop event propagation to parent InkWell
+                          child: RoundedButtonSmall(
+                            isSmall: true,
+                            text: "Add to Cart",
+                            onPressed: () {
                               widget.pharmacyController.addToCart(
                                   widget.product, context);
                             },
-                            child: Container(
-                              width: 8.w,
-                              height: 8.w,
-                              decoration: BoxDecoration(
-                                color: AppColors.darkGreenColor,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 4.w,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {}, // Stop event propagation to parent InkWell
-                      child: RoundedButtonSmall(
-                        isSmall: true,
-                        text: "Add to Cart",
-                        onPressed: () {
-                          widget.pharmacyController.addToCart(
-                              widget.product, context);
-                        },
-                        backgroundColor: ThemeUtil.isDarkMode(context)
-                            ? Color(0xff1DAA61)
-                            : AppColors.darkGreenColor,
-                        textColor: ThemeUtil.isDarkMode(context)
-                            ? AppColors.blackColor
-                            : AppColors.whiteColor),
-                    );
-            }),
+                            backgroundColor: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff1DAA61)
+                                : AppColors.darkGreenColor,
+                            textColor: ThemeUtil.isDarkMode(context)
+                                ? AppColors.blackColor
+                                : AppColors.whiteColor),
+                        );
+                });
+              },
+            ),
           ],
         ),
       ),

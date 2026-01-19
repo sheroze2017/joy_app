@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -25,6 +26,7 @@ import 'package:joy_app/modules/auth/models/user_register_model.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/common/navbar/view/navbar.dart';
+import 'package:joy_app/modules/splash/view/splash_screen.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../core/network/request.dart';
@@ -154,6 +156,74 @@ class AuthController extends GetxController {
     // Fallback to SharedPreferences if Firebase not ready
     fcmToken = await getToken();
     return fcmToken;
+  }
+
+  Future<bool> fetchAndUpdateUserProfile(String userId) async {
+    try {
+      print('');
+      print('🔄 [AuthController] ========== FETCHING USER PROFILE ==========');
+      print('🔄 [AuthController] User ID: $userId');
+      print('🔄 [AuthController] ===========================================');
+      print('');
+      
+      UserRegisterModel response = await authApi.getProfile(userId);
+      
+      if (response.data != null && response.code == 200) {
+        final userData = response.data!;
+        final currentUser = await getCurrentUser();
+        
+        // Preserve the existing token when updating profile
+        final existingToken = currentUser?.token;
+        
+        // Extract name parts (assuming name is "FirstName LastName" or just "FirstName")
+        String firstName = userData.name ?? '';
+        String lastName = '';
+        if (firstName.contains(' ')) {
+          final nameParts = firstName.split(' ');
+          firstName = nameParts.first;
+          lastName = nameParts.skip(1).join(' ');
+        }
+        
+        // Save updated user data to Hive
+        await saveUserDetailInLocal(
+          userData.userId.toString(),
+          firstName,
+          userData.email ?? '',
+          userData.password ?? '',
+          userData.image ?? '',
+          userData.userRole ?? '',
+          userData.authType ?? '',
+          userData.phone ?? '',
+          lastName,
+          userData.deviceToken ?? '',
+          existingToken, // Preserve existing token
+          gender: userData.gender,
+        );
+        
+        print('');
+        print('✅ [AuthController] ========== USER PROFILE UPDATED ==========');
+        print('✅ [AuthController] Profile fetched and saved successfully');
+        print('✅ [AuthController] =========================================');
+        print('');
+        
+        return true;
+      } else {
+        print('');
+        print('⚠️ [AuthController] ========== PROFILE FETCH FAILED ==========');
+        print('⚠️ [AuthController] Response code: ${response.code}');
+        print('⚠️ [AuthController] Message: ${response.message}');
+        print('⚠️ [AuthController] ==========================================');
+        print('');
+        return false;
+      }
+    } catch (error) {
+      print('');
+      print('❌ [AuthController] ========== PROFILE FETCH ERROR ==========');
+      print('❌ [AuthController] Error: $error');
+      print('❌ [AuthController] =========================================');
+      print('');
+      return false;
+    }
   }
 
   Future<void> updateDeviceTokenForUser(String userId) async {
@@ -305,7 +375,10 @@ class AuthController extends GetxController {
       dob,
       gender,
       BuildContext context,
-      image) async {
+      image, {
+      String? aboutMe,
+      Map<String, dynamic>? originalValues,
+      }) async {
     UserHive? currentUser = await getCurrentUser();
 
     try {
@@ -320,7 +393,9 @@ class AuthController extends GetxController {
           dob,
           gender,
           phoneNo,
-          image);
+          image,
+          aboutMe: aboutMe,
+          originalValues: originalValues);
       if (response.data != null) {
         // Preserve the existing token when editing profile
         final existingToken = currentUser.token;
@@ -585,7 +660,10 @@ class AuthController extends GetxController {
       long,
       placeId,
       BuildContext context,
-      image) async {
+      image, {
+      List<Map<String, dynamic>>? availability,
+      Map<String, dynamic>? originalValues,
+    }) async {
     UserHive? currentUser = await getCurrentUser();
 
     try {
@@ -602,7 +680,9 @@ class AuthController extends GetxController {
           placeId,
           lat,
           long,
-          image);
+          image,
+          availability: availability,
+          originalValues: originalValues);
       if (response.data != null) {
         // Preserve the existing token when editing profile
         final existingToken = currentUser.token;
@@ -619,6 +699,12 @@ class AuthController extends GetxController {
             response.data!.deviceToken.toString(),
             existingToken); // Preserve existing token for profile edit
         showSuccessMessage(context, 'Profile Edit Successfully');
+        
+        // Redirect to splash screen after successful edit
+        Timer(Duration(milliseconds: 1500), () {
+          Get.offAll(() => SplashScreen());
+        });
+        
         return true;
       } else {
         showErrorMessage(context, response.message.toString());
@@ -646,7 +732,9 @@ class AuthController extends GetxController {
       long,
       placeId,
       BuildContext context,
-      image) async {
+      image,
+      {List<Map<String, dynamic>>? availability,
+      Map<String, dynamic>? originalValues}) async {
     UserHive? currentUser = await getCurrentUser();
 
     try {
@@ -663,7 +751,9 @@ class AuthController extends GetxController {
           lat,
           long,
           placeId,
-          image);
+          image,
+          availability: availability,
+          originalValues: originalValues);
       if (response.data != null) {
         // Preserve the existing token when editing profile
         final existingToken = currentUser.token;
@@ -681,6 +771,11 @@ class AuthController extends GetxController {
             existingToken); // Preserve existing token for profile edit
 
         showSuccessMessage(context, 'Profile Edit Successfully');
+        
+        // Redirect to splash screen after successful edit
+        Timer(Duration(milliseconds: 1500), () {
+          Get.offAll(() => SplashScreen());
+        });
 
         return true;
       } else {
@@ -710,7 +805,10 @@ class AuthController extends GetxController {
       about,
       instituteType,
       BuildContext context,
-      image) async {
+      image, {
+      List<Map<String, dynamic>>? availability,
+      Map<String, dynamic>? originalValues,
+      }) async {
     UserHive? currentUser = await getCurrentUser();
 
     try {
@@ -730,7 +828,9 @@ class AuthController extends GetxController {
           instituteType,
           about,
           checkupFee,
-          image);
+          image,
+          availability: availability,
+          originalValues: originalValues);
       if (response.data != null) {
         // Preserve the existing token when editing profile
         final existingToken = currentUser.token;
@@ -749,6 +849,12 @@ class AuthController extends GetxController {
         _hospitalDetailController.getHospitalDetails(
             true, response.data!.userId.toString(), context);
         showSuccessMessage(context, 'Edit successfully');
+        
+        // Navigate to splash screen to reload user object
+        Future.delayed(Duration(milliseconds: 1500), () {
+          Get.offAll(() => SplashScreen());
+        });
+        
         return [true, response.data!.hospitalDetailId];
       } else {
         showErrorMessage(context, response.message.toString());

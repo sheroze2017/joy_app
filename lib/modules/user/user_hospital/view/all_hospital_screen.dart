@@ -915,6 +915,8 @@ class HospitalName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       hospitalName ?? 'Sunrise Health Clinic',
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
       style: CustomTextStyles.darkHeadingTextStyle(
           size: 12.67,
           color: ThemeUtil.isDarkMode(context)

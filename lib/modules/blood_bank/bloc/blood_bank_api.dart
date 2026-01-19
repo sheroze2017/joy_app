@@ -24,11 +24,23 @@ class BloodBankApi {
 
   Future<BloodBankDetails> getBloodBankDetail(userId) async {
     try {
+      print('🩸 [BloodBankApi] getBloodBankDetail() - Calling: ${Endpoints.getBloodBankDetails}?user_id=$userId');
       final result = await _dioClient
           .get(Endpoints.getBloodBankDetails + '?user_id=${userId}');
-      return BloodBankDetails.fromJson(result);
+      print('🩸 [BloodBankApi] getBloodBankDetail() - Response received');
+      print('🩸 [BloodBankApi] Response code: ${result['code']}, success: ${result['sucess'] ?? result['success']}');
+      print('🩸 [BloodBankApi] Response has data: ${result['data'] != null}');
+      
+      if (result['data'] != null) {
+        print('🩸 [BloodBankApi] Response data keys: ${result['data'].keys.toList()}');
+      }
+      
+      final bloodBankDetails = BloodBankDetails.fromJson(result);
+      print('🩸 [BloodBankApi] Parsed BloodBankDetails - data is null: ${bloodBankDetails.data == null}');
+      return bloodBankDetails;
     } catch (e) {
-      print(e.toString());
+      print('❌ [BloodBankApi] getBloodBankDetail() error: $e');
+      print('❌ [BloodBankApi] Error type: ${e.runtimeType}');
       throw e;
     }
   }

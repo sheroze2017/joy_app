@@ -116,7 +116,7 @@ class _VerticalDonorsList extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 8.0,
         mainAxisSpacing: 8,
-        childAspectRatio: 0.85, // Increased to reduce empty space below
+        childAspectRatio: 0.75, // Adjusted to prevent overflow
       ),
       itemCount: donors.length,
       itemBuilder: (context, index) {

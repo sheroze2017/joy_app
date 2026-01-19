@@ -62,6 +62,26 @@ class AuthApi {
     }
   }
 
+  Future<UserRegisterModel> getProfile(String userId) async {
+    try {
+      print('👤 [AuthApi] getProfile() called');
+      print('👤 [AuthApi] User ID: $userId');
+      final requestData = {
+        "user_id": userId,
+      };
+      
+      final result = await _dioClient.post(Endpoints.getProfile, data: requestData);
+      
+      print('✅ [AuthApi] getProfile() success');
+      print('📥 [AuthApi] getProfile() Response code: ${result['code']}');
+      final userModel = UserRegisterModel.fromJson(result);
+      return userModel;
+    } catch (e) {
+      print('❌ [AuthApi] getProfile() error: $e');
+      throw e;
+    }
+  }
+
   Future<bool> updateDeviceToken(String userId, String deviceToken) async {
     try {
       final requestData = {
@@ -289,23 +309,55 @@ class AuthApi {
       String gender,
       String phoneNo,
       String image,
-      {bool profileCompleted = false}) async {
+      {bool profileCompleted = false,
+      String? aboutMe,
+      Map<String, dynamic>? originalValues}) async {
     try {
       print('✏️ [AuthApi] editUser() called - Step 2: Complete User Profile');
       print('✏️ [AuthApi] UserId: $userId, ProfileCompleted: $profileCompleted');
-      final requestData = {
+      final requestData = <String, dynamic>{
         "user_id": userId,
-        "name": firstName,
-        "email": email,
-        "password": password,
-        "location": location,
-        "device_token": deviceToken,
-        "date_of_birth": dob,
-        "gender": gender,
-        "phone": phoneNo,
-        "image": image,
-        "profile_completed": profileCompleted
       };
+      
+      // Only include fields that have changed
+      if (originalValues == null || firstName != originalValues['name']) {
+        requestData["name"] = firstName;
+      }
+      if (originalValues == null || email != originalValues['email']) {
+        requestData["email"] = email;
+      }
+      // Only send password if it was changed (not empty)
+      if (originalValues == null) {
+        // New edit - send password if provided
+        if (password.isNotEmpty) {
+          requestData["password"] = password;
+        }
+      } else if (password.isNotEmpty && password != originalValues['password']) {
+        // Password changed - send new password
+        requestData["password"] = password;
+      }
+      if (originalValues == null || location != originalValues['location']) {
+        requestData["location"] = location;
+      }
+      if (originalValues == null || phoneNo != originalValues['phone']) {
+        requestData["phone"] = phoneNo;
+      }
+      if (originalValues == null || dob != originalValues['date_of_birth']) {
+        requestData["date_of_birth"] = dob;
+      }
+      if (originalValues == null || gender != originalValues['gender']) {
+        requestData["gender"] = gender;
+      }
+      if (originalValues == null || image != originalValues['image']) {
+        requestData["image"] = image;
+      }
+      if (aboutMe != null && (originalValues == null || aboutMe != originalValues['about_me'])) {
+        requestData["about_me"] = aboutMe;
+      }
+      
+      // Always send required fields
+      requestData["device_token"] = deviceToken;
+      requestData["profile_completed"] = profileCompleted;
       final result = await _dioClient.post(Endpoints.editUser, data: requestData);
       print('✅ [AuthApi] editUser() success - ProfileCompleted: $profileCompleted');
       final userModel = UserRegisterModel.fromJson(result);
@@ -330,24 +382,70 @@ class AuthApi {
     String lng,
     String image, {
     bool profileCompleted = false,
+    List<Map<String, dynamic>>? availability,
+    Map<String, dynamic>? originalValues,
   }) async {
     try {
       print('🩸 [AuthApi] editBloodBank() called - Step 2: Complete Blood Bank Profile');
       print('🩸 [AuthApi] UserId: $userId, ProfileCompleted: $profileCompleted');
-      final requestData = {
+      final requestData = <String, dynamic>{
         "user_id": userId,
-        "name": firstName,
-        "email": email,
-        "password": password,
-        "location": location,
-        "device_token": deviceToken,
-        "phone": phoneNo,
-        "place_id": placeID,
-        "lat": lat,
-        "lng": lng,
-        "image": image,
-        "profile_completed": profileCompleted
       };
+      
+      // Only include fields that have changed
+      if (originalValues == null || firstName != originalValues['name']) {
+        requestData["name"] = firstName;
+      }
+      if (originalValues == null || phoneNo != originalValues['phone']) {
+        requestData["phone"] = phoneNo;
+      }
+      if (originalValues == null || location != originalValues['location']) {
+        requestData["location"] = location;
+      }
+      if (originalValues == null || lat != originalValues['lat']) {
+        requestData["lat"] = lat;
+      }
+      if (originalValues == null || lng != originalValues['lng']) {
+        requestData["lng"] = lng;
+      }
+      if (originalValues == null || placeID != originalValues['place_id']) {
+        requestData["place_id"] = placeID;
+      }
+      if (originalValues == null || image != originalValues['image']) {
+        requestData["image"] = image;
+      }
+      // Always send device_token (required)
+      requestData["device_token"] = deviceToken;
+      
+      // Add availability if provided and changed
+      if (availability != null && availability.isNotEmpty) {
+        // Check if availability has changed
+        bool availabilityChanged = false;
+        if (originalValues == null || originalValues['availability'] == null) {
+          availabilityChanged = true;
+        } else {
+          final originalAvail = originalValues['availability'] as List<Map<String, dynamic>>?;
+          if (originalAvail == null || originalAvail.length != availability.length) {
+            availabilityChanged = true;
+          } else {
+            // Compare availability arrays
+            for (int i = 0; i < availability.length; i++) {
+              if (originalAvail.length <= i ||
+                  originalAvail[i]['day'] != availability[i]['day'] ||
+                  (originalAvail[i]['times'] as List).toString() != availability[i]['times'].toString()) {
+                availabilityChanged = true;
+                break;
+              }
+            }
+          }
+        }
+        if (availabilityChanged) {
+          requestData["availability"] = availability;
+        }
+      }
+      
+      requestData["profile_completed"] = profileCompleted;
+      
       final result = await _dioClient.post(Endpoints.editBloodBank, data: requestData);
       print('✅ [AuthApi] editBloodBank() success - ProfileCompleted: $profileCompleted');
       final bloodBankModel = BloodBankRegisterModel.fromJson(result);
@@ -372,24 +470,41 @@ class AuthApi {
       String placeId,
       String image, {
       bool profileCompleted = false,
+      List<Map<String, dynamic>>? availability,
+      Map<String, dynamic>? originalValues,
       }) async {
     try {
       print('💊 [AuthApi] editPharmacy() called - Step 2: Complete Pharmacy Profile');
       print('💊 [AuthApi] UserId: $userId, ProfileCompleted: $profileCompleted');
-      final requestData = {
+      final requestData = <String, dynamic>{
         "user_id": userId,
-        "name": name,
-        "email": email,
-        "password": password,
-        "location": location,
-        "device_token": deviceToken,
-        "phone": phoneNo,
-        "place_id": placeId,
-        "lat": lat,
-        "lng": long,
-        "image": image,
-        "profile_completed": profileCompleted
       };
+      
+      // Only include fields that have changed
+      if (originalValues == null || name != originalValues['name']) {
+        requestData["name"] = name;
+      }
+      if (originalValues == null || phoneNo != originalValues['phone']) {
+        requestData["phone"] = phoneNo;
+      }
+      if (originalValues == null || location != originalValues['location']) {
+        requestData["location"] = location;
+      }
+      // Only send password if it was changed (not empty)
+      if (password.isNotEmpty && password != (originalValues?['password'] ?? '')) {
+        requestData["password"] = password;
+      }
+      // Only send image if it was changed
+      if (originalValues == null || image != originalValues['image']) {
+        if (image.isNotEmpty && image.contains('http')) {
+          requestData["image"] = image;
+        }
+      }
+      // Only send availability if it was provided and changed
+      if (availability != null && availability.isNotEmpty) {
+        requestData["availability"] = availability;
+      }
+      
       final result = await _dioClient.post(Endpoints.editPharmacy, data: requestData);
       print('✅ [AuthApi] editPharmacy() success - ProfileCompleted: $profileCompleted');
       final pharmacyModel = PharmacyRegisterModel.fromJson(result);
@@ -417,27 +532,63 @@ class AuthApi {
       String checkupFee,
       String image, {
       bool profileCompleted = false,
+      List<Map<String, dynamic>>? availability,
+      Map<String, dynamic>? originalValues,
       }) async {
     try {
       print('🏥 [AuthApi] editHospital() called - Step 2: Complete Hospital Profile');
       print('🏥 [AuthApi] UserId: $userId, ProfileCompleted: $profileCompleted');
-      final requestData = {
+      final requestData = <String, dynamic>{
         "user_id": userId,
-        "name": name,
-        "email": email,
-        "password": password,
-        "location": location,
-        "device_token": deviceToken,
-        "phone": phoneNo,
-        "place_id": placeId,
-        "lat": lat,
-        "lng": long,
-        "checkup_fee": checkupFee,
-        "about": about,
-        "institute": instituteType,
-        "image": image,
-        "profile_completed": profileCompleted
       };
+      
+      // Only include fields that have changed
+      if (originalValues == null || name != originalValues['name']) {
+        requestData["name"] = name;
+      }
+      if (originalValues == null || email != originalValues['email']) {
+        requestData["email"] = email;
+      }
+      if (originalValues == null || password != originalValues['password']) {
+        requestData["password"] = password;
+      }
+      if (originalValues == null || location != originalValues['location']) {
+        requestData["location"] = location;
+      }
+      if (originalValues == null || phoneNo != originalValues['phone']) {
+        requestData["phone"] = phoneNo;
+      }
+      if (originalValues == null || lat != originalValues['lat']) {
+        requestData["lat"] = lat;
+      }
+      if (originalValues == null || long != originalValues['lng']) {
+        requestData["lng"] = long;
+      }
+      if (placeId.isNotEmpty && (originalValues == null || placeId != originalValues['place_id'])) {
+        requestData["place_id"] = placeId;
+      }
+      // Always send device_token (required)
+      requestData["device_token"] = deviceToken;
+      if (originalValues == null || checkupFee != originalValues['checkup_fee']) {
+        requestData["checkup_fee"] = checkupFee;
+      }
+      if (originalValues == null || about != originalValues['about']) {
+        requestData["about"] = about;
+      }
+      if (originalValues == null || instituteType != originalValues['institute']) {
+        requestData["institute"] = instituteType;
+      }
+      if (originalValues == null || image != originalValues['image']) {
+        requestData["image"] = image;
+      }
+      
+      // Add availability if provided
+      if (availability != null && availability.isNotEmpty) {
+        requestData["availability"] = availability;
+      }
+      
+      requestData["profile_completed"] = profileCompleted;
+      
       final result = await _dioClient.post(Endpoints.editHospital, data: requestData);
       print('✅ [AuthApi] editHospital() success - ProfileCompleted: $profileCompleted');
       final hospitalModel = HospitalRegisterModel.fromJson(result);

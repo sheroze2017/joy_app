@@ -50,11 +50,11 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _diseaseController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _aboutMeController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _profileImgController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
@@ -63,6 +63,7 @@ class _FormScreenState extends State<FormScreen> {
   final FocusNode _focusNode5 = FocusNode();
   final FocusNode _focusNode6 = FocusNode();
   final FocusNode _focusNode7 = FocusNode();
+  final FocusNode _focusNode8 = FocusNode();
   TextEditingController controller = TextEditingController();
   final authController = Get.put(AuthController());
 
@@ -70,6 +71,17 @@ class _FormScreenState extends State<FormScreen> {
 
   final _formKey = GlobalKey<FormState>();
   String? _selectedImage;
+  
+  // Store original values for comparison
+  String? _originalName;
+  String? _originalEmail;
+  String? _originalPassword;
+  String? _originalLocation;
+  String? _originalPhone;
+  String? _originalDob;
+  String? _originalGender;
+  String? _originalImage;
+  String? _originalAboutMe;
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -98,48 +110,79 @@ class _FormScreenState extends State<FormScreen> {
 
   Future<void> _loadUserProfileData() async {
     try {
-      // Get basic data from ProfileController
+      UserHive? currentUser = await getCurrentUser();
+      if (currentUser == null) return;
+      
+      // Get basic data from ProfileController and Hive
       _selectedImage = _profileController.image.value;
-      _nameController.setText(_profileController.firstName.toString());
-      _phoneController.setText(_profileController.phone.toString());
+      _originalImage = _selectedImage;
+      
+      _nameController.text = _profileController.firstName.toString();
+      _originalName = _nameController.text;
+      
+      _phoneController.text = _profileController.phone.toString();
+      _originalPhone = _phoneController.text;
+      
+      _passwordController.text = _profileController.password.value.toString();
+      _originalPassword = _passwordController.text;
+      
+      _originalEmail = _profileController.email.value.toString();
 
       // Fetch full profile data using getMyProfile API
-      UserHive? currentUser = await getCurrentUser();
-      if (currentUser != null) {
-        _friendsController = Get.find<FriendsSocialController>();
-        final response = await _friendsController!.friendApi.getMyProfile(currentUser.userId.toString());
+      _friendsController = Get.find<FriendsSocialController>();
+      final response = await _friendsController!.friendApi.getMyProfile(currentUser.userId.toString());
+      
+      if (response.singleData != null || (response.data != null && response.data!.isNotEmpty)) {
+        final profileData = response.singleData ?? response.data!.first;
         
-        if (response.singleData != null || (response.data != null && response.data!.isNotEmpty)) {
-          final profileData = response.singleData ?? response.data!.first;
-          
-          // Populate all fields from profile data
-          if (profileData.name != null) {
-            _nameController.text = profileData.name!;
+        // Populate all fields from profile data
+        if (profileData.name != null && profileData.name!.isNotEmpty) {
+          _nameController.text = profileData.name!;
+          _originalName = _nameController.text;
+        }
+        
+        if (profileData.image != null && profileData.image!.isNotEmpty) {
+          _selectedImage = profileData.image!;
+          _originalImage = _selectedImage;
+        }
+        
+        // Get profile data (location, dob, gender, aboutMe) from nested structure
+        if (profileData.location != null && profileData.location!.isNotEmpty) {
+          _locationController.text = profileData.location!;
+          _originalLocation = _locationController.text;
+        }
+        
+        if (profileData.dob != null && profileData.dob!.isNotEmpty) {
+          _dobController.text = profileData.dob!;
+          _originalDob = _dobController.text;
+        }
+        
+        if (profileData.gender != null && profileData.gender!.isNotEmpty) {
+          // Normalize gender value to match dropdown options
+          String normalizedGender = '';
+          if (profileData.gender!.toLowerCase().contains('female')) {
+            normalizedGender = 'Female';
+          } else if (profileData.gender!.toLowerCase().contains('male')) {
+            normalizedGender = 'Male';
           }
-          if (profileData.image != null && profileData.image!.isNotEmpty) {
-            _selectedImage = profileData.image!;
+          _genderController.text = normalizedGender;
+          selectedValue = normalizedGender;
+          _originalGender = normalizedGender;
+        } else if (currentUser.gender != null && currentUser.gender!.isNotEmpty) {
+          String normalizedGender = '';
+          if (currentUser.gender!.toLowerCase().contains('female')) {
+            normalizedGender = 'Female';
+          } else if (currentUser.gender!.toLowerCase().contains('male')) {
+            normalizedGender = 'Male';
           }
-          
-          // Get profile data (location, dob, gender, aboutMe) from nested structure
-          if (profileData.location != null && profileData.location!.isNotEmpty) {
-            _locationController.text = profileData.location!;
-          }
-          
-          if (profileData.dob != null && profileData.dob!.isNotEmpty) {
-            _dobController.text = profileData.dob!;
-          }
-          
-          if (profileData.gender != null && profileData.gender!.isNotEmpty) {
-            _genderController.text = profileData.gender!;
-            selectedValue = profileData.gender!; // For dropdown
-          } else if (currentUser.gender != null && currentUser.gender!.isNotEmpty) {
-            _genderController.text = currentUser.gender!;
-            selectedValue = currentUser.gender!;
-          }
-          
-          if (profileData.aboutMe != null && profileData.aboutMe!.isNotEmpty) {
-            _aboutMeController.text = profileData.aboutMe!;
-          }
+          _genderController.text = normalizedGender;
+          selectedValue = normalizedGender;
+          _originalGender = normalizedGender;
+        }
+        
+        if (profileData.aboutMe != null && profileData.aboutMe!.isNotEmpty) {
+          _aboutMeController.text = profileData.aboutMe!;
+          _originalAboutMe = _aboutMeController.text;
         }
       }
     } catch (e) {
@@ -147,13 +190,21 @@ class _FormScreenState extends State<FormScreen> {
       // Fallback to basic data from ProfileController
       if (_selectedImage == null) {
         _selectedImage = _profileController.image.value;
+        _originalImage = _selectedImage;
       }
       if (_nameController.text.isEmpty) {
-        _nameController.setText(_profileController.firstName.toString());
+        _nameController.text = _profileController.firstName.toString();
+        _originalName = _nameController.text;
       }
       if (_phoneController.text.isEmpty) {
-        _phoneController.setText(_profileController.phone.toString());
+        _phoneController.text = _profileController.phone.toString();
+        _originalPhone = _phoneController.text;
       }
+      if (_passwordController.text.isEmpty) {
+        _passwordController.text = _profileController.password.value.toString();
+        _originalPassword = _passwordController.text;
+      }
+      _originalEmail = _profileController.email.value.toString();
     }
   }
 
@@ -222,28 +273,6 @@ class _FormScreenState extends State<FormScreen> {
                                             ),
                                           ),
                                         )),
-                              Positioned(
-                                bottom: 20,
-                                right: 100,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        color: ThemeUtil.isDarkMode(context)
-                                            ? AppColors.lightBlueColor3e3
-                                            : Color(0xff1C2A3A),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10.0),
-                                          topRight: Radius.circular(10.0),
-                                          bottomRight: Radius.circular(10.0),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: SvgPicture.asset(
-                                        'Assets/icons/pen.svg',
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                      ),
-                                    )),
-                              )
                             ],
                           ),
                   ),
@@ -251,6 +280,7 @@ class _FormScreenState extends State<FormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                    showLabel: true,
                     validator: validateName,
                     focusNode: _focusNode1,
                     nextFocusNode: _focusNode2,
@@ -262,23 +292,7 @@ class _FormScreenState extends State<FormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter disease';
-                      } else {
-                        return null;
-                      }
-                    },
-                    focusNode: _focusNode2,
-                    nextFocusNode: _focusNode3,
-                    controller: _diseaseController,
-                    hintText: 'Disease',
-                    icon: '',
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  RoundedBorderTextField(
+                    showLabel: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter about me';
@@ -286,26 +300,44 @@ class _FormScreenState extends State<FormScreen> {
                         return null;
                       }
                     },
-                    focusNode: _focusNode3,
-                    nextFocusNode: _focusNode4,
+                    focusNode: _focusNode2,
+                    nextFocusNode: _focusNode3,
                     controller: _aboutMeController,
                     hintText: 'About Me',
                     icon: '',
+                    maxlines: true,
                   ),
                   SizedBox(
                     height: 2.h,
                   ),
-                  SearchSingleDropdown(
-                    hintText: 'Gender',
-                    items: ['Male', 'Female'],
-                    value: selectedValue ?? '',
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedValue = value;
-                      });
-                      _genderController.text = value ?? '';
-                    },
-                    icon: '',
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
+                        child: Text(
+                          'Gender',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff6B7280)
+                                : Color(0xff4B5563),
+                          ),
+                        ),
+                      ),
+                      SearchSingleDropdown(
+                        hintText: 'Gender',
+                        items: ['Male', 'Female'],
+                        value: selectedValue?.isEmpty ?? true ? null : selectedValue,
+                        onChanged: (String? value) {
+                          setState(() {
+                            selectedValue = value;
+                          });
+                          _genderController.text = value ?? '';
+                        },
+                        icon: '',
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 2.h,
@@ -321,7 +353,7 @@ class _FormScreenState extends State<FormScreen> {
                           double longitude = value['longitude'];
                           String searchValue = value['searchValue'];
 
-                          _locationController.setText(value['searchValue']);
+                          _locationController.text = value['searchValue'];
                         }
                       });
                     },
@@ -334,8 +366,8 @@ class _FormScreenState extends State<FormScreen> {
                         }
                       },
                       isenable: false,
-                      focusNode: _focusNode4,
-                      nextFocusNode: _focusNode5,
+                      focusNode: _focusNode3,
+                      nextFocusNode: _focusNode4,
                       controller: _locationController,
                       hintText: 'Location',
                       showLabel: true,
@@ -348,7 +380,7 @@ class _FormScreenState extends State<FormScreen> {
                   InkWell(
                     onTap: () async {
                       String dob = await showDatePickerDialog(context);
-                      _dobController.setText(dob);
+                      _dobController.text = dob;
                     },
                     child: RoundedBorderTextField(
                       isenable: false,
@@ -360,8 +392,8 @@ class _FormScreenState extends State<FormScreen> {
                           return null;
                         }
                       },
-                      focusNode: _focusNode5,
-                      nextFocusNode: _focusNode6,
+                      focusNode: _focusNode4,
+                      nextFocusNode: _focusNode5,
                       controller: _dobController,
                       hintText: 'Date of Birth',
                       icon: 'Assets/images/calendar.svg',
@@ -371,13 +403,38 @@ class _FormScreenState extends State<FormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                      showLabel: true,
                       validator: validatePhoneNumber,
                       textInputType: TextInputType.number,
-                      focusNode: _focusNode6,
-                      nextFocusNode: _focusNode7,
+                      focusNode: _focusNode5,
+                      nextFocusNode: _focusNode6,
                       controller: _phoneController,
-                      hintText: 'Phone No',
+                      hintText: 'Phone Number',
                       icon: ''),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                    showLabel: true,
+                    validator: (value) {
+                      if (widget.isEdit && (value == null || value.isEmpty)) {
+                        // Password is optional in edit mode
+                        return null;
+                      }
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
+                    focusNode: _focusNode6,
+                    nextFocusNode: _focusNode7,
+                    controller: _passwordController,
+                    hintText: 'Password',
+                    icon: '',
+                  ),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -402,12 +459,23 @@ class _FormScreenState extends State<FormScreen> {
                                         "USER",
                                         _profileController.email.value
                                             .toString(),
-                                        _profileController.password.value
-                                            .toString(),
+                                        _passwordController.text,
                                         _dobController.text,
                                         _genderController.text,
                                         context,
-                                        _selectedImage.toString())
+                                        _selectedImage.toString(),
+                                        aboutMe: _aboutMeController.text,
+                                        originalValues: {
+                                          'name': _originalName,
+                                          'email': _originalEmail,
+                                          'password': _originalPassword,
+                                          'location': _originalLocation,
+                                          'phone': _originalPhone,
+                                          'date_of_birth': _originalDob,
+                                          'gender': _originalGender,
+                                          'image': _originalImage,
+                                          'about_me': _originalAboutMe,
+                                        })
                                     : await authController.userRegister(
                                         _nameController.text,
                                         _locationController.text,

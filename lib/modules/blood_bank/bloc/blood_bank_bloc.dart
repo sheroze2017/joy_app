@@ -93,19 +93,45 @@ class BloodBankController extends GetxController {
 
     try {
       UserHive? currentUser = await getCurrentUser();
+      if (currentUser == null) {
+        print('❌ [BloodBankController] getBloodBankDetail() - No current user');
+        bloodBankHomeLoader.value = false;
+        // Return existing data if available, otherwise return empty
+        return _bloodBankDetails.value ?? BloodBankDetails();
+      }
 
+      print('🩸 [BloodBankController] getBloodBankDetail() - Calling API for user: ${currentUser.userId}');
       BloodBankDetails response =
-          await bloodBankApi.getBloodBankDetail(currentUser!.userId.toString());
+          await bloodBankApi.getBloodBankDetail(currentUser.userId.toString());
+      
+      print('🩸 [BloodBankController] getBloodBankDetail() - Response received');
+      print('🩸 [BloodBankController] Response code: ${response.code}, success: ${response.sucess}');
+      print('🩸 [BloodBankController] Response data: ${response.data != null ? "present" : "null"}');
+      
       if (response.data != null) {
         _bloodBankDetails.value = response;
-        bloodBankHomeLoader.value = false;
+        print('✅ [BloodBankController] getBloodBankDetail() - Successfully set bloodBankDetail');
       } else {
-        bloodBankHomeLoader.value = false;
+        print('⚠️ [BloodBankController] getBloodBankDetail() - Response data is null');
+        // Don't clear existing data if we have it, just log the warning
+        if (_bloodBankDetails.value == null) {
+          print('⚠️ [BloodBankController] getBloodBankDetail() - No existing data, keeping null');
+        } else {
+          print('✅ [BloodBankController] getBloodBankDetail() - Keeping existing data');
+        }
       }
       return response;
     } catch (error) {
-      bloodBankHomeLoader.value = false;
-      throw (error);
+      print('❌ [BloodBankController] getBloodBankDetail() - Error: $error');
+      print('❌ [BloodBankController] Error type: ${error.runtimeType}');
+      print('❌ [BloodBankController] Stack trace: ${StackTrace.current}');
+      // Don't clear existing data on error - return existing data if available
+      if (_bloodBankDetails.value != null) {
+        print('✅ [BloodBankController] getBloodBankDetail() - Returning existing data despite error');
+        return _bloodBankDetails.value!;
+      }
+      // Only return empty if we have no existing data
+      return BloodBankDetails();
     } finally {
       bloodBankHomeLoader.value = false;
     }

@@ -51,7 +51,8 @@ class DoctorApi {
       String image,
       String aboutMe,
       {bool profileCompleted = false,
-      List<Map<String, dynamic>>? availability}) async {
+      List<Map<String, dynamic>>? availability,
+      Map<String, dynamic>? originalValues}) async {
     try {
       print('👨‍⚕️ [DoctorApi] updateDoctor() called - Step 2: Complete Doctor Profile');
       print('👨‍⚕️ [DoctorApi] UserId: $userId, ProfileCompleted: $profileCompleted');
@@ -61,23 +62,53 @@ class DoctorApi {
       }
       Map<String, dynamic> data = {
         "user_id": userId,
-        "name": name,
-        "email": email,
-        "password": password,
-        "location": location,
-        "device_token": deviceToken,
-        "gender": gender,
-        "user_role": userRole,
-        "auth_type": authType,
-        "phone": phone,
-        "expertise": expertise,
-        "consultation_fee": consultationFee,
-        "qualifications": qualifications,
-        "document": document,
-        "about_me": aboutMe,
-        "image": image,
-        "profile_completed": profileCompleted
       };
+      
+      // Only include fields that have changed
+      if (originalValues == null || name != originalValues['name']) {
+        data["name"] = name;
+      }
+      if (originalValues == null || email != originalValues['email']) {
+        data["email"] = email;
+      }
+      if (originalValues == null || password != originalValues['password']) {
+        data["password"] = password;
+      }
+      if (originalValues == null || location != originalValues['location']) {
+        data["location"] = location;
+      }
+      if (originalValues == null || gender != originalValues['gender']) {
+        data["gender"] = gender;
+      }
+      if (originalValues == null || phone != originalValues['phone']) {
+        data["phone"] = phone;
+      }
+      if (originalValues == null || expertise != originalValues['expertise']) {
+        data["expertise"] = expertise;
+      }
+      if (originalValues == null || consultationFee != originalValues['consultation_fee']) {
+        data["consultation_fee"] = consultationFee;
+      }
+      if (originalValues == null || qualifications != originalValues['qualifications']) {
+        data["qualifications"] = qualifications;
+      }
+      if (originalValues == null || document != originalValues['document']) {
+        data["document"] = document;
+      }
+      if (originalValues == null || aboutMe != originalValues['about_me']) {
+        data["about_me"] = aboutMe;
+      }
+      if (originalValues == null || image != originalValues['image']) {
+        data["image"] = image;
+      }
+      
+      // Always send required fields
+      data["device_token"] = deviceToken;
+      data["user_role"] = userRole;
+      data["auth_type"] = authType;
+      data["profile_completed"] = profileCompleted;
+      
+      // Add availability if provided
       if (availability != null && availability.isNotEmpty) {
         data["availability"] = availability;
       }

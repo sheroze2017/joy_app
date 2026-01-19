@@ -37,15 +37,32 @@ class _SplashScreenState extends State<SplashScreen> {
         print('   - Current Device Token: ${currentUser.deviceToken}');
         print('');
         print('');
-        print('🔄 [SplashScreen] ========== CALLING updateDeviceTokenForUser() ==========');
-        print('🔄 [SplashScreen] Updating device token on backend...');
+        print('🔄 [SplashScreen] ========== FETCHING UPDATED USER PROFILE ==========');
+        print('🔄 [SplashScreen] Fetching updated user object from backend...');
         print('🔄 [SplashScreen] User ID: ${currentUser.userId}');
-        print('🔄 [SplashScreen] ======================================================');
+        print('🔄 [SplashScreen] ===================================================');
         print('');
         
         final authController = Get.find<AuthController>();
-        await authController.updateDeviceTokenForUser(
+        
+        // Fetch and update user profile from backend
+        await authController.fetchAndUpdateUserProfile(
             currentUser.userId.toString());
+        
+        // Get updated user after profile fetch
+        currentUser = await getCurrentUser();
+        
+        print('');
+        print('🔄 [SplashScreen] ========== CALLING updateDeviceTokenForUser() ==========');
+        print('🔄 [SplashScreen] Updating device token on backend...');
+        print('🔄 [SplashScreen] User ID: ${currentUser?.userId}');
+        print('🔄 [SplashScreen] ======================================================');
+        print('');
+        
+        if (currentUser != null) {
+          await authController.updateDeviceTokenForUser(
+              currentUser.userId.toString());
+        }
         
         print('');
         print('✅ [SplashScreen] ========== updateDeviceTokenForUser() RETURNED ==========');
@@ -57,8 +74,12 @@ class _SplashScreenState extends State<SplashScreen> {
         print('🚀 [SplashScreen] =================================================');
         print('');
         
+        // Get updated user role after profile fetch
+        final updatedUser = await getCurrentUser();
+        final userRole = updatedUser?.userRole ?? currentUser?.userRole ?? 'USER';
+        
         Timer(Duration(seconds: 5),
-            () => handleUserRoleNavigation(currentUser.userRole));
+            () => handleUserRoleNavigation(userRole));
       } else {
         print('ℹ️ [SplashScreen] No user found, redirecting to onboarding');
         print('🚀 [SplashScreen] =================================================');

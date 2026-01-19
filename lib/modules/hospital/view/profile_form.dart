@@ -3,25 +3,53 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
 import 'package:joy_app/Widgets/button/dropdown_button.dart';
-import 'package:joy_app/Widgets/dailog/multi_time_selector.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
 import 'package:joy_app/Widgets/dailog/success_dailog.dart';
 import 'package:joy_app/common/map/view/mapscreen.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
-import 'package:joy_app/modules/doctor/view/profile_form.dart';
 import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
-import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/common/utils/file_selector.dart';
 import 'package:joy_app/widgets/appbar/appbar.dart';
 import 'package:joy_app/widgets/dailog/doctor_availability_dailog.dart';
 import 'package:lottie/lottie.dart';
-import 'package:pinput/pinput.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../auth/bloc/auth_bloc.dart';
+import '../../hospital/model/hospital_detail_model.dart';
+
+// Helper function to format availability string
+String generateFormattedString(
+    List<Set<String>> selectedTimesPerDay, List<String> daysOfWeek) {
+  String formattedString = '';
+  for (int i = 0; i < daysOfWeek.length; i++) {
+    formattedString += daysOfWeek[i] + '\n';
+    if (selectedTimesPerDay[i].isNotEmpty) {
+      formattedString += selectedTimesPerDay[i].join(' ') + '\n\n';
+    } else {
+      formattedString += '\n';
+    }
+  }
+  return formattedString;
+}
+
+// Helper function to convert availability to API format
+List<Map<String, dynamic>> convertAvailabilityToApiFormat(List<Set<String>> dateAvailability) {
+  final List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  final List<Map<String, dynamic>> availability = [];
+  
+  for (int i = 0; i < daysOfWeek.length; i++) {
+    if (dateAvailability[i].isNotEmpty) {
+      availability.add({
+        "day": daysOfWeek[i],
+        "times": dateAvailability[i].toList()
+      });
+    }
+  }
+  return availability;
+}
 
 class HospitalFormScreen extends StatefulWidget {
   final String email;
@@ -53,6 +81,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _instituteController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
@@ -73,6 +102,21 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
 
   double latitude = 0;
   double longitude = 0;
+  
+  // Store original values for comparison
+  String? _originalName;
+  String? _originalPhone;
+  String? _originalLocation;
+  String? _originalLat;
+  String? _originalLng;
+  String? _originalCheckupFee;
+  String? _originalAbout;
+  String? _originalInstitute;
+  String? _originalImage;
+  String? _originalPlaceId;
+  String? _originalPassword;
+  List<Map<String, dynamic>>? _originalAvailability;
+  bool _availabilityChanged = false;
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -86,25 +130,113 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
     }
   }
 
+  // Convert HospitalTiming to availability format
+  List<Map<String, dynamic>> _convertTimingsToAvailability(List<HospitalTiming>? timings) {
+    if (timings == null || timings.isEmpty) return [];
+    
+    final List<Map<String, dynamic>> availability = [];
+    for (var timing in timings) {
+      if (timing.day != null) {
+        // Handle times array format (new API format)
+        if (timing.times != null && timing.times!.isNotEmpty) {
+          availability.add({
+            "day": timing.day,
+            "times": timing.times!
+          });
+        } 
+        // Handle open/close format (old format)
+        else if (timing.open != null && timing.close != null) {
+          availability.add({
+            "day": timing.day,
+            "times": ["${timing.open}-${timing.close}"]
+          });
+        }
+      }
+    }
+    return availability;
+  }
+  
+  // Convert availability to List<Set<String>> for dialog
+  List<Set<String>> _convertAvailabilityToDialogFormat(List<Map<String, dynamic>>? availability) {
+    final List<Set<String>> result = List.generate(7, (_) => <String>{});
+    if (availability == null || availability.isEmpty) return result;
+    
+    final List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    
+    for (var avail in availability) {
+      final day = avail['day'] as String?;
+      final times = avail['times'] as List<dynamic>?;
+      if (day != null && times != null) {
+        final dayIndex = daysOfWeek.indexWhere((d) => d.toLowerCase() == day.toLowerCase());
+        if (dayIndex != -1) {
+          result[dayIndex] = times.map((t) => t.toString()).toSet();
+        }
+      }
+    }
+    return result;
+  }
+
   @override
   void initState() {
     super.initState();
     if (widget.isEdit) {
-      _selectedImage = _profileController.image.value;
-      _nameController.setText(_profileController.firstName.toString());
-      _contactController.setText(_profileController.phone.toString());
-      _feesController.setText(
-          _hospitalDetailController.hospitald.value!.checkupFee.toString());
-      _locationController.setText(
-          _hospitalDetailController.hospitald.value!.location.toString());
-      latitude = double.parse(
-              _hospitalDetailController.hospitald.value!.lat.toString()) ??
-          0.0;
-      longitude = double.parse(
-              _hospitalDetailController.hospitald.value!.lng.toString()) ??
-          0.0;
-      _aboutController
-          .setText(_hospitalDetailController.hospitald.value!.about.toString());
+      final hospitalData = _hospitalDetailController.hospitald.value;
+      if (hospitalData != null) {
+        // Load existing values
+        _selectedImage = _profileController.image.value;
+        _originalImage = _selectedImage;
+        
+        _nameController.text = _profileController.firstName.toString();
+        _originalName = _nameController.text;
+        
+        _contactController.text = _profileController.phone.toString();
+        _originalPhone = _contactController.text;
+        
+        _feesController.text = hospitalData.checkupFee?.toString() ?? '';
+        _originalCheckupFee = _feesController.text;
+        
+        _locationController.text = hospitalData.location?.toString() ?? '';
+        _originalLocation = _locationController.text;
+        
+        latitude = double.tryParse(hospitalData.lat?.toString() ?? '') ?? 0.0;
+        _originalLat = hospitalData.lat?.toString() ?? '';
+        
+        longitude = double.tryParse(hospitalData.lng?.toString() ?? '') ?? 0.0;
+        _originalLng = hospitalData.lng?.toString() ?? '';
+        
+        _aboutController.text = hospitalData.about?.toString() ?? '';
+        _originalAbout = _aboutController.text;
+        
+        _instituteController.text = hospitalData.institute?.toString() ?? '';
+        _originalInstitute = _instituteController.text;
+        
+        _originalPlaceId = hospitalData.placeId?.toString() ?? '';
+        
+        // Load password from ProfileController
+        _passwordController.text = widget.password;
+        _originalPassword = widget.password;
+        
+        // Load availability from timings
+        if (hospitalData.timings != null && hospitalData.timings!.isNotEmpty) {
+          _originalAvailability = _convertTimingsToAvailability(hospitalData.timings);
+          dateAvailability = _convertAvailabilityToDialogFormat(_originalAvailability);
+          
+          // Generate formatted string for display
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final String formattedString = generateFormattedString(
+                dateAvailability, [
+              'Monday',
+              'Tuesday',
+              'Wednesday',
+              'Thursday',
+              'Friday',
+              'Saturday',
+              'Sunday'
+            ]);
+            _availabilityController.text = formattedString;
+          });
+        }
+      }
     }
   }
 
@@ -174,28 +306,6 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                             ),
                                           ),
                                         )),
-                              Positioned(
-                                bottom: 20,
-                                right: 100,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        color: ThemeUtil.isDarkMode(context)
-                                            ? AppColors.lightBlueColor3e3
-                                            : Color(0xff1C2A3A),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10.0),
-                                          topRight: Radius.circular(10.0),
-                                          bottomRight: Radius.circular(10.0),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: SvgPicture.asset(
-                                        'Assets/icons/pen.svg',
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                      ),
-                                    )),
-                              )
                             ],
                           ),
                   ),
@@ -210,6 +320,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                         return null;
                       }
                     },
+                    showLabel: true,
                     controller: _nameController,
                     focusNode: _focusNode1,
                     nextFocusNode: _focusNode2,
@@ -220,10 +331,11 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                      showLabel: true,
                       controller: _contactController,
                       focusNode: _focusNode2,
                       nextFocusNode: _focusNode3,
-                      hintText: 'Contact',
+                      hintText: 'Phone Number',
                       icon: '',
                       validator: validatePhoneNumber),
                   SizedBox(
@@ -238,8 +350,9 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                             initialSelectedTimes: dateAvailability,
                             onConfirm: (List<Set<String>> selectedTimes) async {
                               dateAvailability = selectedTimes;
+                              _availabilityChanged = true;
                               setState(() {});
-                              String result = await generateFormattedString(
+                              String result = generateFormattedString(
                                   selectedTimes, [
                                 'Monday',
                                 'Tuesday',
@@ -249,7 +362,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                                 'Saturday',
                                 'Sunday'
                               ]);
-                              _availabilityController.setText(result);
+                              _availabilityController.text = result;
                             },
                           );
                         },
@@ -265,6 +378,10 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                       hintText: 'Availability',
                       icon: '',
                       validator: (value) {
+                        // Make availability optional in edit mode if it already exists
+                        if (widget.isEdit && _originalAvailability != null && _originalAvailability!.isNotEmpty) {
+                          return null;
+                        }
                         if (value == null || value.isEmpty) {
                           return 'Please enter availability';
                         } else {
@@ -277,6 +394,7 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                    showLabel: true,
                     controller: _feesController,
                     focusNode: _focusNode4,
                     nextFocusNode: _focusNode5,
@@ -294,9 +412,9 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                         MaterialPageRoute(builder: (context) => MapScreen()),
                       ).then((value) {
                         if (value != null) {
-                          latitude = value['latitude'];
-                          longitude = value['longitude'];
-                          _locationController.setText(value['searchValue']);
+                              latitude = value['latitude'];
+                              longitude = value['longitude'];
+                              _locationController.text = value['searchValue'];
                         }
                       });
                     },
@@ -320,23 +438,43 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  SearchDropdown(
-                    hintText: 'Public or Private Institute',
-                    items: ['Public', 'Private'],
-                    value: '',
-                    onChanged: (String? value) {
-                      _instituteController.text = value.toString();
-                    },
-                    icon: '',
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
+                        child: Text(
+                          'Institute Type',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: ThemeUtil.isDarkMode(context)
+                                ? Color(0xff6B7280)
+                                : Color(0xff4B5563),
+                          ),
+                        ),
+                      ),
+                      SearchDropdown(
+                        hintText: 'Public or Private Institute',
+                        items: ['Public', 'Private'],
+                        value: _instituteController.text.isEmpty ? null : _instituteController.text,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            _instituteController.text = value;
+                          }
+                        },
+                        icon: '',
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                    showLabel: true,
                     controller: _aboutController,
                     focusNode: _focusNode7,
                     nextFocusNode: _focusNode8,
-                    hintText: 'About',
+                    hintText: 'Description/Details',
                     icon: '',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -346,6 +484,29 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
                       }
                     },
                     maxlines: true,
+                  ),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  RoundedBorderTextField(
+                    showLabel: true,
+                    validator: (value) {
+                      if (widget.isEdit && (value == null || value.isEmpty)) {
+                        // Password is optional in edit mode
+                        return null;
+                      }
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
+                    focusNode: _focusNode8,
+                    controller: _passwordController,
+                    hintText: 'Password',
+                    icon: '',
                   ),
                   SizedBox(
                     height: 2.h,
@@ -362,41 +523,70 @@ class _HospitalFormScreenState extends State<HospitalFormScreen> {
 
                                 if (!_formKey.currentState!.validate()) {
                                 } else {
-                                  dynamic result = widget.isEdit
-                                      ? await authController.editHospital(
-                                          _nameController.text,
-                                          _profileController.email.value
-                                              .toString(),
-                                          _profileController.password.value
-                                              .toString(),
-                                          _locationController.text,
-                                          "",
-                                          _contactController.text,
-                                          "AD1234",
-                                          latitude.toString(),
-                                          longitude.toString(),
-                                          _feesController.text,
-                                          _aboutController.text,
-                                          _instituteController.text,
-                                          context,
-                                          _selectedImage.toString())
-                                      : await authController.HospitalRegister(
-                                          _nameController.text,
-                                          widget.email,
-                                          widget.password,
-                                          _locationController.text,
-                                          "",
-                                          _contactController.text,
-                                          widget.isSocial ? 'SOCIAL' : "EMAIL",
-                                          widget.userRole ?? 'HOSPITAL',
-                                          latitude.toString(),
-                                          longitude.toString(),
-                                          "AD1234",
-                                          _instituteController.text,
-                                          _aboutController.text,
-                                          _feesController.text,
-                                          context,
-                                          _selectedImage.toString());
+                                  dynamic result;
+                                  
+                                  if (widget.isEdit) {
+                                    // Convert availability to API format only if changed
+                                    List<Map<String, dynamic>>? availabilityToSend;
+                                    if (_availabilityChanged || (_originalAvailability == null || _originalAvailability!.isEmpty) && dateAvailability.isNotEmpty) {
+                                      // Convert current availability
+                                      final currentAvailability = convertAvailabilityToApiFormat(dateAvailability);
+                                      if (currentAvailability.isNotEmpty) {
+                                        availabilityToSend = currentAvailability;
+                                      }
+                                    }
+                                    
+                                    result = await authController.editHospital(
+                                        _nameController.text,
+                                        _profileController.email.value.toString(),
+                                        _passwordController.text.isEmpty 
+                                            ? _originalPassword ?? _profileController.password.value.toString()
+                                            : _passwordController.text,
+                                        _locationController.text,
+                                        "",
+                                        _contactController.text,
+                                        _hospitalDetailController.hospitald.value?.placeId ?? _originalPlaceId ?? "AD1234",
+                                        latitude.toString(),
+                                        longitude.toString(),
+                                        _feesController.text,
+                                        _aboutController.text,
+                                        _instituteController.text,
+                                        context,
+                                        _selectedImage.toString(),
+                                        availability: availabilityToSend,
+                                        originalValues: {
+                                          'name': _originalName,
+                                          'email': _profileController.email.value.toString(),
+                                          'password': _originalPassword ?? _profileController.password.value.toString(),
+                                          'phone': _originalPhone,
+                                          'location': _originalLocation,
+                                          'lat': _originalLat,
+                                          'lng': _originalLng,
+                                          'checkup_fee': _originalCheckupFee,
+                                          'about': _originalAbout,
+                                          'institute': _originalInstitute,
+                                          'image': _originalImage,
+                                          'place_id': _originalPlaceId,
+                                        });
+                                  } else {
+                                    result = await authController.HospitalRegister(
+                                        _nameController.text,
+                                        widget.email,
+                                        widget.password,
+                                        _locationController.text,
+                                        "",
+                                        _contactController.text,
+                                        widget.isSocial ? 'SOCIAL' : "EMAIL",
+                                        widget.userRole ?? 'HOSPITAL',
+                                        latitude.toString(),
+                                        longitude.toString(),
+                                        "AD1234",
+                                        _instituteController.text,
+                                        _aboutController.text,
+                                        _feesController.text,
+                                        context,
+                                        _selectedImage.toString());
+                                  }
                                   if ((result is List && result[0] == true) || (result is bool && result == true)) {
                                     widget.isEdit
                                         ? {_profileController.updateUserDetal()}

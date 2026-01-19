@@ -23,6 +23,9 @@ import 'package:sizer/sizer.dart';
 
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/utils/auth_utils.dart';
+import '../../auth/utils/auth_hive_utils.dart';
+import '../../../core/network/request.dart';
+import '../../../core/constants/endpoints.dart';
 
 class BloodBankFormScreen extends StatefulWidget {
   final String email;
@@ -65,6 +68,16 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
   final mediaController = Get.find<MediaPostController>();
   double latitude = 0;
   double longitude = 0;
+  
+  // Store original values for comparison
+  String? _originalName;
+  String? _originalPhone;
+  String? _originalLocation;
+  String? _originalLat;
+  String? _originalLng;
+  String? _originalImage;
+  String? _originalPlaceId;
+  List<Map<String, dynamic>>? _originalAvailability;
 
   Future<void> _pickImage() async {
     final List<String?> paths = await pickSingleFile();
@@ -78,13 +91,150 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
     }
   }
 
+  // Convert timings from API format to availability format
+  List<Map<String, dynamic>> _convertTimingsToAvailability(List<dynamic>? timings) {
+    if (timings == null || timings.isEmpty) return [];
+    
+    final List<Map<String, dynamic>> availability = [];
+    for (var timing in timings) {
+      if (timing is Map<String, dynamic>) {
+        final day = timing['day'] as String?;
+        final times = timing['times'] as List<dynamic>?;
+        if (day != null && times != null && times.isNotEmpty) {
+          availability.add({
+            "day": day,
+            "times": times.map((t) => t.toString()).toList()
+          });
+        }
+      }
+    }
+    return availability;
+  }
+
+  // Convert availability to List<Set<String>> for dialog
+  List<Set<String>> _convertAvailabilityToDialogFormat(List<Map<String, dynamic>>? availability) {
+    final List<Set<String>> result = List.generate(7, (_) => <String>{});
+    if (availability == null || availability.isEmpty) return result;
+    
+    final List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    
+    for (var avail in availability) {
+      final day = avail['day'] as String?;
+      final times = avail['times'] as List<dynamic>?;
+      if (day != null && times != null) {
+        final dayIndex = daysOfWeek.indexWhere((d) => d.toLowerCase() == day.toLowerCase());
+        if (dayIndex != -1) {
+          result[dayIndex] = times.map((t) => t.toString()).toSet();
+        }
+      }
+    }
+    return result;
+  }
+
+  // Fetch blood bank profile and load data
+  Future<void> _loadBloodBankProfile() async {
+    try {
+      final currentUser = await getCurrentUser();
+      if (currentUser == null) return;
+      
+      // Call getProfile API to get full blood bank details
+      // This will update Hive, but we also need the raw response to get details.timings
+      await authController.fetchAndUpdateUserProfile(currentUser.userId.toString());
+      
+      // Now get the raw response to access details.timings and details.location
+      // We'll use the core network request directly
+      final coreNetwork = DioClient.getInstance();
+      final rawResponse = await coreNetwork.post(
+        Endpoints.getProfile,
+        data: {"user_id": currentUser.userId.toString()}
+      );
+      
+      if (rawResponse['code'] == 200 && rawResponse['data'] != null) {
+        final data = rawResponse['data'] as Map<String, dynamic>;
+        final details = data['details'] as Map<String, dynamic>?;
+        
+        // Load location from details.location (more detailed) or fallback to root location
+        if (details != null && details['location'] != null) {
+          _locationController.text = details['location'].toString();
+          _originalLocation = _locationController.text;
+          
+          // Also set lat/lng if available
+          if (details['lat'] != null) {
+            latitude = double.tryParse(details['lat'].toString()) ?? 0.0;
+            _originalLat = details['lat'].toString();
+          }
+          if (details['lng'] != null) {
+            longitude = double.tryParse(details['lng'].toString()) ?? 0.0;
+            _originalLng = details['lng'].toString();
+          }
+          if (details['place_id'] != null) {
+            _originalPlaceId = details['place_id'].toString();
+          }
+        } else if (data['location'] != null) {
+          _locationController.text = data['location'].toString();
+          _originalLocation = _locationController.text;
+        }
+        
+        // Load availability from details.timings (preferred) or root timings
+        List<dynamic>? timings;
+        if (details != null && details['timings'] != null) {
+          timings = details['timings'] as List<dynamic>?;
+        } else if (data['timings'] != null) {
+          timings = data['timings'] as List<dynamic>?;
+        }
+        
+        if (timings != null && timings.isNotEmpty) {
+          _originalAvailability = _convertTimingsToAvailability(timings);
+          dateAvailability = _convertAvailabilityToDialogFormat(_originalAvailability);
+          
+          // Generate formatted string for display
+          if (mounted) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                final String formattedString = generateFormattedString(
+                    dateAvailability, [
+                  'Monday',
+                  'Tuesday',
+                  'Wednesday',
+                  'Thursday',
+                  'Friday',
+                  'Saturday',
+                  'Sunday'
+                ]);
+                _availabilityController.text = formattedString;
+              }
+            });
+          }
+        }
+      }
+    } catch (e) {
+      print('Error loading blood bank profile: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     if (widget.isEdit) {
       _selectedImage = _profileController.image.value;
-      _nameController.setText(_profileController.firstName.toString());
-      _contactController.setText(_profileController.phone.toString());
+      _originalImage = _selectedImage;
+      
+      _nameController.text = _profileController.firstName.toString();
+      _originalName = _nameController.text;
+      
+      _contactController.text = _profileController.phone.toString();
+      _originalPhone = _contactController.text;
+      
+      // Start with basic location from ProfileController, will be updated by _loadBloodBankProfile
+      _locationController.text = _profileController.location.value.toString();
+      _originalLocation = _locationController.text;
+      
+      // Initialize availability as empty, will be loaded by _loadBloodBankProfile
+      _originalAvailability = [];
+      dateAvailability = [];
+      
+      // Fetch full blood bank profile to get details.location and details.timings
+      _loadBloodBankProfile();
     }
   }
 
@@ -156,28 +306,6 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                             ),
                                           ),
                                         )),
-                              Positioned(
-                                bottom: 20,
-                                right: 100,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        color: ThemeUtil.isDarkMode(context)
-                                            ? AppColors.lightBlueColor3e3
-                                            : Color(0xff1C2A3A),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10.0),
-                                          topRight: Radius.circular(10.0),
-                                          bottomRight: Radius.circular(10.0),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: SvgPicture.asset(
-                                        'Assets/icons/pen.svg',
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                      ),
-                                    )),
-                              )
                             ],
                           ),
                   ),
@@ -192,6 +320,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                         return null;
                       }
                     },
+                    showLabel: true,
                     focusNode: _focusNode1,
                     nextFocusNode: _focusNode2,
                     controller: _nameController,
@@ -202,6 +331,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                     height: 2.h,
                   ),
                   RoundedBorderTextField(
+                      showLabel: true,
                       focusNode: _focusNode2,
                       nextFocusNode: _focusNode3,
                       controller: _contactController,
@@ -220,7 +350,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                         if (value != null) {
                           latitude = value['latitude'];
                           longitude = value['longitude'];
-                          _locationController.setText(value['searchValue']);
+                          _locationController.text = value['searchValue'];
                         }
                       });
                     },
@@ -265,7 +395,7 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                 'Saturday',
                                 'Sunday'
                               ]);
-                              _availabilityController.setText(result);
+                              _availabilityController.text = result;
                             },
                           );
                         },
@@ -305,6 +435,33 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
 
                               if (!_formKey.currentState!.validate()) {
                               } else {
+                                // Convert availability to API format
+                                List<Map<String, dynamic>> availability = [];
+                                for (int i = 0; i < dateAvailability.length; i++) {
+                                  if (dateAvailability[i].isNotEmpty) {
+                                    final List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                                    availability.add({
+                                      "day": daysOfWeek[i],
+                                      "times": dateAvailability[i].toList()
+                                    });
+                                  }
+                                }
+                                
+                                // Build original values map for comparison
+                                Map<String, dynamic> originalValues = {};
+                                if (widget.isEdit) {
+                                  originalValues = {
+                                    'name': _originalName,
+                                    'phone': _originalPhone,
+                                    'location': _originalLocation,
+                                    'lat': _originalLat,
+                                    'lng': _originalLng,
+                                    'place_id': _originalPlaceId,
+                                    'image': _originalImage,
+                                    'availability': _originalAvailability,
+                                  };
+                                }
+                                
                                 bool result = widget.isEdit
                                     ? await authController.editBloodBank(
                                         _nameController.text,
@@ -321,7 +478,9 @@ class _BloodBankFormScreenState extends State<BloodBankFormScreen> {
                                         longitude.toString(),
                                         "ASDA21321",
                                         context,
-                                        _selectedImage.toString())
+                                        _selectedImage.toString(),
+                                        availability: availability,
+                                        originalValues: originalValues)
                                     : await authController.bloodBankRegister(
                                         _nameController.text,
                                         widget.email,
