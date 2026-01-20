@@ -35,6 +35,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min, // Use min to prevent overflow
         children: [
           ScaleTransition(
             scale: _animationController,

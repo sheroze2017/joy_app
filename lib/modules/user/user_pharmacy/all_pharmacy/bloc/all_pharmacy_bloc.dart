@@ -249,22 +249,30 @@ class AllPharmacyController extends GetxController {
     UserHive? currentUser = await getCurrentUser();
 
     try {
+      // Clear existing products and search results
       pharmacyProducts.clear();
       searchPharmacyProducts.clear();
+      // Clear search query to show all products
+      searchQuery.value = '';
+      
       PharmacyProductModel response = await pharmacyApi.getAllPharmacyProducts(
           isUser ? userId : currentUser!.userId.toString());
       if (response.data != null && response.data!.isNotEmpty) {
         // Use assignAll to update the list atomically instead of forEach + add
         pharmacyProducts.assignAll(response.data!);
         searchPharmacyProducts.assignAll(response.data!);
-        print('Loaded ${pharmacyProducts.length} products');
+        print('✅ [ProductList] Loaded ${pharmacyProducts.length} products');
+        // Debug: Print category_name for each product
+        for (var product in pharmacyProducts) {
+          print('   - ${product.name}: category_name = "${product.categoryName ?? "NULL"}"');
+        }
       } else {
-        print('No products in response data');
+        print('⚠️ [ProductList] No products in response data');
       }
       allProductLoader.value = false;
       return response;
     } catch (error) {
-      print('Error loading products: $error');
+      print('❌ [ProductList] Error loading products: $error');
       allProductLoader.value = false;
       // Don't throw, just return empty response
       return PharmacyProductModel();

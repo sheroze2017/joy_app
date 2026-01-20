@@ -153,14 +153,9 @@ class ProductController extends GetxController {
       );
 
       if (response.data != null) {
-        showSuccessMessage(context, 'Medicine Edit Successfully');
-
-        Get.offAll(NavBarScreen(
-          isPharmacy: true,
-        ));
-        // if (response.data!.userRole == 1) {
-        //   Get.offAll(NavBarScreen(isUser: true));
-        // }
+        // Don't navigate away - let the calling widget handle navigation
+        // This allows the product list to refresh properly
+        return response;
       } else {
         showErrorMessage(context, response.message.toString());
       }

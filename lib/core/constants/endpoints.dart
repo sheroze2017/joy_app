@@ -1,24 +1,24 @@
-// import 'dart:io';
-// import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Endpoints {
-  static String baseUrl = 'https://joy.comsrvssoftwaresolutions.com';
-  // Use 127.0.0.1 instead of localhost for better compatibility with iOS Simulator and Android Emulator
-  // For Android Emulator, use 10.0.2.2 instead
-  // For physical devices, use your machine's IP address (e.g., 192.168.x.x)
-//   static String get baseUrl {
-//     if (kIsWeb) {
-//       return 'http://localhost:1006';
-//     } else if (Platform.isAndroid) {
-//       // Android Emulator uses 10.0.2.2 to access host machine's localhost
-//       //   return 'http://10.0.2.2:1006';
-//       return 'http://localhost:1006';
-//     } else {
-//       // iOS Simulator - use 127.0.0.1 which is more reliable than localhost
-//       //   return 'http://192.168.100.20:1006';
-//       return 'http://localhost:1006';
-//     }
-//   }
+//   static String baseUrl = 'https://joy.comsrvssoftwaresolutions.com';
+//   Use 127.0.0.1 instead of localhost for better compatibility with iOS Simulator and Android Emulator
+//   For Android Emulator, use 10.0.2.2 instead
+//   For physical devices, use your machine's IP address (e.g., 192.168.x.x)
+  static String get baseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:1006';
+    } else if (Platform.isAndroid) {
+      // Android Emulator uses 10.0.2.2 to access host machine's localhost
+      //   return 'http://10.0.2.2:1006';
+      return 'http://localhost:1006';
+    } else {
+      // iOS Simulator - use 127.0.0.1 which is more reliable than localhost
+      //   return 'http://192.168.100.20:1006';
+      return 'http://localhost:1006';
+    }
+  }
 
   // Chat uses same baseUrl as APIs
   static String get chatRestBase => baseUrl;

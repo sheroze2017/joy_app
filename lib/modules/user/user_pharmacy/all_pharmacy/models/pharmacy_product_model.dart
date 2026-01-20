@@ -42,6 +42,7 @@ class PharmacyProductData {
   String? shortDescription;
   int? categoryId;
   String? category; // Added to store category string from API (e.g., "SYRUP")
+  String? categoryName; // Added to store category_name from API (e.g., "PILL", "SYRUP", "CREAM")
   String? price;
   String? discount;
   dynamic pharmacyId; // Changed to dynamic to handle both String (MongoDB) and int (legacy)
@@ -56,6 +57,7 @@ class PharmacyProductData {
       this.shortDescription,
       this.categoryId,
       this.category,
+      this.categoryName,
       this.price,
       this.discount,
       this.pharmacyId,
@@ -80,6 +82,14 @@ class PharmacyProductData {
     
     // Handle category - API sends category as string (e.g., "SYRUP") or category_id as MongoDB ID
     category = json['category']?.toString();
+    
+    // Handle category_name - API sends category_name (e.g., "PILL", "SYRUP", "CREAM", "DROPS", "SPRAY")
+    final categoryNameValue = json['category_name']?.toString();
+    categoryName = categoryNameValue != null ? categoryNameValue.trim() : null;
+    // Debug: Print category_name to verify it's being parsed
+    if (categoryName != null && categoryName!.isNotEmpty) {
+      print('📦 [ProductModel] Parsed category_name: "$categoryName" for product: ${name ?? "Unknown"}');
+    }
     
     // Handle category_id - can be MongoDB ID string or int
     if (json['category_id'] != null) {

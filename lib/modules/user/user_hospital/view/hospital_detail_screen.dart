@@ -492,6 +492,7 @@ class MedicineCard extends StatelessWidget {
   bool isUserProductScreen;
   int categoryId;
   final bool isFromHospital;
+  String? categoryName; // Added to support category_name from API
 
   MedicineCard(
       {super.key,
@@ -503,7 +504,22 @@ class MedicineCard extends StatelessWidget {
       this.isUserProductScreen = false,
       this.categoryId = 1,
       required this.isFromHospital,
+      this.categoryName,
       required this.onPressed});
+
+  // Helper method to get category display name
+  String _getCategoryDisplayName() {
+    final category = ['pills', 'round_pills', 'syrupe'];
+    // Use categoryName if available, display it as-is
+    if (categoryName != null && categoryName!.isNotEmpty) {
+      return categoryName!.trim();
+    }
+    // Fallback to category array if categoryName is not available
+    if (categoryId > 0 && categoryId <= category.length) {
+      return category[categoryId - 1];
+    }
+    return 'pills'; // Default fallback
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -573,7 +589,7 @@ class MedicineCard extends StatelessWidget {
                             style: CustomTextStyles.darkHeadingTextStyle(),
                           ),
                           Text(
-                            '${count} ${category[categoryId - 1]} for ${cost}\Rs',
+                            _getCategoryDisplayName(),
                             style: CustomTextStyles.w600TextStyle(
                                 size: 13, color: Color(0xff4B5563)),
                           ),

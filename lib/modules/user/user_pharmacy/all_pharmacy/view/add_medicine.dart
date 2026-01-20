@@ -11,6 +11,7 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/modules/auth/utils/auth_utils.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/splash/view/splash_screen.dart';
 import 'package:joy_app/common/utils/file_selector.dart';
 import 'package:joy_app/widgets/textfield/single_select_dropdown.dart';
 import 'package:pinput/pinput.dart';
@@ -142,28 +143,30 @@ class _AddMedicineState extends State<AddMedicine> {
                                     ),
                                   ),
                                 )),
-                      Positioned(
-                        bottom: 20,
-                        right: 100,
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: ThemeUtil.isDarkMode(context)
-                                    ? AppColors.lightGreenColoreb1
-                                    : AppColors.darkGreenColor,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.0),
-                                  topRight: Radius.circular(10.0),
-                                  bottomRight: Radius.circular(10.0),
-                                )),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: SvgPicture.asset(
-                                'Assets/icons/pen.svg',
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                              ),
-                            )),
-                      ),
+                      // Hide pencil icon when editing (image cannot be changed in edit mode)
+                      if (!widget.isEdit)
+                        Positioned(
+                          bottom: 20,
+                          right: 100,
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  color: ThemeUtil.isDarkMode(context)
+                                      ? AppColors.lightGreenColoreb1
+                                      : AppColors.darkGreenColor,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0),
+                                    bottomRight: Radius.circular(10.0),
+                                  )),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: SvgPicture.asset(
+                                  'Assets/icons/pen.svg',
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                ),
+                              )),
+                        ),
                     ],
                   ),
                   SizedBox(
@@ -396,22 +399,62 @@ class _AddMedicineState extends State<AddMedicine> {
                               if (!_formKey.currentState!.validate()) {
                               } else {
                                 if (widget.isEdit) {
-                                  productsController.editProduct(
+                                  // Get current user for pharmacy_id
+                                  getCurrentUser().then((currentUser) async {
+                                    if (currentUser == null) {
+                                      Get.snackbar('Error', 'User not found');
+                                      return;
+                                    }
+
+                                    // Find the category_id from the selected category name
+                                    String? categoryId;
+                                    final selectedCategoryName = _categoryController.text.isNotEmpty
+                                        ? _categoryController.text
+                                        : category.isNotEmpty ? category.first : '';
+                                    
+                                    if (selectedCategoryName.isNotEmpty) {
+                                      // Find the category object that matches the selected name
+                                      final selectedCategoryObj = productsController.categoriesList.firstWhere(
+                                        (cat) => (cat.name ?? '').toLowerCase() == selectedCategoryName.toLowerCase(),
+                                        orElse: () => productsController.categoriesList.isNotEmpty 
+                                            ? productsController.categoriesList.first 
+                                            : throw Exception('No categories available'),
+                                      );
+                                      categoryId = selectedCategoryObj.categoryId?.toString();
+                                    }
+
+                                    if (categoryId == null || categoryId.isEmpty) {
+                                      Get.snackbar('Error', 'Please select a category');
+                                      return;
+                                    }
+
+                                    // Call editProduct with category_id
+                                    final response = await productsController.editProduct(
                                       _nameController.text.toString(),
                                       _descController.text.toString(),
-                                      (category.indexOf(_categoryController
-                                                      .text) +
-                                                  1)
-                                              .toString() ??
-                                          '0',
+                                      categoryId,
                                       _priceController.text.toString(),
-                                      '0',
-                                      '',
+                                      _discountController.text.toString().isEmpty 
+                                          ? '0' 
+                                          : _discountController.text.toString(),
+                                      currentUser.userId.toString(),
                                       _stockController.text.toString(),
                                       _dosageController.text.toString(),
-                                      widget.productDetail!.productId
-                                          .toString(),
-                                      context);
+                                      widget.productDetail!.productId.toString(),
+                                      context,
+                                    );
+
+                                    if (response.data != null) {
+                                      // Close the screen first
+                                      Get.back();
+                                      // Show success message
+                                      Get.snackbar('Success', 'Product updated successfully');
+                                      // Wait a bit for the message to show, then redirect to splash screen
+                                      await Future.delayed(Duration(milliseconds: 1500));
+                                      // Navigate to splash screen to reload app state
+                                      Get.offAll(() => SplashScreen());
+                                    }
+                                  });
                                 } else {
                                   // Get current user for pharmacy_id
                                   getCurrentUser().then((currentUser) async {

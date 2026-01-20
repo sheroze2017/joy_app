@@ -52,6 +52,7 @@ class _ProductScreenState extends State<ProductScreen> {
       // Clear previous products and load new ones
       pharmacyController.pharmacyProducts.clear();
       pharmacyController.searchPharmacyProducts.clear();
+      pharmacyController.searchQuery.value = ''; // Clear search query
       pharmacyController.getPharmacyProduct(true, widget.userId);
     });
   }
@@ -201,17 +202,17 @@ class _ProductScreenState extends State<ProductScreen> {
                                       child: MedicineCard(
                                         isFromHospital: false,
                                         categoryId: data.categoryId ?? 1,
+                                        categoryName: data.categoryName, // Pass category_name from API
                                         isUserProductScreen: true,
                                         onPressed: () async {
                                           // Open bottom sheet for editing
+                                          // The EditProductSheet will handle reloading products after successful edit
                                           await showModalBottomSheet(
                                             context: context,
                                             isScrollControlled: true,
                                             backgroundColor: Colors.transparent,
                                             builder: (context) => EditProductSheet(product: data),
                                           );
-                                          // Refresh products list when bottom sheet closes
-                                          pharmacyController.getPharmacyProduct(true, widget.userId);
                                         },
                                         btnText: "Edit",
                                         imgUrl: data.image ?? '',
@@ -262,10 +263,23 @@ class _UserProductCardState extends State<_UserProductCard> {
     return currentUser?.userRole == 'HOSPITAL';
   }
 
-  @override
-  Widget build(BuildContext context) {
+  // Helper method to get category display name
+  String _getCategoryDisplayName() {
+    // Use category_name from API if available, display it as-is
+    if (widget.product.categoryName != null && widget.product.categoryName!.isNotEmpty) {
+      return widget.product.categoryName!.trim();
+    }
+    // Fallback to category array if category_name is not available
     final category = ['pills', 'syrupe', 'round_pills', 'capsule', 'injection'];
     final categoryId = widget.product.categoryId ?? 1;
+    if (categoryId > 0 && categoryId <= category.length) {
+      return category[categoryId - 1];
+    }
+    return 'pills'; // Default fallback
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     return InkWell(
       onTap: () {
@@ -309,7 +323,7 @@ class _UserProductCardState extends State<_UserProductCard> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              '${widget.product.quantity ?? 0} ${category[categoryId - 1]} for ${widget.product.price ?? '0'}\Rs',
+                              _getCategoryDisplayName(),
                               style: CustomTextStyles.w600TextStyle(
                                   size: 13, color: Color(0xff4B5563)),
                               maxLines: 1,

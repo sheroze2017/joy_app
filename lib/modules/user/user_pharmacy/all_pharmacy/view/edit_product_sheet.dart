@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:joy_app/Widgets/textfield/custom_textfield.dart';
 import 'package:joy_app/Widgets/button/rounded_button.dart';
@@ -9,6 +10,7 @@ import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/theme.dart';
 import 'package:joy_app/widgets/textfield/single_select_dropdown.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
+import 'package:joy_app/modules/splash/view/splash_screen.dart';
 import 'package:sizer/sizer.dart';
 
 class EditProductSheet extends StatefulWidget {
@@ -35,6 +37,7 @@ class _EditProductSheetState extends State<EditProductSheet> {
   
   List<String> categoryOptions = [];
   String? selectedCategory;
+  String? selectedCategoryId;
 
   @override
   void initState() {
@@ -76,10 +79,18 @@ class _EditProductSheetState extends State<EditProductSheet> {
           );
           selectedCategory = matchedCategory;
           _categoryController.text = matchedCategory;
+          
+          // Find the category_id for the matched category
+          final matchedCategoryObj = productsController.categoriesList.firstWhere(
+            (cat) => (cat.name ?? '').toLowerCase() == matchedCategory.toLowerCase(),
+            orElse: () => productsController.categoriesList.first,
+          );
+          selectedCategoryId = matchedCategoryObj.categoryId?.toString();
         } else if (categoryOptions.isNotEmpty) {
           // Default to first category if no match found
           selectedCategory = categoryOptions.first;
           _categoryController.text = categoryOptions.first;
+          selectedCategoryId = productsController.categoriesList.first.categoryId?.toString();
         }
       });
     } catch (e) {
@@ -121,16 +132,16 @@ class _EditProductSheetState extends State<EditProductSheet> {
       }
 
       // Validate category is selected
-      if (selectedCategory == null || selectedCategory!.isEmpty) {
+      if (selectedCategory == null || selectedCategory!.isEmpty || selectedCategoryId == null) {
         Get.snackbar('Error', 'Please select a category');
         return;
       }
 
-      // Call the edit API with the correct format
-      final response = await productsController.editProductWithCategory(
+      // Call the edit API with category_id
+      final response = await productsController.editProduct(
         _nameController.text.trim(),
         _descController.text.trim(),
-        selectedCategory!, // Use selected category name
+        selectedCategoryId!, // Use category_id
         _priceController.text.trim(),
         _discountController.text.trim(),
         currentUser.userId.toString(),
@@ -140,15 +151,17 @@ class _EditProductSheetState extends State<EditProductSheet> {
         context,
       );
 
-      if (response != null) {
-        // Close the sheet first before showing snackbar
+      if (response.data != null) {
+        // Close the sheet first
         Get.back(); // Close the sheet
-        // Wait a bit for the sheet to close
-        await Future.delayed(Duration(milliseconds: 300));
-        // Refresh products list
-        await pharmacyController.getPharmacyProduct(true, currentUser.userId.toString());
-        // Show success message after sheet is closed
+        // Show success message
         Get.snackbar('Success', 'Product updated successfully');
+        // Wait a bit for the message to show, then redirect to splash screen
+        await Future.delayed(Duration(milliseconds: 1500));
+        // Navigate to splash screen to reload app state
+        Get.offAll(() => SplashScreen());
+      } else {
+        Get.snackbar('Error', response.message?.toString() ?? 'Failed to update product');
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to update product: ${e.toString()}');
@@ -216,6 +229,44 @@ class _EditProductSheetState extends State<EditProductSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    SizedBox(height: 2.h),
+                    // Product Image Section (without pencil icon)
+                    Center(
+                      child: widget.product.image == null ||
+                              widget.product.image!.isEmpty ||
+                              !widget.product.image!.contains('http')
+                          ? SvgPicture.asset(
+                              'Assets/images/profile-circle.svg',
+                              width: 43.w,
+                              height: 43.w,
+                            )
+                          : Container(
+                              width: 43.w,
+                              height: 43.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                              ),
+                              child: ClipOval(
+                                child: Image.network(
+                                  widget.product.image!,
+                                  fit: BoxFit.cover,
+                                  width: 43.w,
+                                  height: 43.w,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return SvgPicture.asset(
+                                      'Assets/images/profile-circle.svg',
+                                      width: 43.w,
+                                      height: 43.w,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                    ),
                     SizedBox(height: 2.h),
                     // Product Name Label
                     Align(
@@ -317,6 +368,15 @@ class _EditProductSheetState extends State<EditProductSheet> {
                               setState(() {
                                 selectedCategory = value;
                                 _categoryController.text = value ?? (categoryOptions.isNotEmpty ? categoryOptions.first : '');
+                                
+                                // Find the category_id for the selected category
+                                if (value != null) {
+                                  final selectedCategoryObj = productsController.categoriesList.firstWhere(
+                                    (cat) => (cat.name ?? '').toLowerCase() == value.toLowerCase(),
+                                    orElse: () => productsController.categoriesList.first,
+                                  );
+                                  selectedCategoryId = selectedCategoryObj.categoryId?.toString();
+                                }
                               });
                             },
                             icon: '',
