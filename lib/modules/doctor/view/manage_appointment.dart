@@ -228,7 +228,9 @@ class _ManageAppointmentState extends State<ManageAppointment> {
                                     .doctorAppointment
                                     .where((appointment) => 
                                         appointment.status?.toUpperCase() == 'COMPLETED')
-                                    .toList();
+                                    .toList()
+                                    .reversed
+                                    .toList(); // Reverse to show latest first
                                 
                                 return ListView.builder(
                                     shrinkWrap: true,

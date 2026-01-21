@@ -44,6 +44,19 @@ class DioClient {
               // Always set Authorization header, even if it already exists
               options.headers['Authorization'] = 'Bearer $token';
             }
+            
+            // Log request details for upload requests
+            if (options.method == 'POST' && options.data is FormData) {
+              final formData = options.data as FormData;
+              print('🔍 [Interceptor] Upload Request Intercepted:');
+              print('   - URL: ${options.uri}');
+              print('   - Method: ${options.method}');
+              print('   - Headers: ${options.headers}');
+              print('   - FormData Files: ${formData.files.length}');
+              for (var file in formData.files) {
+                print('     * Field: "${file.key}", File: "${file.value.filename}"');
+              }
+            }
           } catch (e) {
             print('❌ [DioClient Interceptor] Error adding token: $e');
             print('❌ [DioClient Interceptor] Stack trace: ${StackTrace.current}');
@@ -363,32 +376,286 @@ class DioClient {
 
   Future<dynamic> upload(String url, {data}) async {
     try {
+      print('📤 [UPLOAD] ========== UPLOAD REQUEST START ==========');
       dio.options.baseUrl = Endpoints.baseUrl;
       // dio.options.headers['marketplace_id'] = getMarketplaceId();
       final fullUrl = '${Endpoints.baseUrl}$url';
       print('📤 [UPLOAD] Request URL: $fullUrl');
-      print('📤 [UPLOAD] Uploading file...');
+      print('📤 [UPLOAD] Base URL: ${Endpoints.baseUrl}');
+      print('📤 [UPLOAD] Endpoint Path: $url');
+      print('📤 [UPLOAD] Data Type: ${data.runtimeType}');
+      
+      // Get token for logging
+      String? token;
+      try {
+        token = await getToken();
+        if (token != null && token.isNotEmpty) {
+          print('🔑 [UPLOAD] Authorization Token: ${token.substring(0, 20)}... (length: ${token.length})');
+        } else {
+          print('⚠️ [UPLOAD] Authorization Token: null or empty');
+        }
+      } catch (e) {
+        print('⚠️ [UPLOAD] Failed to get token: $e');
+      }
+
+      // Detailed FormData logging
+      if (data is FormData) {
+        print('📋 [UPLOAD] FormData Details:');
+        print('   - Fields Count: ${data.fields.length}');
+        print('   - Files Count: ${data.files.length}');
+        if (data.fields.isNotEmpty) {
+          print('   - FormData Fields:');
+          for (var field in data.fields) {
+            print('     * "${field.key}": "${field.value}"');
+          }
+        }
+        if (data.files.isNotEmpty) {
+          print('   - FormData Files:');
+          for (var file in data.files) {
+            print('     * Key: "${file.key}"');
+            print('       - FileName: "${file.value.filename}"');
+            print('       - ContentType: ${file.value.contentType}');
+            print('       - Length: ${file.value.length} bytes');
+            print('       - Headers: ${file.value.headers}');
+          }
+        } else {
+          print('   ⚠️ [UPLOAD] No files in FormData!');
+        }
+      } else {
+        print('⚠️ [UPLOAD] Data is not FormData: ${data.runtimeType}');
+        print('📤 [UPLOAD] Data content: $data');
+      }
 
       // When using FormData, Dio automatically sets Content-Type with boundary
       // Don't manually set Content-Type for FormData
       Options? options;
       if (data is! FormData) {
         options = Options();
-      options.headers?.putIfAbsent('Content-Type', () => 'multipart/form-data');
+        options.headers?.putIfAbsent('Content-Type', () => 'multipart/form-data');
+        print('📤 [UPLOAD] Setting Content-Type header manually (not FormData)');
+      } else {
+        print('📤 [UPLOAD] Using FormData - Content-Type will be set automatically by Dio with boundary');
       }
 
+      // Final summary before sending request
+      print('');
+      print('📡 [UPLOAD] ========== FINAL REQUEST SUMMARY ==========');
+      print('📡 [UPLOAD] API Endpoint: $fullUrl');
+      print('📡 [UPLOAD] HTTP Method: POST');
+      print('📡 [UPLOAD] Request Headers:');
+      if (token != null && token.isNotEmpty) {
+        print('   - Authorization: Bearer ${token.substring(0, 20)}...');
+      }
+      if (data is FormData) {
+        print('   - Content-Type: multipart/form-data (with boundary - auto-set by Dio)');
+      }
+      print('📡 [UPLOAD] Request Payload:');
+      if (data is FormData) {
+        print('   Type: FormData');
+        print('   Fields: ${data.fields.length}');
+        print('   Files: ${data.files.length}');
+        if (data.files.isNotEmpty) {
+          for (var file in data.files) {
+            print('   📎 Field Name: "${file.key}"');
+            print('      File: "${file.value.filename}"');
+            print('      Size: ${file.value.length} bytes');
+            print('      Type: ${file.value.contentType}');
+          }
+        }
+        if (data.fields.isNotEmpty) {
+          for (var field in data.fields) {
+            print('   📎 "${field.key}": "${field.value}"');
+          }
+        }
+      } else {
+        print('   Type: ${data.runtimeType}');
+        print('   Content: $data');
+      }
+      print('📡 [UPLOAD] ===========================================');
+      print('');
+
+      print('📤 [UPLOAD] Sending POST request...');
       final response = await dio.post(url, data: data, options: options);
 
-      print('✅ [UPLOAD] Response Status: ${response.statusCode}');
-      print('📥 [UPLOAD] Response Data: ${response.data}');
-      return response.data;
-    } catch (e) {
-      print('❌ [UPLOAD] Error: $e');
-      if (e is DioException) {
-        print('❌ [UPLOAD] Error Response: ${e.response?.data}');
-        print('❌ [UPLOAD] Error Status Code: ${e.response?.statusCode}');
-        print('❌ [UPLOAD] Error URL: ${e.requestOptions.uri}');
+      print('✅ [UPLOAD] ========== UPLOAD RESPONSE ==========');
+      print('✅ [UPLOAD] Response Status Code: ${response.statusCode}');
+      print('✅ [UPLOAD] Response Status Message: ${response.statusMessage}');
+      print('✅ [UPLOAD] Response Headers:');
+      response.headers.forEach((key, values) {
+        print('   - $key: ${values.join(", ")}');
+      });
+      print('✅ [UPLOAD] Response Data Type: ${response.data.runtimeType}');
+      print('');
+      print('📥 [UPLOAD] ========== COMPLETE RESPONSE DATA ==========');
+      
+      // Parse response if it's a Map
+      if (response.data is Map) {
+        final responseMap = response.data as Map;
+        print('📥 [UPLOAD] Response Structure: Map');
+        print('📥 [UPLOAD] Response Keys: ${responseMap.keys.toList()}');
+        print('');
+        
+        // Log all top-level keys
+        responseMap.forEach((key, value) {
+          print('📥 [UPLOAD] "$key": ${value.runtimeType} = $value');
+          
+          // If value is a Map, show its structure
+          if (value is Map) {
+            print('   └─ Map Keys: ${value.keys.toList()}');
+            value.forEach((nestedKey, nestedValue) {
+              print('      "$nestedKey": ${nestedValue.runtimeType} = $nestedValue');
+              
+              // Check for URLs in nested values
+              if (nestedValue is String && (nestedValue.toString().startsWith('http://') || nestedValue.toString().startsWith('https://'))) {
+                print('      🔗 [URL FOUND] $nestedKey: $nestedValue');
+              }
+              
+              // If nested value is also a Map, show its structure
+              if (nestedValue is Map) {
+                nestedValue.forEach((deepKey, deepValue) {
+                  print('         "$deepKey": ${deepValue.runtimeType} = $deepValue');
+                  if (deepValue is String && (deepValue.toString().startsWith('http://') || deepValue.toString().startsWith('https://'))) {
+                    print('         🔗 [URL FOUND] $deepKey: $deepValue');
+                  }
+                });
+              }
+            });
+          }
+          
+          // If value is a List, show its structure
+          if (value is List) {
+            print('   └─ List Length: ${value.length}');
+            for (int i = 0; i < value.length && i < 5; i++) {
+              print('      [$i]: ${value[i].runtimeType} = ${value[i]}');
+              if (value[i] is Map) {
+                (value[i] as Map).forEach((listKey, listValue) {
+                  print('         "$listKey": ${listValue.runtimeType} = $listValue');
+                  if (listValue is String && (listValue.toString().startsWith('http://') || listValue.toString().startsWith('https://'))) {
+                    print('         🔗 [URL FOUND] $listKey: $listValue');
+                  }
+                });
+              }
+            }
+            if (value.length > 5) {
+              print('      ... and ${value.length - 5} more items');
+            }
+          }
+          
+          // Check for URLs in string values
+          if (value is String && (value.toString().startsWith('http://') || value.toString().startsWith('https://'))) {
+            print('   🔗 [URL FOUND] $key: $value');
+          }
+        });
+        
+        print('');
+        print('📥 [UPLOAD] Parsed Values:');
+        print('   - code: ${responseMap['code']}');
+        print('   - success: ${responseMap['success'] ?? responseMap['sucess']}');
+        print('   - message: ${responseMap['message']}');
+        
+        if (responseMap['data'] != null) {
+          print('   - data: ${responseMap['data']}');
+          print('   - data type: ${responseMap['data'].runtimeType}');
+          
+          // Check if data contains URL
+          if (responseMap['data'] is String) {
+            final dataString = responseMap['data'] as String;
+            if (dataString.startsWith('http://') || dataString.startsWith('https://')) {
+              print('   🔗 [URL IN DATA] $dataString');
+            }
+          } else if (responseMap['data'] is Map) {
+            final dataMap = responseMap['data'] as Map;
+            dataMap.forEach((dataKey, dataValue) {
+              if (dataValue is String && (dataValue.toString().startsWith('http://') || dataValue.toString().startsWith('https://'))) {
+                print('   🔗 [URL IN DATA.$dataKey] $dataValue');
+              }
+              // Check common URL field names
+              if (['url', 'image_url', 'imageUrl', 'image', 'file_url', 'fileUrl', 'link', 'src'].contains(dataKey.toString().toLowerCase())) {
+                print('   🔗 [POSSIBLE URL FIELD: $dataKey] $dataValue');
+              }
+            });
+          }
+        }
+        
+        // Check for common URL field names in response
+        final urlFields = ['url', 'image_url', 'imageUrl', 'image', 'file_url', 'fileUrl', 'link', 'src', 'media_url', 'mediaUrl'];
+        for (var urlField in urlFields) {
+          if (responseMap.containsKey(urlField)) {
+            print('   🔗 [URL FIELD FOUND: $urlField] ${responseMap[urlField]}');
+          }
+        }
+      } else if (response.data is String) {
+        print('📥 [UPLOAD] Response Structure: String');
+        print('📥 [UPLOAD] Response Content: ${response.data}');
+        if ((response.data as String).startsWith('http://') || (response.data as String).startsWith('https://')) {
+          print('🔗 [URL FOUND IN RESPONSE] ${response.data}');
+        }
+      } else if (response.data is List) {
+        print('📥 [UPLOAD] Response Structure: List');
+        print('📥 [UPLOAD] Response Length: ${(response.data as List).length}');
+        for (int i = 0; i < (response.data as List).length && i < 10; i++) {
+          print('   [$i]: ${(response.data as List)[i]}');
+        }
+      } else {
+        print('📥 [UPLOAD] Response Content: ${response.data}');
       }
+      
+      print('📥 [UPLOAD] ===========================================');
+      print('✅ [UPLOAD] ======================================');
+      return response.data;
+    } catch (e, stackTrace) {
+      print('❌ [UPLOAD] ========== UPLOAD ERROR ==========');
+      print('❌ [UPLOAD] Error: $e');
+      print('❌ [UPLOAD] Error Type: ${e.runtimeType}');
+      if (e is DioException) {
+        print('❌ [UPLOAD] DioException Details:');
+        print('   - Type: ${e.type}');
+        print('   - Message: ${e.message}');
+        print('   - Request Path: ${e.requestOptions.path}');
+        print('   - Request Method: ${e.requestOptions.method}');
+        print('   - Request URL: ${e.requestOptions.uri}');
+        print('   - Request Headers: ${e.requestOptions.headers}');
+        print('   - Request Data Type: ${e.requestOptions.data.runtimeType}');
+        
+        if (e.requestOptions.data is FormData) {
+          final fd = e.requestOptions.data as FormData;
+          print('   - FormData Fields Count: ${fd.fields.length}');
+          print('   - FormData Files Count: ${fd.files.length}');
+          if (fd.fields.isNotEmpty) {
+            print('   - FormData Fields:');
+            for (var field in fd.fields) {
+              print('     * "${field.key}": "${field.value}"');
+            }
+          }
+          if (fd.files.isNotEmpty) {
+            print('   - FormData Files:');
+            for (var file in fd.files) {
+              print('     * Key: "${file.key}"');
+              print('       - FileName: "${file.value.filename}"');
+              print('       - ContentType: ${file.value.contentType}');
+              print('       - Length: ${file.value.length} bytes');
+            }
+          }
+        } else {
+          print('   - Request Data: ${e.requestOptions.data}');
+        }
+        
+        print('   - Response Status Code: ${e.response?.statusCode}');
+        print('   - Response Status Message: ${e.response?.statusMessage}');
+        print('   - Response Headers: ${e.response?.headers}');
+        print('   - Response Data: ${e.response?.data}');
+        print('   - Response Data Type: ${e.response?.data.runtimeType}');
+        
+        if (e.response?.data is Map) {
+          final errorData = e.response!.data as Map;
+          print('   - Error Response Keys: ${errorData.keys.toList()}');
+          print('   - Error Code: ${errorData['code']}');
+          print('   - Error Message: ${errorData['message']}');
+          print('   - Error Success: ${errorData['success'] ?? errorData['sucess']}');
+        }
+      }
+      print('❌ [UPLOAD] Stack Trace: $stackTrace');
+      print('❌ [UPLOAD] ======================================');
       throw e;
     }
   }

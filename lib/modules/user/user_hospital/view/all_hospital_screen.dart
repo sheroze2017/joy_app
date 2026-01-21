@@ -377,7 +377,7 @@ class _AllHospitalScreenState extends State<AllHospitalScreen> {
                       final donorsCount = bloodBankController.allDonors.length;
 
                       return SizedBox(
-                        height: 15.h,
+                        height: 18.h,
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(

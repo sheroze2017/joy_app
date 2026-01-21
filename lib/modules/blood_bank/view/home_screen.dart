@@ -296,6 +296,7 @@ class BloodBankHomeScreen extends StatelessWidget {
     final TextEditingController aboutController = TextEditingController(
       text: controller.bloodBankDetail?.data?.about ?? '',
     );
+    final FocusNode aboutFocusNode = FocusNode();
 
     showModalBottomSheet(
       context: context,
@@ -324,7 +325,10 @@ class BloodBankHomeScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      aboutFocusNode.unfocus();
+                      Navigator.pop(context);
+                    },
                   ),
                 ],
               ),
@@ -332,9 +336,14 @@ class BloodBankHomeScreen extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: aboutController,
+                  focusNode: aboutFocusNode,
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) {
+                    aboutFocusNode.unfocus();
+                  },
                   style: CustomTextStyles.lightTextStyle(size: 14),
                   decoration: InputDecoration(
                     hintText: 'Enter about blood bank',
@@ -406,32 +415,112 @@ class BloodBankHomeScreen extends StatelessWidget {
     final existingTimings = controller.bloodBankDetail?.data?.timings;
     if (existingTimings != null) {
       // Handle timings as either String or List
-      String timingsString = '';
       if (existingTimings is String && existingTimings.isNotEmpty) {
-        timingsString = existingTimings;
-      } else if (existingTimings is List && existingTimings.isNotEmpty) {
-        // Format list of timing objects
-        final List<String> formattedTimings = [];
-        for (var timing in existingTimings) {
-          if (timing is Map) {
-            final day = timing['day']?.toString() ?? '';
-            final times = timing['times'];
-            if (day.isNotEmpty && times != null) {
-              if (times is List) {
-                formattedTimings.add('$day: ${times.join(', ')}');
+        // Parse string format: "Monday: 08:00 AM - 09:00 AM" or "Monday: 08:00 AM - 09:00 AM, Tuesday: 10:00 AM - 11:00 AM"
+        final parts = existingTimings.split(',');
+        for (var part in parts) {
+          part = part.trim();
+          // Match pattern like "Monday: 08:00 AM - 09:00 AM"
+          final dayTimeMatch = RegExp(r'^(\w+):\s*(\d{1,2}:\d{2}\s*(?:AM|PM))\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM))').firstMatch(part);
+          if (dayTimeMatch != null) {
+            final dayName = dayTimeMatch.group(1)!;
+            final startTime = dayTimeMatch.group(2)!.trim();
+            final endTime = dayTimeMatch.group(3)!.trim();
+            
+            // Find day index
+            final dayIndex = daysOfWeek.indexWhere((day) => day.toLowerCase() == dayName.toLowerCase());
+            if (dayIndex != -1) {
+              // Initialize set for this day if not exists
+              if (selectedTimesPerDay[dayIndex] == null) {
+                selectedTimesPerDay[dayIndex] = <String>{};
+              }
+              
+              // Find all time slots between start and end time
+              final startIndex = times.indexWhere((t) => t == startTime);
+              final endIndex = times.indexWhere((t) => t == endTime);
+              
+              if (startIndex != -1 && endIndex != -1) {
+                // Add all times from start to end (inclusive)
+                for (int i = startIndex; i <= endIndex; i++) {
+                  if (i < times.length) {
+                    selectedTimesPerDay[dayIndex]!.add(times[i]);
+                  }
+                }
               } else {
-                formattedTimings.add('$day: $times');
+                // If exact match not found, try to add start and end times
+                if (startIndex != -1) {
+                  selectedTimesPerDay[dayIndex]!.add(times[startIndex]);
+                }
+                if (endIndex != -1) {
+                  selectedTimesPerDay[dayIndex]!.add(times[endIndex]);
+                }
+              }
+              
+              // Set first day with timings as selected
+              if (selectedDayIndex == 0 && selectedTimesPerDay[dayIndex]!.isNotEmpty) {
+                selectedDayIndex = dayIndex;
               }
             }
           }
         }
-        timingsString = formattedTimings.join('\n');
-      }
-      
-      if (timingsString.isNotEmpty) {
-        // Parse existing timings (simple parsing - can be improved)
-        // Format: "Monday-Friday: 9:00 AM - 6:00 PM, Saturday-Sunday: 10:00 AM - 4:00 PM"
-        // For now, we'll just initialize empty
+      } else if (existingTimings is List && existingTimings.isNotEmpty) {
+        // Handle list format: [{day: "Monday", times: ["08:00 AM", "09:00 AM"]}]
+        for (var timing in existingTimings) {
+          if (timing is Map) {
+            final day = timing['day']?.toString() ?? '';
+            final timesList = timing['times'];
+            
+            if (day.isNotEmpty) {
+              // Find day index
+              final dayIndex = daysOfWeek.indexWhere((d) => d.toLowerCase() == day.toLowerCase());
+              if (dayIndex != -1) {
+                // Initialize set for this day if not exists
+                if (selectedTimesPerDay[dayIndex] == null) {
+                  selectedTimesPerDay[dayIndex] = <String>{};
+                }
+                
+                if (timesList is List) {
+                  // Add all times from the list
+                  for (var time in timesList) {
+                    final timeStr = time.toString().trim();
+                    if (times.contains(timeStr)) {
+                      selectedTimesPerDay[dayIndex]!.add(timeStr);
+                    }
+                  }
+                } else if (timesList is String) {
+                  // Parse string like "08:00 AM - 09:00 AM"
+                  final timeRangeMatch = RegExp(r'(\d{1,2}:\d{2}\s*(?:AM|PM))\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM))').firstMatch(timesList);
+                  if (timeRangeMatch != null) {
+                    final startTime = timeRangeMatch.group(1)!.trim();
+                    final endTime = timeRangeMatch.group(2)!.trim();
+                    
+                    final startIndex = times.indexWhere((t) => t == startTime);
+                    final endIndex = times.indexWhere((t) => t == endTime);
+                    
+                    if (startIndex != -1 && endIndex != -1) {
+                      for (int i = startIndex; i <= endIndex; i++) {
+                        if (i < times.length) {
+                          selectedTimesPerDay[dayIndex]!.add(times[i]);
+                        }
+                      }
+                    }
+                  } else {
+                    // Single time
+                    final timeStr = timesList.trim();
+                    if (times.contains(timeStr)) {
+                      selectedTimesPerDay[dayIndex]!.add(timeStr);
+                    }
+                  }
+                }
+                
+                // Set first day with timings as selected
+                if (selectedDayIndex == 0 && selectedTimesPerDay[dayIndex]!.isNotEmpty) {
+                  selectedDayIndex = dayIndex;
+                }
+              }
+            }
+          }
+        }
       }
     }
 

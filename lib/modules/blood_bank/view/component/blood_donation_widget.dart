@@ -129,6 +129,28 @@ class DonationApproval extends StatelessWidget {
                           SizedBox(
                             height: 1.h,
                           ),
+                          // Show "Requested by" with user name if userDetails is available
+                          if (userDetails != null && userDetails!.name != null && userDetails!.name!.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Requested by: ',
+                                    style: CustomTextStyles.w600TextStyle(
+                                        size: 14, color: Color(0xff4B5563)),
+                                  ),
+                                  Text(
+                                    userDetails!.name!,
+                                    style: CustomTextStyles.darkHeadingTextStyle(size: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (userDetails != null && userDetails!.name != null && userDetails!.name!.isNotEmpty)
+                            SizedBox(
+                              height: 1.h,
+                            ),
                           Text(
                             'Need: ${count} unit ${isBloodDonate ? 'of ${bloodType} Blood' : ''}',
                             style: CustomTextStyles.w600TextStyle(

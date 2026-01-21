@@ -497,12 +497,15 @@ class DoctorCategory extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(right: isUser == false ? 0 : 8.0),
       child: Container(
-        width: isBloodBank ? 38.87.w : 37.54.w,
+        width: isBloodBank ? 45.w : 37.54.w,
+        constraints: isBloodBank 
+            ? BoxConstraints(minHeight: 17.h)
+            : null,
         decoration: BoxDecoration(
             color: bgColor, borderRadius: BorderRadius.circular(22.31)),
         child: Padding(
           padding: isBloodBank
-              ? EdgeInsets.fromLTRB(15.44, 8, 12, 8)
+              ? EdgeInsets.fromLTRB(18, 14, 14, 14)
               : EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,12 +519,12 @@ class DoctorCategory extends StatelessWidget {
                   padding: EdgeInsets.all(isBloodBank ? 5.0 : 8.0),
                   child: SvgPicture.asset(
                     imagePath,
-                    width: isBloodBank ? 18 : null,
-                    height: isBloodBank ? 18 : null,
+                    width: isBloodBank ? 22 : null,
+                    height: isBloodBank ? 22 : null,
                   ),
                 ),
               ),
-              SizedBox(height: isBloodBank ? 6 : 0),
+              SizedBox(height: isBloodBank ? 10 : 0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -530,7 +533,7 @@ class DoctorCategory extends StatelessWidget {
                     catrgory,
                     style: CustomTextStyles.w600TextStyle(
                         color: AppColors.blackColor393,
-                        size: isBloodBank ? 13 : 18.86,
+                        size: isBloodBank ? 15 : 18.86,
                         letterspacing: -1),
                   ),
                   // Hide the count text for blood bank mode

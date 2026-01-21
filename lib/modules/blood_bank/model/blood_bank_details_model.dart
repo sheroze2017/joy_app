@@ -183,7 +183,7 @@ class BloodBankDetailsData {
   String? lng;
   String? location;
   String? about;
-  List<dynamic>? timings; // Store timings if present
+  dynamic timings; // Can be String or List<dynamic>
 
   BloodBankDetailsData({this.placeId, this.lat, this.lng, this.location, this.about, this.timings});
 
@@ -193,7 +193,16 @@ class BloodBankDetailsData {
     lng = json['lng']?.toString();
     location = json['location'];
     about = json['about'];
-    timings = json['timings']; // Store timings if present (won't break if missing)
+    // Handle timings as either String or List
+    if (json['timings'] != null) {
+      if (json['timings'] is List) {
+        timings = json['timings'];
+      } else {
+        timings = json['timings'].toString();
+      }
+    } else {
+      timings = null;
+    }
   }
 
   Map<String, dynamic> toJson() {

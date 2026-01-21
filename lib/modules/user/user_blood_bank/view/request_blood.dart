@@ -13,6 +13,7 @@ import 'package:sizer/sizer.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/social_media/friend_request/bloc/friends_bloc.dart';
+import 'package:joy_app/common/map/view/mapscreen.dart';
 
 class RequestBlood extends StatefulWidget {
   bool isRegister;
@@ -150,21 +151,34 @@ class _RequestBloodState extends State<RequestBlood> {
                       SizedBox(
                         height: 2.h,
                       ),
-                      RoundedBorderTextField(
-                        controller: _locationController,
-                        focusNode: _focusNode3,
-                        showLabel: true,
-                        nextFocusNode: _focusNode4,
-                        isenable: true,
-                        hintText: 'Location',
-                        icon: '',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter location';
-                          } else {
-                            return null;
-                          }
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MapScreen()),
+                          ).then((value) {
+                            if (value != null) {
+                              String searchValue = value['searchValue'];
+                              _locationController.text = searchValue;
+                            }
+                          });
                         },
+                        child: RoundedBorderTextField(
+                          controller: _locationController,
+                          focusNode: _focusNode3,
+                          showLabel: true,
+                          nextFocusNode: _focusNode4,
+                          isenable: false,
+                          hintText: 'Location',
+                          icon: '',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select location';
+                            } else {
+                              return null;
+                            }
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 2.h,
@@ -377,19 +391,35 @@ class _RequestBloodState extends State<RequestBlood> {
                       SizedBox(
                         height: 2.h,
                       ),
-                      RoundedBorderTextField(
-                        controller: _locationController,
-                        focusNode: _focusNode7,
-                        nextFocusNode: _focusNode8,
-                        hintText: 'Your Location',
-                        icon: '',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter location';
-                          } else {
-                            return null;
-                          }
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MapScreen()),
+                          ).then((value) {
+                            if (value != null) {
+                              String searchValue = value['searchValue'];
+                              _locationController.text = searchValue;
+                            }
+                          });
                         },
+                        child: AbsorbPointer(
+                          child: RoundedBorderTextField(
+                            controller: _locationController,
+                            focusNode: _focusNode7,
+                            nextFocusNode: _focusNode8,
+                            hintText: 'Your Location',
+                            icon: '',
+                            isenable: false,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select location';
+                              } else {
+                                return null;
+                              }
+                            },
+                          ),
+                        ),
                       ),
                       SizedBox(
                         height: 2.h,

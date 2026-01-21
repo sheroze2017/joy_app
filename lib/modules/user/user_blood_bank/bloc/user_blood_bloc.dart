@@ -54,9 +54,10 @@ class UserBloodBankController extends GetxController {
     UserHive? currentUser = await getCurrentUser();
 
     try {
-      bool response = await userBloodBankApi.CreateDonor(name, bloodGroup,
+      Map<String, dynamic> response = await userBloodBankApi.CreateDonor(name, bloodGroup,
           location, gender, city, currentUser!.userId.toString(), type);
-      if (response == true) {
+      
+      if (response['success'] == true) {
         showLoader.value = false;
         // Reload donors list after successful registration
         await getAllDonors();
@@ -73,15 +74,31 @@ class UserBloodBankController extends GetxController {
             );
           },
         );
+        return true;
       } else {
         showLoader.value = false;
-        showErrorMessage(context, 'Error in creating you a donor');
+        // Display the actual error message from API
+        String errorMessage = response['message']?.toString() ?? 'Error in creating you a donor';
+        showErrorMessage(context, errorMessage);
+        return false;
       }
-
-      return response;
     } catch (error) {
       showLoader.value = false;
-      throw (error);
+      // Extract error message from exception
+      String errorMessage = 'Error in creating you a donor';
+      if (error is Exception) {
+        String errorString = error.toString();
+        // Remove "Exception: " prefix if present
+        if (errorString.startsWith('Exception: ')) {
+          errorMessage = errorString.substring(11);
+        } else {
+          errorMessage = errorString;
+        }
+      } else {
+        errorMessage = error.toString();
+      }
+      showErrorMessage(context, errorMessage);
+      return false;
     } finally {
       showLoader.value = false;
     }
