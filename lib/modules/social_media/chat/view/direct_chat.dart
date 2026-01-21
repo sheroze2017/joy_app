@@ -183,9 +183,16 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       // Load history
       await loadHistory();
 
+      // Log socket connection status before listening
+      print('🔍 [Socket] Checking connection status before listening...');
+      print('🔍 [Socket] Socket connected: ${chatService!.socket?.connected ?? false}');
+      print('🔍 [Socket] Socket ID: ${chatService!.socket?.id ?? "null"}');
+      
       // Listen for new messages
       chatService!.onMessage((data) async {
-        print('📨 [Socket] Received message: ${data.toString()}');
+        print('📨 [Socket] ========== RECEIVED MESSAGE EVENT ==========');
+        print('📨 [Socket] Raw data: ${data.toString()}');
+        print('📨 [Socket] Data type: ${data.runtimeType}');
         // Handle message structure from guide: _id, conversationId, senderId, senderType, receiverId, receiverType, body, mediaUrl, status, createdAt
         final messageId = data['_id']?.toString() ?? '';
         final senderIdRaw = data['senderId'] ?? data['sender_id'];
@@ -206,50 +213,54 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
         final isCurrentUser = _isSenderCurrentUser(senderId, senderType, messageBody: body, receiverId: receiverId);
         
         print('📨 [Chat] Real-time message - id: $messageId, sender: "$senderId", current user: "${widget.userId}", isCurrentUser: $isCurrentUser, body: $body');
+        print('📨 [Chat] Processed message IDs count: ${processedMessageIds.length}');
+        if (messageId.isNotEmpty) {
+          print('📨 [Chat] Checking if message ID "$messageId" is in processed list: ${processedMessageIds.contains(messageId)}');
+        }
         
         // Check if message already exists (avoid duplicates)
+        // CRITICAL: Only check by messageId, NOT by text (text can be repeated)
         bool messageExists = false;
         if (messageId.isNotEmpty) {
           // Check by messageId first (most reliable)
           messageExists = processedMessageIds.contains(messageId);
+          if (messageExists) {
+            print('⚠️ [Chat] Message ID already processed: $messageId, skipping (this message was already loaded from API)');
+          } else {
+            print('✅ [Chat] Message ID is new: $messageId, will add to UI');
+          }
+        } else {
+          print('⚠️ [Chat] Message has no ID, cannot check for duplicates reliably - will add anyway');
         }
         
-        // Also check by text and sender to catch duplicates (including optimistic messages)
-        if (!messageExists) {
+        // Handle optimistic messages (only for messages from current user)
+        if (!messageExists && isCurrentUser && body.isNotEmpty) {
           // Find optimistic message with same text from current user
-          if (isCurrentUser) {
-            final optimisticIndex = messageWidgets.indexWhere((msg) => 
-              msg.msgText == body && 
-              msg.user == true // Sent message (right side)
-            );
-            
-            if (optimisticIndex != -1) {
-              // Replace optimistic message with real one
-              messageExists = true;
-              if (mounted) {
-                setState(() {
-                  messageWidgets[optimisticIndex] = MessageBubble(
-                    msgText: body,
-                    msgSender: "You",
-                    user: true, // Always right side for sent messages
-                    sending: false, // No longer sending
-                    receiverImage: widget.userAsset,
-                  );
-                  if (messageId.isNotEmpty) {
-                    processedMessageIds.add(messageId);
-                  }
-                });
-              }
-              print('✅ [Chat] Replaced optimistic message with real message: $messageId');
-              return; // Don't add again - IMPORTANT: prevents duplicate
-            }
-          }
-          
-          // Check for other duplicates (including if message already exists with same text and alignment)
-          messageExists = messageWidgets.any((msg) => 
+          final optimisticIndex = messageWidgets.indexWhere((msg) => 
             msg.msgText == body && 
-            ((isCurrentUser && msg.user == true) || (!isCurrentUser && msg.user == false))
+            msg.user == true && // Sent message (right side)
+            msg.sending == true // Still sending (optimistic)
           );
+          
+          if (optimisticIndex != -1) {
+            // Replace optimistic message with real one
+            if (mounted) {
+              setState(() {
+                messageWidgets[optimisticIndex] = MessageBubble(
+                  msgText: body,
+                  msgSender: "You",
+                  user: true, // Always right side for sent messages
+                  sending: false, // No longer sending
+                  receiverImage: widget.userAsset,
+                );
+                if (messageId.isNotEmpty) {
+                  processedMessageIds.add(messageId);
+                }
+              });
+            }
+            print('✅ [Chat] Replaced optimistic message with real message: $messageId');
+            return; // Don't add again - IMPORTANT: prevents duplicate
+          }
         }
         
         // CRITICAL: If message is from current user but isCurrentUser is false, fix it

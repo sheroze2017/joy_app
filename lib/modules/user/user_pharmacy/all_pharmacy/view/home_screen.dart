@@ -47,70 +47,8 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
     }
   }
   
-  Widget _buildStatusButton(String status, String orderId) {
-    if (status == 'PENDING') {
-      return Row(
-        children: [
-          Expanded(
-            child: RoundedButtonSmall(
-              text: 'Accept',
-              onPressed: () {
-                productsController.updateOrderStatus(
-                  orderId,
-                  'CONFIRMED',
-                  context,
-                );
-              },
-              backgroundColor: AppColors.darkGreenColor,
-              textColor: Colors.white,
-            ),
-          ),
-          SizedBox(width: 8.0),
-          Expanded(
-            child: RoundedButtonSmall(
-              text: 'Cancel',
-              onPressed: () {
-                productsController.updateOrderStatus(
-                  orderId,
-                  'CANCELLED',
-                  context,
-                );
-              },
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-            ),
-          ),
-        ],
-      );
-    } else if (status == 'CONFIRMED') {
-      return RoundedButtonSmall(
-        text: 'Out for Delivery',
-        onPressed: () {
-          productsController.updateOrderStatus(
-            orderId,
-            'OUT_FOR_DELIVERY',
-            context,
-          );
-        },
-        backgroundColor: AppColors.darkGreenColor,
-        textColor: Colors.white,
-      );
-    } else if (status == 'OUT_FOR_DELIVERY') {
-      return RoundedButtonSmall(
-        text: 'Delivered',
-        onPressed: () {
-          productsController.updateOrderStatus(
-            orderId,
-            'DELIVERED',
-            context,
-          );
-        },
-        backgroundColor: AppColors.darkGreenColor,
-        textColor: Colors.white,
-      );
-    }
-    return Container();
-  }
+  // Removed _buildStatusButton - using swipe gestures instead for PENDING orders
+  // Non-PENDING orders don't show buttons (pharmacy goes to Orders screen for those actions)
   
   @override
   void initState() {
@@ -207,17 +145,13 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                
                 Obx(
                   () {
-                    // Get all orders (combining pending, confirmed, and on the way)
-                    final allActiveOrders = [
-                      ...productsController.pendingOrders,
-                      ...productsController.confirmedOrders,
-                      ...productsController.onTheWayOrders,
-                    ];
+                    // Only show PENDING orders on home screen
+                    final pendingOrders = productsController.pendingOrders;
                     
-                    if (allActiveOrders.isEmpty) {
+                    if (pendingOrders.isEmpty) {
                       return Column(
                         children: [
-                          Text('No Orders Yet'),
+                          Text('No Pending Orders'),
                         
                           Obx(() => RoundedButtonSmall(
                               showLoader:
@@ -235,8 +169,8 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                       );
                     }
                     
-                    // Show max 2 orders on home screen
-                    final displayOrders = allActiveOrders.take(2).toList();
+                    // Show max 2 pending orders on home screen
+                    final displayOrders = pendingOrders.take(2).toList();
                     
                     return ListView.builder(
                       shrinkWrap: true,
@@ -249,110 +183,216 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                         // Get items from order (prefer items over cart)
                         final orderItems = order.items ?? order.cart ?? [];
                         
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.lightGreenColor,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          'Customer', // Placeholder - can be enhanced to fetch actual user name
-                                          style: CustomTextStyles.darkTextStyle(
-                                            color: ThemeUtil.isDarkMode(context)
-                                                ? AppColors.whiteColor
-                                                : Color(0xff374151),
-                                          ),
+                        final orderId = order.orderId?.toString() ?? '';
+                        final isPending = status == 'PENDING';
+                        
+                        Widget orderCard = Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.lightGreenColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        'Customer', // Placeholder - can be enhanced to fetch actual user name
+                                        style: CustomTextStyles.darkTextStyle(
+                                          color: ThemeUtil.isDarkMode(context)
+                                              ? AppColors.whiteColor
+                                              : Color(0xff374151),
                                         ),
                                       ),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: _getStatusColor(status),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Text(
-                                          status,
-                                          style: CustomTextStyles.lightTextStyle(
-                                            color: Colors.white,
-                                            size: 10,
-                                          ),
-                                        ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: _getStatusColor(status),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 8),
-                                  // Display items with name, qty, and price
-                                  ...orderItems.map<Widget>((item) {
-                                    return Padding(
-                                      padding: EdgeInsets.only(bottom: 6),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              '${item.productName ?? 'N/A'}',
-                                              style: CustomTextStyles.w600TextStyle(
-                                                size: 13,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 8.0),
-                                          Text(
-                                            'Qty: ${item.qty ?? '0'}',
-                                            style: CustomTextStyles.lightTextStyle(
-                                              size: 12,
-                                            ),
-                                          ),
-                                          SizedBox(width: 8.0),
-                                          Text(
-                                            '${item.price ?? '0'} Rs',
-                                            style: CustomTextStyles.w600TextStyle(
-                                              size: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                                  SizedBox(height: 8),
-                                  Divider(color: Colors.grey.withOpacity(0.3)),
-                                  SizedBox(height: 4),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Location: ${order.location ?? 'N/A'}',
+                                      child: Text(
+                                        status,
                                         style: CustomTextStyles.lightTextStyle(
-                                          size: 12,
+                                          color: Colors.white,
+                                          size: 10,
                                         ),
                                       ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                // Display items with name, qty, and price
+                                ...orderItems.map<Widget>((item) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(bottom: 6),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            '${item.productName ?? 'N/A'}',
+                                            style: CustomTextStyles.w600TextStyle(
+                                              size: 13,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        Text(
+                                          'Qty: ${item.qty ?? '0'}',
+                                          style: CustomTextStyles.lightTextStyle(
+                                            size: 12,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        Text(
+                                          '${item.price ?? '0'} Rs',
+                                          style: CustomTextStyles.w600TextStyle(
+                                            size: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                                SizedBox(height: 8),
+                                Divider(color: Colors.grey.withOpacity(0.3)),
+                                SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Location: ${order.location ?? 'N/A'}',
+                                      style: CustomTextStyles.lightTextStyle(
+                                        size: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Total: ${order.totalPrice ?? 'N/A'} Rs',
+                                      style: CustomTextStyles.w600TextStyle(
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                // Show swipe hint for PENDING orders
+                                if (isPending) ...[
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.swipe_left, size: 16, color: Colors.red),
+                                      SizedBox(width: 4),
                                       Text(
-                                        'Total: ${order.totalPrice ?? 'N/A'} Rs',
-                                        style: CustomTextStyles.w600TextStyle(
-                                          size: 14,
+                                        'Swipe left to cancel',
+                                        style: CustomTextStyles.lightTextStyle(
+                                          size: 11,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      SizedBox(width: 16),
+                                      Icon(Icons.swipe_right, size: 16, color: AppColors.darkGreenColor),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Swipe right to accept',
+                                        style: CustomTextStyles.lightTextStyle(
+                                          size: 11,
+                                          color: AppColors.darkGreenColor,
                                         ),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 12),
-                                  // Status buttons based on order status
-                                  _buildStatusButton(status, order.orderId?.toString() ?? ''),
                                 ],
-                              ),
+                              ],
                             ),
                           ),
                         );
+                        
+                        // Wrap with Dismissible only for PENDING orders
+                        if (isPending) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3.0),
+                            child: Dismissible(
+                              key: Key('order_${orderId}_$index'),
+                              direction: DismissDirection.horizontal,
+                              background: Container(
+                                decoration: BoxDecoration(
+                                  color: AppColors.darkGreenColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.only(left: 20),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.check_circle, color: Colors.white, size: 32),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Accept',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              secondaryBackground: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                alignment: Alignment.centerRight,
+                                padding: EdgeInsets.only(right: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(Icons.cancel, color: Colors.white, size: 32),
+                                  ],
+                                ),
+                              ),
+                              onDismissed: (direction) async {
+                                if (direction == DismissDirection.startToEnd) {
+                                  // Swipe right = Accept
+                                  await productsController.updateOrderStatus(
+                                    orderId,
+                                    'CONFIRMED',
+                                    context,
+                                  );
+                                } else if (direction == DismissDirection.endToStart) {
+                                  // Swipe left = Cancel
+                                  await productsController.updateOrderStatus(
+                                    orderId,
+                                    'CANCELLED',
+                                    context,
+                                  );
+                                }
+                                // Order will be removed from list after status update refreshes
+                              },
+                              child: orderCard,
+                            ),
+                          );
+                        } else {
+                          // Non-PENDING orders: no swipe, no buttons
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3.0),
+                            child: orderCard,
+                          );
+                        }
                       },
                     );
                   },

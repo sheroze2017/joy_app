@@ -16,7 +16,6 @@ import 'package:joy_app/modules/hospital/view/home_screen.dart';
 import 'package:joy_app/modules/social_media/friend_request/view/new_friend.dart';
 import 'package:joy_app/modules/user/user_hospital/view/all_hospital_screen.dart';
 import 'package:joy_app/modules/pharmacy/view/pharmacy_product_screen.dart';
-import 'package:joy_app/modules/user/user_pharmacy/all_pharmacy/view/user_all_order.dart';
 import 'package:joy_app/Widgets/appbar/custom_appbar.dart';
 import 'package:sizer/sizer.dart';
 import '../../user_blood_bank/bloc/user_blood_bloc.dart';
@@ -225,76 +224,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 1.h,
                   ),
-                  // Scrollable Content Sections
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16, left: 16),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildScrollableContentCard(
-                            context,
-                            'Consult Doctors Online',
-                            'Find and appoint skilled doctors',
-                            Icons.medical_services,
-                            Colors.blue,
-                            () {
-                              Get.to(
-                                AllDoctorsScreen(appBarText: 'All Doctors'),
-                                transition: Transition.native,
-                              );
-                            },
-                          ),
-                          SizedBox(width: 2.w),
-                          _buildScrollableContentCard(
-                            context,
-                            'Search for Hospitals',
-                            'Find nearby medical centers',
-                            Icons.local_hospital,
-                            Colors.green,
-                            () {
-                              Get.to(
-                                AllHospitalScreen(
-                                  appBarText: 'All Hospitals',
-                                  isHospital: true,
-                                ),
-                                transition: Transition.native,
-                              );
-                            },
-                          ),
-                          SizedBox(width: 2.w),
-                          _buildScrollableContentCard(
-                            context,
-                            'Check Medical History',
-                            'View your bookings and history',
-                            Icons.history,
-                            Colors.orange,
-                            () {
-                              Get.to(
-                                ManageAllAppointmentUser(),
-                                transition: Transition.native,
-                              );
-                            },
-                          ),
-                          SizedBox(width: 2.w),
-                          _buildScrollableContentCard(
-                            context,
-                            'My Pharmacy Orders',
-                            'View your pharmacy orders',
-                            Icons.shopping_bag,
-                            Colors.purple,
-                            () {
-                              Get.to(
-                                UserAllOrderScreen(),
-                                transition: Transition.native,
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
                   Padding(
                     padding: const EdgeInsets.only(right: 16, left: 16),
                     child: Row(
@@ -604,61 +533,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
-  Widget _buildScrollableContentCard(
-    BuildContext context,
-    String title,
-    String subtitle,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        width: 70.w,
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 1,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 32),
-            SizedBox(height: 1.h),
-            Text(
-              title,
-              style: CustomTextStyles.darkHeadingTextStyle(
-                color: ThemeUtil.isDarkMode(context)
-                    ? AppColors.whiteColor
-                    : null,
-                size: 16,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 0.5.h),
-            Text(
-              subtitle,
-              style: CustomTextStyles.lightTextStyle(
-                color: ThemeUtil.isDarkMode(context)
-                    ? Color(0xffAAAAAA)
-                    : Color(0xff6B7280),
-                size: 12,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class DrawerItem extends StatelessWidget {
