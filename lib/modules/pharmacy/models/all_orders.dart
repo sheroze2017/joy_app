@@ -44,6 +44,10 @@ class PharmacyOrders {
   List<Cart>? cart;
   List<Cart>? items; // New field for items array
   dynamic review; // Review can be null or an object
+  String? userName; // User name from API
+  String? userEmail; // User email from API
+  String? userPhone; // User phone from API
+  String? userImage; // User image from API
 
   PharmacyOrders(
       {this.orderId,
@@ -58,7 +62,11 @@ class PharmacyOrders {
       this.placeId,
       this.cart,
       this.items,
-      this.review});
+      this.review,
+      this.userName,
+      this.userEmail,
+      this.userPhone,
+      this.userImage});
 
   PharmacyOrders.fromJson(Map<String, dynamic> json) {
     // Handle both _id (MongoDB) and order_id (legacy)
@@ -131,6 +139,36 @@ class PharmacyOrders {
     
     // Handle review field
     review = json['review'];
+    
+    // Handle user information fields - handle null and "null" string cases
+    final userNameRaw = json['user_name'];
+    final userEmailRaw = json['user_email'];
+    final userPhoneRaw = json['user_phone'];
+    final userImageRaw = json['user_image'];
+    
+    userName = (userNameRaw != null && userNameRaw.toString().toLowerCase() != 'null' && userNameRaw.toString().trim().isNotEmpty)
+        ? userNameRaw.toString().trim()
+        : null;
+    userEmail = (userEmailRaw != null && userEmailRaw.toString().toLowerCase() != 'null' && userEmailRaw.toString().trim().isNotEmpty)
+        ? userEmailRaw.toString().trim()
+        : null;
+    userPhone = (userPhoneRaw != null && userPhoneRaw.toString().toLowerCase() != 'null' && userPhoneRaw.toString().trim().isNotEmpty)
+        ? userPhoneRaw.toString().trim()
+        : null;
+    userImage = (userImageRaw != null && userImageRaw.toString().toLowerCase() != 'null' && userImageRaw.toString().trim().isNotEmpty)
+        ? userImageRaw.toString().trim()
+        : null;
+    
+    // Debug logging for user fields
+    print('📦 [PharmacyOrders] Parsing user fields:');
+    print('   - user_name (raw): $userNameRaw');
+    print('   - user_name (parsed): $userName');
+    print('   - user_email (raw): $userEmailRaw');
+    print('   - user_email (parsed): $userEmail');
+    print('   - user_phone (raw): $userPhoneRaw');
+    print('   - user_phone (parsed): $userPhone');
+    print('   - user_image (raw): $userImageRaw');
+    print('   - user_image (parsed): $userImage');
   }
 
   Map<String, dynamic> toJson() {
@@ -153,6 +191,10 @@ class PharmacyOrders {
       data['cart'] = this.cart!.map((v) => v.toJson()).toList();
     }
     data['review'] = this.review;
+    data['user_name'] = this.userName;
+    data['user_email'] = this.userEmail;
+    data['user_phone'] = this.userPhone;
+    data['user_image'] = this.userImage;
     return data;
   }
 }

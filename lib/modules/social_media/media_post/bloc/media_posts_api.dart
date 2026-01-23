@@ -422,4 +422,22 @@ class MediaPosts {
       throw e;
     }
   }
+
+  Future<Map<String, dynamic>> togglePostDislike(String userId, String postId) async {
+    try {
+      print('👎 [MediaPosts] togglePostDislike() called');
+      print('👎 [MediaPosts] User ID: $userId, Post ID: $postId');
+      final requestData = {
+        "user_id": userId,
+        "post_id": postId
+      };
+      print('📤 [MediaPosts] togglePostDislike() Request Data: $requestData');
+      final result = await _dioClient.post(Endpoints.togglePostDislike, data: requestData);
+      print('✅ [MediaPosts] togglePostDislike() Response: $result');
+      return result;
+    } catch (e) {
+      print('❌ [MediaPosts] togglePostDislike() error: $e');
+      throw e;
+    }
+  }
 }

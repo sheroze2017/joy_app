@@ -352,18 +352,20 @@ class FriendsSocialController extends GetxController {
       // Populate posts for the screen
       userPostById.clear();
       
-      // Try to get posts from getMyProfile response first (works for both own and friend profiles)
+      // Try to get posts from getAnotherUserProfile/getMyProfile response first
       final postsFromProfile = response.singleData?.posts ??
           (response.data != null && response.data!.isNotEmpty
               ? response.data!.first.posts
               : []);
       
       if (postsFromProfile != null && postsFromProfile.isNotEmpty) {
-        // Use posts from getMyProfile response
+        // Use posts from API response
+        print('✅ [FriendsSocialController] Using posts from profile API response: ${postsFromProfile.length} posts');
         userPostById.addAll(postsFromProfile);
       } else {
-        // Fallback to posts-by-id API only if posts are not in getMyProfile response
-        await getAllPostById(myProfile, friendId);
+        // If posts array is empty, don't call fallback API - user has no posts
+        print('ℹ️ [FriendsSocialController] No posts in profile API response (empty array) - user has no posts');
+        userPostById.clear();
       }
 
       if (response.data != null && response.data!.isNotEmpty) {

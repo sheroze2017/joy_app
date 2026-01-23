@@ -68,6 +68,7 @@ class MediaPost {
   String? user_image;
   List<Comments>? comments;
   bool? isMyLike; // Added to track if current user has liked this post
+  List<dynamic>? likedBy; // Array of user IDs who liked this post
   PostUser? createdByUser;
 
   MediaPost(
@@ -85,6 +86,7 @@ class MediaPost {
       this.user_image,
       this.comments,
       this.isMyLike,
+      this.likedBy,
       this.createdByUser});
 
   MediaPost.fromJson(Map<String, dynamic> json) {
@@ -119,11 +121,19 @@ class MediaPost {
         json['user_image']?.toString() ?? createdByUser?.image ?? '';
     // Parse is_my_like field (handle both snake_case and camelCase)
     isMyLike = json['is_my_like'] ?? json['isMyLike'] ?? false;
+    // Parse liked_by array
+    if (json['liked_by'] != null) {
+      likedBy = json['liked_by'] as List<dynamic>;
+    } else {
+      likedBy = [];
+    }
     if (json['comments'] != null) {
       comments = <Comments>[];
       json['comments'].forEach((v) {
         comments!.add(new Comments.fromJson(v));
       });
+      // Reverse comments to show newest first (at the top)
+      comments = comments!.reversed.toList();
     } else {
       comments = [];
     }

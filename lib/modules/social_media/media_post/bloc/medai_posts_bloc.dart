@@ -10,6 +10,7 @@ import 'package:joy_app/modules/auth/models/user.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/media_posts_api.dart';
 import 'package:joy_app/modules/auth/utils/auth_hive_utils.dart';
 import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
+import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import '../model/comment_model.dart';
 import '../model/create_post_model.dart';
 import '../model/media_post.dart';
@@ -241,8 +242,29 @@ class MediaPostController extends GetxController {
         showSuccessMessage(context, 'Post posted successfully');
         Get.back(); // Close modal first
         postUpload.value = false;
+        
+        // Check if user is in hospital mode
+        UserHive? currentUser = await getCurrentUser();
+        final isHospitalMode = currentUser?.userRole == 'HOSPITAL';
+        
         // Reload posts after modal closes to show new post at top
         await getAllPost();
+        
+        // If in hospital mode, also reload hospital details to refresh posts
+        if (isHospitalMode) {
+          try {
+            final hospitalController = Get.find<HospitalDetailController>();
+            await hospitalController.getHospitalDetails(
+              true, // isHospital
+              currentUser!.userId.toString(),
+              context,
+            );
+            print('✅ [MediaPostController] Hospital details reloaded after post creation');
+          } catch (e) {
+            // HospitalDetailController might not be initialized, that's okay
+            print('⚠️ [MediaPostController] HospitalDetailController not found: $e');
+          }
+        }
       } else {
         showErrorMessage(context, 'Error adding post');
         postUpload.value = false;
@@ -291,18 +313,50 @@ class MediaPostController extends GetxController {
                 name: currentUser.firstName,
                 image: currentUser.image ?? ''));
         
-        // Ensure comments list exists before adding
-        if (allPost[postIndex].comments == null) {
-          allPost[postIndex].comments = <Comments>[];
+        // Convert reversed index to actual index (postIndex is from reversed list)
+        // If allPost has length N, reversed index i corresponds to actual index (N - 1 - i)
+        final actualIndex = allPost.length > 0 && postIndex >= 0 && postIndex < allPost.length
+            ? (allPost.length - 1 - postIndex)
+            : postIndex;
+        
+        // Ensure allPost is not empty and index is valid before accessing
+        if (allPost.isNotEmpty && actualIndex >= 0 && actualIndex < allPost.length) {
+          // Ensure comments list exists before adding
+          if (allPost[actualIndex].comments == null) {
+            allPost[actualIndex].comments = <Comments>[];
+          }
+          // Add comment at the beginning (index 0) so it appears at the top
+          allPost[actualIndex].comments!.insert(0, newComment);
+          update();
+        } else {
+          print('⚠️ [MediaPostController] Invalid postIndex: $postIndex, allPost.length: ${allPost.length}, actualIndex: $actualIndex');
         }
-        // Add comment at the beginning (index 0) so it appears at the top
-        allPost[postIndex].comments!.insert(0, newComment);
-        update();
         commentLoad.value = false;
         
-        // Refresh posts from server to ensure comment count and data are in sync
-        // This ensures the comment appears immediately and stays updated
-        await getAllPost();
+        // Check if user is in hospital mode
+        final isHospitalMode = currentUser?.userRole == 'HOSPITAL';
+        
+        // If in hospital mode, reload hospital details to show new comment
+        if (isHospitalMode) {
+          try {
+            final hospitalController = Get.find<HospitalDetailController>();
+            final profileController = Get.find<ProfileController>();
+            await hospitalController.getHospitalDetails(
+              true, // isHospital
+              currentUser!.userId.toString(),
+              context,
+            );
+            print('✅ [MediaPostController] Hospital details reloaded after comment add');
+          } catch (e) {
+            print('⚠️ [MediaPostController] HospitalDetailController not found: $e');
+            // Fallback: reload regular posts
+            await getAllPost();
+          }
+        } else {
+          // Refresh posts from server to ensure comment count and data are in sync
+          // This ensures the comment appears immediately and stays updated
+          await getAllPost();
+        }
 
         return response;
       } else {
@@ -403,6 +457,11 @@ class MediaPostController extends GetxController {
           update();
         }
         
+        // Reload posts from server to get updated liked_by array
+        // This ensures the UI shows correct like state based on liked_by array
+        print('🔄 [MediaPostController] Reloading posts to get updated liked_by array');
+        await getAllPost();
+        
         return true;
       } else {
         String errorMessage = result['message'] ?? 'Failed to toggle like';
@@ -413,6 +472,63 @@ class MediaPostController extends GetxController {
     } catch (error) {
       print('❌ [MediaPostController] toggleLike() Exception: $error');
       showErrorMessage(context, 'Error toggling like');
+      return false;
+    }
+  }
+
+  Future<bool> toggleDislike(String postId, int postIndex, BuildContext context) async {
+    try {
+      print('👎 [MediaPostController] toggleDislike() called');
+      print('👎 [MediaPostController] Post ID: $postId, Post Index: $postIndex');
+      
+      // Get current user ID
+      UserHive? currentUser = await getCurrentUser();
+      if (currentUser == null) {
+        print('❌ [MediaPostController] No current user found');
+        showErrorMessage(context, 'User not logged in');
+        return false;
+      }
+      
+      String userId = currentUser.userId;
+      
+      final result = await mediaPosts.togglePostDislike(userId, postId);
+      
+      // Check response
+      bool isSuccess = result['success'] ?? result['sucess'] ?? false;
+      int? responseCode = result['code'];
+      
+      if (isSuccess == true && responseCode == 200) {
+        print('✅ [MediaPostController] Dislike toggled successfully');
+        
+        // Update local post state
+        final actualIndex = allPost.length - 1 - postIndex;
+        if (actualIndex >= 0 && actualIndex < allPost.length) {
+          final post = allPost[actualIndex];
+          
+          // Get updated data from response
+          final responseData = result['data'];
+          if (responseData != null) {
+            // Update dislikes count if available
+            if (responseData['dislikes'] != null) {
+              // Note: MediaPost model might need to be updated to include dislikes
+            }
+          }
+          
+          // Trigger UI update
+          allPost.refresh();
+          update();
+        }
+        
+        return true;
+      } else {
+        String errorMessage = result['message'] ?? 'Failed to toggle dislike';
+        print('❌ [MediaPostController] Toggle dislike failed: $errorMessage');
+        showErrorMessage(context, errorMessage);
+        return false;
+      }
+    } catch (error) {
+      print('❌ [MediaPostController] toggleDislike() Exception: $error');
+      showErrorMessage(context, 'Error toggling dislike');
       return false;
     }
   }

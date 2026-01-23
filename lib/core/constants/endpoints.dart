@@ -78,6 +78,7 @@ class Endpoints {
   static String createPost = '/auth/createPost';
   static String addComment = '/auth/addComment';
   static String togglePostLike = '/auth/togglePostLike';
+  static String togglePostDislike = '/auth/togglePostDislike';
 
   static String getAllFriendRequest = '/user/getAllFriendRequests';
   static String getAllUser = '/user/getAllUsers';

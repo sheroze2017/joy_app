@@ -6,6 +6,7 @@ import 'package:joy_app/common/profile/bloc/profile_bloc.dart';
 import 'package:joy_app/core/network/utils/extra.dart';
 import 'package:joy_app/modules/social_media/media_post/bloc/medai_posts_bloc.dart';
 import 'package:joy_app/modules/social_media/media_post/model/media_post.dart';
+import 'package:joy_app/modules/hospital/bloc/get_hospital_details_bloc.dart';
 import 'package:joy_app/styles/colors.dart';
 import 'package:joy_app/styles/custom_textstyle.dart';
 import 'package:joy_app/widgets/loader/loader.dart';
@@ -27,6 +28,7 @@ class MyCustomWidget extends StatefulWidget {
   String postId;
   String likeCount;
   bool isLiked;
+  bool isDisliked;
   String userImage;
   int postIndex;
   List<Comments> cm;
@@ -41,6 +43,7 @@ class MyCustomWidget extends StatefulWidget {
       this.likeCount = '',
       this.recentName = '',
       this.isLiked = false,
+      this.isDisliked = false,
       required this.id,
       required this.postId,
       required this.postIndex,
@@ -127,6 +130,38 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
         color: ThemeUtil.isDarkMode(context)
             ? Color(0xff5A5A5A)
             : Color(0xffA5A5A5),
+      ),
+    );
+  }
+
+  Widget _buildThumbsUpDownButtons({
+    required bool isLiked,
+    required bool isDisliked,
+    required VoidCallback onLikeTap,
+    required VoidCallback onDislikeTap,
+    required BuildContext context,
+  }) {
+    // Show thumbs up if NOT liked, thumbs down if LIKED
+    final showThumbsUp = !isLiked;
+    
+    return InkWell(
+      onTap: showThumbsUp ? onLikeTap : onDislikeTap,
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: ThemeUtil.isDarkMode(context)
+              ? Color(0xffC5D3E3)  // Light background always
+              : AppColors.whiteColorf9f,  // Light background always
+        ),
+        child: Center(
+          child: Icon(
+            showThumbsUp ? Icons.thumb_up : Icons.thumb_down,
+            size: 20,
+            color: Color(0xff1C2A3A),  // Dark icon color
+          ),
+        ),
       ),
     );
   }
@@ -324,40 +359,98 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
         SizedBox(height: 2.h),
         Row(
           children: [
-            Obx(() {
-              // Get current like state from controller's reactive list
-              // Note: allPost is reversed in the list, so we need to adjust index
-              final reversedIndex = mediaController.allPost.length - 1 - widget.postIndex;
-              final currentPost = mediaController.allPost.isNotEmpty && 
-                                 reversedIndex >= 0 && 
-                                 reversedIndex < mediaController.allPost.length
-                  ? mediaController.allPost[reversedIndex]
-                  : null;
-              final isCurrentlyLiked = currentPost?.isMyLike ?? widget.isLiked;
-              
-              return InkWell(
-                onTap: () async {
-                  // Call togglePostLike API - UI will update automatically via Obx
-                  await mediaController.toggleLike(
-                    widget.postId,
-                    widget.postIndex,
-                    context,
-                  );
-                },
-                child: CircleButton(
-                  isLikeButton: true,
-                  isActive: isCurrentlyLiked,
-                  img: 'Assets/images/like.png',
-                  color: ThemeUtil.isDarkMode(context)
-                      ? isCurrentlyLiked
-                          ? Color(0xffC5D3E3)
-                          : Color(0xff121212)
-                      : !isCurrentlyLiked
-                          ? Color(0xff121212)
-                          : AppColors.whiteColorf9f,
-                ),
-              );
-            }),
+            // Thumbs Up (Like) and Thumbs Down (Dislike) Buttons
+            widget.isHospital
+                ? _buildThumbsUpDownButtons(
+                    isLiked: widget.isLiked,
+                    isDisliked: widget.isDisliked,
+                    onLikeTap: () async {
+                      // Call togglePostLike API
+                      final success = await mediaController.toggleLike(
+                        widget.postId,
+                        widget.postIndex,
+                        context,
+                      );
+                      // Reload hospital details to get updated state
+                      if (success) {
+                        try {
+                          final hospitalController = Get.find<HospitalDetailController>();
+                          final profileController = Get.find<ProfileController>();
+                          await hospitalController.getHospitalDetails(
+                            true, // isHospital
+                            profileController.userId.value,
+                            context,
+                          );
+                          print('✅ [BlogCard] Hospital details reloaded after like toggle');
+                        } catch (e) {
+                          print('⚠️ [BlogCard] HospitalDetailController not found: $e');
+                        }
+                      }
+                    },
+                    onDislikeTap: () async {
+                      // Use toggleLike to unlike the post (since dislike endpoint doesn't exist)
+                      // This will toggle the like state: if liked, it will unlike
+                      final success = await mediaController.toggleLike(
+                        widget.postId,
+                        widget.postIndex,
+                        context,
+                      );
+                      // Reload hospital details to get updated state
+                      if (success) {
+                        try {
+                          final hospitalController = Get.find<HospitalDetailController>();
+                          final profileController = Get.find<ProfileController>();
+                          await hospitalController.getHospitalDetails(
+                            true, // isHospital
+                            profileController.userId.value,
+                            context,
+                          );
+                          print('✅ [BlogCard] Hospital details reloaded after like/unlike toggle');
+                        } catch (e) {
+                          print('⚠️ [BlogCard] HospitalDetailController not found: $e');
+                        }
+                      }
+                    },
+                    context: context,
+                  )
+                : Obx(() {
+                    // Get current like state from controller's reactive list
+                    // Posts are already sorted from API, so use index directly
+                    final currentPost = mediaController.allPost.isNotEmpty && 
+                                     widget.postIndex >= 0 && 
+                                     widget.postIndex < mediaController.allPost.length
+                        ? mediaController.allPost[widget.postIndex]
+                        : null;
+                    // Check if current user liked this post by checking liked_by array
+                    // Same logic as hospital mode - check liked_by array instead of isMyLike
+                    final currentUserId = _profileController.userId.value;
+                    final likedBy = currentPost?.likedBy ?? [];
+                    final isCurrentlyLiked = currentUserId.isNotEmpty &&
+                        likedBy.any((id) => id.toString() == currentUserId);
+                    
+                    return _buildThumbsUpDownButtons(
+                      isLiked: isCurrentlyLiked,
+                      isDisliked: false, // Not used in user mode
+                      onLikeTap: () async {
+                        // Call togglePostLike API - UI will update automatically via Obx
+                        await mediaController.toggleLike(
+                          widget.postId,
+                          widget.postIndex,
+                          context,
+                        );
+                      },
+                      onDislikeTap: () async {
+                        // Use toggleLike to unlike the post (since dislike endpoint doesn't exist)
+                        // This will toggle the like state: if liked, it will unlike
+                        await mediaController.toggleLike(
+                          widget.postId,
+                          widget.postIndex,
+                          context,
+                        );
+                      },
+                      context: context,
+                    );
+                  }),
             Spacer(),
             Divider(
               color: Color(0xffE5E7EB),
@@ -389,10 +482,11 @@ class _MyCustomWidgetState extends State<MyCustomWidget> {
             ? _buildCommentsList(widget.cm, context)
             : Obx(() {
                 // For non-hospital mode, use reactive controller lists
+                // Posts are already sorted from API, so use index directly
                 final commentsList = mediaController.postsByUserId.length > widget.postIndex
                     ? (mediaController.postsByUserId[widget.postIndex].comments ?? widget.cm)
-                    : (mediaController.allPost.reversed.toList().length > widget.postIndex
-                        ? (mediaController.allPost.reversed.toList()[widget.postIndex].comments ?? widget.cm)
+                    : (mediaController.allPost.length > widget.postIndex
+                        ? (mediaController.allPost[widget.postIndex].comments ?? widget.cm)
                         : widget.cm);
                 
                 return _buildCommentsList(commentsList, context);

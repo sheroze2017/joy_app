@@ -1185,26 +1185,38 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                     postData['liked_by']
                                                             as List<dynamic>? ??
                                                         [];
+                                                final dislikedBy =
+                                                    postData['disliked_by']
+                                                            as List<dynamic>? ??
+                                                        [];
                                                 final likesCount =
                                                     postData['likes']
                                                             ?.toString() ??
                                                         '0';
 
-                                                // Check if current user liked this post
-                                                final isLiked =
-                                                    currentUserId.isNotEmpty &&
-                                                        likedBy.any((id) =>
-                                                            id.toString() ==
-                                                            currentUserId);
+                                                // Check if current user liked this post by checking liked_by array
+                                                // Ignore is_my_like field and use liked_by array instead
+                                                final isLiked = currentUserId.isNotEmpty &&
+                                                    likedBy.any((id) =>
+                                                        id.toString() == currentUserId);
+                                                
+                                                // Check if current user disliked this post by checking disliked_by array
+                                                final isDisliked = currentUserId.isNotEmpty &&
+                                                    dislikedBy.any((id) =>
+                                                        id.toString() == currentUserId);
+                                                
+                                                // Debug: Log the like/dislike state for verification
+                                                print('🏥 [HospitalHomeScreen] Post ${postId}: currentUserId=$currentUserId, liked_by=$likedBy, disliked_by=$dislikedBy, isLiked=$isLiked, isDisliked=$isDisliked');
 
                                                 // Convert comments to Comments format
+                                                // Reverse to show newest comments first (at the top)
                                                 final commentsList =
                                                     comments.map((c) {
                                                   final commentData =
                                                       c as Map<String, dynamic>;
                                                   return Comments.fromJson(
                                                       commentData);
-                                                }).toList();
+                                                }).toList().reversed.toList();
 
                                                 return Padding(
                                                   padding: const EdgeInsets
@@ -1241,6 +1253,7 @@ class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
                                                         id: createdBy,
                                                         imgPath: image,
                                                         isLiked: isLiked,
+                                                        isDisliked: isDisliked,
                                                         likeCount: likesCount,
                                                         isReply: false,
                                                         showImg:
